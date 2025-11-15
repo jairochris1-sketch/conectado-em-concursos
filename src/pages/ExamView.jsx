@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Question } from "@/entities/Question";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { User } from "@/entities/User";
 import QuestionList from "../components/questions/QuestionList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookCopy, Printer, FileText, ClipboardList, CheckSquare } from "lucide-react";
+import { ArrowLeft, BookCopy, Printer, Download, FileText, ClipboardList, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -68,12 +69,22 @@ export default function ExamView() {
         }
 
         setIsLoading(true);
-        const fetchedQuestions = await Question.filter({
+        
+        // Construir filtro dinamicamente
+        const filter = {
           institution,
           year: parseInt(year),
-          exam_name,
-          cargo: cargo === 'null' ? null : cargo
-        });
+          exam_name
+        };
+        
+        // Só adicionar cargo se não for 'null' ou vazio
+        if (cargo && cargo !== 'null') {
+          filter.cargo = cargo;
+        }
+        
+        console.log('Filtro aplicado:', filter);
+        const fetchedQuestions = await Question.filter(filter);
+        console.log('Questões encontradas:', fetchedQuestions.length);
         
         setQuestions(fetchedQuestions);
         
