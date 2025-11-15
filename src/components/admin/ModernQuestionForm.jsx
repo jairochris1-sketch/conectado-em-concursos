@@ -110,11 +110,17 @@ export default function ModernQuestionForm({
   questionToEdit,
   onQuestionSaved,
   onCancel,
-  allSubjects,
-  allInstitutions,
+  allSubjects = [],
+  allInstitutions = [],
 }) {
   const [topics, setTopics] = useState([]);
   const [examNames, setExamNames] = useState([]);
+
+  // Log para debug
+  useEffect(() => {
+    console.log('ModernQuestionForm - allSubjects:', allSubjects);
+    console.log('ModernQuestionForm - allInstitutions:', allInstitutions);
+  }, [allSubjects, allInstitutions]);
 
   const getDefaultOptions = (type) => {
     if (type === 'true_false') {
@@ -292,20 +298,25 @@ export default function ModernQuestionForm({
                     control={control}
                     rules={{ required: "Disciplina é obrigatória" }}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione uma disciplina" />
                         </SelectTrigger>
                         <SelectContent>
-                          {allSubjects && allSubjects.map(subject => (
-                            <SelectItem key={subject.id || subject.value} value={subject.id || subject.value}>
-                              {subject.name || subject.label}
-                            </SelectItem>
-                          ))}
+                          {allSubjects && allSubjects.length > 0 ? (
+                            allSubjects.map(subject => (
+                              <SelectItem key={subject.id} value={subject.id}>
+                                {subject.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="__loading__" disabled>Carregando...</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     )}
                   />
+                  {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>}
                 </div>
 
                 <div>
@@ -315,20 +326,25 @@ export default function ModernQuestionForm({
                     control={control}
                     rules={{ required: "Banca é obrigatória" }}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione uma banca" />
                         </SelectTrigger>
                         <SelectContent>
-                          {allInstitutions && allInstitutions.map(institution => (
-                            <SelectItem key={institution.id || institution.value} value={institution.id || institution.value}>
-                              {institution.name || institution.label}
-                            </SelectItem>
-                          ))}
+                          {allInstitutions && allInstitutions.length > 0 ? (
+                            allInstitutions.map(institution => (
+                              <SelectItem key={institution.id} value={institution.id}>
+                                {institution.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="__loading__" disabled>Carregando...</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     )}
                   />
+                  {errors.institution && <p className="text-red-500 text-xs mt-1">{errors.institution.message}</p>}
                 </div>
 
                 <div>
