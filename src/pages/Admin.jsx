@@ -1,20 +1,27 @@
 
-import { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User } from '@/entities/User';
 import { Question } from '@/entities/Question';
+import { Topic } from '@/entities/Topic';
 import { SiteContent } from '@/entities/SiteContent';
 import { FAQ } from '@/entities/FAQ';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Shield, Loader2, Pencil, FileText, Upload, CreditCard, BookOpen, Play, Newspaper } from 'lucide-react'; // Added Newspaper for Articles
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper } from 'lucide-react'; // Added Newspaper for Articles
+import { format } from "date-fns";
 import { toast } from 'sonner';
 
 // Direct imports for components
 import ModernQuestionForm from '../components/admin/ModernQuestionForm';
 import QuestionImporter from '../components/admin/QuestionImporter';
 import AdminContentForm from '../components/admin/AdminContentForm';
+import AdminFAQForm from '../components/admin/AdminFAQForm';
 import TopicManager from '../components/admin/TopicManager';
+import NotificationManager from '../components/admin/NotificationManager';
 import ArticleManager from '../components/admin/ArticleManager'; // NEW: Import ArticleManager
 
 // Lazy load admin components
@@ -98,8 +105,8 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('questions');
 
   const [welcomeContent, setWelcomeContent] = useState(null);
-  const [faqs, setFaqs] = useState([]); // FAQ states kept for potential future use or non-UI access
-  const [editingFAQ, setEditingFAQ] = useState(null); // FAQ states kept
+  const [faqs, setFaqs] = useState([]);
+  const [editingFAQ, setEditingFAQ] = useState(null);
   
   // States for subjects and institutions
   const [allSubjects, setAllSubjects] = useState([]);
@@ -112,11 +119,14 @@ export default function AdminPage() {
         const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com'];
         if (adminEmails.includes(user.email)) {
           setIsAdmin(true);
-          loadQuestions();
-          loadWelcomeContent();
-          loadFAQs(); // Kept for functionality, even if UI tab is removed
-          loadAllSubjects();
-          loadAllInstitutions();
+          // Carregar dados em paralelo
+          await Promise.all([
+            loadQuestions(),
+            loadWelcomeContent(),
+            loadFAQs(),
+            loadAllSubjects(),
+            loadAllInstitutions()
+          ]);
         } else {
           navigate(createPageUrl('Dashboard'));
         }
@@ -131,21 +141,27 @@ export default function AdminPage() {
   const loadAllSubjects = async () => {
     try {
       const questionSchema = await Question.schema();
+      console.log('Schema completo:', questionSchema);
+      
       if (questionSchema?.properties?.subject?.enum) {
         const subjects = questionSchema.properties.subject.enum.map(subjectKey => ({
           id: subjectKey,
           name: subjectNames[subjectKey] || subjectKey
         }));
-        // Ordenar com Português em primeiro
+        
         subjects.sort((a, b) => {
           if (a.name === 'Português') return -1;
           if (b.name === 'Português') return 1;
           return a.name.localeCompare(b.name);
         });
+        
+        console.log('Disciplinas carregadas:', subjects);
         setAllSubjects(subjects);
+      } else {
+        console.error('Schema de disciplinas não encontrado');
       }
     } catch (error) {
-      console.error("Erro ao carregar disciplinas para o admin:", error);
+      console.error("Erro ao carregar disciplinas:", error);
       toast.error("Falha ao carregar disciplinas.");
     }
   };
@@ -153,17 +169,21 @@ export default function AdminPage() {
   const loadAllInstitutions = async () => {
     try {
       const questionSchema = await Question.schema();
+      
       if (questionSchema?.properties?.institution?.enum) {
         const institutions = questionSchema.properties.institution.enum.map(instKey => ({
           id: instKey,
           name: institutionNames[instKey] || instKey.toUpperCase()
         }));
-        // Ordenar alfabeticamente
+        
         institutions.sort((a, b) => a.name.localeCompare(b.name));
+        console.log('Instituições carregadas:', institutions);
         setAllInstitutions(institutions);
+      } else {
+        console.error('Schema de instituições não encontrado');
       }
     } catch (error) {
-      console.error("Erro ao carregar instituições para o admin:", error);
+      console.error("Erro ao carregar instituições:", error);
       toast.error("Falha ao carregar instituições.");
     }
   };
@@ -342,13 +362,22 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="new-question">
-            <ModernQuestionForm
-              questionToEdit={selectedQuestion}
-              onQuestionSaved={handleSaveQuestion}
-              onCancel={() => { setSelectedQuestion(null); setActiveTab('questions'); }}
-              allSubjects={allSubjects}
-              allInstitutions={allInstitutions}
-            />
+            {allSubjects.length > 0 && allInstitutions.length > 0 ? (
+              <ModernQuestionForm
+                questionToEdit={selectedQuestion}
+                onQuestionSaved={handleSaveQuestion}
+                onCancel={() => { setSelectedQuestion(null); setActiveTab('questions'); }}
+                allSubjects={allSubjects}
+                allInstitutions={allInstitutions}
+              />
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+                  <p>Carregando formulário...</p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="import">
