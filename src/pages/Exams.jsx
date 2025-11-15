@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,7 +74,7 @@ export default function Exams() {
         const questionsData = await Question.list("-created_date", 5000);
         
         const groupedExams = _.groupBy(questionsData, q => 
-          `${q.institution}|${q.year}|${q.exam_name}|${q.cargo || 'N/A'}`
+          `${q.institution}|${q.year}|${q.exam_name}|${q.cargo || ''}`
         );
 
         const examsList = Object.values(groupedExams).map(examQuestions => {
@@ -82,11 +82,12 @@ export default function Exams() {
           const subjects = [...new Set(examQuestions.map(q => q.subject))];
           
           return {
-            id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
+            id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || ''}`,
             institution: firstQuestion.institution,
             year: firstQuestion.year,
             exam_name: firstQuestion.exam_name,
-            cargo: firstQuestion.cargo || 'Cargo não especificado',
+            cargo: firstQuestion.cargo || '',
+            cargoDisplay: firstQuestion.cargo || 'Cargo não especificado',
             subjects: subjects,
             question_count: examQuestions.length,
           };
@@ -110,7 +111,7 @@ export default function Exams() {
       const lowercasedTerm = searchTerm.toLowerCase();
       filtered = filtered.filter(exam => 
         exam.exam_name.toLowerCase().includes(lowercasedTerm) ||
-        exam.cargo.toLowerCase().includes(lowercasedTerm)
+        exam.cargoDisplay.toLowerCase().includes(lowercasedTerm)
       );
     }
 
@@ -245,47 +246,50 @@ export default function Exams() {
 
         {/* Lista de Provas */}
         <div className="space-y-4">
-          {filteredExams.map((exam, index) => (
-            <motion.div
-              key={exam.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <Link 
-                to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
+          {filteredExams.map((exam, index) => {
+            const linkCargo = exam.cargo || 'null';
+            return (
+              <motion.div
+                key={exam.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
               >
-                <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-lg font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-1">
-                        {exam.exam_name}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        <div className="flex items-center gap-1.5">
-                          <Building className="w-4 h-4" />
-                          <span>{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Briefcase className="w-4 h-4" />
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{exam.cargo}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
-                          <span>{exam.year}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <FileText className="w-4 h-4" />
-                          <span>{exam.question_count} questões</span>
+                <Link 
+                  to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(linkCargo)}`)}
+                >
+                  <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-lg font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-1">
+                          {exam.exam_name}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="flex items-center gap-1.5">
+                            <Building className="w-4 h-4" />
+                            <span>{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Briefcase className="w-4 h-4" />
+                            <span className="font-medium text-gray-700 dark:text-gray-300">{exam.cargoDisplay}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4" />
+                            <span>{exam.year}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <FileText className="w-4 h-4" />
+                            <span>{exam.question_count} questões</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
-                  </CardContent>
-                </Card>
-              </Link>
-            </motion.div>
-          ))}
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
         {filteredExams.length === 0 && !isLoading && (
