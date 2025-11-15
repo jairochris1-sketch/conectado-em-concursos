@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Question } from '@/entities/Question';
 import { Topic } from '@/entities/Topic';
@@ -297,9 +297,9 @@ export default function ModernQuestionForm({
                           <SelectValue placeholder="Selecione uma disciplina" />
                         </SelectTrigger>
                         <SelectContent>
-                          {allSubjects.map(subject => (
-                            <SelectItem key={subject.id} value={subject.id}>
-                              {subject.name}
+                          {allSubjects && allSubjects.map(subject => (
+                            <SelectItem key={subject.id || subject.value} value={subject.id || subject.value}>
+                              {subject.name || subject.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -320,9 +320,9 @@ export default function ModernQuestionForm({
                           <SelectValue placeholder="Selecione uma banca" />
                         </SelectTrigger>
                         <SelectContent>
-                          {allInstitutions.map(institution => (
-                            <SelectItem key={institution.id} value={institution.id}>
-                              {institution.name}
+                          {allInstitutions && allInstitutions.map(institution => (
+                            <SelectItem key={institution.id || institution.value} value={institution.id || institution.value}>
+                              {institution.name || institution.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
