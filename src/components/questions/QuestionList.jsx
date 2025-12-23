@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -403,7 +402,12 @@ export default function QuestionList({
   return (
     <div className={getContainerStyle()}>
       <AnimatePresence>
-        {questions.map((question, index) => {
+        {[...questions].sort((a, b) => {
+          const pa = a.subject === 'portugues' ? 0 : 1;
+          const pb = b.subject === 'portugues' ? 0 : 1;
+          if (pa !== pb) return pa - pb;
+          return (a.subject || '').localeCompare(b.subject || '');
+        }).map((question, index) => {
           const userAnswer = userAnswers[question.id];
           const submittedAnswer = submittedAnswers[question.id];
           const isSubmitted = submittedAnswer?.submitted;
