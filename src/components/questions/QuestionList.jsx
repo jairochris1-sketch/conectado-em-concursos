@@ -98,7 +98,8 @@ export default function QuestionList({
   currentPage,
   questionsPerPage,
   layoutMode = 'compact',
-  fontSize = 1
+  fontSize = 1,
+  autoShowAssociatedTextForPortuguese = false
 }) {
   const [commentsVisible, setCommentsVisible] = useState({});
   const [favorites, setFavorites] = useState({});
@@ -194,8 +195,9 @@ export default function QuestionList({
     fetchCounts();
   }, [questions, fetchCommentCounts]);
 
-  // Exibir automaticamente o texto associado nas questões de Português
+  // Exibir automaticamente o texto associado nas questões de Português (quando habilitado)
   useEffect(() => {
+    if (!autoShowAssociatedTextForPortuguese) return;
     if (!questions || questions.length === 0) return;
     setAssociatedTextVisible(prev => {
       const updated = { ...prev };
@@ -206,7 +208,7 @@ export default function QuestionList({
       });
       return updated;
     });
-  }, [questions]);
+  }, [questions, autoShowAssociatedTextForPortuguese]);
 
   const toggleAssociatedText = (questionId) => {
     setAssociatedTextVisible(prev => ({
@@ -521,34 +523,47 @@ export default function QuestionList({
 
               <div className={`px-6 ${layoutMode === 'classic' ? 'py-6' : 'py-5'}`}>
                 {question.associated_text && (
-                  <div className="mb-4 print-hide">
-                    <button
-                      onClick={() => toggleAssociatedText(question.id)}
-                      className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        showAssociatedText 
-                          ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      <FileText className="w-4 h-4" />
-                      {showAssociatedText ? 'Ocultar texto' : 'Exibir texto associado'}
-                    </button>
-                    
-                    {showAssociatedText && (
-                      <div className="mt-4 print-hide">
-                        <div
-                          className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed`}
-                          dangerouslySetInnerHTML={{ __html: question.associated_text }}
-                          style={{ 
-                            fontSize: `${fontSize}rem`, 
-                            textAlign: 'justify',
-                            textIndent: '3em'
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  autoShowAssociatedTextForPortuguese && question.subject === 'portugues' ? (
+                    <div className="mb-4">
+                      <div
+                        className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed`}
+                        dangerouslySetInnerHTML={{ __html: question.associated_text }}
+                        style={{ 
+                          fontSize: `${fontSize}rem`, 
+                          textAlign: 'justify',
+                          textIndent: '3em'
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-4 print-hide">
+                      <button
+                        onClick={() => toggleAssociatedText(question.id)}
+                        className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          showAssociatedText 
+                            ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800' 
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        <FileText className="w-4 h-4" />
+                        {showAssociatedText ? 'Ocultar texto' : 'Exibir texto associado'}
+                      </button>
+                      {showAssociatedText && (
+                        <div className="mt-4 print-hide">
+                          <div
+                            className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed`}
+                            dangerouslySetInnerHTML={{ __html: question.associated_text }}
+                            style={{ 
+                              fontSize: `${fontSize}rem`, 
+                              textAlign: 'justify',
+                              textIndent: '3em'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )
+                )
 
                 <div className="hidden print:block mb-4">
                   <span className="text-lg font-bold">Questão {questionNumber}</span>

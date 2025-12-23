@@ -142,14 +142,21 @@ export default function ExamView() {
         // Coletar URLs disponíveis em qualquer questão da prova (não apenas a primeira)
         if (fetchedQuestions.length > 0) {
           const docSource = fetchedQuestions.find(q => q.edital_url || q.prova_url || q.gabarito_url) || fetchedQuestions[0];
+          const cleanUrl = (u) => {
+            const s = (u ?? '').toString().trim();
+            if (!s) return '';
+            const lower = s.toLowerCase();
+            if (lower === 'null' || lower === 'undefined' || lower === '#') return '';
+            return s;
+          };
           setExamInfo({
             name: exam_name,
             institution: institution,
             year: year,
             cargo: cargoValid ? cargoParam : 'Não especificado',
-            edital_url: docSource.edital_url || "",
-            prova_url: docSource.prova_url || "",
-            gabarito_url: docSource.gabarito_url || ""
+            edital_url: cleanUrl(docSource.edital_url),
+            prova_url: cleanUrl(docSource.prova_url),
+            gabarito_url: cleanUrl(docSource.gabarito_url)
           });
         }
 
@@ -385,6 +392,7 @@ export default function ExamView() {
             currentPage={1}
             questionsPerPage={questions.length}
             layoutMode="classic"
+            autoShowAssociatedTextForPortuguese={true}
           />
         </div>
       </div>
