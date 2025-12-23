@@ -127,7 +127,17 @@ export default function ExamView() {
           } catch (_) {}
         }
 
-        setQuestions(fetchedQuestions);
+        // Ordenar: Português primeiro, depois demais disciplinas (alfabético), mantendo ordem original dentro da mesma disciplina
+        const originalOrder = new Map(fetchedQuestions.map((q, idx) => [q.id, idx]));
+        const sortedQuestions = [...fetchedQuestions].sort((a, b) => {
+          const pa = a.subject === 'portugues' ? 0 : 1;
+          const pb = b.subject === 'portugues' ? 0 : 1;
+          if (pa !== pb) return pa - pb;
+          if (a.subject !== b.subject) return (a.subject || '').localeCompare(b.subject || '');
+          // dentro da mesma disciplina, respeitar ordem original
+          return (originalOrder.get(a.id) ?? 0) - (originalOrder.get(b.id) ?? 0);
+        });
+        setQuestions(sortedQuestions);
         
         // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
