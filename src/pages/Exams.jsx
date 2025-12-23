@@ -78,7 +78,14 @@ export default function Exams() {
 
         const examsList = Object.values(groupedExams).map(examQuestions => {
           const firstQuestion = examQuestions[0];
-          const subjects = [...new Set(examQuestions.map(q => q.subject))];
+          // Ordenar disciplinas: Português primeiro, depois alfabético
+          const subjectsSet = new Set(examQuestions.map(q => q.subject));
+          const subjects = Array.from(subjectsSet).sort((a, b) => {
+            const pa = a === 'portugues' ? 0 : 1;
+            const pb = b === 'portugues' ? 0 : 1;
+            if (pa !== pb) return pa - pb;
+            return (a || '').localeCompare(b || '');
+          });
           
           return {
             id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || ''}`,
