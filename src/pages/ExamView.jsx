@@ -139,17 +139,17 @@ export default function ExamView() {
         });
         setQuestions(sortedQuestions);
         
-        // Pegar informações da primeira questão para downloads
+        // Coletar URLs disponíveis em qualquer questão da prova (não apenas a primeira)
         if (fetchedQuestions.length > 0) {
-          const firstQuestion = fetchedQuestions[0];
+          const docSource = fetchedQuestions.find(q => q.edital_url || q.prova_url || q.gabarito_url) || fetchedQuestions[0];
           setExamInfo({
             name: exam_name,
             institution: institution,
             year: year,
             cargo: cargoValid ? cargoParam : 'Não especificado',
-            edital_url: firstQuestion.edital_url || "",
-            prova_url: firstQuestion.prova_url || "",
-            gabarito_url: firstQuestion.gabarito_url || ""
+            edital_url: docSource.edital_url || "",
+            prova_url: docSource.prova_url || "",
+            gabarito_url: docSource.gabarito_url || ""
           });
         }
 

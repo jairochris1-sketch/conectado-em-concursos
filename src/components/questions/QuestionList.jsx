@@ -194,6 +194,20 @@ export default function QuestionList({
     fetchCounts();
   }, [questions, fetchCommentCounts]);
 
+  // Exibir automaticamente o texto associado nas questões de Português
+  useEffect(() => {
+    if (!questions || questions.length === 0) return;
+    setAssociatedTextVisible(prev => {
+      const updated = { ...prev };
+      questions.forEach(q => {
+        if (q.subject === 'portugues' && q.associated_text && updated[q.id] === undefined) {
+          updated[q.id] = true;
+        }
+      });
+      return updated;
+    });
+  }, [questions]);
+
   const toggleAssociatedText = (questionId) => {
     setAssociatedTextVisible(prev => ({
       ...prev,
