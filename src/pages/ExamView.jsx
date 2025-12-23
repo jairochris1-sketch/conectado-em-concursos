@@ -97,6 +97,36 @@ export default function ExamView() {
           }
         }
 
+        // Fallbacks caso não encontre (normaliza e busca mais amplo)
+        const normalize = (s) => (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+        const targetExam = normalize(exam_name);
+
+        if (!fetchedQuestions || fetchedQuestions.length === 0) {
+          // 1) tentar por instituição + ano e filtrar por exam_name
+          const broad1 = yearNum !== undefined ? { institution, year: yearNum } : { institution };
+          try {
+            const res1 = await Question.filter(broad1);
+            const matched1 = (res1 || []).filter(q => normalize(q.exam_name) === targetExam);
+            if (matched1.length > 0) fetchedQuestions = matched1;
+          } catch (_) {}
+        }
+
+        if (!fetchedQuestions || fetchedQuestions.length === 0) {
+          // 2) tentar apenas por exam_name (independente de ano/instituição)
+          try {
+            const res2 = await Question.filter({ exam_name });
+            if (res2 && res2.length > 0) fetchedQuestions = res2;
+          } catch (_) {}
+        }
+
+        if (!fetchedQuestions || fetchedQuestions.length === 0) {
+          // 3) tentar por instituição e exam_name sem ano
+          try {
+            const res3 = await Question.filter({ institution, exam_name });
+            if (res3 && res3.length > 0) fetchedQuestions = res3;
+          } catch (_) {}
+        }
+
         setQuestions(fetchedQuestions);
         
         // Pegar informações da primeira questão para downloads
@@ -106,7 +136,7 @@ export default function ExamView() {
             name: exam_name,
             institution: institution,
             year: year,
-            cargo: cargo === 'null' ? 'Não especificado' : cargo,
+            cargo: cargoValid ? cargoParam : 'Não especificado',
             edital_url: firstQuestion.edital_url || "",
             prova_url: firstQuestion.prova_url || "",
             gabarito_url: firstQuestion.gabarito_url || ""

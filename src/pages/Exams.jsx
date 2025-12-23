@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
 import { Button } from "@/components/ui/button";
@@ -247,7 +246,7 @@ export default function Exams() {
         {/* Lista de Provas */}
         <div className="space-y-4">
           {filteredExams.map((exam, index) => {
-            const linkCargo = exam.cargo || 'null';
+            const linkCargo = ((exam.cargo || '').trim()) || 'null';
             return (
               <motion.div
                 key={exam.id}
