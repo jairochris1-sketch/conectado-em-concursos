@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Question } from "@/entities/Question";
@@ -70,22 +69,34 @@ export default function ExamView() {
 
         setIsLoading(true);
         
-        // Construir filtro dinamicamente
-        const filter = {
-          institution,
-          year: parseInt(year),
-          exam_name
-        };
-        
-        // Só adicionar cargo se não for 'null' ou vazio
-        if (cargo && cargo !== 'null') {
-          filter.cargo = cargo;
+        // Construir filtros com tolerância a variações de dados
+        const yearNum = Number.isNaN(parseInt(year)) ? undefined : parseInt(year);
+        const cargoParam = (cargo || '').trim();
+        const cargoValid = cargoParam && cargoParam.toLowerCase() !== 'null' && cargoParam.toLowerCase() !== 'cargo não especificado';
+        const baseFilter = { institution, exam_name: typeof exam_name === 'string' ? exam_name.trim() : exam_name };
+
+        const candidateFilters = [];
+        if (yearNum !== undefined) {
+          if (cargoValid) candidateFilters.push({ ...baseFilter, year: yearNum, cargo: cargoParam });
+          candidateFilters.push({ ...baseFilter, year: yearNum });
         }
-        
-        console.log('Filtro aplicado:', filter);
-        const fetchedQuestions = await Question.filter(filter);
-        console.log('Questões encontradas:', fetchedQuestions.length);
-        
+        if (cargoValid) candidateFilters.push({ ...baseFilter, year: year, cargo: cargoParam });
+        candidateFilters.push({ ...baseFilter, year: year });
+        candidateFilters.push({ ...baseFilter });
+
+        let fetchedQuestions = [];
+        for (const f of candidateFilters) {
+          try {
+            const res = await Question.filter(f);
+            if (res && res.length > 0) {
+              fetchedQuestions = res;
+              break;
+            }
+          } catch (_) {
+            // ignora e tenta o próximo
+          }
+        }
+
         setQuestions(fetchedQuestions);
         
         // Pegar informações da primeira questão para downloads
