@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { Article, YouTubeVideo } from "@/entities/all";
+import { SiteContent } from "@/entities/SiteContent";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [pageContent, setPageContent] = useState(null);
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\\?v=|&v=)([^#&?]*).*/;
@@ -20,6 +25,8 @@ export default function ComoEstudarPrimeiroLugar() {
       try {
         const arts = await Article.filter({ is_published: true });
         const vids = await YouTubeVideo.filter({ is_active: true });
+        const sc = await SiteContent.filter({ page_key: 'como_estudar_primeiro_lugar' });
+        setPageContent(sc && sc.length ? sc[0] : null);
         setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes("guia_aprovacao")));
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === "guia_aprovacao"));
       } finally {
@@ -30,13 +37,30 @@ export default function ComoEstudarPrimeiroLugar() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="mx-auto bg-white shadow-xl rounded-md p-8" style={{ maxWidth: "794px" }}>
-        <h1 className="text-3xl font-extrabold mb-2">Como estudar para ser aprovado em primeiro lugar</h1>
-        <p className="text-gray-600 mb-6">
-          Guia prático com materiais selecionados para acelerar sua aprovação. 
-          Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.
-        </p>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'} py-8 px-4`}>
+      <div className={`mx-auto ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-xl rounded-md p-8`} style={{ maxWidth: "794px" }}>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-extrabold mb-1">
+              {pageContent?.title || 'Como estudar para ser aprovado em primeiro lugar'}
+            </h1>
+            {pageContent?.subtitle && (
+              <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{pageContent.subtitle}</p>
+            )}
+          </div>
+          <Button variant="outline" onClick={() => setDarkMode(v => !v)} className={darkMode ? 'border-gray-600 text-gray-200 hover:bg-gray-700' : ''} title={darkMode ? 'Modo claro' : 'Modo escuro'}>
+            {darkMode ? (<Sun className="w-4 h-4 mr-2" />) : (<Moon className="w-4 h-4 mr-2" />)}
+            {darkMode ? 'Claro' : 'Escuro'}
+          </Button>
+        </div>
+
+        {pageContent?.main_text ? (
+          <div className={`${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-6 leading-relaxed`} dangerouslySetInnerHTML={{ __html: pageContent.main_text }} />
+        ) : (
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
+            Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.
+          </p>
+        )}
 
         {loading && <div className="text-gray-700">Carregando conteúdo...</div>}
 
@@ -85,7 +109,7 @@ export default function ComoEstudarPrimeiroLugar() {
         )}
 
         {!loading && videos.length === 0 && articles.length === 0 && (
-          <div className="text-gray-600">
+          <div className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Nenhum conteúdo marcado para este guia ainda.
             Marque artigos com a tag <b>guia_aprovacao</b> e vídeos com o tópico <b>guia_aprovacao</b>.
           </div>

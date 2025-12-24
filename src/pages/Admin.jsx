@@ -131,6 +131,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('questions');
 
   const [welcomeContent, setWelcomeContent] = useState(null);
+  const [studyGuideContent, setStudyGuideContent] = useState(null);
   const [faqs, setFaqs] = useState([]);
   const [editingFAQ, setEditingFAQ] = useState(null);
   
@@ -166,6 +167,7 @@ export default function AdminPage() {
           setIsAdmin(true);
           loadQuestions();
           loadWelcomeContent();
+          loadStudyGuideContent();
           loadFAQs();
         } else {
           navigate(createPageUrl('Dashboard'));
@@ -202,6 +204,20 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Erro ao carregar conteúdo do site:', error);
       toast.error('Erro ao carregar conteúdo do site.');
+    }
+  };
+
+  const loadStudyGuideContent = async () => {
+    try {
+      const contentData = await SiteContent.filter({ page_key: 'como_estudar_primeiro_lugar' });
+      if (contentData && contentData.length > 0) {
+        setStudyGuideContent(contentData[0]);
+      } else {
+        setStudyGuideContent({ page_key: 'como_estudar_primeiro_lugar', title: '', subtitle: '', main_text: '', secondary_text: '' });
+      }
+    } catch (error) {
+      console.error('Erro ao carregar conteúdo do guia:', error);
+      toast.error('Erro ao carregar conteúdo do guia.');
     }
   };
 
@@ -279,6 +295,22 @@ export default function AdminPage() {
     }
   };
 
+  const handleStudyGuideSave = async (updatedContent) => {
+    try {
+      const payload = { ...updatedContent, page_key: 'como_estudar_primeiro_lugar' };
+      if (payload.id) {
+        await SiteContent.update(payload.id, payload);
+      } else {
+        await SiteContent.create(payload);
+      }
+      toast.success('Guia atualizado com sucesso!');
+      loadStudyGuideContent();
+    } catch (error) {
+      console.error('Erro ao salvar guia:', error);
+      toast.error('Falha ao salvar o guia.');
+    }
+  };
+
   if (isLoading || !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -296,7 +328,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-9 md:grid-cols-9">
+          <TabsList className="grid w-full grid-cols-10 md:grid-cols-10">
             <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
               <Pencil className="w-4 h-4 mr-2" />
               Questões
@@ -320,6 +352,10 @@ export default function AdminPage() {
             <TabsTrigger value="conteudo">
               <FileText className="w-4 h-4 mr-2" />
               Conteúdo
+            </TabsTrigger>
+            <TabsTrigger value="guia">
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Como Estudar
             </TabsTrigger>
             <TabsTrigger value="videos">
               <Play className="w-4 h-4 mr-2" />
@@ -379,6 +415,13 @@ export default function AdminPage() {
             <AdminContentForm
               content={welcomeContent}
               onSave={handleContentSave}
+            />
+          </TabsContent>
+
+          <TabsContent value="guia">
+            <AdminContentForm
+              content={studyGuideContent}
+              onSave={handleStudyGuideSave}
             />
           </TabsContent>
 
