@@ -640,102 +640,201 @@ ${videoNotes}
             </Card>
 
             {/* Lista de Materiais */}
-            <div className="grid gap-6">
-              {filteredMaterials.length === 0 ? (
-                <Card className="text-center py-12">
-                  <CardContent className="space-y-4">
-                    <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      Nenhum material encontrado
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {selectedCargo !== 'all'
-                        ? `Não há materiais disponíveis para ${cargoOptions.find(c => c.value === selectedCargo)?.label}`
-                        : 'Tente ajustar os filtros de busca'
-                      }
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredMaterials.map((material, index) => (
-                    <motion.div
-                      key={material.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Card className="shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col"
-                            onClick={() => handleMaterialClick(material)}>
-                        <CardHeader className="flex-grow">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <CardTitle className="text-lg text-blue-600 dark:text-blue-400 line-clamp-2">
-                                {material.title}
-                              </CardTitle>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
-                                {material.description}
-                              </p>
-                            </div>
-                            <div className="ml-2">
-                              {material.file_type === 'pdf' ? (
-                                <FileText className="w-8 h-8 text-red-500" />
-                              ) : (
-                                <Eye className="w-8 h-8 text-blue-500" />
-                              )}
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="flex flex-col justify-end">
-                          <div className="space-y-3">
-                            <div className="flex flex-wrap gap-2">
-                              <Badge className={typeColors[material.type]}>
-                                {typeNames[material.type]}
-                              </Badge>
-                              <Badge variant="outline">
-                                {subjectNames[material.subject]}
-                              </Badge>
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              <span className="font-medium">
-                                {cargoOptions.find(c => c.value === material.cargo)?.label}
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center pt-2">
-                              <span className="text-xs text-gray-400 truncate w-2/5">
-                                {material.file_name}
-                              </span>
-                              <div className="flex items-center gap-2">
-                                 {isAdmin && (
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={(e) => handleDeleteMaterial(e, material.id)}
-                                    title="Excluir Material (Admin)"
-                                  >
-                                    <Trash2 className="w-4 h-4"/>
-                                  </Button>
-                                )}
-                                <Button
-                                  size="sm"
-                                  className="bg-indigo-600 hover:bg-indigo-700"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleMaterialClick(material);
-                                  }}
-                                >
-                                  <Eye className="w-4 h-4 mr-1" />
-                                  Ver
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
+            <div className="space-y-4">
+              {/* Controles de visualização */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {activeFolder && (
+                    <Button variant="outline" size="sm" onClick={() => setActiveFolder(null)}>
+                      <Folder className="w-4 h-4 mr-2" /> Voltar para pastas
+                    </Button>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={materialsView === 'blocks' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => setMaterialsView('blocks')}
+                    title="Exibir em blocos"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={materialsView === 'list' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => setMaterialsView('list')}
+                    title="Exibir em lista"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Pastas por disciplina */}
+              {!activeFolder && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {Object.entries(groupedBySubject)
+                    .sort((a,b) => (subjectNames[a[0]] || a[0]).localeCompare(subjectNames[b[0]] || b[0]))
+                    .map(([subjectKey, items]) => (
+                    <Card key={subjectKey} className="cursor-pointer hover:shadow-md" onClick={() => setActiveFolder(subjectKey)}>
+                      <CardContent className="p-4 flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-md bg-blue-50 flex items-center justify-center">
+                          <Folder className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm truncate">{subjectNames[subjectKey] || subjectKey}</div>
+                          <div className="text-xs text-gray-500">{items.length} {items.length === 1 ? 'material' : 'materiais'}</div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               )}
+
+              {/* Conteúdo (lista ou blocos) */}
+              {(() => {
+                const items = activeFolder ? (groupedBySubject[activeFolder] || []) : filteredMaterials;
+
+                if (items.length === 0) {
+                  return (
+                    <Card className="text-center py-12">
+                      <CardContent className="space-y-4">
+                        <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Nenhum material encontrado</h3>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {selectedCargo !== 'all'
+                            ? `Não há materiais disponíveis para ${cargoOptions.find(c => c.value === selectedCargo)?.label}`
+                            : 'Tente ajustar os filtros de busca'}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                }
+
+                if (materialsView === 'list') {
+                  return (
+                    <div className="divide-y rounded-lg border dark:border-gray-700">
+                      {items.map((material) => (
+                        <div
+                          key={material.id}
+                          className="p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                          onClick={() => handleMaterialClick(material)}
+                        >
+                          <div className="flex-shrink-0">
+                            {material.file_type === 'pdf' ? (
+                              <FileText className="w-6 h-6 text-red-500" />
+                            ) : (
+                              <Eye className="w-6 h-6 text-blue-500" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-blue-600 dark:text-blue-400 font-semibold truncate">{material.title}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                              {(typeNames[material.type] || material.type)} • {(subjectNames[material.subject] || material.subject)} • {cargoOptions.find(c => c.value === material.cargo)?.label}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {isAdmin && (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={(e) => handleDeleteMaterial(e, material.id)}
+                                title="Excluir Material (Admin)"
+                              >
+                                <Trash2 className="w-4 h-4"/>
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              className="bg-indigo-600 hover:bg-indigo-700"
+                              onClick={(e) => { e.stopPropagation(); handleMaterialClick(material); }}
+                            >
+                              <Eye className="w-4 h-4 mr-1" /> Ver
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.map((material, index) => (
+                      <motion.div
+                        key={material.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card className="shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col"
+                              onClick={() => handleMaterialClick(material)}>
+                          <CardHeader className="flex-grow">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <CardTitle className="text-lg text-blue-600 dark:text-blue-400 line-clamp-2">
+                                  {material.title}
+                                </CardTitle>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
+                                  {material.description}
+                                </p>
+                              </div>
+                              <div className="ml-2">
+                                {material.file_type === 'pdf' ? (
+                                  <FileText className="w-8 h-8 text-red-500" />
+                                ) : (
+                                  <Eye className="w-8 h-8 text-blue-500" />
+                                )}
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="flex flex-col justify-end">
+                            <div className="space-y-3">
+                              <div className="flex flex-wrap gap-2">
+                                <Badge className={typeColors[material.type]}>
+                                  {typeNames[material.type]}
+                                </Badge>
+                                <Badge variant="outline">
+                                  {subjectNames[material.subject]}
+                                </Badge>
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                <span className="font-medium">
+                                  {cargoOptions.find(c => c.value === material.cargo)?.label}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center pt-2">
+                                <span className="text-xs text-gray-400 truncate w-2/5">
+                                  {material.file_name}
+                                </span>
+                                <div className="flex items-center gap-2">
+                                  {isAdmin && (
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      onClick={(e) => handleDeleteMaterial(e, material.id)}
+                                      title="Excluir Material (Admin)"
+                                    >
+                                      <Trash2 className="w-4 h-4"/>
+                                    </Button>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    className="bg-indigo-600 hover:bg-indigo-700"
+                                    onClick={(e) => { e.stopPropagation(); handleMaterialClick(material); }}
+                                  >
+                                    <Eye className="w-4 h-4 mr-1" /> Ver
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </TabsContent>
 
