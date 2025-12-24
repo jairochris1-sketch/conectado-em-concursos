@@ -128,6 +128,10 @@ export default function StudiesPage() {
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
 
+  // Exibição de materiais
+  const [materialsView, setMaterialsView] = useState('blocks'); // 'blocks' | 'list'
+  const [activeFolder, setActiveFolder] = useState(null); // chave da disciplina
+
   // State for Flashcards
   const [flashcards, setFlashcards] = useState([]);
   const [reviews, setReviews] = useState([]);
