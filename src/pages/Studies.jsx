@@ -251,6 +251,14 @@ export default function StudiesPage() {
     filterMaterials();
   }, [materials, selectedCargo, searchTerm]);
 
+  // Agrupar materiais por disciplina para "pastas"
+  const groupedBySubject = filteredMaterials.reduce((acc, m) => {
+    const key = m.subject || 'outros';
+    (acc[key] = acc[key] || []).push(m);
+    return acc;
+  }, {});
+
+
   useEffect(() => {
     let filtered = [...articles];
     
