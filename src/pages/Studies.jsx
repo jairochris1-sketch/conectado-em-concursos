@@ -1314,6 +1314,7 @@ ${videoNotes}
             material={selectedMaterial}
             isOpen={!!selectedMaterial}
             onClose={() => setSelectedMaterial(null)}
+            canDownload={currentUser?.current_plan === 'avancado'}
           />
         )}
 

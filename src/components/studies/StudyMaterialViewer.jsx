@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Printer, FileText, Image, Moon, Sun } from 'lucide-react';
+import { X, Printer, FileText, Image, Moon, Sun, Download } from 'lucide-react';
 
-export default function StudyMaterialViewer({ material, isOpen, onClose }) {
+export default function StudyMaterialViewer({ material, isOpen, onClose, canDownload = false }) {
   const [darkMode, setDarkMode] = useState(false);
   
   if (!isOpen || !material) return null;
@@ -16,8 +16,8 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`rounded-lg shadow-xl max-w-6xl max-h-[90vh] w-full flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`fixed inset-0 z-50 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className={`flex justify-between items-center p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex-1">
@@ -47,6 +47,14 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
               <Printer className="w-4 h-4" />
               Imprimir
             </Button>
+            {canDownload && (
+              <a href={material.file_url} download={material.file_name || 'material'} className="inline-flex">
+                <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2">
+                  <Download className="w-4 h-4" />
+                  Baixar
+                </Button>
+              </a>
+            )}
             <button
               onClick={onClose}
               className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
@@ -59,42 +67,21 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
         {/* Content Viewer */}
         <div className={`flex-1 overflow-auto p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
           {material.file_type === 'pdf' ? (
-            <div className="w-full h-full min-h-[600px]">
+            <div className="w-full h-full">
               <iframe
-                src={getPdfViewerUrl(material.file_url)}
-                width="100%"
-                height="600px"
-                className="border rounded-lg"
+                src={material.file_url}
                 title={material.title}
+                className="w-full h-full border"
               />
-              <div className={`mt-4 p-4 rounded-lg flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                <div className="text-center">
-                  <FileText className={`w-12 h-12 mx-auto mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Visualizando: {material.file_name}
-                  </p>
-                  <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Use o botão "Imprimir" para salvar ou imprimir este documento
-                  </p>
-                </div>
-              </div>
             </div>
           ) : (
-            <div className="w-full h-full">
+            <div className="w-full h-full flex items-center justify-center">
               <img
                 src={material.file_url}
                 alt={material.title}
-                className="max-w-full max-h-full mx-auto rounded-lg shadow-lg"
-                style={{ maxHeight: '80vh' }}
+                className="max-w-full max-h-full object-contain"
+                style={{ height: '100%', width: 'auto' }}
               />
-              <div className={`mt-4 p-4 rounded-lg flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                <div className="text-center">
-                  <Image className={`w-12 h-12 mx-auto mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Visualizando: {material.file_name}
-                  </p>
-                </div>
-              </div>
             </div>
           )}
         </div>
