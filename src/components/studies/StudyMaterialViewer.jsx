@@ -69,7 +69,7 @@ export default function StudyMaterialViewer({ material, isOpen, onClose, canDown
           {material.file_type === 'pdf' ? (
             <div className="w-full h-full">
               <iframe
-                src={material.file_url}
+                src={getPdfViewerUrl(material.file_url)}
                 title={material.title}
                 className="w-full h-full border"
               />
