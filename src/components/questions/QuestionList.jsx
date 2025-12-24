@@ -563,7 +563,7 @@ export default function QuestionList({
                       )}
                     </div>
                   )
-                )
+                )}
 
                 <div className="hidden print:block mb-4">
                   <span className="text-lg font-bold">Questão {questionNumber}</span>
