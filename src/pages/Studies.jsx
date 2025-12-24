@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
 import { Button } from '@/components/ui/button';
@@ -33,6 +32,7 @@ import {
   Sun
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { LayoutGrid, List, Folder } from 'lucide-react';
 
 import StudyMaterialViewer from '../components/studies/StudyMaterialViewer';
 import StudyMaterialUploader from '../components/studies/StudyMaterialUploader';
