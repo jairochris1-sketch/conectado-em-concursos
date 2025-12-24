@@ -148,24 +148,28 @@ export default function StudiesPage() {
   const [playingVideo, setPlayingVideo] = useState(null);
           const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
 
-          // Vistos e avaliações (localStorage)
-          const [watchedVideos, setWatchedVideos] = useState(() => {
-            try { return new Set(JSON.parse(localStorage.getItem('watchedVideos') || '[]')); } catch { return new Set(); }
-          });
-          const [videoRatings, setVideoRatings] = useState(() => {
-            try { return JSON.parse(localStorage.getItem('videoRatings') || '{}'); } catch { return {}; }
-          });
-          const markAsWatched = (videoId) => {
-            const next = new Set(watchedVideos);
-            next.add(videoId);
-            setWatchedVideos(next);
-            localStorage.setItem('watchedVideos', JSON.stringify(Array.from(next)));
-          };
-          const setRating = (videoId, value) => {
-            const next = { ...videoRatings, [videoId]: value };
-            setVideoRatings(next);
-            localStorage.setItem('videoRatings', JSON.stringify(next));
-          };
+                  // Vistos e avaliações (localStorage)
+                  const [watchedVideos, setWatchedVideos] = useState(() => {
+                    try { return new Set(JSON.parse(localStorage.getItem('watchedVideos') || '[]')); } catch { return new Set(); }
+                  });
+                  const [videoRatings, setVideoRatings] = useState(() => {
+                    try { return JSON.parse(localStorage.getItem('videoRatings') || '{}'); } catch { return {}; }
+                  });
+                  const markAsWatched = (videoId) => {
+                    const next = new Set(watchedVideos);
+                    next.add(videoId);
+                    setWatchedVideos(next);
+                    localStorage.setItem('watchedVideos', JSON.stringify(Array.from(next)));
+                  };
+                  const setRating = (videoId, value) => {
+                    const next = { ...videoRatings, [videoId]: value };
+                    setVideoRatings(next);
+                    localStorage.setItem('videoRatings', JSON.stringify(next));
+                  };
+
+                  // Exibição de vídeos
+                  const [videosView, setVideosView] = useState('list'); // 'list' | 'grid' | 'folders'
+                  const [videosActiveFolder, setVideosActiveFolder] = useState(null);
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
@@ -176,7 +180,11 @@ export default function StudiesPage() {
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [selectedArticleSubject, setSelectedArticleSubject] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [articleDarkMode, setArticleDarkMode] = useState(false); // New state for article dark mode
+          const [articleDarkMode, setArticleDarkMode] = useState(false); // New state for article dark mode
+
+          // Exibição de artigos
+          const [articlesView, setArticlesView] = useState('grid'); // 'grid' | 'list' | 'folders'
+          const [articlesActiveFolder, setArticlesActiveFolder] = useState(null);
   
   // New state for search
   const [articleSearchTerm, setArticleSearchTerm] = useState('');
@@ -532,17 +540,33 @@ ${videoNotes}
     }
   };
 
-  // Calcular vídeos da página atual
-  const indexOfLastVideo = currentVideoPage * videosPerPage;
-  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
-  const currentVideos = filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
-  const totalVideoPages = Math.ceil(filteredVideos.length / videosPerPage);
+  // Agrupar vídeos por disciplina (pastas)
+          const videosBySubject = filteredVideos.reduce((acc, v) => {
+            const key = v.subject || 'outros';
+            (acc[key] = acc[key] || []).push(v);
+            return acc;
+          }, {});
+          // Base considerando pasta ativa
+          const videosBase = videosActiveFolder ? (videosBySubject[videosActiveFolder] || []) : filteredVideos;
+          // Calcular vídeos da página atual (modo lista)
+          const indexOfLastVideo = currentVideoPage * videosPerPage;
+          const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+          const currentVideos = videosBase.slice(indexOfFirstVideo, indexOfLastVideo);
+          const totalVideoPages = Math.ceil(videosBase.length / videosPerPage);
 
-  // NEW: Calculate paginated articles
-  const indexOfLastArticle = currentArticlePage * articlesPerPage;
-  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
-  const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
+  // Agrupar artigos por disciplina (pastas)
+          const articlesBySubject = filteredArticles.reduce((acc, a) => {
+            const key = a.subject || 'outros';
+            (acc[key] = acc[key] || []).push(a);
+            return acc;
+          }, {});
+          // Base considerando pasta ativa
+          const articlesBase = articlesActiveFolder ? (articlesBySubject[articlesActiveFolder] || []) : filteredArticles;
+          // NEW: Calculate paginated articles
+          const indexOfLastArticle = currentArticlePage * articlesPerPage;
+          const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+          const currentArticles = articlesBase.slice(indexOfFirstArticle, indexOfLastArticle);
+          const totalArticlePages = Math.ceil(articlesBase.length / articlesPerPage);
   
   if (isLoading) {
       return (
@@ -880,7 +904,7 @@ ${videoNotes}
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 <div className="relative flex-1 w-full">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
@@ -893,14 +917,41 @@ ${videoNotes}
                     className="pl-10"
                   />
                 </div>
-                
+
                 <Badge variant="secondary" className="text-sm">
-                  {filteredArticles.length} {filteredArticles.length === 1 ? 'artigo' : 'artigos'}
+                  {articlesBase.length} {articlesBase.length === 1 ? 'artigo' : 'artigos'}
                 </Badge>
+
+                <div className="md:ml-auto flex items-center gap-2">
+                  <Button
+                    variant={articlesView === 'grid' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => { setArticlesView('grid'); setArticlesActiveFolder(null); }}
+                    title="Exibir em blocos"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={articlesView === 'list' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => { setArticlesView('list'); setArticlesActiveFolder(null); }}
+                    title="Exibir em lista"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={articlesView === 'folders' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => setArticlesView('folders')}
+                    title="Exibir por pastas"
+                  >
+                    <Folder className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {filteredArticles.length === 0 ? (
+            {articlesBase.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <BookOpen className="w-16 h-16 text-gray-400 mb-4" />
@@ -911,125 +962,101 @@ ${videoNotes}
               </Card>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {currentArticles.map((article, index) => (
-                    <motion.div
-                      key={article.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Card 
-                        className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
-                        onClick={() => handleArticleClick(article)}
-                      >
-                        {article.cover_image_url && (
-                          <div className="h-32 overflow-hidden">
-                            <img
-                              src={article.cover_image_url}
-                              alt={article.title}
-                              className="w-full h-full object-cover"
-                            />
+                {/* Pastas de artigos */}
+                {articlesView === 'folders' && !articlesActiveFolder ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {Object.entries(articlesBySubject).sort((a,b) => (subjectNames[a[0]]||a[0]).localeCompare(subjectNames[b[0]]||b[0])).map(([key, list]) => (
+                      <Card key={key} className="cursor-pointer hover:shadow-md" onClick={() => setArticlesActiveFolder(key)}>
+                        <CardContent className="p-4 flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-md bg-purple-50 flex items-center justify-center">
+                            <Folder className="w-5 h-5 text-purple-600" />
                           </div>
-                        )}
-                        <CardHeader className="flex-grow p-3">
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">
-                              {subjectNames[article.subject] || article.subject}
-                            </Badge>
-                            {article.topic && (
-                              <Badge variant="outline" className="text-xs">
-                                {article.topic}
-                              </Badge>
-                            )}
-                            {article.is_featured && (
-                              <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                                ⭐
-                              </Badge>
-                            )}
-                          </div>
-                          <CardTitle className="text-sm line-clamp-2">
-                            {article.title}
-                          </CardTitle>
-                          {article.summary && (
-                            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
-                              {article.summary}
-                            </p>
-                          )}
-                        </CardHeader>
-                        <CardContent className="p-3 pt-0">
-                          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                            {article.reading_time && (
-                              <span className="flex items-center gap-1">
-                                <Timer className="w-3 h-3" />
-                                {article.reading_time} min
-                              </span>
-                            )}
-                            {article.views_count > 0 && (
-                              <span className="flex items-center gap-1">
-                                <Eye className="w-3 h-3" />
-                                {article.views_count}
-                              </span>
-                            )}
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm truncate">{subjectNames[key] || key}</div>
+                            <div className="text-xs text-gray-500">{list.length} {list.length === 1 ? 'artigo' : 'artigos'}</div>
                           </div>
                         </CardContent>
                       </Card>
-                    </motion.div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  articlesView === 'list' ? (
+                    <div className="divide-y rounded-lg border dark:border-gray-700">
+                      {currentArticles.map((article, index) => (
+                        <div key={article.id} className="p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onClick={() => handleArticleClick(article)}>
+                          {article.cover_image_url && (
+                            <div className="w-28 h-20 rounded overflow-hidden flex-shrink-0">
+                              <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              <Badge className="bg-purple-100 text-purple-800 text-xs">{subjectNames[article.subject] || article.subject}</Badge>
+                              {article.topic && (<Badge variant="outline" className="text-xs">{article.topic}</Badge>)}
+                            </div>
+                            <div className="text-blue-600 dark:text-blue-400 font-semibold truncate">{article.title}</div>
+                            {article.summary && (<div className="text-xs text-gray-600 dark:text-gray-400 truncate">{article.summary}</div>)}
+                          </div>
+                          {article.reading_time && (
+                            <span className="text-xs text-gray-500">{article.reading_time} min</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {currentArticles.map((article, index) => (
+                        <motion.div key={article.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+                          <Card className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col" onClick={() => handleArticleClick(article)}>
+                            {article.cover_image_url && (
+                              <div className="h-32 overflow-hidden">
+                                <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" />
+                              </div>
+                            )}
+                            <CardHeader className="flex-grow p-3">
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">{subjectNames[article.subject] || article.subject}</Badge>
+                                {article.topic && (<Badge variant="outline" className="text-xs">{article.topic}</Badge>)}
+                                {article.is_featured && (<Badge className="bg-yellow-100 text-yellow-800 text-xs">⭐</Badge>)}
+                              </div>
+                              <CardTitle className="text-sm line-clamp-2">{article.title}</CardTitle>
+                              {article.summary && (<p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">{article.summary}</p>)}
+                            </CardHeader>
+                            <CardContent className="p-3 pt-0">
+                              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                {article.reading_time && (<span className="flex items-center gap-1"><Timer className="w-3 h-3" />{article.reading_time} min</span>)}
+                                {article.views_count > 0 && (<span className="flex items-center gap-1"><Eye className="w-3 h-3" />{article.views_count}</span>)}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )
+                )}
 
                 {/* Pagination */}
-                {totalArticlePages > 1 && (
+                {totalArticlePages > 1 && articlesView !== 'folders' && (
                   <div className="mt-8 flex justify-center items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentArticlePage(prev => Math.max(1, prev - 1))}
-                      disabled={currentArticlePage === 1}
-                    >
-                      Anterior
-                    </Button>
-                    
+                    <Button variant="outline" size="sm" onClick={() => setCurrentArticlePage(prev => Math.max(1, prev - 1))} disabled={currentArticlePage === 1}>Anterior</Button>
                     <div className="flex gap-1">
                       {Array.from({ length: Math.min(5, totalArticlePages) }, (_, i) => {
                         let pageNum;
-                        if (totalArticlePages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentArticlePage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentArticlePage >= totalArticlePages - 2) {
-                          pageNum = totalArticlePages - 4 + i;
-                        } else {
-                          pageNum = currentArticlePage - 2 + i;
-                        }
-                        
+                        if (totalArticlePages <= 5) pageNum = i + 1;
+                        else if (currentArticlePage <= 3) pageNum = i + 1;
+                        else if (currentArticlePage >= totalArticlePages - 2) pageNum = totalArticlePages - 4 + i;
+                        else pageNum = currentArticlePage - 2 + i;
                         return (
-                          <Button
-                            key={i}
-                            variant={currentArticlePage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentArticlePage(pageNum)}
-                            className="w-10"
-                          >
-                            {pageNum}
-                          </Button>
+                          <Button key={i} variant={currentArticlePage === pageNum ? 'default' : 'outline'} size="sm" onClick={() => setCurrentArticlePage(pageNum)} className="w-10">{pageNum}</Button>
                         );
                       })}
                     </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentArticlePage(prev => Math.min(totalArticlePages, prev + 1))}
-                      disabled={currentArticlePage === totalArticlePages}
-                    >
-                      Próxima
-                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentArticlePage(prev => Math.min(totalArticlePages, prev + 1))} disabled={currentArticlePage === totalArticlePages}>Próxima</Button>
                   </div>
                 )}
 
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Página {currentArticlePage} de {totalArticlePages} • Mostrando {indexOfFirstArticle + 1}-{Math.min(indexOfLastArticle, filteredArticles.length)} de {filteredArticles.length} artigos
+                  Página {currentArticlePage} de {totalArticlePages} • Mostrando {indexOfFirstArticle + 1}-{Math.min(indexOfLastArticle, articlesBase.length)} de {articlesBase.length} artigos
                 </div>
               </>
             )}
@@ -1054,7 +1081,7 @@ ${videoNotes}
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 <div className="relative flex-1 w-full">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
@@ -1067,10 +1094,37 @@ ${videoNotes}
                     className="pl-10"
                   />
                 </div>
-                
+
                 <Badge variant="secondary" className="text-sm">
-                  {filteredVideos.length} {filteredVideos.length === 1 ? 'vídeo' : 'vídeos'}
+                  {videosBase.length} {videosBase.length === 1 ? 'vídeo' : 'vídeos'}
                 </Badge>
+
+                <div className="md:ml-auto flex items-center gap-2">
+                  <Button
+                    variant={videosView === 'list' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => { setVideosView('list'); setVideosActiveFolder(null); }}
+                    title="Exibir em lista"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={videosView === 'grid' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => { setVideosView('grid'); setVideosActiveFolder(null); }}
+                    title="Exibir em blocos"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={videosView === 'folders' ? 'default' : 'outline'}
+                    size="icon"
+                    onClick={() => setVideosView('folders')}
+                    title="Exibir por pastas"
+                  >
+                    <Folder className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -1085,100 +1139,100 @@ ${videoNotes}
               </Card>
             ) : (
               <>
-                <div className="space-y-4">
-                  {currentVideos.map((video, index) => {
-                    const videoId = video.video_id || extractYouTubeId(video.youtube_url);
-                    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-                    
-                    return (
-                      <motion.div
-                        key={video.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <Card className="overflow-hidden hover:shadow-xl transition-all cursor-pointer">
-                          <div className="flex flex-col md:flex-row">
-                            <div 
-                              className="md:w-80 h-48 md:h-auto bg-gray-200 flex-shrink-0 relative group"
-                              onClick={() => handlePlayVideo(video)}
-                            >
-                              <img
-                                src={thumbnailUrl}
-                                alt={video.title}
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-white rounded-full p-4">
-                                  <Play className="w-8 h-8 text-red-600" />
-                                </div>
-                              </div>
-                              {video.duration && (
-                                <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
-                                  {video.duration}
-                                </div>
-                              )}
-                            </div>
-
-                            <CardContent className="flex-1 p-4">
-                              <div className="flex flex-wrap gap-2 mb-3">
-                                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                  {subjectNames[video.subject] || video.subject}
-                                </Badge>
-                                {video.topic && (
-                                  <Badge variant="outline">
-                                    {video.topic}
-                                  </Badge>
-                                )}
-                              </div>
-
-                              <h3 
-                                className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer line-clamp-2"
-                                onClick={() => handlePlayVideo(video)}
-                                style={{ fontWeight: 600 }}
-                              >
-                                {video.title}
-                              </h3>
-
-                              {video.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
-                                  {video.description}
-                                </p>
-                              )}
-
-                              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                                {video.instructor && (
-                                  <span className="flex items-center gap-1">
-                                    <UserIcon className="w-3 h-3" />
-                                    {video.instructor}
-                                  </span>
-                                )}
-                                {video.duration && (
-                                  <span className="flex items-center gap-1">
-                                    <Timer className="w-3 h-3" />
-                                    {video.duration}
-                                  </span>
-                                )}
-                              </div>
-
-                              <Button
-                                onClick={() => handlePlayVideo(video)}
-                                className="mt-4 bg-red-600 hover:bg-red-700 text-white"
-                                size="sm"
-                              >
-                                <Play className="w-4 h-4 mr-2" />
-                                Assistir Agora
-                              </Button>
-                            </CardContent>
+                {/* Pastas de vídeos */}
+                {videosView === 'folders' && !videosActiveFolder ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {Object.entries(videosBySubject).sort((a,b) => (subjectNames[a[0]]||a[0]).localeCompare(subjectNames[b[0]]||b[0])).map(([key, list]) => (
+                      <Card key={key} className="cursor-pointer hover:shadow-md" onClick={() => setVideosActiveFolder(key)}>
+                        <CardContent className="p-4 flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-md bg-blue-50 flex items-center justify-center">
+                            <Folder className="w-5 h-5 text-blue-600" />
                           </div>
-                        </Card>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm truncate">{subjectNames[key] || key}</div>
+                            <div className="text-xs text-gray-500">{list.length} {list.length === 1 ? 'vídeo' : 'vídeos'}</div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  videosView === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {videosBase.map((video, index) => {
+                        const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                        const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        return (
+                          <motion.div key={video.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }}>
+                            <Card className="overflow-hidden hover:shadow-lg transition-all cursor-pointer" onClick={() => handlePlayVideo(video)}>
+                              <div className="aspect-video bg-gray-200 relative">
+                                <img src={thumbnailUrl} alt={video.title} className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition flex items-center justify-center">
+                                  <div className="bg-white rounded-full p-3"><Play className="w-6 h-6 text-red-600" /></div>
+                                </div>
+                              </div>
+                              <CardContent className="p-3">
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  <Badge className="bg-blue-100 text-blue-800">{subjectNames[video.subject] || video.subject}</Badge>
+                                  {video.topic && <Badge variant="outline">{video.topic}</Badge>}
+                                </div>
+                                <div className="text-blue-600 dark:text-blue-400 font-semibold text-sm line-clamp-2">{video.title}</div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {currentVideos.map((video, index) => {
+                        const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                        const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        return (
+                          <motion.div key={video.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+                            <Card className="overflow-hidden hover:shadow-lg transition-all cursor-pointer">
+                              <div className="flex flex-col md:flex-row">
+                                <div className="md:w-56 h-32 md:h-auto bg-gray-200 flex-shrink-0 relative group" onClick={() => handlePlayVideo(video)}>
+                                  <img src={thumbnailUrl} alt={video.title} className="w-full h-full object-cover" />
+                                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="bg-white rounded-full p-3"><Play className="w-6 h-6 text-red-600" /></div>
+                                  </div>
+                                  {video.duration && (
+                                    <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-0.5 rounded text-[11px]">
+                                      {video.duration}
+                                    </div>
+                                  )}
+                                </div>
+                                <CardContent className="flex-1 p-3">
+                                  <div className="flex flex-wrap gap-2 mb-2">
+                                    <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{subjectNames[video.subject] || video.subject}</Badge>
+                                    {video.topic && (<Badge variant="outline">{video.topic}</Badge>)}
+                                  </div>
+                                  <h3 className="text-base font-semibold text-blue-600 dark:text-blue-400 mb-1 hover:text-blue-700 dark:hover:text-blue-300 line-clamp-2" onClick={() => handlePlayVideo(video)}>
+                                    {video.title}
+                                  </h3>
+                                  {video.description && (
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">{video.description}</p>
+                                  )}
+                                  <div className="flex items-center gap-4 text-[11px] text-gray-500 dark:text-gray-400">
+                                    {video.instructor && (<span className="flex items-center gap-1"><UserIcon className="w-3 h-3" />{video.instructor}</span>)}
+                                    {video.duration && (<span className="flex items-center gap-1"><Timer className="w-3 h-3" />{video.duration}</span>)}
+                                  </div>
+                                  <Button onClick={() => handlePlayVideo(video)} className="mt-3 bg-red-600 hover:bg-red-700 text-white" size="sm">
+                                    <Play className="w-4 h-4 mr-2" /> Assistir Agora
+                                  </Button>
+                                </CardContent>
+                              </div>
+                            </Card>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )
+                )}
 
                 {/* Paginação */}
-                {totalVideoPages > 1 && (
+                {videosView === 'list' && totalVideoPages > 1 && (
                   <div className="mt-8 flex justify-center items-center gap-2">
                     <Button
                       variant="outline"
@@ -1228,8 +1282,8 @@ ${videoNotes}
                 )}
 
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Página {currentVideoPage} de {totalVideoPages} • Mostrando {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, filteredVideos.length)} de {filteredVideos.length} vídeos
-                </div>
+                                        Página {currentVideoPage} de {totalVideoPages} • Mostrando {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, videosBase.length)} de {videosBase.length} vídeos
+                                      </div>
               </>
             )}
           </TabsContent>
