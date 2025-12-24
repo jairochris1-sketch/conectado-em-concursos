@@ -29,7 +29,11 @@ import {
   Printer,
   User as UserIcon, // Renamed to avoid conflict with entity User
   Moon,
-  Sun
+  Sun,
+  ThumbsUp,
+  ThumbsDown,
+  CheckCircle,
+  ChevronRight
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { LayoutGrid, List, Folder } from 'lucide-react';
@@ -142,7 +146,26 @@ export default function StudiesPage() {
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [selectedVideoSubject, setSelectedVideoSubject] = useState('all');
   const [playingVideo, setPlayingVideo] = useState(null);
-  const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
+          const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
+
+          // Vistos e avaliações (localStorage)
+          const [watchedVideos, setWatchedVideos] = useState(() => {
+            try { return new Set(JSON.parse(localStorage.getItem('watchedVideos') || '[]')); } catch { return new Set(); }
+          });
+          const [videoRatings, setVideoRatings] = useState(() => {
+            try { return JSON.parse(localStorage.getItem('videoRatings') || '{}'); } catch { return {}; }
+          });
+          const markAsWatched = (videoId) => {
+            const next = new Set(watchedVideos);
+            next.add(videoId);
+            setWatchedVideos(next);
+            localStorage.setItem('watchedVideos', JSON.stringify(Array.from(next)));
+          };
+          const setRating = (videoId, value) => {
+            const next = { ...videoRatings, [videoId]: value };
+            setVideoRatings(next);
+            localStorage.setItem('videoRatings', JSON.stringify(next));
+          };
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
@@ -1318,45 +1341,34 @@ ${videoNotes}
           />
         )}
 
-        {/* Modal do Player de Vídeo com Anotações */}
+        {/* Modal do Player de Vídeo - estilo curso */}
         {playingVideo && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-7xl h-[90vh] flex flex-col">
-              {/* Header do Player */}
-              <div className="flex justify-between items-start mb-4 flex-shrink-0">
-                <div className="text-white flex-1">
-                  <h2 className="text-2xl font-bold mb-2">{playingVideo.title}</h2>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-blue-600">
-                      {subjectNames[playingVideo.subject] || playingVideo.subject}
-                    </Badge>
+          <div className="fixed inset-0 z-50 bg-[#111111] text-white p-4 md:p-6 overflow-hidden">
+            <div className="mx-auto max-w-7xl h-full flex flex-col">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold">{playingVideo.title}</h2>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-300">
+                    <Badge className="bg-blue-600">{subjectNames[playingVideo.subject] || playingVideo.subject}</Badge>
                     {playingVideo.topic && (
-                      <Badge variant="outline" className="text-white border-white">
-                        {playingVideo.topic}
-                      </Badge>
+                      <Badge variant="outline" className="border-gray-600 text-gray-300">{playingVideo.topic}</Badge>
                     )}
                     {playingVideo.instructor && (
-                      <span className="text-sm text-gray-300">
-                        Professor: {playingVideo.instructor}
-                      </span>
+                      <span className="opacity-80">Professor: {playingVideo.instructor}</span>
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={handleCloseVideo}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2"
-                >
+                <button onClick={handleCloseVideo} className="p-2 text-gray-400 hover:text-white">
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
-              {/* Conteúdo Principal: Vídeo + Anotações */}
-              <div className="flex-1 flex gap-4 min-h-0">
-                {/* Player de Vídeo */}
-                <div className="flex-1 flex flex-col">
-                  <div className="relative w-full flex-1 bg-black rounded-lg overflow-hidden">
+
+              <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                {/* Esquerda: Vídeo + ações */}
+                <div className="lg:col-span-8 xl:col-span-9 flex flex-col min-h-0">
+                  <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
                     <iframe
-                      className="absolute top-0 left-0 w-full h-full"
+                      className="absolute inset-0 w-full h-full"
                       src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1`}
                       title={playingVideo.title}
                       frameBorder="0"
@@ -1365,93 +1377,91 @@ ${videoNotes}
                     />
                   </div>
 
-                  {/* Botões de Navegação */}
-                  <div className="flex justify-between items-center mt-4 gap-2">
-                    <Button
-                      onClick={handlePreviousVideo}
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Vídeo Anterior
-                    </Button>
-                    
-                    <Button
-                      onClick={handleCloseVideo}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      Voltar à Lista
-                    </Button>
-                    
-                    <Button
-                      onClick={handleNextVideo}
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      Próximo Vídeo
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-
                   {playingVideo.description && (
-                    <div className="mt-4 text-white bg-white/10 p-4 rounded-lg">
-                      <h3 className="font-semibold mb-2">Sobre esta aula:</h3>
-                      <p className="text-gray-300">{playingVideo.description}</p>
+                    <div className="mt-4 text-gray-300">{playingVideo.description}</div>
+                  )}
+
+                  {(playingVideo.material_url || playingVideo.pdf_url) && (
+                    <div className="mt-4 rounded-lg border border-gray-800 bg-gray-900 p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-6 h-6 text-red-400" />
+                        <div>
+                          <div className="font-medium">Material de apoio</div>
+                          <div className="text-xs text-gray-400">{playingVideo.material_name || 'PDF'}</div>
+                        </div>
+                      </div>
+                      <a href={(playingVideo.material_url || playingVideo.pdf_url)} target="_blank" rel="noopener noreferrer" className="inline-flex">
+                        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                          <Download className="w-4 h-4 mr-2" /> Baixar
+                        </Button>
+                      </a>
                     </div>
                   )}
-                </div>
 
-                {/* Área de Anotações */}
-                <div className="w-96 flex flex-col bg-white/10 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-white font-semibold flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
-                      Minhas Anotações
-                    </h3>
-                    <div className="flex gap-1">
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
                       <Button
-                        onClick={handleSaveNotes}
+                        variant={videoRatings[playingVideo.id] === 'up' ? 'default' : 'outline'}
                         size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                        title="Salvar"
+                        onClick={() => setRating(playingVideo.id, 'up')}
+                        className={videoRatings[playingVideo.id] === 'up' ? 'bg-green-600 hover:bg-green-700' : 'border-gray-700 text-gray-300 hover:bg-gray-800'}
                       >
-                        <Save className="w-4 h-4" />
+                        <ThumbsUp className="w-4 h-4 mr-1" /> Gostei
                       </Button>
                       <Button
-                        onClick={handleDownloadNotes}
+                        variant={videoRatings[playingVideo.id] === 'down' ? 'default' : 'outline'}
                         size="sm"
-                        variant="outline"
-                        className="text-white border-white hover:bg-white/20"
-                        title="Baixar"
+                        onClick={() => setRating(playingVideo.id, 'down')}
+                        className={videoRatings[playingVideo.id] === 'down' ? 'bg-red-600 hover:bg-red-700' : 'border-gray-700 text-gray-300 hover:bg-gray-800'}
                       >
-                        <Download className="w-4 h-4" />
+                        <ThumbsDown className="w-4 h-4 mr-1" /> Não gostei
                       </Button>
                       <Button
-                        onClick={handlePrintNotes}
-                        size="sm"
                         variant="outline"
-                        className="text-white border-white hover:bg-white/20"
-                        title="Imprimir"
+                        size="sm"
+                        onClick={() => markAsWatched(playingVideo.id)}
+                        className="border-gray-700 text-gray-300 hover:bg-gray-800"
                       >
-                        <Printer className="w-4 h-4" />
+                        <CheckCircle className={`w-4 h-4 mr-1 ${watchedVideos.has(playingVideo.id) ? 'text-green-500' : ''}`} />
+                        {watchedVideos.has(playingVideo.id) ? 'Visto' : 'Marcar como visto'}
                       </Button>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleNextVideo}
+                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
+                      className="border-gray-700 text-gray-300 hover:bg-gray-800 disabled:opacity-50"
+                    >
+                      Próximo <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
-                  
-                  <Textarea
-                    value={videoNotes}
-                    onChange={(e) => setVideoNotes(e.target.value)}
-                    placeholder="Faça suas anotações sobre este vídeo aqui..."
-                    className="flex-1 bg-white/90 text-gray-900 resize-none"
-                    rows={20}
-                  />
-                  
-                  <p className="text-xs text-gray-400 mt-2">
-                    Suas anotações são salvas automaticamente no seu navegador.
-                  </p>
+                </div>
+
+                {/* Direita: Lista de aulas */}
+                <div className="lg:col-span-4 xl:col-span-3 min-h-0">
+                  <div className="h-full rounded-lg border border-gray-800 bg-gray-900 overflow-y-auto">
+                    <div className="p-3 border-b border-gray-800 font-semibold">Aulas</div>
+                    <div className="divide-y divide-gray-800">
+                      {filteredVideos.map((video) => {
+                        const active = video.id === playingVideo.id;
+                        const seen = watchedVideos.has(video.id);
+                        return (
+                          <button
+                            key={video.id}
+                            onClick={() => handlePlayVideo(video)}
+                            className={`w-full text-left p-3 flex items-start gap-3 hover:bg-gray-800 ${active ? 'bg-gray-800' : ''}`}
+                          >
+                            <div className={`mt-1 h-2 w-2 rounded-full ${active ? 'bg-indigo-500' : seen ? 'bg-green-500' : 'bg-gray-600'}`}></div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`truncate ${active ? 'text-indigo-300' : 'text-gray-200'}`}>{video.title}</div>
+                              <div className="text-xs text-gray-400">{video.duration || ''}</div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
