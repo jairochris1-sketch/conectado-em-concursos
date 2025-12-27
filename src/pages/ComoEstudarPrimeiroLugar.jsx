@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import { Article, YouTubeVideo } from "@/entities/all";
 import { SiteContent } from "@/entities/SiteContent";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { User } from "@/entities/User";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pageContent, setPageContent] = useState(null);
+  const [otherGuides, setOtherGuides] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\\?v=|&v=)([^#&?]*).*/;
@@ -20,14 +26,18 @@ export default function ComoEstudarPrimeiroLugar() {
     const load = async () => {
       setLoading(true);
       try {
-        const [arts, vids, page] = await Promise.all([
+        const [arts, vids, page, allPages] = await Promise.all([
           Article.filter({ is_published: true }),
           YouTubeVideo.filter({ is_active: true }),
-          SiteContent.filter({ page_key: 'como_estudar_primeiro_lugar' })
+          SiteContent.filter({ page_key: 'como_estudar_primeiro_lugar' }),
+          SiteContent.list('-updated_date')
         ]);
         setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes("guia_aprovacao")));
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === "guia_aprovacao"));
         setPageContent((page && page[0]) || null);
+        setOtherGuides((allPages || []).filter(p => p.page_key !== 'como_estudar_primeiro_lugar'));
+        const u = await User.me().catch(() => null);
+        setIsAdmin(!!u && (u.email === 'conectadoemconcursos@gmail.com' || u.email === 'jairochris1@gmail.com'));
       } finally {
         setLoading(false);
       }
@@ -37,8 +47,17 @@ export default function ComoEstudarPrimeiroLugar() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="mx-auto bg-white shadow-xl rounded-md p-8" style={{ maxWidth: "794px" }}>
-        <h1 className="text-3xl font-extrabold mb-2">{pageContent?.title || 'Como estudar para ser aprovado em primeiro lugar'}</h1>
+      <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <div className="bg-white shadow-xl rounded-md p-8">
+            {isAdmin && (
+              <div className="flex justify-end -mt-4 -mr-4 mb-2">
+                <Link to={createPageUrl('Admin')}>
+                  <Button size="sm" variant="outline">Editar guia</Button>
+                </Link>
+              </div>
+            )}
+            <h1 className="text-3xl font-extrabold mb-2">{pageContent?.title || 'Como estudar para ser aprovado em primeiro lugar'}</h1>
         {pageContent?.subtitle && (
           <p className="text-gray-700 mb-2">{pageContent.subtitle}</p>
         )}
@@ -109,6 +128,26 @@ export default function ComoEstudarPrimeiroLugar() {
             )}
           </div>
         )}
+          </div>
+        </div>
+        <div className="lg:col-span-4">
+          <div className="bg-white rounded-md shadow p-4">
+            <h3 className="font-semibold mb-3">Outras guias</h3>
+            {otherGuides.length > 0 ? (
+              <ul className="space-y-2">
+                {otherGuides.map((g) => (
+                  <li key={g.id}>
+                    <Link to={createPageUrl(`Guide?key=${encodeURIComponent(g.page_key)}`)} className="text-blue-600 hover:underline">
+                      {g.title || g.page_key}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-500">Nenhuma outra guia criada.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
