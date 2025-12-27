@@ -38,10 +38,16 @@ export default function ComoEstudarPrimeiroLugar() {
       <div className="mx-auto bg-white shadow-xl rounded-md p-8" style={{ maxWidth: "794px" }}>
         <h1 className="text-3xl font-extrabold mb-2">{pageContent?.title || 'Como estudar para ser aprovado em primeiro lugar'}</h1>
         {(pageContent?.subtitle || pageContent?.main_text) ? (
-          <div className="text-gray-700 mb-6 space-y-2">
-            {pageContent?.subtitle && <p>{pageContent.subtitle}</p>}
-            {pageContent?.main_text && <p className="text-gray-600">{pageContent.main_text}</p>}
-            {pageContent?.secondary_text && <p className="text-gray-500">{pageContent.secondary_text}</p>}
+          <div className="text-gray-700 mb-6 space-y-3">
+            {pageContent?.subtitle && (
+              <div dangerouslySetInnerHTML={{ __html: pageContent.subtitle }} />
+            )}
+            {pageContent?.main_text && (
+              <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: pageContent.main_text }} />
+            )}
+            {pageContent?.secondary_text && (
+              <div className="text-gray-500" dangerouslySetInnerHTML={{ __html: pageContent.secondary_text }} />
+            )}
           </div>
         ) : (
           <p className="text-gray-600 mb-6">

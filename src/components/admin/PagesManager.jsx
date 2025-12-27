@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea"; // kept for compatibility if needed
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, PlusCircle, Pencil, Trash2, ImageIcon, FileText } from "lucide-react";
+import ReactQuill from 'react-quill';
 import { base44 } from "@/api/base44Client";
 
 export default function PagesManager() {
@@ -148,15 +149,15 @@ export default function PagesManager() {
             </div>
           </div>
           <div>
-            <Label>Texto Principal</Label>
-            <Textarea rows={4} value={form.main_text} onChange={(e) => setForm({ ...form, main_text: e.target.value })} />
+            <Label>Texto Principal (formatação preservada)</Label>
+            <ReactQuill theme="snow" value={form.main_text || ''} onChange={(value) => setForm({ ...form, main_text: value })} />
           </div>
           <div>
-            <Label>Texto Secundário</Label>
-            <Textarea rows={3} value={form.secondary_text} onChange={(e) => setForm({ ...form, secondary_text: e.target.value })} />
+            <Label>Texto Secundário (opcional)</Label>
+            <ReactQuill theme="snow" value={form.secondary_text || ''} onChange={(value) => setForm({ ...form, secondary_text: value })} />
           </div>
           <div className="flex justify-end">
-            <Button onClick={save} disabled={isSaving} className="gap-2">{isSaving && <Loader2 className="w-4 h-4 animate-spin" />}Salvar</Button>
+            <Button onClick={save} disabled={isSaving} className="gap-2">{isSaving && <Loader2 className="w-4 h-4 animate-spin" />}Salvar Página</Button>
           </div>
         </CardContent>
       </Card>
