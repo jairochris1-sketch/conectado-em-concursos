@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { BookOpen, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { UploadFile } from '@/integrations/Core';
+import { BookOpen, Plus, Edit, Trash2, Save, X, ImageIcon, Upload, Loader2 } from 'lucide-react';
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },
@@ -80,6 +81,7 @@ export default function ArticleManager() {
 
   const [tagInput, setTagInput] = useState('');
   const [filteredTopics, setFilteredTopics] = useState([]);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -110,7 +112,21 @@ export default function ArticleManager() {
     setIsLoading(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setIsUploadingCover(true);
+    try {
+      const { file_url } = await UploadFile({ file });
+      setFormData(prev => ({ ...prev, cover_image_url: file_url }));
+    } catch (error) {
+      console.error('Erro ao enviar imagem de capa:', error);
+      alert('Erro ao enviar a imagem. Tente novamente.');
+    }
+    setIsUploadingCover(false);
+  };
+
+   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.title.trim() || !formData.content.trim() || !formData.subject) {
@@ -334,12 +350,26 @@ export default function ArticleManager() {
               </div>
 
               <div>
-                <Label htmlFor="cover_image_url">URL da Imagem de Capa</Label>
+                <Label>Imagem de Capa</Label>
+                <div className="flex items-center gap-4 mt-1">
+                  <div className="w-28 h-20 rounded overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {formData.cover_image_url ? (
+                      <img src={formData.cover_image_url} alt="Capa" className="w-full h-full object-cover" />
+                    ) : (
+                      <ImageIcon className="w-6 h-6 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 flex items-center gap-2">
+                    <Input type="file" accept="image/*" onChange={handleCoverUpload} />
+                    {isUploadingCover && <Loader2 className="w-4 h-4 animate-spin" />}
+                  </div>
+                </div>
                 <Input
                   id="cover_image_url"
                   value={formData.cover_image_url}
                   onChange={(e) => setFormData({...formData, cover_image_url: e.target.value})}
                   placeholder="https://exemplo.com/imagem.jpg"
+                  className="mt-2"
                 />
               </div>
 
@@ -349,8 +379,10 @@ export default function ArticleManager() {
                   <Input
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
-                    placeholder="Digite uma tag..."
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                    placeholder="Digite uma tag e pressione Enter ou vírgula"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); handleAddTag(); }
+                    }}
                   />
                   <Button type="button" variant="outline" onClick={handleAddTag}>
                     Adicionar
@@ -435,7 +467,7 @@ export default function ArticleManager() {
           <BookOpen className="w-6 h-6" />
           Gerenciar Artigos
         </h2>
-        <Button onClick={() => setShowForm(true)} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={() => { setShowForm(true); setEditingArticle(null); }} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus className="w-4 h-4 mr-2" />
           Novo Artigo
         </Button>
@@ -495,6 +527,13 @@ export default function ArticleManager() {
                               <span>• {article.views_count} visualizações</span>
                             )}
                           </div>
+                          {article.tags && article.tags.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {article.tags.map((t, i) => (
+                                <Badge key={i} variant="secondary">{t}</Badge>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 ml-4">
                           <Button
