@@ -28,7 +28,6 @@ const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
 const ProvasEnviadasList = lazy(() => import('@/components/admin/ProvasEnviadasList'));
 const SubscriptionsList = lazy(() => import('@/components/admin/SubscriptionsList'));
 const VideoManager = lazy(() => import('@/components/admin/VideoManager'));
-const PagesManager = lazy(() => import('@/components/admin/PagesManager'));
 
 // Mapeamento completo de disciplinas
 const subjectNames = {
@@ -297,7 +296,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-10 md:grid-cols-10">
+          <TabsList className="grid w-full grid-cols-9 md:grid-cols-9">
             <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
               <Pencil className="w-4 h-4 mr-2" />
               Questões
@@ -321,10 +320,6 @@ export default function AdminPage() {
             <TabsTrigger value="conteudo">
               <FileText className="w-4 h-4 mr-2" />
               Conteúdo
-            </TabsTrigger>
-            <TabsTrigger value="paginas">
-              <FileText className="w-4 h-4 mr-2" />
-              Páginas
             </TabsTrigger>
             <TabsTrigger value="videos">
               <Play className="w-4 h-4 mr-2" />
@@ -385,12 +380,6 @@ export default function AdminPage() {
               content={welcomeContent}
               onSave={handleContentSave}
             />
-          </TabsContent>
-
-          <TabsContent value="paginas">
-            <Suspense fallback={<div>Carregando páginas...</div>}>
-              <PagesManager />
-            </Suspense>
           </TabsContent>
 
           <TabsContent value="assuntos">
