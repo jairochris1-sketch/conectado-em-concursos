@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -98,8 +99,7 @@ export default function QuestionList({
   currentPage,
   questionsPerPage,
   layoutMode = 'compact',
-  fontSize = 1,
-  autoShowAssociatedTextForPortuguese = false
+  fontSize = 1
 }) {
   const [commentsVisible, setCommentsVisible] = useState({});
   const [favorites, setFavorites] = useState({});
@@ -194,21 +194,6 @@ export default function QuestionList({
 
     fetchCounts();
   }, [questions, fetchCommentCounts]);
-
-  // Exibir automaticamente o texto associado nas questões de Português (quando habilitado)
-  useEffect(() => {
-    if (!autoShowAssociatedTextForPortuguese) return;
-    if (!questions || questions.length === 0) return;
-    setAssociatedTextVisible(prev => {
-      const updated = { ...prev };
-      questions.forEach(q => {
-        if (q.subject === 'portugues' && q.associated_text && updated[q.id] === undefined) {
-          updated[q.id] = true;
-        }
-      });
-      return updated;
-    });
-  }, [questions, autoShowAssociatedTextForPortuguese]);
 
   const toggleAssociatedText = (questionId) => {
     setAssociatedTextVisible(prev => ({
@@ -418,12 +403,7 @@ export default function QuestionList({
   return (
     <div className={getContainerStyle()}>
       <AnimatePresence>
-        {[...questions].sort((a, b) => {
-          const pa = a.subject === 'portugues' ? 0 : 1;
-          const pb = b.subject === 'portugues' ? 0 : 1;
-          if (pa !== pb) return pa - pb;
-          return (a.subject || '').localeCompare(b.subject || '');
-        }).map((question, index) => {
+        {questions.map((question, index) => {
           const userAnswer = userAnswers[question.id];
           const submittedAnswer = submittedAnswers[question.id];
           const isSubmitted = submittedAnswer?.submitted;
@@ -535,6 +515,7 @@ export default function QuestionList({
                       <FileText className="w-4 h-4" />
                       {showAssociatedText ? 'Ocultar texto' : 'Exibir texto associado'}
                     </button>
+                    
                     {showAssociatedText && (
                       <div className="mt-4 print-hide">
                         <div

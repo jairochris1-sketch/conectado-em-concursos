@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Question } from "@/entities/Question";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { User } from "@/entities/User";
 import QuestionList from "../components/questions/QuestionList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookCopy, Printer, Download, FileText, ClipboardList, CheckSquare } from "lucide-react";
+import { ArrowLeft, BookCopy, Printer, FileText, ClipboardList, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -68,95 +68,26 @@ export default function ExamView() {
         }
 
         setIsLoading(true);
-        
-        // Construir filtros com tolerância a variações de dados
-        const yearNum = Number.isNaN(parseInt(year)) ? undefined : parseInt(year);
-        const cargoParam = (cargo || '').trim();
-        const cargoValid = cargoParam && cargoParam.toLowerCase() !== 'null' && cargoParam.toLowerCase() !== 'cargo não especificado';
-        const baseFilter = { institution, exam_name: typeof exam_name === 'string' ? exam_name.trim() : exam_name };
-
-        const candidateFilters = [];
-        if (yearNum !== undefined) {
-          if (cargoValid) candidateFilters.push({ ...baseFilter, year: yearNum, cargo: cargoParam });
-          candidateFilters.push({ ...baseFilter, year: yearNum });
-        }
-        if (cargoValid) candidateFilters.push({ ...baseFilter, year: year, cargo: cargoParam });
-        candidateFilters.push({ ...baseFilter, year: year });
-        candidateFilters.push({ ...baseFilter });
-
-        let fetchedQuestions = [];
-        for (const f of candidateFilters) {
-          try {
-            const res = await Question.filter(f);
-            if (res && res.length > 0) {
-              fetchedQuestions = res;
-              break;
-            }
-          } catch (_) {
-            // ignora e tenta o próximo
-          }
-        }
-
-        // Fallbacks caso não encontre (normaliza e busca mais amplo)
-        const normalize = (s) => (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
-        const targetExam = normalize(exam_name);
-
-        if (!fetchedQuestions || fetchedQuestions.length === 0) {
-          // 1) tentar por instituição + ano e filtrar por exam_name
-          const broad1 = yearNum !== undefined ? { institution, year: yearNum } : { institution };
-          try {
-            const res1 = await Question.filter(broad1);
-            const matched1 = (res1 || []).filter(q => normalize(q.exam_name) === targetExam);
-            if (matched1.length > 0) fetchedQuestions = matched1;
-          } catch (_) {}
-        }
-
-        if (!fetchedQuestions || fetchedQuestions.length === 0) {
-          // 2) tentar apenas por exam_name (independente de ano/instituição)
-          try {
-            const res2 = await Question.filter({ exam_name });
-            if (res2 && res2.length > 0) fetchedQuestions = res2;
-          } catch (_) {}
-        }
-
-        if (!fetchedQuestions || fetchedQuestions.length === 0) {
-          // 3) tentar por instituição e exam_name sem ano
-          try {
-            const res3 = await Question.filter({ institution, exam_name });
-            if (res3 && res3.length > 0) fetchedQuestions = res3;
-          } catch (_) {}
-        }
-
-        // Ordenar: Português primeiro, depois demais disciplinas (alfabético), mantendo ordem original dentro da mesma disciplina
-        const originalOrder = new Map(fetchedQuestions.map((q, idx) => [q.id, idx]));
-        const sortedQuestions = [...fetchedQuestions].sort((a, b) => {
-          const pa = a.subject === 'portugues' ? 0 : 1;
-          const pb = b.subject === 'portugues' ? 0 : 1;
-          if (pa !== pb) return pa - pb;
-          if (a.subject !== b.subject) return (a.subject || '').localeCompare(b.subject || '');
-          // dentro da mesma disciplina, respeitar ordem original
-          return (originalOrder.get(a.id) ?? 0) - (originalOrder.get(b.id) ?? 0);
+        const fetchedQuestions = await Question.filter({
+          institution,
+          year: parseInt(year),
+          exam_name,
+          cargo: cargo === 'null' ? null : cargo
         });
-        setQuestions(sortedQuestions);
         
-        // Coletar URLs disponíveis em qualquer questão da prova (não apenas a primeira)
+        setQuestions(fetchedQuestions);
+        
+        // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
-          const docSource = fetchedQuestions.find(q => q.edital_url || q.prova_url || q.gabarito_url) || fetchedQuestions[0];
-          const cleanUrl = (u) => {
-            const s = (u ?? '').toString().trim();
-            if (!s) return '';
-            const lower = s.toLowerCase();
-            if (lower === 'null' || lower === 'undefined' || lower === '#') return '';
-            return s;
-          };
+          const firstQuestion = fetchedQuestions[0];
           setExamInfo({
             name: exam_name,
             institution: institution,
             year: year,
-            cargo: cargoValid ? cargoParam : 'Não especificado',
-            edital_url: cleanUrl(docSource.edital_url),
-            prova_url: cleanUrl(docSource.prova_url),
-            gabarito_url: cleanUrl(docSource.gabarito_url)
+            cargo: cargo === 'null' ? 'Não especificado' : cargo,
+            edital_url: firstQuestion.edital_url || "",
+            prova_url: firstQuestion.prova_url || "",
+            gabarito_url: firstQuestion.gabarito_url || ""
           });
         }
 
@@ -392,7 +323,6 @@ export default function ExamView() {
             currentPage={1}
             questionsPerPage={questions.length}
             layoutMode="classic"
-            autoShowAssociatedTextForPortuguese={true}
           />
         </div>
       </div>
