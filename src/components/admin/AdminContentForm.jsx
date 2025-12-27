@@ -1,8 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import ReactQuill from 'react-quill';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loader2, FileText, ImageIcon } from 'lucide-react';
@@ -62,7 +62,7 @@ export default function AdminContentForm({ content, onSave }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText />
-            Editar Conteúdo da Página de Boas-vindas (mantém formatação)
+            Editar Conteúdo da Página de Boas-vindas
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -92,12 +92,12 @@ export default function AdminContentForm({ content, onSave }) {
             <Input id="subtitle" value={formData.subtitle || ''} onChange={e => handleInputChange('subtitle', e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="main_text">Texto Principal (formatação preservada)</Label>
-            <ReactQuill theme="snow" value={formData.main_text || ''} onChange={(value) => handleInputChange('main_text', value)} />
+            <Label htmlFor="main_text">Texto Principal</Label>
+            <Textarea id="main_text" value={formData.main_text || ''} onChange={e => handleInputChange('main_text', e.target.value)} rows={4} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="secondary_text">Texto Secundário</Label>
-            <ReactQuill theme="snow" value={formData.secondary_text || ''} onChange={(value) => handleInputChange('secondary_text', value)} />
+            <Textarea id="secondary_text" value={formData.secondary_text || ''} onChange={e => handleInputChange('secondary_text', e.target.value)} rows={3} />
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
