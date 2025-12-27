@@ -21,9 +21,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import A4Pages from './pages/A4Pages';
-import A4PageEditor from './pages/A4PageEditor';
-import A4PageView from './pages/A4PageView';
 import __Layout from './Layout.jsx';
 
 
@@ -51,9 +48,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "A4Pages": A4Pages,
-    "A4PageEditor": A4PageEditor,
-    "A4PageView": A4PageView,
 }
 
 export const pagesConfig = {
