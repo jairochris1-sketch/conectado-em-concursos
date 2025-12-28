@@ -77,7 +77,7 @@ export default function ExamView() {
           year: parseInt(year),
         };
         if (sanitizedExamName) {
-          query.exam_name = sanitizedExamName.trim();
+          query.exam_name = sanitizedExamName;
         }
         if (
           cargoParam &&
