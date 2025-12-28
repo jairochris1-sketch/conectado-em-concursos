@@ -68,15 +68,12 @@ export default function ExamView() {
         }
 
         setIsLoading(true);
-        const query = {
+        const fetchedQuestions = await Question.filter({
           institution,
           year: parseInt(year),
-          exam_name
-        };
-        if (cargo && cargo !== 'null' && cargo !== 'N/A' && cargo !== 'Cargo não especificado') {
-          query.cargo = cargo;
-        }
-        const fetchedQuestions = await Question.filter(query);
+          exam_name,
+          cargo: cargo === 'null' ? null : cargo
+        });
         
         setQuestions(fetchedQuestions);
         

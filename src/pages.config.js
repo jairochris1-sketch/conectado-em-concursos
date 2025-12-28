@@ -1,57 +1,55 @@
-import Admin from './pages/Admin';
-import ChatGPT from './pages/ChatGPT';
-import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
-import DigitalWhiteboard from './pages/DigitalWhiteboard';
+import Questions from './pages/Questions';
+import Admin from './pages/Admin';
+import Schedule from './pages/Schedule';
+import Ranking from './pages/Ranking';
+import Statistics from './pages/Statistics';
+import Subscription from './pages/Subscription';
+import Profile from './pages/Profile';
+import Welcome from './pages/Welcome';
+import Studies from './pages/Studies';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
-import Home from './pages/Home';
-import Notes from './pages/Notes';
-import Profile from './pages/Profile';
-import Questions from './pages/Questions';
-import Ranking from './pages/Ranking';
-import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
-import Schedule from './pages/Schedule';
-import SimuladosDigital from './pages/SimuladosDigital';
-import Statistics from './pages/Statistics';
-import Studies from './pages/Studies';
-import Subscription from './pages/Subscription';
-import Welcome from './pages/Welcome';
-import chatgpt from './pages/chatgpt';
-import studies from './pages/studies';
+import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import subscription from './pages/subscription';
-import __Layout from './Layout.jsx';
+import studies from './pages/studies';
+import Notes from './pages/Notes';
+import ChatGPT from './pages/ChatGPT';
+import chatgpt from './pages/chatgpt';
+import SimuladosDigital from './pages/SimuladosDigital';
+import SDAdmin from './pages/SDAdmin';
+import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
+import Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Admin": Admin,
-    "ChatGPT": ChatGPT,
-    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
-    "DigitalWhiteboard": DigitalWhiteboard,
+    "Questions": Questions,
+    "Admin": Admin,
+    "Schedule": Schedule,
+    "Ranking": Ranking,
+    "Statistics": Statistics,
+    "Subscription": Subscription,
+    "Profile": Profile,
+    "Welcome": Welcome,
+    "Studies": Studies,
     "ExamView": ExamView,
     "Exams": Exams,
-    "Home": Home,
-    "Notes": Notes,
-    "Profile": Profile,
-    "Questions": Questions,
-    "Ranking": Ranking,
-    "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
-    "Schedule": Schedule,
-    "SimuladosDigital": SimuladosDigital,
-    "Statistics": Statistics,
-    "Studies": Studies,
-    "Subscription": Subscription,
-    "Welcome": Welcome,
-    "chatgpt": chatgpt,
-    "studies": studies,
+    "DigitalWhiteboard": DigitalWhiteboard,
     "subscription": subscription,
+    "studies": studies,
+    "Notes": Notes,
+    "ChatGPT": ChatGPT,
+    "chatgpt": chatgpt,
+    "SimuladosDigital": SimuladosDigital,
+    "SDAdmin": SDAdmin,
+    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
 }
 
 export const pagesConfig = {
     mainPage: "Questions",
     Pages: PAGES,
-    Layout: __Layout,
+    Layout: Layout,
 };
