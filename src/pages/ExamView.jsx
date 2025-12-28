@@ -95,12 +95,13 @@ export default function ExamView() {
         // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
           const firstQuestion = fetchedQuestions[0];
-          const displayCargo = (!cargoParam || cargoParam === 'Cargo não especificado' || cargoParam === 'N/A' || cargoParam === 'null' || cargoParam === 'undefined')
+          const rawCargo = cargo ? decodeURIComponent(cargo) : null;
+          const displayCargo = (!rawCargo || rawCargo === 'Cargo não especificado' || rawCargo === 'N/A' || rawCargo === 'null' || rawCargo === 'undefined')
             ? 'Não especificado'
-            : cargoParam;
+            : rawCargo;
           setExamInfo({
             name: sanitizedExamName || firstQuestion.exam_name || 'Prova',
-            institution: institution,
+            institution: decodedInstitution,
             year: year,
             cargo: displayCargo,
             edital_url: firstQuestion.edital_url || "",
