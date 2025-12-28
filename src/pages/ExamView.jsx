@@ -68,23 +68,36 @@ export default function ExamView() {
         }
 
         setIsLoading(true);
-        const fetchedQuestions = await Question.filter({
+        const cargoParam = cargo && decodeURIComponent(cargo);
+        const query = {
           institution,
           year: parseInt(year),
           exam_name,
-          cargo: cargo === 'null' ? null : cargo
-        });
+        };
+        if (
+          cargoParam &&
+          cargoParam !== 'Cargo não especificado' &&
+          cargoParam !== 'N/A' &&
+          cargoParam !== 'null' &&
+          cargoParam !== 'undefined'
+        ) {
+          query.cargo = cargoParam;
+        }
+        const fetchedQuestions = await Question.filter(query);
         
         setQuestions(fetchedQuestions);
         
         // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
           const firstQuestion = fetchedQuestions[0];
+          const displayCargo = (!cargoParam || cargoParam === 'Cargo não especificado' || cargoParam === 'N/A' || cargoParam === 'null' || cargoParam === 'undefined')
+            ? 'Não especificado'
+            : cargoParam;
           setExamInfo({
             name: exam_name,
             institution: institution,
             year: year,
-            cargo: cargo === 'null' ? 'Não especificado' : cargo,
+            cargo: displayCargo,
             edital_url: firstQuestion.edital_url || "",
             prova_url: firstQuestion.prova_url || "",
             gabarito_url: firstQuestion.gabarito_url || ""
