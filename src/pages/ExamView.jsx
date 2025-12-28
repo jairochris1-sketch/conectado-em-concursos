@@ -88,7 +88,17 @@ export default function ExamView() {
         ) {
           query.cargo = cargoParam;
         }
-        const fetchedQuestions = await Question.filter(query);
+        let fetchedQuestions = await Question.filter(query);
+        if (fetchedQuestions.length === 0 && sanitizedExamName) {
+          const trimmed = sanitizedExamName.trim();
+          if (trimmed !== sanitizedExamName) {
+            fetchedQuestions = await Question.filter({ ...query, exam_name: trimmed });
+          }
+        }
+        if (fetchedQuestions.length === 0) {
+          const { exam_name: _omit, ...noNameQuery } = query;
+          fetchedQuestions = await Question.filter(noNameQuery);
+        }
         
         setQuestions(fetchedQuestions);
         
@@ -101,7 +111,7 @@ export default function ExamView() {
             : rawCargo;
           setExamInfo({
             name: sanitizedExamName || firstQuestion.exam_name || 'Prova',
-            institution: decodedInstitution,
+            institution: institution,
             year: year,
             cargo: displayCargo,
             edital_url: firstQuestion.edital_url || "",
