@@ -1,11 +1,8 @@
 
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { UserRanking, UserAnswer } from "@/entities/all";
 import { User } from "@/entities/User";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, Medal, Award, TrendingUp, Flame, Target } from "lucide-react";
-import { motion } from "framer-motion";
+import { Trophy } from "lucide-react"; // Only Trophy is used from lucide-react
 
 const calculatePoints = (correct, total) => {
   const accuracy = total > 0 ? correct / total : 0;
@@ -61,7 +58,7 @@ export default function RankingPage() {
 
       setCurrentUser(user);
       
-      let allRankings = allRankingsResult; // Rename to avoid confusion with parameter
+      let allRankings = allRankingsResult;
       let userRank = allRankings.find(r => r.created_by === user.email);
       
       if (!userRank) {
@@ -79,10 +76,10 @@ export default function RankingPage() {
           streak_days: calculateStreak(userAnswers),
           level: Math.floor(totalPoints / 1000) + 1,
           badges: getBadges(totalPoints, correctAnswers, totalQuestions),
-          created_by: user.email, // Ensure created_by is set for the new ranking
+          created_by: user.email,
         });
         
-        allRankings = [...allRankings, userRank]; // Add new userRank to the list
+        allRankings = [...allRankings, userRank];
       } else {
         // If userRank exists, ensure its data is up-to-date
         const userAnswers = await UserAnswer.filter({ created_by: user.email });
@@ -116,37 +113,17 @@ export default function RankingPage() {
         }
       }
 
-
       setUserRanking(userRank);
       setRankings(allRankings.sort((a, b) => b.total_points - a.total_points));
     } catch (error) {
       console.error("Erro ao carregar ranking:", error);
     }
     setIsLoading(false);
-  }, []); // Empty dependency array as calculatePoints, calculateStreak, getBadges are outside and stable
+  }, []);
 
   useEffect(() => {
     loadRankingData();
   }, [loadRankingData]);
-
-  const getRankIcon = (position) => {
-    switch(position) {
-      case 1: return <Trophy className="w-6 h-6 text-yellow-500" />;
-      case 2: return <Medal className="w-6 h-6 text-gray-400" />;
-      case 3: return <Award className="w-6 h-6 text-amber-600" />;
-      default: return <div className="w-6 h-6 flex items-center justify-center text-gray-500 font-bold">#{position}</div>;
-    }
-  };
-
-  const getBadgeColor = (badge) => {
-    const colors = {
-      "Acertador": "bg-green-100 text-green-800",
-      "Expert": "bg-blue-100 text-blue-800",
-      "Dedicado": "bg-purple-100 text-purple-800",
-      "Mestre": "bg-yellow-100 text-yellow-800"
-    };
-    return colors[badge] || "bg-gray-100 text-gray-800";
-  };
 
   if (isLoading) {
     return (
@@ -163,137 +140,99 @@ export default function RankingPage() {
   const userPosition = rankings.findIndex(r => r.created_by === currentUser?.email);
   const displayUserPosition = userPosition !== -1 ? userPosition + 1 : null;
 
+  // NEW: split rankings for top 3 and the rest
+  const top3 = rankings.slice(0, 3);
+  const others = rankings.slice(3, 20);
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            🏆 Ranking dos Concurseiros
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Veja sua posição e compete com outros estudantes
+    <div className="min-h-screen p-6 md:p-10 bg-gradient-to-b from-[#14142a] via-[#161a33] to-[#101226] text-white">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg">
+              <Trophy className="w-6 h-6 text-yellow-900" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold">Ranking dos Concurseiros</h1>
+          </div>
+          <p className="text-sm md:text-base text-white/70 mt-2">
+            Veja sua posição e compita com outros estudantes
           </p>
-        </motion.div>
+        </div>
 
-        {/* Card do usuário atual */}
-        {userRanking && displayUserPosition && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8"
-          >
-            <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 border-0 text-white shadow-2xl">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="text-xl">Sua Posição</span>
-                  <div className="flex items-center gap-2">
-                    {getRankIcon(displayUserPosition)}
-                    <span className="text-2xl font-bold">#{displayUserPosition}</span>
+        {/* Top 3 cards */}
+        <div className="space-y-4 mb-6">
+          {top3.map((r, idx) => {
+            const accuracy = r.questions_answered > 0 ? Math.round((r.correct_answers / r.questions_answered) * 100) : 0;
+            const gradients = [
+              'from-yellow-400 to-orange-500',
+              'from-indigo-400 to-indigo-600',
+              'from-amber-600 to-orange-700'
+            ];
+            return (
+              <div
+                key={r.id}
+                className={`rounded-2xl p-5 shadow-2xl bg-gradient-to-br ${gradients[idx]} text-white flex items-center justify-between`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold">
+                    {idx + 1}
                   </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{userRanking.total_points.toLocaleString()}</div>
-                    <div className="text-sm opacity-90">Pontos</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">Lv. {userRanking.level}</div>
-                    <div className="text-sm opacity-90">Nível</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold flex items-center justify-center gap-1">
-                      <Flame className="w-5 h-5 text-orange-300" />
-                      {userRanking.streak_days}
-                    </div>
-                    <div className="text-sm opacity-90">Streak</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">
-                      {userRanking.questions_answered > 0 
-                        ? `${Math.round((userRanking.correct_answers / userRanking.questions_answered) * 100)}%` 
-                        : "0%"}
-                    </div>
-                    <div className="text-sm opacity-90">Acerto</div>
-                  </div>
-                </div>
-                {userRanking.badges.length > 0 && (
-                  <div className="mt-4">
-                    <div className="text-sm opacity-90 mb-2">Conquistas:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {userRanking.badges.map((badge, index) => (
-                        <Badge key={index} className="bg-white/20 text-white">
-                          {badge}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* Ranking geral */}
-        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Trophy className="w-7 h-7 text-yellow-500" />
-              Top Concurseiros
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {rankings.slice(0, 20).map((ranking, index) => (
-                <motion.div
-                  key={ranking.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 ${
-                    ranking.created_by === currentUser?.email 
-                      ? 'border-indigo-500 bg-indigo-50' 
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center w-12 h-12">
-                      {getRankIcon(index + 1)}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{ranking.user_name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>Nível {ranking.level}</span>
-                        <span className="flex items-center gap-1">
-                          <Target className="w-3 h-3" />
-                          {ranking.questions_answered > 0 
-                            ? `${Math.round((ranking.correct_answers / ranking.questions_answered) * 100)}% acerto`
-                            : "0% acerto"}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Flame className="w-3 h-3 text-orange-500" />
-                          {ranking.streak_days} dias
-                        </span>
+                  <div>
+                    <div className="text-lg md:text-xl font-bold">{r.user_name}</div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="opacity-90">Nível {r.level}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-24 bg-white/30 rounded-full overflow-hidden">
+                          <div className="h-2 bg-white rounded-full" style={{ width: `${accuracy}%` }} />
+                        </div>
+                        <span className="opacity-90">{accuracy}%</span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xl font-bold text-indigo-600">
-                      {ranking.total_points.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-500">pontos</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-extrabold">{r.total_points.toLocaleString()}</div>
+                  <div className="text-xs opacity-90">pontos</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Others list */}
+        <div className="space-y-3">
+          {others.map((r, index) => {
+            const position = index + 4;
+            const accuracy = r.questions_answered > 0 ? Math.round((r.correct_answers / r.questions_answered) * 100) : 0;
+            return (
+              <div
+                key={r.id}
+                className="rounded-2xl px-5 py-4 bg-white/5 border border-white/10 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center font-bold">
+                    {position}
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  <div>
+                    <div className="font-semibold">{r.user_name}</div>
+                    <div className="flex items-center gap-3 text-xs text-white/80">
+                      <span>Nível {r.level}</span>
+                      <div className="h-1.5 w-24 bg-white/15 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-indigo-400 rounded-full" style={{ width: `${accuracy}%` }} />
+                      </div>
+                      <span>{accuracy}%</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-bold">{r.total_points.toLocaleString()}</div>
+                  <div className="text-xs text-white/70">pontos</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

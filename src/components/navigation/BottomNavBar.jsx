@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, FileText, User, BookCopy, Bot, Lock } from "lucide-react";

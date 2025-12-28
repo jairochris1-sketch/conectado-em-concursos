@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Save, User as UserIcon, Loader2 } from "lucide-react"; // Removed Info icon as it's no longer used
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom"; // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
-import { createPageUrl } from "@/utils"; // createPageUrl is no longer used, can be removed if not used elsewhere.
+// Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
+// createPageUrl is no longer used, can be removed if not used elsewhere.
 
 const brazilianStates = [
   { value: "AC", label: "Acre" },

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Question } from "@/entities/Question";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { User } from "@/entities/User";
 import QuestionList from "../components/questions/QuestionList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookCopy, Printer, Download, FileText, ClipboardList, CheckSquare } from "lucide-react";
+import { ArrowLeft, BookCopy, Printer, FileText, ClipboardList, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 

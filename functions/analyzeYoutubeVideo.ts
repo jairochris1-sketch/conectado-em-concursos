@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 function extractVideoId(url) {
@@ -5,6 +6,10 @@ function extractVideoId(url) {
     const u = new URL(url);
     if (u.hostname.includes('youtu.be')) {
       return u.pathname.replace('/', '');
+    }
+    if (u.pathname.startsWith('/shorts/')) {
+      const parts = u.pathname.split('/');
+      return parts[2] || null;
     }
     if (u.searchParams.has('v')) {
       return u.searchParams.get('v');
@@ -28,10 +33,24 @@ function decodeXmlEntities(str) {
     .replace(/&gt;/g, '>');
 }
 
+function withTimeout(promise, ms = 8000) {
+  const controller = new AbortController();
+  const timeoutRef = setTimeout(() => controller.abort(), ms); // Use a distinct name for the timeout ID
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), ms)
+  );
+
+  return Promise.race([
+    promise,
+    timeoutPromise
+  ]).finally(() => clearTimeout(timeoutRef));
+}
+
 async function fetchTranscriptFromUnofficial(videoId) {
   // youtubetranscript.net tends a return JSON array of captions
   const url = `https://youtubetranscript.net/?server_vid2=${videoId}`;
-  const res = await fetch(url, { headers: { 'accept': 'application/json, text/plain, */*' } });
+  const res = await withTimeout(fetch(url, { headers: { 'accept': 'application/json, text/plain, */*' } }), 10000);
   const text = await res.text();
   try {
     const data = JSON.parse(text);
@@ -48,7 +67,7 @@ async function fetchTranscriptFromTimedText(videoId) {
   const langs = ['pt-BR', 'pt', 'en'];
   for (const lang of langs) {
     const url = `https://www.youtube.com/api/timedtext?lang=${encodeURIComponent(lang)}&v=${encodeURIComponent(videoId)}`;
-    const res = await fetch(url);
+    const res = await withTimeout(fetch(url), 10000);
     if (!res.ok) continue;
     const xml = await res.text();
     const matches = xml.match(/<text[^>]*>([\s\S]*?)<\/text>/g);
@@ -86,10 +105,11 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: 'Usuário não autenticado.' }, { status: 401 });
+      return Response.json({ error: 'Usuário não autenticado' }, { status: 401 });
     }
     
-    const { videoUrl } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const { videoUrl } = body;
 
     if (!videoUrl) {
       return Response.json({ error: 'URL do vídeo é obrigatória.' }, { status: 400 });
@@ -102,15 +122,25 @@ Deno.serve(async (req) => {
 
     const meta = await fetchVideoMeta(videoId);
     // Tenta obter transcrição de duas formas
-    let transcript = await fetchTranscriptFromUnofficial(videoId);
+    let transcript = null;
+    try { 
+      transcript = await fetchTranscriptFromUnofficial(videoId); 
+    } catch (e) { 
+      console.warn('Unofficial transcript fetch failed:', e instanceof Error ? e.message : e); 
+    }
+    
     if (!transcript) {
-      transcript = await fetchTranscriptFromTimedText(videoId);
+      try { 
+        transcript = await fetchTranscriptFromTimedText(videoId); 
+      } catch (e) { 
+        console.warn('TimedText transcript fetch failed:', e instanceof Error ? e.message : e); 
+      }
     }
 
     if (!transcript || transcript.length < 50) {
       return Response.json({ 
         success: false, 
-        error: 'Transcrição indisponível para este vídeo. Tente outro vídeo ou um com legendas geradas.' 
+        error: 'Transcrição indisponível para este vídeo (sem legendas). Use um vídeo com legendas automáticas/CC ativas.' 
       }, { status: 404 });
     }
 
@@ -180,13 +210,18 @@ Tarefas a cumprir:
 3) questions: Exatamente 3 questões de múltipla escolha (A-D), com a correta e explicação, baseadas SOMENTE na transcrição.
 `;
 
-    const analysisResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
-      add_context_from_internet: false,
-      response_json_schema: json_schema
-    });
+    try {
+      const analysisResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt,
+        add_context_from_internet: false,
+        response_json_schema: json_schema
+      });
 
-    return Response.json({ success: true, data: analysisResult });
+      return Response.json({ success: true, data: analysisResult });
+    } catch (llmError) {
+      console.error('InvokeLLM error:', llmError);
+      return Response.json({ success: false, error: 'Falha ao gerar análise com IA. Tente novamente em instantes.' }, { status: 502 });
+    }
 
   } catch (error) {
     console.error('Erro na função analyzeYoutubeVideo:', error);

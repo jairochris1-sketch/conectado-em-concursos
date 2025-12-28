@@ -1,7 +1,6 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { BookOpen, TrendingUp } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
 const subjectNames = {

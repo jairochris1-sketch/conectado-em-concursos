@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from '@/entities/User';
 import { Subscription } from '@/entities/Subscription';
 import { createAsaasSubscription } from '@/functions/createAsaasSubscription';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Check, Loader2, ArrowLeft, CreditCard, X, Lock, Shield, AlertCircle, Clock, AlertTriangle } from 'lucide-react';
+import { Check, Loader2, ArrowLeft, X, Shield, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";

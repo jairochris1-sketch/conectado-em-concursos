@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Topic } from '@/entities/Topic';
+import { Subject } from '@/entities/Subject';
 import { Question } from '@/entities/Question';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Trash2, Edit, PlusCircle } from 'lucide-react';
+import { Trash2, Edit, PlusCircle, BookOpen, FileText } from 'lucide-react';
 
 const slugify = (text) =>
   text
@@ -23,17 +25,29 @@ const slugify = (text) =>
 export default function TopicManager() {
   const [topics, setTopics] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [customSubjects, setCustomSubjects] = useState([]);
   const [editingTopic, setEditingTopic] = useState(null);
+  const [editingSubject, setEditingSubject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('topics');
 
-  const { register, handleSubmit, reset, setValue, watch } = useForm();
-  const watchedLabel = watch('label');
+  const { register: registerTopic, handleSubmit: handleSubmitTopic, reset: resetTopic, setValue: setValueTopic, watch: watchTopic } = useForm();
+  const { register: registerSubject, handleSubmit: handleSubmitSubject, reset: resetSubject, setValue: setValueSubject, watch: watchSubject } = useForm();
+  
+  const watchedTopicLabel = watchTopic('label');
+  const watchedSubjectLabel = watchSubject('label');
 
   useEffect(() => {
-    if (watchedLabel && !editingTopic) {
-      setValue('value', slugify(watchedLabel));
+    if (watchedTopicLabel && !editingTopic) {
+      setValueTopic('value', slugify(watchedTopicLabel));
     }
-  }, [watchedLabel, setValue, editingTopic]);
+  }, [watchedTopicLabel, setValueTopic, editingTopic]);
+
+  useEffect(() => {
+    if (watchedSubjectLabel && !editingSubject) {
+      setValueSubject('value', slugify(watchedSubjectLabel));
+    }
+  }, [watchedSubjectLabel, setValueSubject, editingSubject]);
 
   useEffect(() => {
     fetchData();
@@ -42,12 +56,13 @@ export default function TopicManager() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [topicsData, questionSchema] = await Promise.all([
+      const [topicsData, questionSchema, customSubjectsData] = await Promise.all([
         Topic.list(),
-        Question.schema()
+        Question.schema(),
+        Subject.list('order')
       ]);
       
-      // CORREÇÃO: Remover duplicatas baseado em subject + value
+      // Remover duplicatas de topics
       const uniqueTopics = {};
       topicsData.forEach(topic => {
         if (topic && topic.value && topic.label && topic.subject) {
@@ -63,6 +78,7 @@ export default function TopicManager() {
       );
       
       setTopics(uniqueTopicsArray);
+      setCustomSubjects(customSubjectsData || []);
       
       if (questionSchema?.properties?.subject?.enum) {
         setSubjects(questionSchema.properties.subject.enum);
@@ -74,9 +90,8 @@ export default function TopicManager() {
     setIsLoading(false);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmitTopic = async (data) => {
     try {
-      // Verificar se já existe um assunto com o mesmo value na mesma disciplina
       const existingTopic = topics.find(t => 
         t.value === data.value && 
         t.subject === data.subject && 
@@ -95,7 +110,7 @@ export default function TopicManager() {
         await Topic.create(data);
         toast.success('Assunto criado com sucesso!');
       }
-      reset();
+      resetTopic();
       setEditingTopic(null);
       fetchData();
     } catch (error) {
@@ -104,14 +119,52 @@ export default function TopicManager() {
     }
   };
 
-  const handleEdit = (topic) => {
-    setEditingTopic(topic);
-    setValue('label', topic.label);
-    setValue('value', topic.value);
-    setValue('subject', topic.subject);
+  const onSubmitSubject = async (data) => {
+    try {
+      const existingSubject = customSubjects.find(s => 
+        s.value === data.value && 
+        (!editingSubject || s.id !== editingSubject.id)
+      );
+      
+      if (existingSubject) {
+        toast.error('Já existe uma disciplina com este valor.');
+        return;
+      }
+
+      if (editingSubject) {
+        await Subject.update(editingSubject.id, data);
+        toast.success('Disciplina atualizada com sucesso!');
+      } else {
+        await Subject.create({
+          ...data,
+          order: customSubjects.length
+        });
+        toast.success('Disciplina criada com sucesso!');
+      }
+      resetSubject();
+      setEditingSubject(null);
+      fetchData();
+    } catch (error) {
+      toast.error('Ocorreu um erro.');
+      console.error(error);
+    }
   };
 
-  const handleDelete = async (topicId) => {
+  const handleEditTopic = (topic) => {
+    setEditingTopic(topic);
+    setValueTopic('label', topic.label);
+    setValueTopic('value', topic.value);
+    setValueTopic('subject', topic.subject);
+  };
+
+  const handleEditSubject = (subject) => {
+    setEditingSubject(subject);
+    setValueSubject('label', subject.label);
+    setValueSubject('value', subject.value);
+    setValueSubject('order', subject.order || 0);
+  };
+
+  const handleDeleteTopic = async (topicId) => {
     if (window.confirm('Tem certeza que deseja excluir este assunto?')) {
       try {
         await Topic.delete(topicId);
@@ -124,9 +177,27 @@ export default function TopicManager() {
     }
   };
 
-  const cancelEdit = () => {
+  const handleDeleteSubject = async (subjectId) => {
+    if (window.confirm('Tem certeza que deseja excluir esta disciplina? Isso não afetará as questões já cadastradas.')) {
+      try {
+        await Subject.delete(subjectId);
+        toast.success('Disciplina excluída.');
+        fetchData();
+      } catch (error) {
+        toast.error('Falha ao excluir a disciplina.');
+        console.error(error);
+      }
+    }
+  };
+
+  const cancelEditTopic = () => {
     setEditingTopic(null);
-    reset();
+    resetTopic();
+  };
+
+  const cancelEditSubject = () => {
+    setEditingSubject(null);
+    resetSubject();
   };
 
   const topicsBySubject = topics.reduce((acc, topic) => {
@@ -134,82 +205,196 @@ export default function TopicManager() {
     return acc;
   }, {});
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-1">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PlusCircle className="w-5 h-5" />
-              {editingTopic ? 'Editar Assunto' : 'Novo Assunto'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <Label htmlFor="subject">Disciplina</Label>
-                <select
-                  id="subject"
-                  {...register('subject', { required: true })}
-                  className="w-full mt-1 p-2 border rounded-md dark:bg-gray-700 dark:text-white"
-                >
-                  <option value="">Selecione a Disciplina</option>
-                  {subjects.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="label">Nome do Assunto (Label)</Label>
-                <Input id="label" {...register('label', { required: true })} placeholder="Ex: Uso da Vírgula" />
-              </div>
-              <div>
-                <Label htmlFor="value">Valor (Automático)</Label>
-                <Input id="value" {...register('value', { required: true })} readOnly placeholder="ex: uso_da_virgula" />
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit">{editingTopic ? 'Salvar Alterações' : 'Criar Assunto'}</Button>
-                {editingTopic && <Button variant="outline" onClick={cancelEdit}>Cancelar</Button>}
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+  // Combinar disciplinas padrão + customizadas para seletor de tópicos
+  const allSubjectsForTopics = [
+    ...subjects,
+    ...customSubjects.filter(cs => cs.is_active).map(cs => cs.value)
+  ];
 
-      <div className="md:col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Assuntos Cadastrados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? <p>Carregando...</p> : (
-              <div className="space-y-6 max-h-[600px] overflow-y-auto">
-                {Object.keys(topicsBySubject).sort().map(subject => (
-                  <div key={subject}>
-                    <h3 className="font-bold text-lg capitalize mb-2 border-b pb-1">{subject.replace(/_/g, ' ')}</h3>
-                    <ul className="space-y-2">
-                      {topicsBySubject[subject].map(topic => (
-                        <li key={topic.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
-                          <div>
-                            <p className="font-medium text-gray-800 dark:text-gray-200">{topic.label}</p>
-                            <p className="text-xs text-gray-500">{topic.value}</p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => handleEdit(topic)}>
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(topic.id)}>
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </li>
+  return (
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsTrigger value="topics">
+          <FileText className="w-4 h-4 mr-2" />
+          Assuntos
+        </TabsTrigger>
+        <TabsTrigger value="subjects">
+          <BookOpen className="w-4 h-4 mr-2" />
+          Disciplinas
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="topics">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="w-5 h-5" />
+                  {editingTopic ? 'Editar Assunto' : 'Novo Assunto'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmitTopic(onSubmitTopic)} className="space-y-4">
+                  <div>
+                    <Label htmlFor="subject">Disciplina</Label>
+                    <select
+                      id="subject"
+                      {...registerTopic('subject', { required: true })}
+                      className="w-full mt-1 p-2 border rounded-md dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">Selecione a Disciplina</option>
+                      {allSubjectsForTopics.map(s => (
+                        <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
                       ))}
-                    </ul>
+                    </select>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+                  <div>
+                    <Label htmlFor="label">Nome do Assunto</Label>
+                    <Input id="label" {...registerTopic('label', { required: true })} placeholder="Ex: Uso da Vírgula" />
+                  </div>
+                  <div>
+                    <Label htmlFor="value">Valor (Automático)</Label>
+                    <Input id="value" {...registerTopic('value', { required: true })} readOnly placeholder="ex: uso_da_virgula" />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit">{editingTopic ? 'Salvar' : 'Criar'}</Button>
+                    {editingTopic && <Button type="button" variant="outline" onClick={cancelEditTopic}>Cancelar</Button>}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Assuntos Cadastrados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? <p>Carregando...</p> : (
+                  <div className="space-y-6 max-h-[600px] overflow-y-auto">
+                    {Object.keys(topicsBySubject).sort().map(subject => (
+                      <div key={subject}>
+                        <h3 className="font-bold text-lg capitalize mb-2 border-b pb-1">{subject.replace(/_/g, ' ')}</h3>
+                        <ul className="space-y-2">
+                          {topicsBySubject[subject].map(topic => (
+                            <li key={topic.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
+                              <div>
+                                <p className="font-medium text-gray-800 dark:text-gray-200">{topic.label}</p>
+                                <p className="text-xs text-gray-500">{topic.value}</p>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button variant="ghost" size="icon" onClick={() => handleEditTopic(topic)}>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" onClick={() => handleDeleteTopic(topic.id)}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="subjects">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="w-5 h-5" />
+                  {editingSubject ? 'Editar Disciplina' : 'Nova Disciplina'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmitSubject(onSubmitSubject)} className="space-y-4">
+                  <div>
+                    <Label htmlFor="subject-label">Nome da Disciplina</Label>
+                    <Input 
+                      id="subject-label" 
+                      {...registerSubject('label', { required: true })} 
+                      placeholder="Ex: Direito Empresarial" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subject-value">Valor (Automático)</Label>
+                    <Input 
+                      id="subject-value" 
+                      {...registerSubject('value', { required: true })} 
+                      readOnly 
+                      placeholder="ex: direito_empresarial" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subject-order">Ordem de Exibição</Label>
+                    <Input 
+                      id="subject-order" 
+                      type="number" 
+                      {...registerSubject('order')} 
+                      placeholder="0" 
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit">{editingSubject ? 'Salvar' : 'Criar'}</Button>
+                    {editingSubject && <Button type="button" variant="outline" onClick={cancelEditSubject}>Cancelar</Button>}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Disciplinas Personalizadas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? <p>Carregando...</p> : (
+                  <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                    {customSubjects.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Nenhuma disciplina personalizada ainda.</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {customSubjects.map(subject => (
+                          <li key={subject.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-800 dark:text-gray-200">{subject.label}</p>
+                              <p className="text-xs text-gray-500">{subject.value}</p>
+                              <p className="text-xs text-gray-400">Ordem: {subject.order || 0}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="icon" onClick={() => handleEditSubject(subject)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-red-500 hover:text-red-600" 
+                                onClick={() => handleDeleteSubject(subject.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
   );
 }

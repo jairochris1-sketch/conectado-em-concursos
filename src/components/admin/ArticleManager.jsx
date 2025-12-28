@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Article } from '@/entities/Article';
 import { Topic } from '@/entities/Topic';
 import { Button } from '@/components/ui/button';
@@ -6,12 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { BookOpen, Plus, Edit, Trash2, Eye, Save, X } from 'lucide-react';
+import { BookOpen, Plus, Edit, Trash2, Save, X } from 'lucide-react';
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { UserAnswer, Simulation, User } from "@/entities/all";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -150,28 +150,33 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col gap-4 mb-6 md:mb-8"
         >
+          {/* Título + mensagens */}
           <div>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              {getGreeting()}, {currentUser?.full_name || 'Concurseiro'}! 
-              <span className="inline-block ml-2">👋</span>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
+              Meu Painel
             </h1>
-            {/* Alteração da frase estática para a frase motivacional */}
-            <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg">
-              {motivationalQuote}
-            </p>
+            <div className="mt-2 space-y-1 text-gray-700 dark:text-gray-300 text-sm md:text-base">
+              <p>👋 {getGreeting()}, {currentUser?.full_name || 'user'}!</p>
+              <p>“{motivationalQuote.replace(/^.*?[“"]|[”"]$/g, '')}”</p>
+            </div>
           </div>
+
+          {/* CTA principal + Ver Ranking */}
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Link to={createPageUrl("Questions")} className="flex-1">
               <Button 
-                className="w-full text-white shadow-lg"
+                className="w-full text-white shadow-sm rounded-md py-5 md:py-6 text-base md:text-lg"
                 style={{ backgroundColor: 'var(--primary-color)' }}
               >
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className="w-5 h-5 mr-2" />
                 Resolver Questões
               </Button>
             </Link>
-            <Link to={createPageUrl("Ranking")} className="flex-1">
-              <Button variant="outline" className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/50">
+            <Link to={createPageUrl("Ranking")} className="sm:w-auto">
+              <Button 
+                variant="outline" 
+                className="w-full sm:w-auto rounded-md border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
                 <Trophy className="w-4 h-4 mr-2" />
                 Ver Ranking
               </Button>

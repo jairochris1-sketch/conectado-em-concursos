@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FlashcardReview } from '@/entities/FlashcardReview';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { RotateCcw, Eye, EyeOff, Timer, CheckCircle } from 'lucide-react';
+import { Eye, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Algoritmo SM-2 para repetição espaçada

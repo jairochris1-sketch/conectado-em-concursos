@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { User } from '@/entities/User';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

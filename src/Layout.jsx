@@ -14,21 +14,19 @@ import {
   Upload,
   BookOpen,
   BookCopy,
-  DollarSign,
-  Wand2,
+  CreditCard,
   Bot,
-  Youtube,
   Lock,
-  Search,
   User as UserIcon,
   ChevronDown,
   ArrowUp,
   Menu,
   X,
   AlertTriangle,
-  Award, // Ícone para os planos
-  Pencil, // NOVO: Ícone para a Lousa Digital
-  ClipboardList // NOVO: Ícone para Anotações
+  Award,
+  Pencil,
+  ClipboardList,
+  BookOpen as BookOpenIcon, // Added for the new item
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -77,7 +75,7 @@ const navigationItems = [
   {
     title: "Planos",
     url: createPageUrl("Subscription"),
-    icon: DollarSign,
+    icon: CreditCard, // changed from DollarSign
   }
 ];
 
@@ -98,13 +96,13 @@ const moreMenuItems = [
     icon: Pencil,
   },
   {
-    title: "Análise de Vídeos",
-    url: createPageUrl("VideoAnalysis"),
-    icon: Youtube,
+    title: "Minhas Anotações",
+    url: createPageUrl("Notes"),
+    icon: ClipboardList,
   },
   {
-    title: "Minhas Anotações", // NOVO: Item de menu para Anotações
-    url: createPageUrl("Notes"),
+    title: "Simulados Digital",
+    url: createPageUrl("SimuladosDigital"),
     icon: ClipboardList,
   },
   {
@@ -116,7 +114,12 @@ const moreMenuItems = [
     title: "Minhas Estatísticas",
     url: createPageUrl("Statistics"),
     icon: BarChart3,
-  }
+  },
+  {
+    title: "Como estudar para ser aprovado",
+    url: createPageUrl("ComoEstudarPrimeiroLugar"),
+    icon: BookOpenIcon,
+  },
 ];
 
 const pageNameTranslations = {
@@ -137,20 +140,23 @@ const pageNameTranslations = {
   VideoAnalysis: "Análise de Vídeos",
   SavedContests: "Concursos Abertos",
   DigitalWhiteboard: "Lousa Digital",
-  Notes: "Minhas Anotações" // NOVO: Tradução para Anotações
+  Notes: "Minhas Anotações",
+  SimuladosDigital: "Simulados Digital",
+  SDAdmin: "Admin Simulados Digital",
+  ComoEstudarPrimeiroLugar: "Como estudar para ser aprovado em primeiro lugar",
 };
 
-// Remover referência não usada de 'IA Simulados' no controle de acesso
 const featureAccess = {
   'Área de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
   'ChatGPT': ['padrao', 'avancado'],
   'Criar Simulado': ['avancado'],
-  'Análise de Vídeos': ['avancado'],
   'Concursos Abertos': ['padrao', 'avancado'],
   'Planos': ['gratuito', 'padrao', 'avancado'],
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
+  'Simulados Digital': ['padrao', 'avancado'],
+  'Como estudar para ser aprovado em primeiro lugar': ['gratuito', 'padrao', 'avancado'],
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -164,7 +170,6 @@ const checkAccess = (featureTitle, plan, isAdmin) => {
   return featureAccess[featureTitle].includes(plan);
 };
 
-// NOVO: Estilos e informações dos planos
 const planStyles = {
   gratuito: {
     label: "Plano Gratuito",
@@ -201,7 +206,6 @@ export default function Layout({ children, currentPageName }) {
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com');
   
-  // Efeito para aplicar tema salvo no carregamento inicial
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
@@ -243,7 +247,6 @@ export default function Layout({ children, currentPageName }) {
         
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
         
-        // Lógica para iniciar o trial para usuários 'gratuitos' que ainda não usaram
         if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
             console.log("Iniciando período de teste para usuário 'gratuito'.");
             await User.updateMyUserData({ 
@@ -255,7 +258,6 @@ export default function Layout({ children, currentPageName }) {
             setUser(userData);
         }
         
-        // Lógica existente para verificar expiração do trial
         if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
             const trialStartDate = new Date(userData.trial_start_date);
             const now = new Date();
@@ -279,7 +281,6 @@ export default function Layout({ children, currentPageName }) {
             setTrialNotification({ show: false, days: 0 });
         }
         
-        // CORRIGIDO: Verificar acesso usando current_plan atualizado (que pode incluir trial)
         const userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
@@ -416,8 +417,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full bg-slate-50 dark:bg-gray-900 relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif' }}>
-      {/* NOVO: Menu Lateral Mobile */}
+    <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#1c2c34' }}>
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -444,7 +444,6 @@ export default function Layout({ children, currentPageName }) {
                 </Button>
               </div>
 
-              {/* Informações do usuário no menu mobile */}
               <div className="p-4 flex items-center gap-3 border-b border-black border-opacity-20">
                 <Avatar className="w-12 h-12">
                   <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
@@ -485,6 +484,7 @@ export default function Layout({ children, currentPageName }) {
                   );
                 })}
                 {isAdmin && (
+                  <>
                   <Link
                     to={createPageUrl("Admin")}
                     onClick={() => setIsMobileMenuOpen(false)}
@@ -493,8 +493,19 @@ export default function Layout({ children, currentPageName }) {
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                    <span>Admin</span>
+                    <span>Admin Geral</span>
                   </Link>
+                  <Link
+                    to={createPageUrl("SDAdmin")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                    <span>Admin Simulados Digital</span>
+                  </Link>
+                  </>
                 )}
               </nav>
               <div className="p-4 border-t border-black border-opacity-20">
@@ -508,12 +519,14 @@ export default function Layout({ children, currentPageName }) {
         )}
       </AnimatePresence>
 
-      {/* Header horizontal expandido */}
       <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
-        {/* Logo compacto */}
         <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
-                <Shield className="w-4 h-4 text-white" />
+            <div
+              className="relative w-8 h-8 rounded-lg flex items-center justify-center shadow-lg"
+              style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
+            >
+              <BookOpen className="w-4 h-4 text-white" />
+              <Pencil className="w-3 h-3 text-yellow-300 absolute bottom-0 right-0" />
             </div>
             <div>
                 <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
@@ -524,7 +537,6 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        {/* Navegação Principal - itens principais + dropdown Mais */}
         <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl">
             {navigationItems.map((item) => {
                 const hasAccess = checkAccess(item.title, userPlan, isAdmin);
@@ -551,7 +563,6 @@ export default function Layout({ children, currentPageName }) {
                 );
             })}
             
-            {/* Menu Dropdown "Mais" */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
@@ -585,21 +596,29 @@ export default function Layout({ children, currentPageName }) {
                          );
                     })}
                     {isAdmin && (
+                        <>
                         <DropdownMenuItem asChild>
                              <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm">
                                 <div className="flex items-center gap-2">
                                     <Shield style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                                    <span>Admin</span>
+                                    <span>Admin Geral</span>
                                 </div>
                             </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm">
+                                <div className="flex items-center gap-2">
+                                    <Shield style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                                    <span>Admin Simulados Digital</span>
+                                </div>
+                            </Link>
+                        </DropdownMenuItem>
+                        </>
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>
 
-        {/* Botões Centrais - Enviar Prova (IA Simulados removido) */}
-        {/* START EDIT */}
         <div className="hidden md:flex items-center gap-2">
           <Button
             onClick={() => setShowProvaUploader(true)}
@@ -611,9 +630,7 @@ export default function Layout({ children, currentPageName }) {
             <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
         </div>
-        {/* END EDIT */}
 
-        {/* Menu do Usuário - com notificações */}
         <div className="flex items-center gap-2 ml-4">
           <NotificationDropdown />
           
@@ -641,7 +658,7 @@ export default function Layout({ children, currentPageName }) {
             <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
               {user.job_title && (
                 <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
-                  <BookOpen className="w-4 h-4" /> {/* Or another appropriate icon */}
+                  <BookOpen className="w-4 h-4" />
                   {user.job_title}
                 </DropdownMenuItem>
               )}
@@ -658,7 +675,6 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </header>
 
-      {/* NOVO: BANNER DE AVISO DO PERÍODO DE TESTE */}
       <AnimatePresence>
         {showTrialBanner && trialNotification.show && (
           <motion.div
@@ -688,17 +704,19 @@ export default function Layout({ children, currentPageName }) {
         )}
       </AnimatePresence>
 
-      {/* Conteúdo principal */}
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Header mobile */}
         <header className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-40 print-hide">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" className="-ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsMobileMenuOpen(true)}>
                   <Menu className="w-6 h-6" />
                 </Button>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--primary-color)' }}>
-                  <Shield className="w-5 h-5 text-white" />
+                <div
+                  className="relative w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: 'var(--primary-color)' }}
+                >
+                  <BookOpen className="w-5 h-5 text-white" />
+                  <Pencil className="w-3 h-3 text-white absolute bottom-0 right-0 opacity-90" />
                 </div>
                 <div>
                   <h1 className="text-lg font-bold text-gray-900 dark:text-white">Conectado SE</h1>
@@ -714,7 +732,7 @@ export default function Layout({ children, currentPageName }) {
                     className="text-white"
                     style={{ backgroundColor: 'var(--primary-color)' }}
                   >
-                    <DollarSign className="w-4 h-4 mr-1" />
+                    <CreditCard className="w-4 h-4 mr-1" />
                     Assinar
                   </Button>
                 </Link>
@@ -722,7 +740,6 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
 
-        {/* Sub-header para Desktop - mais compacto */}
         <header className="hidden md:flex bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3 items-center justify-between shadow-sm print-hide">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {pageNameTranslations[currentPageName] || currentPageName}
@@ -731,19 +748,18 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </header>
 
-        {/* Área de conteúdo */}
-        <div className="flex-1 overflow-auto bg-slate-50 dark:bg-gray-900 pb-20 md:pb-0">
+        <div
+          className="flex-1 overflow-auto pb-20 md:pb-0"
+          style={{ backgroundColor: '#1c2c34' }}
+        >
           {children}
         </div>
       </main>
 
-      {/* Barra de navegação inferior - apenas mobile (mantida) */}
       <BottomNavBar userPlan={userPlan} checkAccess={checkAccess} isAdmin={isAdmin} className="print-hide" />
 
-      {/* Modal de Upload (mantido) */}
       <ProvaUploader isOpen={showProvaUploader} onOpenChange={setShowProvaUploader} />
 
-      {/* NOVO: Botão de Voltar ao Topo */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.div
@@ -765,7 +781,6 @@ export default function Layout({ children, currentPageName }) {
         )}
       </AnimatePresence>
 
-      {/* NOVO: Botão de Modo Escuro */}
       <ThemeToggle />
     </div>
   );

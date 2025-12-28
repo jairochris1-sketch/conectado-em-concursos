@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StudyMaterial } from '@/entities/StudyMaterial';
 import { Notification } from '@/entities/Notification';
 import { UploadFile } from '@/integrations/Core';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, FileText, Image, Loader2, X } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox'; // NEW: Import Checkbox component
+import { Checkbox } from '@/components/ui/checkbox';
 
 const cargoOptions = [
   { value: "materiais_questoes", label: "📝 Materiais de Questões" },
@@ -73,6 +73,7 @@ const typeOptions = [
   { value: "revisao", label: "Revisão" },
   { value: "exercicio", label: "Exercício" },
   { value: "resumo", label: "Resumo" },
+  { value: "leis", label: "Leis" },
   { value: "chatgpt", label: "ChatGPT" }
 ];
 
@@ -82,7 +83,7 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
     description: '',
     type: 'teoria',
     cargo: '',
-    subjects: [], // Changed from subject to subjects array
+    subjects: [],
     tags: ''
   });
   const [selectedFile, setSelectedFile] = useState(null);
@@ -119,13 +120,13 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!selectedFile && formData.type !== 'chatgpt') { // File is optional for ChatGPT type
+    // Agora somente título e arquivo (quando não for ChatGPT) são obrigatórios
+    if (!selectedFile && formData.type !== 'chatgpt') {
       alert('Por favor, selecione um arquivo.');
       return;
     }
-    
-    if (!formData.title.trim() || !formData.cargo || formData.subjects.length === 0) { // Changed validation for subjects
-      alert('Por favor, preencha todos os campos obrigatórios e selecione pelo menos uma disciplina.');
+    if (!formData.title.trim()) {
+      alert('Por favor, informe o título do material.');
       return;
     }
 
@@ -149,12 +150,12 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
       }
       
       // Criar material
-      const newMaterial = await StudyMaterial.create({
+      await StudyMaterial.create({
         title: formData.title.trim(),
         description: formData.description.trim(),
         type: formData.type,
-        cargo: formData.cargo,
-        subjects: formData.subjects, // Array of subjects
+        cargo: formData.cargo || undefined, // Make cargo optional
+        subjects: formData.subjects || [],   // Subjects are now optional
         file_url: file_url,
         file_type: file_type,
         file_name: file_name,
@@ -165,7 +166,7 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
       try {
         await Notification.create({
           title: 'Novo Material Disponível! 📚',
-          message: `Foi adicionado um novo material para ${formData.cargo.replace(/_/g, ' ')}: "${formData.title}"`, // Updated message
+          message: `Foi adicionado um novo material: "${formData.title}"`, // Updated message
           type: 'new_material',
           is_global: true,
           target_users: [],
@@ -177,7 +178,7 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
       }
 
       alert('Material adicionado com sucesso!');
-      onMaterialUploaded();
+      onMaterialUploaded?.(); // Safely call onMaterialUploaded
     } catch (error) {
       console.error('Erro ao adicionar material:', error);
       alert('Erro ao adicionar material. Tente novamente.');
@@ -218,7 +219,7 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
             <div>
               <Label htmlFor="type" className="dark:text-gray-200">Tipo de Material *</Label>
               <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                <SelectTrigger className="dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600 focus:dark:ring-blue-500 focus:dark:border-blue-500">
+                <SelectTrigger className="dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600 focus:dark:ring-blue-500 focus:dark:border-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600">
@@ -232,10 +233,10 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="cargo" className="dark:text-gray-200">Cargo *</Label>
+              <Label htmlFor="cargo" className="dark:text-gray-200">Cargo (opcional)</Label>
               <Select value={formData.cargo} onValueChange={(value) => handleInputChange('cargo', value)}>
                 <SelectTrigger className="dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600 focus:dark:ring-blue-500 focus:dark:border-blue-500">
-                  <SelectValue placeholder="Selecione um cargo" />
+                  <SelectValue placeholder="Selecione um cargo (opcional)" />
                 </SelectTrigger>
                 <SelectContent className="dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600">
                   {cargoOptions.map(option => (
@@ -249,7 +250,7 @@ export default function StudyMaterialUploader({ onMaterialUploaded, onCancel }) 
           </div>
 
           <div>
-            <Label className="dark:text-gray-200 mb-3 block">Disciplinas * (selecione uma ou mais)</Label>
+            <Label className="dark:text-gray-200 mb-3 block">Disciplinas (opcional)</Label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto p-4 border rounded-lg dark:border-gray-600">
               {subjectOptions.map(option => (
                 <div key={option.value} className="flex items-center space-x-2">
