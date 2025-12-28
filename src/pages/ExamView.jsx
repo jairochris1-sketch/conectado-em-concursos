@@ -62,8 +62,10 @@ export default function ExamView() {
         const user = await User.me();
         setCurrentUser(user);
         
-        const examName = exam_name ? decodeURIComponent(exam_name) : null;
-        if (!institution || !year || !examName) {
+        const rawExamName = exam_name;
+        const examName = rawExamName ? decodeURIComponent(rawExamName) : null;
+        const sanitizedExamName = (!examName || examName === 'undefined' || examName === 'null' || examName === 'N/A') ? null : examName;
+        if (!institution || !year) {
           setIsLoading(false);
           return;
         }
@@ -73,8 +75,10 @@ export default function ExamView() {
         const query = {
           institution,
           year: parseInt(year),
-          exam_name: examName,
         };
+        if (sanitizedExamName) {
+          query.exam_name = sanitizedExamName;
+        }
         if (
           cargoParam &&
           cargoParam !== 'Cargo não especificado' &&
@@ -95,7 +99,7 @@ export default function ExamView() {
             ? 'Não especificado'
             : cargoParam;
           setExamInfo({
-            name: examName,
+            name: sanitizedExamName || firstQuestion.exam_name || 'Prova',
             institution: institution,
             year: year,
             cargo: displayCargo,
