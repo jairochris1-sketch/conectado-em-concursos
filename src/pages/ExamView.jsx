@@ -83,7 +83,37 @@ export default function ExamView() {
         ) {
           query.cargo = cargoParam;
         }
-        const fetchedQuestions = await Question.filter(query);
+        let fetchedQuestions = await Question.filter(query);
+
+        if (!fetchedQuestions || fetchedQuestions.length === 0) {
+          const allByYear = await Question.filter({
+            institution,
+            year: parseInt(year)
+          });
+
+          const norm = (s) => (s || '')
+            .toString()
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, ' ');
+
+          const targetExam = norm(exam_name);
+          const targetCargo = norm(cargoParam);
+
+          let candidates = allByYear.filter(q => norm(q.exam_name) === targetExam);
+          if (candidates.length === 0) {
+            candidates = allByYear.filter(q => norm(q.exam_name).includes(targetExam));
+          }
+          if (
+            candidates.length > 0 &&
+            targetCargo &&
+            targetCargo !== 'cargo não especificado' &&
+            targetCargo !== 'n/a'
+          ) {
+            candidates = candidates.filter(q => norm(q.cargo) === targetCargo);
+          }
+          fetchedQuestions = candidates;
+        }
         
         setQuestions(fetchedQuestions);
         
