@@ -466,7 +466,12 @@ export default function ArticleManager() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {articlesBySubject[subject].map(article => (
+                    {[...articlesBySubject[subject]].sort((a,b) => {
+                        const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+                        const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+                        if (ao !== bo) return ao - bo;
+                        return (a.title || '').localeCompare(b.title || '', 'pt-BR', { numeric: true });
+                      }).map(article => (
                       <div key={article.id} className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
