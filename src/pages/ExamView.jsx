@@ -62,7 +62,8 @@ export default function ExamView() {
         const user = await User.me();
         setCurrentUser(user);
         
-        if (!institution || !year || !exam_name) {
+        const examName = exam_name ? decodeURIComponent(exam_name) : null;
+        if (!institution || !year || !examName) {
           setIsLoading(false);
           return;
         }
@@ -72,7 +73,7 @@ export default function ExamView() {
         const query = {
           institution,
           year: parseInt(year),
-          exam_name,
+          exam_name: examName,
         };
         if (
           cargoParam &&
@@ -94,7 +95,7 @@ export default function ExamView() {
             ? 'Não especificado'
             : cargoParam;
           setExamInfo({
-            name: exam_name,
+            name: examName,
             institution: institution,
             year: year,
             cargo: displayCargo,
