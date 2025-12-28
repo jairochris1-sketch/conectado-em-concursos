@@ -62,10 +62,7 @@ export default function ExamView() {
         const user = await User.me();
         setCurrentUser(user);
         
-        const rawExamName = exam_name;
-        const examName = rawExamName ? decodeURIComponent(rawExamName) : null;
-        const sanitizedExamName = (!examName || examName === 'undefined' || examName === 'null' || examName === 'N/A') ? null : examName;
-        if (!institution || !year) {
+        if (!institution || !year || !exam_name) {
           setIsLoading(false);
           return;
         }
@@ -75,10 +72,8 @@ export default function ExamView() {
         const query = {
           institution,
           year: parseInt(year),
+          exam_name,
         };
-        if (sanitizedExamName) {
-          query.exam_name = sanitizedExamName;
-        }
         if (
           cargoParam &&
           cargoParam !== 'Cargo não especificado' &&
@@ -88,29 +83,18 @@ export default function ExamView() {
         ) {
           query.cargo = cargoParam;
         }
-        let fetchedQuestions = await Question.filter(query);
-        if (fetchedQuestions.length === 0 && sanitizedExamName) {
-          const trimmed = sanitizedExamName.trim();
-          if (trimmed !== sanitizedExamName) {
-            fetchedQuestions = await Question.filter({ ...query, exam_name: trimmed });
-          }
-        }
-        if (fetchedQuestions.length === 0) {
-          const { exam_name: _omit, ...noNameQuery } = query;
-          fetchedQuestions = await Question.filter(noNameQuery);
-        }
+        const fetchedQuestions = await Question.filter(query);
         
         setQuestions(fetchedQuestions);
         
         // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
           const firstQuestion = fetchedQuestions[0];
-          const rawCargo = cargo ? decodeURIComponent(cargo) : null;
-          const displayCargo = (!rawCargo || rawCargo === 'Cargo não especificado' || rawCargo === 'N/A' || rawCargo === 'null' || rawCargo === 'undefined')
+          const displayCargo = (!cargoParam || cargoParam === 'Cargo não especificado' || cargoParam === 'N/A' || cargoParam === 'null' || cargoParam === 'undefined')
             ? 'Não especificado'
-            : rawCargo;
+            : cargoParam;
           setExamInfo({
-            name: sanitizedExamName || firstQuestion.exam_name || 'Prova',
+            name: exam_name,
             institution: institution,
             year: year,
             cargo: displayCargo,
