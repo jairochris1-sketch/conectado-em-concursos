@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +22,13 @@ import {
   Play,
   BarChart3,
   Timer,
+  Loader2,
   X,
+  Grid3X3,
+  List,
+  AlignJustify,
+  Square,
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Save,
@@ -32,7 +38,7 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import StudyMaterialViewer from '../components/studies/StudyMaterialViewer';
 import StudyMaterialUploader from '../components/studies/StudyMaterialUploader';
@@ -90,16 +96,14 @@ const typeNames = {
   teoria: "Teoria",
   revisao: "Revisão",
   exercicio: "Exercício",
-  resumo: "Resumo",
-  leis: "Leis"
+  resumo: "Resumo"
 };
 
 const typeColors = {
   teoria: "bg-blue-100 text-blue-800",
   revisao: "bg-green-100 text-green-800",
   exercicio: "bg-purple-100 text-purple-800",
-  resumo: "bg-orange-100 text-orange-800",
-  leis: "bg-amber-100 text-amber-800"
+  resumo: "bg-orange-100 text-orange-800"
 };
 
 const VIEW_MODES = {
@@ -1348,7 +1352,7 @@ ${videoNotes}
 
         {/* Modal do Artigo com Modo Escuro */}
         {selectedArticle && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 overflow-y-auto">
             <div className={`rounded-lg shadow-xl max-w-4xl w-full my-8 ${articleDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
               <div className={`flex justify-between items-start p-6 border-b ${articleDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <div className="flex-1">

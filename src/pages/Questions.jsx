@@ -142,17 +142,14 @@ export default function Questions() {
     try {
       let tempFiltered = [...allQuestions];
 
-      // Busca por texto no enunciado, comando e texto associado
       if (filters.keyword) {
         const lowercasedKeyword = filters.keyword.toLowerCase();
         tempFiltered = tempFiltered.filter(q => 
           (q.statement?.toLowerCase().includes(lowercasedKeyword)) ||
-          (q.command?.toLowerCase().includes(lowercasedKeyword)) ||
-          (q.associated_text?.toLowerCase().includes(lowercasedKeyword))
+          (q.command?.toLowerCase().includes(lowercasedKeyword))
         );
       }
 
-      // Múltiplos filtros simultâneos
       if (filters.subjects && filters.subjects.length > 0) {
         tempFiltered = tempFiltered.filter(q => filters.subjects.includes(q.subject));
       }

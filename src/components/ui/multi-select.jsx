@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDown, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export function MultiSelect({ options, selected, onChange, placeholder, className }) {
   const [open, setOpen] = useState(false);

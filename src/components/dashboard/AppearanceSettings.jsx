@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Palette } from 'lucide-react';
+import { Palette, Ruler } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Mapeamento de tamanhos para valores rem (P: 14px, M: 16px, G: 20px)

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User } from '@/entities/User';
 import { Question } from '@/entities/Question';
@@ -10,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper } from 'lucide-react'; // Added Newspaper for Articles
 import { format } from "date-fns";
 import { toast } from 'sonner';
 
@@ -21,7 +22,7 @@ import AdminContentForm from '../components/admin/AdminContentForm';
 import AdminFAQForm from '../components/admin/AdminFAQForm';
 import TopicManager from '../components/admin/TopicManager';
 import NotificationManager from '../components/admin/NotificationManager';
-import ArticleManager from '../components/admin/ArticleManager';
+import ArticleManager from '../components/admin/ArticleManager'; // NEW: Import ArticleManager
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -33,10 +34,6 @@ const VideoManager = lazy(() => import('@/components/admin/VideoManager'));
 const subjectNames = {
   portugues: "Português",
   matematica: "Matemática",
-  raciocinio_logico: "Raciocínio Lógico",
-  informatica: "Informática",
-  tecnologia_informacao: "Tecnologia da Informação",
-  conhecimentos_gerais: "Conhecimentos Gerais",
   direito_constitucional: "Direito Constitucional",
   direito_administrativo: "Direito Administrativo",
   direito_penal: "Direito Penal",
@@ -45,33 +42,30 @@ const subjectNames = {
   direito_previdenciario: "Direito Previdenciário",
   direito_eleitoral: "Direito Eleitoral",
   direito_ambiental: "Direito Ambiental",
-  direito_trabalho: "Direito do Trabalho",
-  direito_processual_penal: "Direito Processual Penal",
   administracao_geral: "Administração Geral",
   administracao_publica: "Administração Pública",
-  afo: "AFO",
-  gestao_pessoas: "Gestão de Pessoas",
   administracao_recursos_materiais: "Administração de Recursos Materiais",
-  arquivologia: "Arquivologia",
+  afo: "AFO",
   financas_publicas: "Finanças Públicas",
   etica_administracao: "Ética na Administração",
+  arquivologia: "Arquivologia",
   atendimento_publico: "Atendimento ao Público",
-  comunicacao_social: "Comunicação Social",
   direitos_humanos: "Direitos Humanos",
   eca: "ECA",
+  informatica: "Informática",
+  conhecimentos_gerais: "Conhecimentos Gerais",
+  legislacao_especifica: "Legislação Específica",
+  raciocinio_logico: "Raciocínio Lógico",
   contabilidade: "Contabilidade",
   economia: "Economia",
   estatistica: "Estatística",
   pedagogia: "Pedagogia",
-  educacao_fisica: "Educação Física",
-  ingles: "Inglês",
-  seguranca_publica: "Segurança Pública",
   lei_8112: "Lei 8.112/90",
   lei_8666: "Lei 8.666/93",
   lei_14133: "Lei 14.133/21",
   constituicao_federal: "Constituição Federal",
   regimento_interno: "Regimento Interno",
-  legislacao_especifica: "Legislação Específica",
+  seguranca_publica: "Segurança Pública",
   legislacao_estadual: "Legislação Estadual",
   legislacao_municipal: "Legislação Municipal"
 };
@@ -101,26 +95,6 @@ const institutionNames = {
   outras: "Outras"
 };
 
-// Arrays estáticos baseados no schema
-const STATIC_SUBJECTS = [
-  'portugues', 'matematica', 'raciocinio_logico', 'informatica', 'tecnologia_informacao',
-  'conhecimentos_gerais', 'direito_constitucional', 'direito_administrativo', 'direito_penal',
-  'direito_civil', 'direito_tributario', 'direito_previdenciario', 'direito_eleitoral',
-  'direito_ambiental', 'direito_trabalho', 'direito_processual_penal', 'administracao_geral',
-  'administracao_publica', 'afo', 'gestao_pessoas', 'administracao_recursos_materiais',
-  'arquivologia', 'financas_publicas', 'etica_administracao', 'atendimento_publico',
-  'comunicacao_social', 'direitos_humanos', 'eca', 'contabilidade', 'economia', 'estatistica',
-  'pedagogia', 'educacao_fisica', 'ingles', 'seguranca_publica', 'lei_8112', 'lei_8666',
-  'lei_14133', 'constituicao_federal', 'regimento_interno', 'legislacao_especifica',
-  'legislacao_estadual', 'legislacao_municipal'
-];
-
-const STATIC_INSTITUTIONS = [
-  'fcc', 'cespe', 'vunesp', 'fgv', 'cesgranrio', 'esaf', 'fundatec', 'consulplan',
-  'idecan', 'aocp', 'quadrix', 'instituto_aocp', 'planejar', 'ibptec', 'amiga_publica',
-  'ibade', 'ibfc', 'objetiva', 'iades', 'itame', 'outras'
-];
-
 export default function AdminPage() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -131,31 +105,12 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('questions');
 
   const [welcomeContent, setWelcomeContent] = useState(null);
-  const [faqs, setFaqs] = useState([]);
-  const [editingFAQ, setEditingFAQ] = useState(null);
+  const [faqs, setFaqs] = useState([]); // FAQ states kept for potential future use or non-UI access
+  const [editingFAQ, setEditingFAQ] = useState(null); // FAQ states kept
   
-  // States for subjects and institutions - inicializados com valores estáticos
-  const [allSubjects, setAllSubjects] = useState(() => {
-    const subjects = STATIC_SUBJECTS.map(key => ({
-      id: key,
-      name: subjectNames[key] || key
-    }));
-    subjects.sort((a, b) => {
-      if (a.name === 'Português') return -1;
-      if (b.name === 'Português') return 1;
-      return a.name.localeCompare(b.name);
-    });
-    return subjects;
-  });
-  
-  const [allInstitutions, setAllInstitutions] = useState(() => {
-    const institutions = STATIC_INSTITUTIONS.map(key => ({
-      id: key,
-      name: institutionNames[key] || key.toUpperCase()
-    }));
-    institutions.sort((a, b) => a.name.localeCompare(b.name));
-    return institutions;
-  });
+  // States for subjects and institutions
+  const [allSubjects, setAllSubjects] = useState([]);
+  const [allInstitutions, setAllInstitutions] = useState([]);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -166,7 +121,9 @@ export default function AdminPage() {
           setIsAdmin(true);
           loadQuestions();
           loadWelcomeContent();
-          loadFAQs();
+          loadFAQs(); // Kept for functionality, even if UI tab is removed
+          loadAllSubjects();
+          loadAllInstitutions();
         } else {
           navigate(createPageUrl('Dashboard'));
         }
@@ -177,6 +134,46 @@ export default function AdminPage() {
     };
     checkAdmin();
   }, [navigate]);
+
+  const loadAllSubjects = async () => {
+    try {
+      const questionSchema = await Question.schema();
+      if (questionSchema?.properties?.subject?.enum) {
+        const subjects = questionSchema.properties.subject.enum.map(subjectKey => ({
+          id: subjectKey,
+          name: subjectNames[subjectKey] || subjectKey
+        }));
+        // Ordenar com Português em primeiro
+        subjects.sort((a, b) => {
+          if (a.name === 'Português') return -1;
+          if (b.name === 'Português') return 1;
+          return a.name.localeCompare(b.name);
+        });
+        setAllSubjects(subjects);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar disciplinas para o admin:", error);
+      toast.error("Falha ao carregar disciplinas.");
+    }
+  };
+
+  const loadAllInstitutions = async () => {
+    try {
+      const questionSchema = await Question.schema();
+      if (questionSchema?.properties?.institution?.enum) {
+        const institutions = questionSchema.properties.institution.enum.map(instKey => ({
+          id: instKey,
+          name: institutionNames[instKey] || instKey.toUpperCase()
+        }));
+        // Ordenar alfabeticamente
+        institutions.sort((a, b) => a.name.localeCompare(b.name));
+        setAllInstitutions(institutions);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar instituições para o admin:", error);
+      toast.error("Falha ao carregar instituições.");
+    }
+  };
 
   const loadQuestions = async () => {
     setIsDataLoading(true);
@@ -205,6 +202,7 @@ export default function AdminPage() {
     }
   };
 
+  // FAQ functions are kept for "preserving all other features, elements and functionality"
   const loadFAQs = async () => {
     try {
       const faqData = await FAQ.list('-created_date');
@@ -217,7 +215,7 @@ export default function AdminPage() {
 
   const handleEditFAQ = (faq) => {
     setEditingFAQ(faq);
-    setActiveTab('faq');
+    setActiveTab('faq'); // This tab content is no longer directly accessible via a trigger
   };
 
   const handleDeleteFAQ = async (id) => {
@@ -235,7 +233,7 @@ export default function AdminPage() {
 
   const handleFAQSave = () => {
     setEditingFAQ(null);
-    setActiveTab('faq-list');
+    setActiveTab('faq-list'); // This tab content is no longer directly accessible via a trigger
     loadFAQs();
   };
 
@@ -288,7 +286,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8"> {/* Updated classname */}
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-3 mb-8">
           <Shield className="w-8 h-8 text-red-600" />
@@ -296,7 +294,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-9 md:grid-cols-9">
+          <TabsList className="grid w-full grid-cols-9 md:grid-cols-9"> {/* Adjusted grid-cols to 9 */}
             <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
               <Pencil className="w-4 h-4 mr-2" />
               Questões
@@ -313,11 +311,11 @@ export default function AdminPage() {
               <Upload className="w-4 h-4 mr-2" />
               Provas
             </TabsTrigger>
-            <TabsTrigger value="assinaturas">
+            <TabsTrigger value="assinaturas"> {/* Value changed from 'subscriptions' */}
               <CreditCard className="w-4 h-4 mr-2" />
               Assinaturas
             </TabsTrigger>
-            <TabsTrigger value="conteudo">
+            <TabsTrigger value="conteudo"> {/* Value changed from 'content' */}
               <FileText className="w-4 h-4 mr-2" />
               Conteúdo
             </TabsTrigger>
@@ -325,14 +323,15 @@ export default function AdminPage() {
               <Play className="w-4 h-4 mr-2" />
               Vídeos
             </TabsTrigger>
-            <TabsTrigger value="artigos">
-              <Newspaper className="w-4 h-4 mr-2" />
+            <TabsTrigger value="artigos"> {/* NEW Tab */}
+              <Newspaper className="w-4 h-4 mr-2" /> {/* Using Newspaper for articles */}
               Artigos
             </TabsTrigger>
-            <TabsTrigger value="assuntos">
+            <TabsTrigger value="assuntos"> {/* Value changed from 'topics' */}
               <BookOpen className="w-4 h-4 mr-2" />
               Assuntos
             </TabsTrigger>
+            {/* Removed: TabsTrigger for 'faq-list', 'notifications', and 'faq' based on outline's explicit list */}
           </TabsList>
 
           <TabsContent value="questions">
@@ -369,20 +368,23 @@ export default function AdminPage() {
             </Suspense>
           </TabsContent>
 
-          <TabsContent value="assinaturas">
+          <TabsContent value="assinaturas"> {/* Value changed from 'subscriptions' */}
             <Suspense fallback={<div>Carregando assinaturas...</div>}>
               <SubscriptionsList />
             </Suspense>
           </TabsContent>
 
-          <TabsContent value="conteudo">
+          <TabsContent value="conteudo"> {/* Value changed from 'content' */}
             <AdminContentForm
               content={welcomeContent}
               onSave={handleContentSave}
             />
           </TabsContent>
 
-          <TabsContent value="assuntos">
+          {/* Removed TabsContent for "faq-list" and "faq" as per outline's implied removal from UI */}
+          {/* FAQ functionality and state are preserved in the component, but not accessible via a tab */}
+
+          <TabsContent value="assuntos"> {/* Value changed from 'topics' */}
             <TopicManager />
           </TabsContent>
           
@@ -392,9 +394,12 @@ export default function AdminPage() {
             </Suspense>
           </TabsContent>
 
-          <TabsContent value="artigos" className="mt-6">
+          <TabsContent value="artigos" className="mt-6"> {/* NEW TabsContent */}
             <ArticleManager />
           </TabsContent>
+
+          {/* Removed TabsContent for "notifications" as per outline's implied removal from UI */}
+          {/* Notification functionality and state are preserved in the component, but not accessible via a tab */}
         </Tabs>
       </div>
     </div>

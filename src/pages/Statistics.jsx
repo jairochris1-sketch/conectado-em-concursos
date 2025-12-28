@@ -1,9 +1,9 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { TrendingUp, Target, BookOpen, Calendar } from "lucide-react";
+import { TrendingUp, Target, BookOpen, Calendar, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, subDays, eachDayOfInterval } from "date-fns";
 

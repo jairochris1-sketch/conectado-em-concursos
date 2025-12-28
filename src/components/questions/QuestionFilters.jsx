@@ -1,11 +1,11 @@
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Save, BookmarkPlus, Bookmark, X, Search, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { Filter, Save, BookmarkPlus, Bookmark, X, Search, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { SavedFilter } from "@/entities/SavedFilter";
 import { Topic } from "@/entities/Topic";
 import { User } from "@/entities/User";

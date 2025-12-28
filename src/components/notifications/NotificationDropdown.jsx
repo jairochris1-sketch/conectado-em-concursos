@@ -1,17 +1,18 @@
 
-import { useState, useEffect } from 'react';
-import { Bell, CheckCheck } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Bell, X, Check, CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Notification } from '@/entities/Notification';
 import { User } from '@/entities/User';
-// AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
-// Not used in this component, but kept as existing import.
+import { motion, AnimatePresence } from 'framer-motion'; // AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
+import { createPageUrl } from '@/utils'; // Not used in this component, but kept as existing import.
 
 export default function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);

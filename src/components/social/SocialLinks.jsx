@@ -1,3 +1,4 @@
+import React from 'react';
 import { Instagram, Youtube, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 

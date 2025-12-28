@@ -1,10 +1,10 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
+import { Plus, Calendar, Clock, Printer, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ScheduleForm from "../components/schedule/ScheduleForm";
