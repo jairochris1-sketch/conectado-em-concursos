@@ -83,13 +83,13 @@ export default function ExamView() {
         ) {
           query.cargo = cargoParam;
         }
-        let fetchedQuestions = await Question.filter(query);
+        let fetchedQuestions = await Question.filter(query, 'created_date');
 
         if (!fetchedQuestions || fetchedQuestions.length === 0) {
           const allByYear = await Question.filter({
             institution,
             year: parseInt(year)
-          });
+          }, 'created_date');
 
           const norm = (s) => (s || '')
             .toString()
@@ -115,7 +115,7 @@ export default function ExamView() {
           fetchedQuestions = candidates;
         }
         
-        setQuestions(fetchedQuestions);
+        setQuestions([...fetchedQuestions].sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
         
         // Pegar informações da primeira questão para downloads
         if (fetchedQuestions.length > 0) {
