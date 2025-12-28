@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
 import { Button } from '@/components/ui/button';
@@ -189,9 +188,15 @@ export default function StudiesPage() {
       setVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0)));
       setFilteredVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0))); // Initialize filtered videos with all videos
 
-      // Process Articles
-      setArticles(articlesData.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)));
-      setFilteredArticles(articlesData.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)));
+      // Process Articles (ordered strictly by numeric 'order' 1..N)
+      const sortedArticles = [...articlesData].sort((a, b) => {
+        const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+        const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+        if (ao !== bo) return ao - bo;
+        return (a.title || '').localeCompare(b.title || '', 'pt-BR', { numeric: true });
+      });
+      setArticles(sortedArticles);
+      setFilteredArticles(sortedArticles);
 
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
@@ -263,9 +268,12 @@ export default function StudiesPage() {
       );
     }
     
-    setFilteredArticles(filtered.sort((a, b) => 
-      (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)
-    ));
+    setFilteredArticles(filtered.sort((a, b) => {
+      const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+      const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+      if (ao !== bo) return ao - bo;
+      return (a.title || '').localeCompare(b.title || '', 'pt-BR', { numeric: true });
+    }));
   }, [selectedArticleSubject, articles, articleSearchTerm]);
 
   useEffect(() => {
