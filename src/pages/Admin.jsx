@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User } from '@/entities/User';
 import { Question } from '@/entities/Question';
@@ -95,6 +94,26 @@ const institutionNames = {
   outras: "Outras"
 };
 
+// Arrays estáticos baseados no schema
+const STATIC_SUBJECTS = [
+  'portugues', 'matematica', 'raciocinio_logico', 'informatica', 'tecnologia_informacao',
+  'conhecimentos_gerais', 'direito_constitucional', 'direito_administrativo', 'direito_penal',
+  'direito_civil', 'direito_tributario', 'direito_previdenciario', 'direito_eleitoral',
+  'direito_ambiental', 'direito_trabalho', 'direito_processual_penal', 'administracao_geral',
+  'administracao_publica', 'afo', 'gestao_pessoas', 'administracao_recursos_materiais',
+  'arquivologia', 'financas_publicas', 'etica_administracao', 'atendimento_publico',
+  'comunicacao_social', 'direitos_humanos', 'eca', 'contabilidade', 'economia', 'estatistica',
+  'pedagogia', 'educacao_fisica', 'ingles', 'seguranca_publica', 'lei_8112', 'lei_8666',
+  'lei_14133', 'constituicao_federal', 'regimento_interno', 'legislacao_especifica',
+  'legislacao_estadual', 'legislacao_municipal'
+];
+
+const STATIC_INSTITUTIONS = [
+  'fcc', 'cespe', 'vunesp', 'fgv', 'cesgranrio', 'esaf', 'fundatec', 'consulplan',
+  'idecan', 'aocp', 'quadrix', 'instituto_aocp', 'planejar', 'ibptec', 'amiga_publica',
+  'ibade', 'ibfc', 'objetiva', 'iades', 'itame', 'outras'
+];
+
 export default function AdminPage() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -108,9 +127,27 @@ export default function AdminPage() {
   const [faqs, setFaqs] = useState([]); // FAQ states kept for potential future use or non-UI access
   const [editingFAQ, setEditingFAQ] = useState(null); // FAQ states kept
   
-  // States for subjects and institutions
-  const [allSubjects, setAllSubjects] = useState([]);
-  const [allInstitutions, setAllInstitutions] = useState([]);
+  // States for subjects and institutions - inicializados com valores estáticos
+  const [allSubjects, setAllSubjects] = useState(() => {
+    const subjects = STATIC_SUBJECTS.map(key => ({
+      id: key,
+      name: subjectNames[key] || key
+    }));
+    subjects.sort((a, b) => {
+      if (a.name === 'Português') return -1;
+      if (b.name === 'Português') return 1;
+      return a.name.localeCompare(b.name);
+    });
+    return subjects;
+  });
+  const [allInstitutions, setAllInstitutions] = useState(() => {
+    const institutions = STATIC_INSTITUTIONS.map(key => ({
+      id: key,
+      name: institutionNames[key] || key.toUpperCase()
+    }));
+    institutions.sort((a, b) => a.name.localeCompare(b.name));
+    return institutions;
+  });
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -122,8 +159,7 @@ export default function AdminPage() {
           loadQuestions();
           loadWelcomeContent();
           loadFAQs(); // Kept for functionality, even if UI tab is removed
-          loadAllSubjects();
-          loadAllInstitutions();
+          // usando listas estáticas para disciplinas e bancas
         } else {
           navigate(createPageUrl('Dashboard'));
         }
