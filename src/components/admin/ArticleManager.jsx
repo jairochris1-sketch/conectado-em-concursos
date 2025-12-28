@@ -205,7 +205,14 @@ export default function ArticleManager() {
     }));
   };
 
-  const articlesBySubject = articles.reduce((acc, article) => {
+  const byOrder = (arr) => [...arr].sort((a,b) => {
+  const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+  const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+  if (ao !== bo) return ao - bo;
+  return (a.title || '').localeCompare(b.title || '', 'pt-BR', { numeric: true });
+});
+
+const articlesBySubject = byOrder(articles).reduce((acc, article) => {
     (acc[article.subject] = acc[article.subject] || []).push(article);
     return acc;
   }, {});
