@@ -19,6 +19,8 @@ export default function GuiaEstudos() {
   const [contentId, setContentId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [guides, setGuides] = useState([]);
+  const [guideArticlesMap, setGuideArticlesMap] = useState({});
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -30,18 +32,20 @@ export default function GuiaEstudos() {
     const load = async () => {
       setLoading(true);
       try {
-        const [user, arts, vids, sc] = await Promise.all([
+        const [user, arts, vids, scAll] = await Promise.all([
           User.me().catch(() => null),
           Article.filter({ is_published: true }),
           YouTubeVideo.filter({ is_active: true }),
-          SiteContent.filter({ page_key: slug })
+          SiteContent.list('-created_date', 500)
         ]);
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
 
         const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
         const defaultSubtitle = "Guia prático com materiais selecionados. Itens exibidos sem bloqueios, em formato limpo.";
-        const existing = Array.isArray(sc) && sc.length ? sc[0] : null;
+        const allGuides = (scAll || []).filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'));
+        setGuides(allGuides);
+        const existing = allGuides.find(g => g.page_key === slug) || null;
         if (existing) {
           setContent({ title: existing.title || defaultTitle, subtitle: existing.subtitle || defaultSubtitle });
           setContentId(existing.id);
@@ -50,8 +54,16 @@ export default function GuiaEstudos() {
           setContentId(null);
         }
 
-        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(slug)));
-        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === slug));
+        const normalizedSlug = slug.toLowerCase();
+        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug)));
+        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === normalizedSlug));
+
+        const map = {};
+        (allGuides || []).forEach(g => {
+          const gs = g.page_key.toLowerCase();
+          map[g.page_key] = (arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(gs));
+        });
+        setGuideArticlesMap(map);
       } finally {
         setLoading(false);
       }
@@ -136,7 +148,7 @@ export default function GuiaEstudos() {
           <section className="space-y-6">
             <h2 className="text-xl font-bold">Artigos</h2>
             {articles.map((a) => (
-              <article key={a.id} className="prose max-w-none">
+              <article key={a.id} id={`art-${a.id}`} className="prose max-w-none">
                 <h3 className="text-lg font-semibold mb-1">{a.title}</h3>
                 <div className="flex items-center gap-2 mb-3">
                   {a.author && <Badge variant="outline">{a.author}</Badge>}
