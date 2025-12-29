@@ -84,7 +84,38 @@ export default function GuiaEstudos() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="mx-auto bg-white shadow-xl rounded-md p-8" style={{ maxWidth: "794px" }}>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <aside className="hidden md:block md:col-span-4 lg:col-span-3">
+            <div className="bg-white shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
+              <h2 className="text-sm font-semibold mb-3 text-gray-700">Guias</h2>
+              <div className="space-y-2">
+                {guides.map((g) => (
+                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
+                    <button className="text-left w-full font-medium text-sm" onClick={() => setSlug(g.page_key)}>
+                      {(g.title || g.page_key).replaceAll('_', ' ')}
+                    </button>
+                    {guideArticlesMap[g.page_key]?.length > 0 && (
+                      <ul className="mt-2 pl-3 space-y-1">
+                        {guideArticlesMap[g.page_key].map((a) => (
+                          <li key={a.id}>
+                            <a href={`#art-${a.id}`} className="text-xs text-gray-600 hover:text-indigo-600">
+                              {a.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+                {guides.length === 0 && (
+                  <p className="text-sm text-gray-500">Nenhum guia criado ainda.</p>
+                )}
+              </div>
+            </div>
+          </aside>
+          <section className="md:col-span-8 lg:col-span-9">
+            <div className="bg-white shadow-xl rounded-md p-8">
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -167,6 +198,9 @@ export default function GuiaEstudos() {
             Marque artigos com a tag <b>{slug}</b> e vídeos com o tópico <b>{slug}</b>.
           </div>
         )}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
