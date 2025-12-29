@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { createPageUrl } from "@/utils";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -14,6 +15,8 @@ export default function ComoEstudarPrimeiroLugar() {
   const [contentId, setContentId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [guides, setGuides] = useState([]);
+  const [guideArticlesMap, setGuideArticlesMap] = useState({});
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -25,18 +28,20 @@ export default function ComoEstudarPrimeiroLugar() {
     const load = async () => {
       setLoading(true);
       try {
-        const [user, arts, vids, sc] = await Promise.all([
+        const [user, arts, vids, scAll] = await Promise.all([
           User.me().catch(() => null),
           Article.filter({ is_published: true }),
           YouTubeVideo.filter({ is_active: true }),
-          SiteContent.filter({ page_key: "guia_aprovacao" })
+          SiteContent.list('-created_date', 500)
         ]);
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
 
         const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
         const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";
-        const existing = Array.isArray(sc) && sc.length ? sc[0] : null;
+        const allGuides = (scAll || []).filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'));
+        setGuides(allGuides);
+        const existing = allGuides.find(g => g.page_key === 'guia_aprovacao') || null;
         if (existing) {
           setContent({ title: existing.title || defaultTitle, subtitle: existing.subtitle || defaultSubtitle });
           setContentId(existing.id);
@@ -45,7 +50,15 @@ export default function ComoEstudarPrimeiroLugar() {
           setContentId(null);
         }
 
-        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes("guia_aprovacao")));
+        const allArts = arts || [];
+        const map = {};
+        (allGuides || []).forEach(g => {
+          const gs = g.page_key.toLowerCase();
+          map[g.page_key] = allArts.filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(gs));
+        });
+        setGuideArticlesMap(map);
+
+        setArticles(allArts.filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes("guia_aprovacao")));
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === "guia_aprovacao"));
       } finally {
         setLoading(false);
@@ -67,7 +80,46 @@ export default function ComoEstudarPrimeiroLugar() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="mx-auto bg-white shadow-xl rounded-md p-8" style={{ maxWidth: "794px" }}>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <aside className="hidden md:block md:col-span-4 lg:col-span-3">
+            <div className="bg-white shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
+              <h2 className="text-sm font-semibold mb-3 text-gray-700">Guias</h2>
+              <div className="space-y-2">
+                {guides.map((g) => (
+                  <div key={g.id} className={`rounded border p-2 ${g.page_key === 'guia_aprovacao' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
+                    {g.page_key === 'guia_aprovacao' ? (
+                      <div className="text-left w-full font-medium text-sm">
+                        {(g.title || g.page_key).replaceAll('_', ' ')}
+                      </div>
+                    ) : (
+                      <a className="block text-left w-full font-medium text-sm hover:text-indigo-700" href={createPageUrl(`GuiaEstudos?slug=${g.page_key}`)}>
+                        {(g.title || g.page_key).replaceAll('_', ' ')}
+                      </a>
+                    )}
+                    {guideArticlesMap[g.page_key]?.length > 0 && (
+                      <ul className="mt-2 pl-3 space-y-1">
+                        {guideArticlesMap[g.page_key].map((a) => (
+                          <li key={a.id}>
+                            {g.page_key === 'guia_aprovacao' ? (
+                              <a href={`#art-${a.id}`} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
+                            ) : (
+                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+                {guides.length === 0 && (
+                  <p className="text-sm text-gray-500">Nenhum guia criado ainda.</p>
+                )}
+              </div>
+            </div>
+          </aside>
+          <section className="md:col-span-8 lg:col-span-9">
+            <div className="bg-white shadow-xl rounded-md p-8">
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -166,6 +218,9 @@ export default function ComoEstudarPrimeiroLugar() {
             Marque artigos com a tag <b>guia_aprovacao</b> e vídeos com o tópico <b>guia_aprovacao</b>.
           </div>
         )}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
