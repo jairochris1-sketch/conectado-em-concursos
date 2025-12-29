@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function ComoEstudarPrimeiroLugar() {
+export default function GuiaEstudos() {
+  const [searchParams] = useSearchParams();
+  const initialSlug = (searchParams.get("slug") || "guia_aprovacao").toLowerCase();
+
+  const [slug, setSlug] = useState(initialSlug);
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +21,7 @@ export default function ComoEstudarPrimeiroLugar() {
   const [editMode, setEditMode] = useState(false);
 
   const extractYouTubeId = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\\?v=|&v=)([^#&?]*).*/;
+    const regExp = /^.*(youtu.be\\/|v\\/|u\\/\\w\\/|embed\\/|watch\\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
@@ -29,13 +34,13 @@ export default function ComoEstudarPrimeiroLugar() {
           User.me().catch(() => null),
           Article.filter({ is_published: true }),
           YouTubeVideo.filter({ is_active: true }),
-          SiteContent.filter({ page_key: "guia_aprovacao" })
+          SiteContent.filter({ page_key: slug })
         ]);
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
 
-        const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
-        const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";
+        const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+        const defaultSubtitle = "Guia prático com materiais selecionados. Itens exibidos sem bloqueios, em formato limpo.";
         const existing = Array.isArray(sc) && sc.length ? sc[0] : null;
         if (existing) {
           setContent({ title: existing.title || defaultTitle, subtitle: existing.subtitle || defaultSubtitle });
@@ -45,17 +50,17 @@ export default function ComoEstudarPrimeiroLugar() {
           setContentId(null);
         }
 
-        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes("guia_aprovacao")));
-        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === "guia_aprovacao"));
+        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(slug)));
+        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === slug));
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, []);
+  }, [slug]);
 
   const handleSaveContent = async () => {
-    const payload = { page_key: "guia_aprovacao", title: content.title, subtitle: content.subtitle };
+    const payload = { page_key: slug, title: content.title, subtitle: content.subtitle };
     if (contentId) {
       await SiteContent.update(contentId, payload);
     } else {
@@ -147,7 +152,7 @@ export default function ComoEstudarPrimeiroLugar() {
         {!loading && videos.length === 0 && articles.length === 0 && (
           <div className="text-gray-600">
             Nenhum conteúdo marcado para este guia ainda.
-            Marque artigos com a tag <b>guia_aprovacao</b> e vídeos com o tópico <b>guia_aprovacao</b>.
+            Marque artigos com a tag <b>{slug}</b> e vídeos com o tópico <b>{slug}</b>.
           </div>
         )}
       </div>

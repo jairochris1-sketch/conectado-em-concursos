@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -144,6 +143,7 @@ const pageNameTranslations = {
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Como estudar para ser aprovado em primeiro lugar",
+  GuiaEstudos: "Guia de Estudos",
 };
 
 const featureAccess = {
