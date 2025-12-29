@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
 import { Button } from '@/components/ui/button';
@@ -174,7 +173,7 @@ export default function StudiesPage() {
         Flashcard.list('-created_date'),
         FlashcardReview.list('-created_date'),
         YouTubeVideo.filter({ is_active: true }),
-        Article.filter({ is_published: true })
+        Article.filter({ is_published: true }, 'created_date')
       ]);
 
       // Process Study Materials
@@ -190,8 +189,8 @@ export default function StudiesPage() {
       setFilteredVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0))); // Initialize filtered videos with all videos
 
       // Process Articles
-      setArticles(articlesData.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)));
-      setFilteredArticles(articlesData.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)));
+      setArticles(articlesData.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
+      setFilteredArticles(articlesData.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
 
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
@@ -264,7 +263,7 @@ export default function StudiesPage() {
     }
     
     setFilteredArticles(filtered.sort((a, b) => 
-      (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0) || (a.order || 0) - (b.order || 0)
+      new Date(a.created_date) - new Date(b.created_date)
     ));
   }, [selectedArticleSubject, articles, articleSearchTerm]);
 
