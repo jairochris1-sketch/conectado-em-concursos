@@ -98,6 +98,22 @@ export default function ComoEstudarPrimeiroLugar() {
         <h1 className="text-3xl font-extrabold mb-2">{content.title}</h1>
         <p className="text-gray-600 mb-6">{content.subtitle}</p>
 
+        {!loading && articles.some(a => a.is_featured) && (
+          <section className="mb-8">
+            <h2 className="text-xl font-bold mb-3">Recomendados</h2>
+            <div className="space-y-4">
+              {articles.filter(a => a.is_featured).map((a) => (
+                <Card key={a.id}>
+                  <CardContent className="p-4">
+                    <a href={`#art-${a.id}`} className="text-blue-700 font-semibold hover:underline">{a.title}</a>
+                    {a.summary && <p className="text-sm text-gray-600 mt-1">{a.summary}</p>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
         {loading && <div className="text-gray-700">Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
@@ -131,7 +147,7 @@ export default function ComoEstudarPrimeiroLugar() {
           <section className="space-y-6">
             <h2 className="text-xl font-bold">Artigos</h2>
             {articles.map((a) => (
-              <article key={a.id} className="prose max-w-none">
+              <article key={a.id} id={`art-${a.id}`} className="prose max-w-none">
                 <h3 className="text-lg font-semibold mb-1">{a.title}</h3>
                 <div className="flex items-center gap-2 mb-3">
                   {a.author && <Badge variant="outline">{a.author}</Badge>}
