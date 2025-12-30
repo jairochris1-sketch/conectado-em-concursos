@@ -74,7 +74,8 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    if (user.role !== 'admin') {
+    const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com'];
+    if (user.role !== 'admin' && !adminEmails.includes(user.email)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 

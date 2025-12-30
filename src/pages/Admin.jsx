@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import { exportQuestions } from '@/functions/exportQuestions';
 
 // Direct imports for components
 import ModernQuestionForm from '../components/admin/ModernQuestionForm';
@@ -282,7 +282,7 @@ export default function AdminPage() {
   };
 
   const handleExport = async (format) => {
-    const { data } = await base44.functions.invoke('exportQuestions', { format });
+    const { data } = await exportQuestions({ format });
     const mime = format === 'xml' ? 'application/xml' : 'text/csv';
     const blob = new Blob([data], { type: mime });
     const url = window.URL.createObjectURL(blob);
