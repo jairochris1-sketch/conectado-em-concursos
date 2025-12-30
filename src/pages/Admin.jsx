@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
+import { base44 } from '@/api/base44Client';
 
 // Direct imports for components
 import ModernQuestionForm from '../components/admin/ModernQuestionForm';
@@ -280,6 +281,20 @@ export default function AdminPage() {
     }
   };
 
+  const handleExport = async (format) => {
+    const { data } = await base44.functions.invoke('exportQuestions', { format });
+    const mime = format === 'xml' ? 'application/xml' : 'text/csv';
+    const blob = new Blob([data], { type: mime });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `questions.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  };
+
   if (isLoading || !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -337,6 +352,10 @@ export default function AdminPage() {
             <TabsTrigger value="guias">
               <Bookmark className="w-4 h-4 mr-2" />
               Guias
+            </TabsTrigger>
+            <TabsTrigger value="exportar">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
             </TabsTrigger>
           </TabsList>
 
@@ -403,6 +422,22 @@ export default function AdminPage() {
 
           <TabsContent value="guias" className="mt-6">
             <GuideManager />
+          </TabsContent>
+
+          <TabsContent value="exportar" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Exportar Questões</CardTitle>
+              </CardHeader>
+              <CardContent className="space-x-2">
+                <Button onClick={() => handleExport('csv')} className="gap-2">
+                  <Download className="w-4 h-4" /> Exportar CSV
+                </Button>
+                <Button variant="outline" onClick={() => handleExport('xml')} className="gap-2">
+                  <Download className="w-4 h-4" /> Exportar XML
+                </Button>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
