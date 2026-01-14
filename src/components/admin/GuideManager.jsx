@@ -157,6 +157,47 @@ export default function GuideManager() {
     }
   };
 
+  // --- Articles ordering/deleting helpers ---
+  const loadGuideArticles = async (slugValue) => {
+    const arts = await Article.filter({ is_published: true });
+    const list = (arts || [])
+      .filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes((slugValue || '').toLowerCase()))
+      .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
+    setCurrentGuideArticles(list);
+  };
+
+  useEffect(() => {
+    if (articleGuideSlug) {
+      loadGuideArticles(articleGuideSlug);
+    } else {
+      setCurrentGuideArticles([]);
+    }
+  }, [articleGuideSlug]);
+
+  const handleUpdateArticleOrder = async (article, newOrder) => {
+    try {
+      await Article.update(article.id, { order: Number(newOrder) || 0 });
+      toast.success('Ordem do artigo atualizada');
+      await loadGuideArticles(articleGuideSlug);
+    } catch (e) {
+      console.error(e);
+      toast.error('Erro ao atualizar ordem');
+    }
+  };
+
+  const handleDeleteArticle = async (article) => {
+    try {
+      if (!confirm(`Excluir o artigo "${article.title}"?`)) return;
+      await Article.delete(article.id);
+      toast.success('Artigo excluído');
+      await loadGuideArticles(articleGuideSlug);
+    } catch (e) {
+      console.error(e);
+      toast.error('Erro ao excluir artigo');
+    }
+  };
+
+
   const handleCreateArticle = async () => {
     if (!articleGuideSlug) {
       toast.error('Selecione um guia');
