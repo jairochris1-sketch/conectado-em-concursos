@@ -81,18 +81,8 @@ Deno.serve(async (req) => {
 
     const { format = 'csv' } = await req.json().catch(() => ({ format: 'csv' }));
 
-    // Fetch all questions (service role for full access) with pagination
-    const all = [];
-    const limit = 1000;
-    let skip = 0;
-    while (true) {
-      const chunk = await base44.asServiceRole.entities.Question.filter({}, '-created_date', limit, skip);
-      if (!chunk || chunk.length === 0) break;
-      all.push(...chunk);
-      if (chunk.length < limit) break;
-      skip += chunk.length;
-    }
-    const questions = all;
+    // Fetch questions with a high limit; adjust if needed
+    const questions = await base44.asServiceRole.entities.Question.list('-created_date', 5000);
 
     let bytes; let contentType; let filename;
     if (String(format).toLowerCase() === 'xml') {
