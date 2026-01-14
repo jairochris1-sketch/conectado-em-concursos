@@ -25,7 +25,7 @@ import {
   Award,
   Pencil,
   ClipboardList,
-  BookOpen as BookOpenIcon, // Added for the new item
+
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
