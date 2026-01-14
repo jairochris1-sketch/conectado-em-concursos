@@ -22,6 +22,7 @@ import subscription from './pages/subscription';
 import Admin from './pages/Admin';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import GuiaEstudos from './pages/GuiaEstudos';
+import AssistirAula from './pages/AssistirAula';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "Admin": Admin,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "GuiaEstudos": GuiaEstudos,
+    "AssistirAula": AssistirAula,
 }
 
 export const pagesConfig = {

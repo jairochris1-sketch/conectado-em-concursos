@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,19 +161,26 @@ export default function GuiaEstudos() {
               {videos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
                 return (
-                  <div key={v.id} className="w-full aspect-video bg-black rounded">
-                    {id ? (
-                      <iframe
-                        className="w-full h-full rounded"
-                        src={`https://www.youtube.com/embed/${id}`}
-                        title={v.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <Card><CardContent className="p-4">{v.title}</CardContent></Card>
-                    )}
+                  <div key={v.id} className="w-full">
+                    <div className="aspect-video bg-black rounded">
+                      {id ? (
+                        <iframe
+                          className="w-full h-full rounded"
+                          src={`https://www.youtube.com/embed/${id}`}
+                          title={v.title}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <Card><CardContent className="p-4">{v.title}</CardContent></Card>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      <Link to={createPageUrl(`AssistirAula?slug=${slug}&videoId=${id}`)}>
+                        <Button size="sm" variant="outline">Assistir aula</Button>
+                      </Link>
+                    </div>
                   </div>
                 );
               })}
