@@ -64,7 +64,6 @@ export default function GuideManager() {
   const [articleContent, setArticleContent] = useState("");
   const [articleFeatured, setArticleFeatured] = useState(true);
   const [currentGuideArticles, setCurrentGuideArticles] = useState([]);
-  const [currentGuideArticles, setCurrentGuideArticles] = useState([]);
 
   const orderedGuides = useMemo(() =>
     [...guides].sort((a, b) => {
