@@ -63,9 +63,16 @@ export default function GuideManager() {
   const [articleSummary, setArticleSummary] = useState("");
   const [articleContent, setArticleContent] = useState("");
   const [articleFeatured, setArticleFeatured] = useState(true);
+  const [currentGuideArticles, setCurrentGuideArticles] = useState([]);
+  const [currentGuideArticles, setCurrentGuideArticles] = useState([]);
 
   const orderedGuides = useMemo(() =>
-    [...guides].sort((a, b) => (a.title || a.page_key).localeCompare(b.title || b.page_key))
+    [...guides].sort((a, b) => {
+      const ao = (a.order ?? 0);
+      const bo = (b.order ?? 0);
+      if (ao !== bo) return ao - bo;
+      return (a.title || a.page_key).localeCompare(b.title || b.page_key);
+    })
   , [guides]);
 
   useEffect(() => {
@@ -121,6 +128,34 @@ export default function GuideManager() {
     setSlug(g.page_key);
     setTitle(g.title || "");
     setSubtitle(g.subtitle || "");
+  };
+
+  const refreshGuides = async () => {
+    const all = await SiteContent.list('-created_date', 500);
+    setGuides((all || []).filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_')));
+  };
+
+  const handleUpdateGuideOrder = async (g, newOrder) => {
+    try {
+      await SiteContent.update(g.id, { order: Number(newOrder) || 0 });
+      toast.success('Ordem do guia atualizada');
+      await refreshGuides();
+    } catch (e) {
+      console.error(e);
+      toast.error('Erro ao atualizar ordem');
+    }
+  };
+
+  const handleDeleteGuide = async (g) => {
+    try {
+      if (!confirm(`Excluir o guia "${g.title || g.page_key}"?`)) return;
+      await SiteContent.delete(g.id);
+      toast.success('Guia excluído');
+      await refreshGuides();
+    } catch (e) {
+      console.error(e);
+      toast.error('Erro ao excluir guia');
+    }
   };
 
   const handleCreateArticle = async () => {
@@ -202,15 +237,22 @@ export default function GuideManager() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {orderedGuides.map(g => (
-                    <div key={g.id} className="border rounded p-3 flex items-start justify-between">
-                      <div>
-                        <div className="font-semibold">{g.title || g.page_key}</div>
+                    <div key={g.id} className="border rounded p-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-semibold truncate">{g.title || g.page_key}</div>
                         <div className="text-xs text-gray-500">Slug: <Badge variant="outline">{g.page_key}</Badge></div>
                         {g.subtitle && (
                           <p className="text-sm mt-1 line-clamp-2">{g.subtitle}</p>
                         )}
                       </div>
-                      <Button size="sm" variant="outline" onClick={() => handleEditGuide(g)}>Editar</Button>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-gray-500">Ordem</span>
+                          <Input type="number" className="w-20 h-8" defaultValue={g.order ?? 0} onBlur={(e) => handleUpdateGuideOrder(g, e.target.value)} />
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => handleEditGuide(g)}>Editar</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleDeleteGuide(g)}>Excluir</Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -281,6 +323,35 @@ export default function GuideManager() {
               <div className="flex gap-2">
                 <Button onClick={handleCreateArticle} className="bg-indigo-600 hover:bg-indigo-700 text-white">Criar artigo</Button>
               </div>
+
+              {articleGuideSlug && (
+                <div className="mt-6">
+                  <h3 className="font-semibold mb-2">Artigos deste guia</h3>
+                  {currentGuideArticles.length === 0 ? (
+                    <div className="text-sm text-gray-500">Nenhum artigo ainda.</div>
+                  ) : (
+                    <div className="space-y-2">
+                      {currentGuideArticles.map((a) => (
+                        <div key={a.id} className="border rounded p-3 flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-medium truncate">{a.title}</div>
+                            {typeof a.order !== 'undefined' && (
+                              <div className="text-xs text-gray-500">ordem atual: {a.order ?? 0}</div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-gray-500">Ordem</span>
+                              <Input type="number" className="w-20 h-8" defaultValue={a.order ?? 0} onBlur={(e) => handleUpdateArticleOrder(a, e.target.value)} />
+                            </div>
+                            <Button size="sm" variant="destructive" onClick={() => handleDeleteArticle(a)}>Excluir</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

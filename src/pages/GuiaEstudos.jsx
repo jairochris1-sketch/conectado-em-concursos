@@ -55,13 +55,15 @@ export default function GuiaEstudos() {
         }
 
         const normalizedSlug = slug.toLowerCase();
-        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug)));
+        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug))
+          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date)));
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === normalizedSlug));
 
         const map = {};
         (allGuides || []).forEach(g => {
           const gs = g.page_key.toLowerCase();
-          map[g.page_key] = (arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(gs));
+          map[g.page_key] = (arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(gs))
+            .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
         });
         setGuideArticlesMap(map);
       } finally {
