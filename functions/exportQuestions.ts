@@ -81,8 +81,8 @@ Deno.serve(async (req) => {
 
     const { format = 'csv' } = await req.json().catch(() => ({ format: 'csv' }));
 
-    // Fetch questions with a high limit; adjust if needed
-    const questions = await base44.asServiceRole.entities.Question.list('-created_date', 5000);
+    // Fetch up to 1000 questions to avoid server limits
+    const questions = await base44.asServiceRole.entities.Question.filter({}, '-created_date', 1000);
 
     let text; let contentType; let filename;
     if (String(format).toLowerCase() === 'xml') {
