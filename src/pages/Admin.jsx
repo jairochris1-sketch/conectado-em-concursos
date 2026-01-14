@@ -23,7 +23,6 @@ import AdminFAQForm from '../components/admin/AdminFAQForm';
 import TopicManager from '../components/admin/TopicManager';
 import NotificationManager from '../components/admin/NotificationManager';
 import ArticleManager from '../components/admin/ArticleManager';
-import GuideManager from '../components/admin/GuideManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -425,9 +424,6 @@ export default function AdminPage() {
             <ArticleManager />
           </TabsContent>
 
-          <TabsContent value="guias" className="mt-6">
-            <GuideManager />
-          </TabsContent>
 
           <TabsContent value="exportar" className="mt-6">
             <Card>
