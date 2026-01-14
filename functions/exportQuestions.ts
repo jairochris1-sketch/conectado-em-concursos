@@ -25,7 +25,7 @@ function toCSV(rows) {
     ].map(csvEscape).join(',');
     lines.push(line);
   }
-  return new TextEncoder().encode(lines.join('\n'));
+  return lines.join('\n');
 }
 
 function xmlEscape(str) {
@@ -64,7 +64,7 @@ function toXML(rows) {
     parts.push('  </question>');
   }
   parts.push('</questions>');
-  return new TextEncoder().encode(parts.join('\n'));
+  return parts.join('\n');
 }
 
 Deno.serve(async (req) => {
@@ -84,18 +84,18 @@ Deno.serve(async (req) => {
     // Fetch questions with a high limit; adjust if needed
     const questions = await base44.asServiceRole.entities.Question.list('-created_date', 5000);
 
-    let bytes; let contentType; let filename;
+    let text; let contentType; let filename;
     if (String(format).toLowerCase() === 'xml') {
-      bytes = toXML(questions || []);
-      contentType = 'application/xml';
+      text = toXML(questions || []);
+      contentType = 'application/xml; charset=utf-8';
       filename = 'questions.xml';
     } else {
-      bytes = toCSV(questions || []);
+      text = toCSV(questions || []);
       contentType = 'text/csv; charset=utf-8';
       filename = 'questions.csv';
     }
 
-    return new Response(bytes, {
+    return new Response(text, {
       status: 200,
       headers: {
         'Content-Type': contentType,
