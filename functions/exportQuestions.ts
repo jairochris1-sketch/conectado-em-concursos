@@ -81,8 +81,18 @@ Deno.serve(async (req) => {
 
     const { format = 'csv' } = await req.json().catch(() => ({ format: 'csv' }));
 
-    // Fetch all questions (service role for full access)
-    const questions = await base44.asServiceRole.entities.Question.filter({});
+    // Fetch all questions (service role for full access) with pagination
+    const all = [];
+    const limit = 1000;
+    let skip = 0;
+    while (true) {
+      const chunk = await base44.asServiceRole.entities.Question.filter({}, '-created_date', limit, skip);
+      if (!chunk || chunk.length === 0) break;
+      all.push(...chunk);
+      if (chunk.length < limit) break;
+      skip += chunk.length;
+    }
+    const questions = all;
 
     let bytes; let contentType; let filename;
     if (String(format).toLowerCase() === 'xml') {
@@ -104,6 +114,7 @@ Deno.serve(async (req) => {
       }
     });
   } catch (error) {
-    return Response.json({ error: error.message || 'Internal error' }, { status: 500 });
+    console.error('exportQuestions error:', error);
+    return Response.json({ error: error?.message || 'Internal error' }, { status: 500 });
   }
 });
