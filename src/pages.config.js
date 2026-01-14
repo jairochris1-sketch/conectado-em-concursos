@@ -1,9 +1,11 @@
 import Admin from './pages/Admin';
 import ChatGPT from './pages/ChatGPT';
+import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
+import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Profile from './pages/Profile';
@@ -26,10 +28,12 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "Admin": Admin,
     "ChatGPT": ChatGPT,
+    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
     "ExamView": ExamView,
     "Exams": Exams,
+    "GuiaEstudos": GuiaEstudos,
     "Home": Home,
     "Notes": Notes,
     "Profile": Profile,

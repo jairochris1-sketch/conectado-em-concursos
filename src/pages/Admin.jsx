@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { exportQuestions } from '@/functions/exportQuestions';
@@ -23,6 +23,7 @@ import AdminFAQForm from '../components/admin/AdminFAQForm';
 import TopicManager from '../components/admin/TopicManager';
 import NotificationManager from '../components/admin/NotificationManager';
 import ArticleManager from '../components/admin/ArticleManager';
+import GuideManager from '../components/admin/GuideManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -353,6 +354,10 @@ export default function AdminPage() {
               <BookOpen className="w-4 h-4 mr-2" />
               Assuntos
             </TabsTrigger>
+            <TabsTrigger value="guias">
+              <Bookmark className="w-4 h-4 mr-2" />
+              Guias
+            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
@@ -420,6 +425,9 @@ export default function AdminPage() {
             <ArticleManager />
           </TabsContent>
 
+          <TabsContent value="guias" className="mt-6">
+            <GuideManager />
+          </TabsContent>
 
           <TabsContent value="exportar" className="mt-6">
             <Card>
