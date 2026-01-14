@@ -21,6 +21,8 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import AssistirAula from './pages/AssistirAula';
+import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +50,8 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "AssistirAula": AssistirAula,
+    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
 }
 
 export const pagesConfig = {
