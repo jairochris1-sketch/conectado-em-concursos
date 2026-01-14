@@ -282,17 +282,22 @@ export default function AdminPage() {
   };
 
   const handleExport = async (format) => {
-    const { data } = await exportQuestions({ format });
-    const mime = format === 'xml' ? 'application/xml' : 'text/csv';
-    const blob = new Blob([data], { type: mime });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `questions.${format}`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+    try {
+      const { data, status } = await exportQuestions({ format });
+      if (status !== 200) throw new Error('Falha ao exportar');
+      const mime = format === 'xml' ? 'application/xml' : 'text/csv';
+      const blob = new Blob([data], { type: mime });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `questions.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (e) {
+      toast.error('Erro ao exportar. Tente novamente.');
+    }
   };
 
   if (isLoading || !isAdmin) {

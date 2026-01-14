@@ -81,8 +81,8 @@ Deno.serve(async (req) => {
 
     const { format = 'csv' } = await req.json().catch(() => ({ format: 'csv' }));
 
-    // Fetch up to 1000 questions to avoid server limits
-    const questions = await base44.asServiceRole.entities.Question.filter({}, '-created_date', 1000);
+    // Fetch up to 1000 questions using user-scoped token (read is public)
+    const questions = await base44.entities.Question.filter({}, '-created_date', 1000);
 
     let text; let contentType; let filename;
     if (String(format).toLowerCase() === 'xml') {
@@ -95,7 +95,9 @@ Deno.serve(async (req) => {
       filename = 'questions.csv';
     }
 
-    return new Response(text, {
+    // Prepend BOM for CSV to ensure Excel opens UTF-8 correctly
+    const withBom = (contentType.startsWith('text/csv') ? '\uFEFF' + text : text);
+    return new Response(withBom, {
       status: 200,
       headers: {
         'Content-Type': contentType,
