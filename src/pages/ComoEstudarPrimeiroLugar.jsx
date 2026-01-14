@@ -39,7 +39,9 @@ export default function ComoEstudarPrimeiroLugar() {
 
         const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
         const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";
-        const allGuides = (scAll || []).filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'));
+        const allGuides = (scAll || [])
+          .filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'))
+          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || (a.title || a.page_key).localeCompare(b.title || b.page_key));
         setGuides(allGuides);
         const existing = allGuides.find(g => g.page_key === 'guia_aprovacao') || null;
         if (existing) {

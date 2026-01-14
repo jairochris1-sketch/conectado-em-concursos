@@ -222,6 +222,7 @@ export default function GuideManager() {
       setArticleSummary("");
       setArticleContent("");
       setArticleFeatured(true);
+      await loadGuideArticles(articleGuideSlug);
     } catch (e) {
       console.error(e);
       toast.error('Erro ao criar artigo');

@@ -43,7 +43,9 @@ export default function GuiaEstudos() {
 
         const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
         const defaultSubtitle = "Guia prático com materiais selecionados. Itens exibidos sem bloqueios, em formato limpo.";
-        const allGuides = (scAll || []).filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'));
+        const allGuides = (scAll || [])
+          .filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'))
+          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || (a.title || a.page_key).localeCompare(b.title || b.page_key));
         setGuides(allGuides);
         const existing = allGuides.find(g => g.page_key === slug) || null;
         if (existing) {
