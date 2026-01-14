@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
