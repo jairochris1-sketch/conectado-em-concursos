@@ -3,6 +3,8 @@ import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+const safeCreatePageUrl = typeof createPageUrl === 'function' ? createPageUrl : (p) => `/${p}`;
+const safeCreatePageUrl = typeof createPageUrl === 'function' ? createPageUrl : (p) => `/${p}`;
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,7 +100,7 @@ export default function ComoEstudarPrimeiroLugar() {
                         {(g.title || g.page_key).replaceAll('_', ' ')}
                       </div>
                     ) : (
-                      <a className="block text-left w-full font-medium text-sm hover:text-indigo-700" href={createPageUrl(`GuiaEstudos?slug=${g.page_key}`)}>
+                      <a className="block text-left w-full font-medium text-sm hover:text-indigo-700" href={safeCreatePageUrl(`GuiaEstudos?slug=${g.page_key}`)}>
                         {(g.title || g.page_key).replaceAll('_', ' ')}
                       </a>
                     )}
@@ -109,7 +111,7 @@ export default function ComoEstudarPrimeiroLugar() {
                             {g.page_key === 'guia_aprovacao' ? (
                               <a href={`#art-${a.id}`} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
                             ) : (
-                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
+                              <a href={safeCreatePageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
                             )}
                           </li>
                         ))}
@@ -196,7 +198,7 @@ export default function ComoEstudarPrimeiroLugar() {
                       )}
                     </div>
                     <div className="mt-2">
-                      <Link to={createPageUrl(`AssistirAula?slug=guia_aprovacao&videoId=${id}`)}>
+                      <Link to={safeCreatePageUrl(`AssistirAula?slug=guia_aprovacao&videoId=${id}`)}>
                         <Button size="sm" variant="outline">Assistir aula</Button>
                       </Link>
                     </div>

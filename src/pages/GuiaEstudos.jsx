@@ -4,6 +4,7 @@ import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+const safeCreatePageUrl = typeof createPageUrl === 'function' ? createPageUrl : (p) => `/${p}`;
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -177,7 +178,7 @@ export default function GuiaEstudos() {
                       )}
                     </div>
                     <div className="mt-2">
-                      <Link to={createPageUrl(`AssistirAula?slug=${slug}&videoId=${id}`)}>
+                      <Link to={safeCreatePageUrl(`AssistirAula?slug=${slug}&videoId=${id}`)}>
                         <Button size="sm" variant="outline">Assistir aula</Button>
                       </Link>
                     </div>

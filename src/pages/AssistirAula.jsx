@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { createPageUrl } from "@/utils";
+const safeCreatePageUrl = typeof createPageUrl === 'function' ? createPageUrl : (p) => `/${p}`;
+const safeCreatePageUrl = typeof createPageUrl === 'function' ? createPageUrl : (p) => `/${p}`;
 
 export default function AssistirAula() {
   const [searchParams] = useSearchParams();
@@ -75,7 +77,7 @@ export default function AssistirAula() {
               <p className="text-sm text-gray-600">{guide.subtitle}</p>
             )}
           </div>
-          <Link to={createPageUrl(`GuiaEstudos?slug=${slug}`)}>
+          <Link to={safeCreatePageUrl(`GuiaEstudos?slug=${slug}`)}>
             <Button variant="outline">Voltar ao guia</Button>
           </Link>
         </div>
