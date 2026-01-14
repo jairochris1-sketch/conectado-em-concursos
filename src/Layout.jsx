@@ -114,11 +114,6 @@ const moreMenuItems = [
     url: createPageUrl("Statistics"),
     icon: BarChart3,
   },
-  {
-    title: "Como estudar para ser aprovado",
-    url: createPageUrl("ComoEstudarPrimeiroLugar"),
-    icon: BookOpenIcon,
-  },
 ];
 
 const pageNameTranslations = {
@@ -142,8 +137,6 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  ComoEstudarPrimeiroLugar: "Como estudar para ser aprovado em primeiro lugar",
-  GuiaEstudos: "Guia de Estudos",
 };
 
 const featureAccess = {
@@ -156,7 +149,6 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Como estudar para ser aprovado em primeiro lugar': ['gratuito', 'padrao', 'avancado'],
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
