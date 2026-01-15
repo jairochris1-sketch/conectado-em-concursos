@@ -1205,125 +1205,158 @@ ${videoNotes}
           />
         )}
 
-        {/* Modal do Player de Vídeo com Anotações */}
+        {/* Modal do Player de Vídeo em formato Playlist */}
         {playingVideo && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-7xl h-[90vh] flex flex-col">
-              {/* Header do Player */}
-              <div className="flex justify-between items-start mb-4 flex-shrink-0">
-                <div className="text-white flex-1">
-                  <h2 className="text-2xl font-bold mb-2">{playingVideo.title}</h2>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-blue-600">
-                      {subjectNames[playingVideo.subject] || playingVideo.subject}
-                    </Badge>
-                    {playingVideo.topic && (
-                      <Badge variant="outline" className="text-white border-white">
-                        {playingVideo.topic}
-                      </Badge>
-                    )}
-                    {playingVideo.instructor && (
-                      <span className="text-sm text-gray-300">
-                        Professor: {playingVideo.instructor}
-                      </span>
-                    )}
-                  </div>
+          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
+            {/* Video Player Section */}
+            <div className="flex-1 flex flex-col lg:flex-row h-full">
+              {/* Main Video Player */}
+              <div className="flex-1 flex flex-col bg-black">
+                <div className="flex-1 relative">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
+                    title={playingVideo.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
-                <button
-                  onClick={handleCloseVideo}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              
-              {/* Conteúdo Principal: Vídeo + Anotações */}
-              <div className="flex-1 flex gap-4 min-h-0">
-                {/* Player de Vídeo */}
-                <div className="flex-1 flex flex-col">
-                  <div className="relative w-full flex-1 bg-black rounded-lg overflow-hidden">
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1`}
-                      title={playingVideo.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
 
-                  {/* Botões de Navegação */}
-                  <div className="flex justify-between items-center mt-4 gap-2">
-                    <Button
-                      onClick={handlePreviousVideo}
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Vídeo Anterior
-                    </Button>
-                    
-                    <Button
-                      onClick={handleCloseVideo}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      Voltar à Lista
-                    </Button>
-                    
-                    <Button
-                      onClick={handleNextVideo}
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                      variant="outline"
-                      className="text-white border-white hover:bg-white/20"
-                    >
-                      Próximo Vídeo
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-
-                  {playingVideo.description && (
-                    <div className="mt-4 text-white bg-white/10 p-4 rounded-lg">
-                      <h3 className="font-semibold mb-2">Sobre esta aula:</h3>
-                      <p className="text-gray-300">{playingVideo.description}</p>
+                {/* Bottom Bar with Title and Navigation */}
+                <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h2 className="text-white text-lg font-semibold mb-1">{playingVideo.title}</h2>
+                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                        {playingVideo.instructor && (
+                          <span>Prof. {playingVideo.instructor}</span>
+                        )}
+                        {playingVideo.topic && (
+                          <span>• {playingVideo.topic}</span>
+                        )}
+                      </div>
                     </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleCloseVideo}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
+                  
+                  {playingVideo.description && (
+                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{playingVideo.description}</p>
                   )}
+                  
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handlePreviousVideo} 
+                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
+                      className="text-white border-gray-600 hover:bg-gray-700"
+                    >
+                      ← Anterior
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      onClick={handleNextVideo} 
+                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      Próximo →
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Playlist Sidebar with Notes */}
+              <aside className="w-full lg:w-96 bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen">
+                <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10">
+                  <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
+                  <p className="text-gray-400 text-sm">
+                    {subjectNames[playingVideo.subject] || playingVideo.subject}
+                  </p>
                 </div>
 
-                {/* Área de Anotações */}
-                <div className="w-96 flex flex-col bg-white/10 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-white font-semibold flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
+                <div className="flex-1 overflow-y-auto">
+                  <div className="p-2">
+                    {filteredVideos.map((video, idx) => {
+                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                      const isActive = video.id === playingVideo.id;
+                      return (
+                        <button 
+                          key={video.id} 
+                          onClick={() => {
+                            localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
+                            handlePlayVideo(video);
+                          }}
+                          className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
+                            isActive 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                              isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
+                            }`}>
+                              {idx + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                                {video.title}
+                              </div>
+                              {video.duration && (
+                                <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                                  {video.duration}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Notes Section */}
+                <div className="border-t border-gray-800 bg-gray-800 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-white text-sm font-semibold flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
                       Minhas Anotações
-                    </h3>
+                    </h4>
                     <div className="flex gap-1">
                       <Button
                         onClick={handleSaveNotes}
                         size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="bg-green-600 hover:bg-green-700 text-white h-7 px-2"
                         title="Salvar"
                       >
-                        <Save className="w-4 h-4" />
+                        <Save className="w-3 h-3" />
                       </Button>
                       <Button
                         onClick={handleDownloadNotes}
                         size="sm"
                         variant="outline"
-                        className="text-white border-white hover:bg-white/20"
+                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
                         title="Baixar"
                       >
-                        <Download className="w-4 h-4" />
+                        <Download className="w-3 h-3" />
                       </Button>
                       <Button
                         onClick={handlePrintNotes}
                         size="sm"
                         variant="outline"
-                        className="text-white border-white hover:bg-white/20"
+                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
                         title="Imprimir"
                       >
-                        <Printer className="w-4 h-4" />
+                        <Printer className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -1332,15 +1365,15 @@ ${videoNotes}
                     value={videoNotes}
                     onChange={(e) => setVideoNotes(e.target.value)}
                     placeholder="Faça suas anotações sobre este vídeo aqui..."
-                    className="flex-1 bg-white/90 text-gray-900 resize-none"
-                    rows={20}
+                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
+                    rows={8}
                   />
                   
-                  <p className="text-xs text-gray-400 mt-2">
-                    Suas anotações são salvas automaticamente no seu navegador.
+                  <p className="text-xs text-gray-500 mt-2">
+                    Salvas automaticamente no navegador.
                   </p>
                 </div>
-              </div>
+              </aside>
             </div>
           </div>
         )}
