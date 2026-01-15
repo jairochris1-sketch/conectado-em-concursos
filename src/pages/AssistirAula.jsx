@@ -64,96 +64,135 @@ export default function AssistirAula() {
 
   const embedId = currentId;
 
+  const currentIndex = videos.findIndex(v => (v.video_id || extractYouTubeId(v.youtube_url)) === embedId);
+  const hasNext = currentIndex >= 0 && currentIndex < videos.length - 1;
+  const hasPrev = currentIndex > 0;
+
+  const goToNext = () => {
+    if (hasNext) {
+      const nextVideo = videos[currentIndex + 1];
+      setCurrentId(nextVideo.video_id || extractYouTubeId(nextVideo.youtube_url));
+    }
+  };
+
+  const goToPrev = () => {
+    if (hasPrev) {
+      const prevVideo = videos[currentIndex - 1];
+      setCurrentId(prevVideo.video_id || extractYouTubeId(prevVideo.youtube_url));
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 py-6 px-4">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <div>
-            <h1 className="text-xl font-bold">
-              {guide?.title || slug.replaceAll('_',' ')}</h1>
-            {guide?.subtitle && (
-              <p className="text-sm text-gray-600">{guide.subtitle}</p>
+    <div className="min-h-screen bg-gray-900">
+      <div className="flex flex-col lg:flex-row h-screen">
+        {/* Video Player Section */}
+        <div className="flex-1 flex flex-col bg-black">
+          {/* Video Player */}
+          <div className="flex-1 relative">
+            {loading ? (
+              <div className="w-full h-full flex items-center justify-center text-white">Carregando vídeo...</div>
+            ) : embedId ? (
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${embedId}?rel=0`}
+                title={currentVideo?.title || 'Aula'}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-white">Selecione uma aula</div>
             )}
           </div>
-          <Link to={createPageUrl(`GuiaEstudos?slug=${slug}`)}>
-            <Button variant="outline">Voltar ao guia</Button>
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <section className="md:col-span-9">
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-600">Tamanho:</span>
-                <Button size="sm" variant={size==='sm'? 'default':'outline'} onClick={() => setSize('sm')}>Pequeno</Button>
-                <Button size="sm" variant={size==='md'? 'default':'outline'} onClick={() => setSize('md')}>Médio</Button>
-                <Button size="sm" variant={size==='lg'? 'default':'outline'} onClick={() => setSize('lg')}>Grande</Button>
+          {/* Bottom Bar with Title and Navigation */}
+          <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h2 className="text-white text-lg font-semibold">{currentVideo?.title || 'Selecione uma aula'}</h2>
+                {currentVideo?.instructor && (
+                  <p className="text-gray-400 text-sm mt-1">Prof. {currentVideo.instructor}</p>
+                )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">Cor:</span>
-                <div className="flex items-center gap-1">
-                  {["#111827", "#4f46e5", "#16a34a", "#dc2626"].map(c => (
-                    <button key={c} onClick={() => setAccent(c)} className="h-6 w-6 rounded-full border" style={{ backgroundColor: c }} aria-label={`cor ${c}`} />
-                  ))}
-                </div>
-                <Input type="color" value={accent} onChange={(e)=>setAccent(e.target.value)} className="h-8 w-12 p-1" />
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={goToPrev} 
+                  disabled={!hasPrev}
+                  className="text-white border-gray-600 hover:bg-gray-700"
+                >
+                  ← Anterior
+                </Button>
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={goToNext} 
+                  disabled={!hasNext}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Próximo →
+                </Button>
               </div>
             </div>
-
-            <Card style={{ borderColor: accent }} className="border-2 shadow-md">
-              <CardContent className={`p-0 bg-black rounded ${playerHeightCls}`}>
-                {loading ? (
-                  <div className="h-64 md:h-full flex items-center justify-center text-white">Carregando vídeo...</div>
-                ) : embedId ? (
-                  <iframe
-                    className="w-full h-64 md:h-full rounded"
-                    src={`https://www.youtube.com/embed/${embedId}`}
-                    title={currentVideo?.title || 'Aula'}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ backgroundColor: accent }}
-                  />
-                ) : (
-                  <div className="h-64 md:h-full flex items-center justify-center text-white">Selecione uma aula</div>
-                )}
-              </CardContent>
-            </Card>
-
-            {currentVideo && (
-              <div className="mt-4">
-                <h2 className="text-lg font-semibold">{currentVideo.title}</h2>
-                {currentVideo.description && (
-                  <p className="text-sm text-gray-600 mt-1">{currentVideo.description}</p>
-                )}
-                <div className="mt-2 flex items-center gap-2">
-                  {currentVideo.duration && <Badge variant="secondary">{currentVideo.duration}</Badge>}
-                  {currentVideo.instructor && <Badge variant="outline">Prof. {currentVideo.instructor}</Badge>}
-                </div>
-              </div>
-            )}
-          </section>
-
-          <aside className="md:col-span-3">
-            <Card>
-              <CardContent className="p-3 space-y-2 max-h-[70vh] overflow-auto">
-                <h3 className="text-sm font-semibold mb-1">Aulas</h3>
-                {(videos || []).map((v) => {
-                  const vid = v.video_id || extractYouTubeId(v.youtube_url);
-                  const isActive = vid === embedId;
-                  return (
-                    <button key={v.id} onClick={() => setCurrentId(vid)}
-                      className={`w-full text-left p-2 rounded border transition-colors ${isActive ? 'bg-indigo-50 border-indigo-300' : 'bg-white hover:bg-gray-50 border-gray-200'}`}>
-                      <div className="truncate font-medium text-sm">{v.title}</div>
-                      {v.duration && <div className="text-xs text-gray-500">{v.duration}</div>}
-                    </button>
-                  );
-                })}
-                {videos.length === 0 && <div className="text-sm text-gray-500">Nenhuma aula encontrada.</div>}
-              </CardContent>
-            </Card>
-          </aside>
+          </div>
         </div>
+
+        {/* Playlist Sidebar */}
+        <aside className="w-full lg:w-96 bg-gray-900 border-l border-gray-800 overflow-y-auto">
+          <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-white font-semibold">Playlist do Curso</h3>
+              <Link to={createPageUrl(`GuiaEstudos?slug=${slug}`)}>
+                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                  ← Voltar
+                </Button>
+              </Link>
+            </div>
+            {guide?.title && (
+              <p className="text-gray-400 text-sm mt-1">{guide.title}</p>
+            )}
+          </div>
+
+          <div className="p-2">
+            {(videos || []).map((v, idx) => {
+              const vid = v.video_id || extractYouTubeId(v.youtube_url);
+              const isActive = vid === embedId;
+              return (
+                <button 
+                  key={v.id} 
+                  onClick={() => setCurrentId(vid)}
+                  className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
+                    isActive 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                      isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
+                    }`}>
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`font-medium text-sm mb-1 ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                        {v.title}
+                      </div>
+                      {v.duration && (
+                        <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                          {v.duration}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+            {videos.length === 0 && (
+              <div className="text-center text-gray-500 py-8">Nenhuma aula encontrada.</div>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   );
