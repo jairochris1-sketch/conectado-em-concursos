@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
 import { Button } from '@/components/ui/button';
+import YouTubeOverlayPlayer from '../components/video/YouTubeOverlayPlayer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -1242,13 +1243,9 @@ ${videoNotes}
                 {/* Player de Vídeo */}
                 <div className="flex-1 flex flex-col">
                   <div className="relative w-full flex-1 bg-black rounded-lg overflow-hidden">
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1`}
-                      title={playingVideo.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
+                    <YouTubeOverlayPlayer
+                      videoId={(playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url))}
+                      accentColor="#6d28d9"
                     />
                   </div>
 
