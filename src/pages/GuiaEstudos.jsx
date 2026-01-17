@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Search } from "lucide-react";
 
 export default function GuiaEstudos() {
   const [searchParams] = useSearchParams();
@@ -23,12 +24,36 @@ export default function GuiaEstudos() {
   const [editMode, setEditMode] = useState(false);
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
+  const [guideSearch, setGuideSearch] = useState('');
+  const [articleSearch, setArticleSearch] = useState('');
+  const [videoSearch, setVideoSearch] = useState('');
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
+
+  const filteredGuides = guides.filter(g => {
+    if (!guideSearch.trim()) return true;
+    const search = guideSearch.toLowerCase();
+    return (g.title || g.page_key).toLowerCase().includes(search);
+  });
+
+  const filteredArticles = articles.filter(a => {
+    if (!articleSearch.trim()) return true;
+    const search = articleSearch.toLowerCase();
+    return a.title.toLowerCase().includes(search) || 
+           (a.content || '').toLowerCase().includes(search) ||
+           (a.summary || '').toLowerCase().includes(search);
+  });
+
+  const filteredVideos = videos.filter(v => {
+    if (!videoSearch.trim()) return true;
+    const search = videoSearch.toLowerCase();
+    return v.title.toLowerCase().includes(search) ||
+           (v.description || '').toLowerCase().includes(search);
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -95,8 +120,17 @@ export default function GuiaEstudos() {
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
             <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
               <h2 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">Guias</h2>
+              <div className="relative mb-3">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
+                  value={guideSearch}
+                  onChange={(e) => setGuideSearch(e.target.value)}
+                  placeholder="Buscar guias..."
+                  className="pl-10 h-9 text-sm dark:bg-gray-700 dark:text-white"
+                />
+              </div>
               <div className="space-y-2">
-                {guides.map((g) => (
+                {filteredGuides.map((g) => (
                   <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
                     <button className="text-left w-full font-medium text-sm text-gray-900 dark:text-gray-100" onClick={() => setSlug(g.page_key)}>
                       {(g.title || g.page_key).replaceAll('_', ' ')}
@@ -114,8 +148,11 @@ export default function GuiaEstudos() {
                     )}
                   </div>
                 ))}
+                {filteredGuides.length === 0 && guides.length > 0 && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Nenhum guia encontrado.</p>
+                )}
                 {guides.length === 0 && (
-                  <p className="text-sm text-gray-500">Nenhum guia criado ainda.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Nenhum guia criado ainda.</p>
                 )}
               </div>
             </div>
@@ -158,9 +195,23 @@ export default function GuiaEstudos() {
 
         {!loading && videos.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Vídeos</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Vídeos</h2>
+              <div className="relative w-64">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
+                  value={videoSearch}
+                  onChange={(e) => setVideoSearch(e.target.value)}
+                  placeholder="Buscar vídeos..."
+                  className="pl-10 h-9 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
             <div className="space-y-6">
-              {videos.map((v) => {
+              {filteredVideos.length === 0 ? (
+                <p className="text-gray-600 dark:text-gray-400 text-center py-4">Nenhum vídeo encontrado.</p>
+              ) : (
+                filteredVideos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
                 return (
                   <div key={v.id} className="w-full">
@@ -185,15 +236,29 @@ export default function GuiaEstudos() {
                     </div>
                   </div>
                 );
-              })}
+              }))}
             </div>
           </section>
         )}
 
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
-            {articles.map((a) => (
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
+              <div className="relative w-64">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
+                  value={articleSearch}
+                  onChange={(e) => setArticleSearch(e.target.value)}
+                  placeholder="Buscar artigos..."
+                  className="pl-10 h-9 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+            {filteredArticles.length === 0 ? (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-4">Nenhum artigo encontrado.</p>
+            ) : (
+              filteredArticles.map((a) => (
               <article key={a.id} id={`art-${a.id}`} className="prose prose-lg max-w-none dark:prose-invert">
                 <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">{a.title}</h3>
                 <div className="flex items-center gap-2 mb-3">
@@ -209,7 +274,7 @@ export default function GuiaEstudos() {
                 />
                 <hr className="my-6 dark:border-gray-700" />
               </article>
-            ))}
+            )))}
           </section>
         )}
 
