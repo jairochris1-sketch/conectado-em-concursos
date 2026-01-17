@@ -129,7 +129,9 @@ export default function StudiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
-  const [materialViewMode, setMaterialViewMode] = useState('grid'); // grid, list, compact
+  const [materialViewMode, setMaterialViewMode] = useState(() => {
+    return localStorage.getItem('materialViewMode') || 'grid';
+  });
 
   // State for Flashcards
   const [flashcards, setFlashcards] = useState([]);
@@ -154,7 +156,9 @@ export default function StudiesPage() {
   const [selectedArticleSubject, setSelectedArticleSubject] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [articleDarkMode, setArticleDarkMode] = useState(false); // New state for article dark mode
-  const [articleViewMode, setArticleViewMode] = useState('grid'); // grid, list, compact
+  const [articleViewMode, setArticleViewMode] = useState(() => {
+    return localStorage.getItem('articleViewMode') || 'grid';
+  });
   
   // New state for search
   const [articleSearchTerm, setArticleSearchTerm] = useState('');
