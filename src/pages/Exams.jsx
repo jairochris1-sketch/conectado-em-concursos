@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,10 @@ import {
   ChevronRight,
   Filter,
   BookCopy,
-  Briefcase
+  Briefcase,
+  Grid3x3,
+  List,
+  LayoutGrid
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -66,6 +68,13 @@ export default function Exams() {
     year: "all",
     subject: "all"
   });
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('examsViewMode') || 'list';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('examsViewMode', viewMode);
+  }, [viewMode]);
 
   useEffect(() => {
     const loadExams = async () => {
@@ -166,10 +175,42 @@ export default function Exams() {
         {/* Filtros e Busca */}
         <Card className="mb-6 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="w-5 h-5" />
-              Filtrar Provas
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="w-5 h-5" />
+                Filtrar Provas
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                  title="Grade"
+                >
+                  <Grid3x3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                  title="Lista"
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'compact' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('compact')}
+                  className={viewMode === 'compact' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                  title="Compacto"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -244,45 +285,97 @@ export default function Exams() {
         </Card>
 
         {/* Lista de Provas */}
-        <div className="space-y-4">
+        <div className={
+          viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
+          viewMode === 'list' ? 'space-y-4' :
+          'grid grid-cols-1 md:grid-cols-2 gap-3'
+        }>
           {filteredExams.map((exam, index) => (
             <motion.div
               key={exam.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              transition={{ delay: index * 0.03 }}
             >
               <Link 
                 to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
               >
-                <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-lg font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-1">
+                {viewMode === 'grid' ? (
+                  <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-2">
                         {exam.exam_name}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        <div className="flex items-center gap-1.5">
-                          <Building className="w-4 h-4" />
-                          <span>{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Briefcase className="w-4 h-4" />
-                          <span className="font-medium text-gray-700 dark:text-gray-300">{exam.cargo}</span>
-                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <Building className="w-4 h-4 flex-shrink-0" />
+                        <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <Briefcase className="w-4 h-4 flex-shrink-0" />
+                        <span className="line-clamp-1">{exam.cargo}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-4 h-4" />
                           <span>{exam.year}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <FileText className="w-4 h-4" />
-                          <span>{exam.question_count} questões</span>
+                          <span className="font-medium">{exam.question_count} questões</span>
                         </div>
                       </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ) : viewMode === 'list' ? (
+                  <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-lg font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-1">
+                          {exam.exam_name}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="flex items-center gap-1.5">
+                            <Building className="w-4 h-4" />
+                            <span>{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Briefcase className="w-4 h-4" />
+                            <span className="font-medium text-gray-700 dark:text-gray-300">{exam.cargo}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4" />
+                            <span>{exam.year}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <FileText className="w-4 h-4" />
+                            <span>{exam.question_count} questões</span>
+                          </div>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
+                    <CardContent className="p-3">
+                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-2 mb-2">
+                        {exam.exam_name}
+                      </p>
+                      <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
+                          <span>{exam.year}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="line-clamp-1 text-gray-700 dark:text-gray-300">{exam.cargo}</span>
+                          <span className="font-medium whitespace-nowrap ml-2">{exam.question_count} questões</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </Link>
             </motion.div>
           ))}
