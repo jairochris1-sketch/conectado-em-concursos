@@ -168,6 +168,14 @@ export default function StudiesPage() {
   const [currentArticlePage, setCurrentArticlePage] = useState(1);
   const articlesPerPage = 20;
 
+  useEffect(() => {
+    localStorage.setItem('materialViewMode', materialViewMode);
+  }, [materialViewMode]);
+
+  useEffect(() => {
+    localStorage.setItem('articleViewMode', articleViewMode);
+  }, [articleViewMode]);
+
   // General State
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
