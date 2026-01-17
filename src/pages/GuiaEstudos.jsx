@@ -8,7 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon } from "lucide-react";
+import { Search, Sun, Moon, BookMarked } from "lucide-react";
+import ReadingControls from "../components/reading/ReadingControls";
+import AnnotationTools from "../components/reading/AnnotationTools";
 
 export default function GuiaEstudos() {
   const [searchParams] = useSearchParams();
@@ -31,6 +33,18 @@ export default function GuiaEstudos() {
     const saved = localStorage.getItem('guideStudiesDarkMode');
     return saved === 'true';
   });
+  const [focusMode, setFocusMode] = useState(false);
+  const [readingSettings, setReadingSettings] = useState(() => {
+    const saved = localStorage.getItem('readingSettings');
+    return saved ? JSON.parse(saved) : {
+      fontFamily: 'Arial',
+      fontSize: 16,
+      lineHeight: 1.6,
+      maxWidth: '3xl'
+    };
+  });
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [readingProgress, setReadingProgress] = useState({});
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -123,6 +137,102 @@ export default function GuiaEstudos() {
     localStorage.setItem('guideStudiesDarkMode', newMode.toString());
   };
 
+  const handleReadingSettingsChange = (newSettings) => {
+    setReadingSettings(newSettings);
+    localStorage.setItem('readingSettings', JSON.stringify(newSettings));
+  };
+
+  const handleArticleScroll = (articleId, scrollPosition) => {
+    const progress = { ...readingProgress, [articleId]: scrollPosition };
+    setReadingProgress(progress);
+    localStorage.setItem('readingProgress', JSON.stringify(progress));
+  };
+
+  useEffect(() => {
+    const savedProgress = localStorage.getItem('readingProgress');
+    if (savedProgress) {
+      setReadingProgress(JSON.parse(savedProgress));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedArticle && readingProgress[selectedArticle.id]) {
+      setTimeout(() => {
+        window.scrollTo(0, readingProgress[selectedArticle.id]);
+      }, 100);
+    }
+  }, [selectedArticle]);
+
+  if (focusMode && selectedArticle) {
+    const maxWidthClasses = {
+      'full': 'max-w-full',
+      '4xl': 'max-w-4xl',
+      '3xl': 'max-w-3xl',
+      '2xl': 'max-w-2xl',
+      'xl': 'max-w-xl'
+    };
+
+    return (
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="sticky top-0 z-10 border-b backdrop-blur-sm" style={{ backgroundColor: darkMode ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)' }}>
+          <div className="mx-auto px-6 py-4 flex items-center justify-between">
+            <Button variant="outline" onClick={() => setFocusMode(false)}>
+              Sair do Modo Foco
+            </Button>
+            <div className="flex items-center gap-3">
+              <ReadingControls
+                settings={readingSettings}
+                onSettingsChange={handleReadingSettingsChange}
+                onToggleFocusMode={() => setFocusMode(false)}
+              />
+              <Button
+                onClick={toggleDarkMode}
+                size="icon"
+                variant="ghost"
+                className={darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className={`mx-auto py-12 px-6 ${maxWidthClasses[readingSettings.maxWidth]}`}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <article 
+              className="lg:col-span-8"
+              style={{
+                fontFamily: readingSettings.fontFamily,
+                fontSize: `${readingSettings.fontSize}px`,
+                lineHeight: readingSettings.lineHeight
+              }}
+              onScroll={(e) => handleArticleScroll(selectedArticle.id, e.target.scrollTop)}
+            >
+              <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                {selectedArticle.title}
+              </h1>
+              <div className="flex items-center gap-2 mb-6">
+                {selectedArticle.author && <Badge variant="outline">{selectedArticle.author}</Badge>}
+                {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
+              </div>
+              <div 
+                className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert' : ''}`}
+                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                style={{
+                  color: darkMode ? '#e5e7eb' : '#1f2937'
+                }}
+              />
+            </article>
+            <aside className="lg:col-span-4">
+              <div className={`sticky top-24 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+                <AnnotationTools articleId={selectedArticle.id} darkMode={darkMode} />
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen py-8 px-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
       <div className="mx-auto max-w-7xl">
@@ -201,15 +311,22 @@ export default function GuiaEstudos() {
               </div>
             )}
           </div>
-          <Button
-            onClick={toggleDarkMode}
-            size="icon"
-            variant="ghost"
-            className={`ml-4 ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
-            title={darkMode ? 'Modo Claro' : 'Modo Escuro'}
-          >
-            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </Button>
+          <div className="flex items-center gap-2">
+            <ReadingControls
+              settings={readingSettings}
+              onSettingsChange={handleReadingSettingsChange}
+              onToggleFocusMode={() => {}}
+            />
+            <Button
+              onClick={toggleDarkMode}
+              size="icon"
+              variant="ghost"
+              className={`${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
+              title={darkMode ? 'Modo Claro' : 'Modo Escuro'}
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
         <h1 className={`text-3xl font-extrabold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{content.title}</h1>
         <p className={`mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.subtitle}</p>
@@ -282,21 +399,50 @@ export default function GuiaEstudos() {
               <p className={`text-center py-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Nenhum artigo encontrado.</p>
             ) : (
               filteredArticles.map((a) => (
-              <article key={a.id} id={`art-${a.id}`} className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert' : ''}`}>
-                <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
-                <div className="flex items-center gap-2 mb-3">
-                  {a.author && <Badge variant="outline">{a.author}</Badge>}
-                  {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
+              <div key={a.id} id={`art-${a.id}`} className={`relative p-6 rounded-lg mb-6 ${darkMode ? 'bg-gray-700/50' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
+                    <div className="flex items-center gap-2 mb-3">
+                      {a.author && <Badge variant="outline">{a.author}</Badge>}
+                      {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
+                      {readingProgress[a.id] && (
+                        <Badge className="bg-blue-100 text-blue-800">
+                          <BookMarked className="w-3 h-3 mr-1" />
+                          Continuar leitura
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedArticle(a);
+                      setFocusMode(true);
+                    }}
+                  >
+                    Modo Foco
+                  </Button>
                 </div>
-                <div 
-                  className={darkMode ? 'text-gray-200' : ''} 
-                  dangerouslySetInnerHTML={{ __html: a.content }}
+                <article 
+                  className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert' : ''}`}
                   style={{
-                    color: 'inherit'
+                    fontFamily: readingSettings.fontFamily,
+                    fontSize: `${readingSettings.fontSize}px`,
+                    lineHeight: readingSettings.lineHeight
                   }}
-                />
+                >
+                  <div 
+                    className={darkMode ? 'text-gray-200' : ''} 
+                    dangerouslySetInnerHTML={{ __html: a.content }}
+                    style={{
+                      color: 'inherit'
+                    }}
+                  />
+                </article>
                 <hr className={`my-6 ${darkMode ? 'border-gray-700' : ''}`} />
-              </article>
+              </div>
             )))}
           </section>
         )}
