@@ -29,7 +29,10 @@ import {
   Printer,
   User as UserIcon, // Renamed to avoid conflict with entity User
   Moon,
-  Sun
+  Sun,
+  Grid3x3,
+  List,
+  LayoutGrid
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -126,6 +129,7 @@ export default function StudiesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [showUploader, setShowUploader] = useState(false);
+  const [materialViewMode, setMaterialViewMode] = useState('grid'); // grid, list, compact
 
   // State for Flashcards
   const [flashcards, setFlashcards] = useState([]);
@@ -150,6 +154,7 @@ export default function StudiesPage() {
   const [selectedArticleSubject, setSelectedArticleSubject] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [articleDarkMode, setArticleDarkMode] = useState(false); // New state for article dark mode
+  const [articleViewMode, setArticleViewMode] = useState('grid'); // grid, list, compact
   
   // New state for search
   const [articleSearchTerm, setArticleSearchTerm] = useState('');
@@ -582,13 +587,42 @@ ${videoNotes}
               </motion.div>
             )}
 
-            {/* Filtros */}
+            {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Filter className="w-5 h-5" />
-                  Filtros de Busca de Materiais
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Filter className="w-5 h-5" />
+                    Filtros de Busca de Materiais
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
+                    <Button
+                      variant={materialViewMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setMaterialViewMode('grid')}
+                      className={materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                    >
+                      <Grid3x3 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={materialViewMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setMaterialViewMode('list')}
+                      className={materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={materialViewMode === 'compact' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setMaterialViewMode('compact')}
+                      className={materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                    >
+                      <LayoutGrid className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -645,81 +679,144 @@ ${videoNotes}
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={
+                  materialViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' :
+                  materialViewMode === 'list' ? 'space-y-4' :
+                  'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
+                }>
                   {filteredMaterials.map((material, index) => (
                     <motion.div
                       key={material.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      <Card className="shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col"
-                            onClick={() => handleMaterialClick(material)}>
-                        <CardHeader className="flex-grow">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <CardTitle className="text-lg text-blue-600 dark:text-blue-400 line-clamp-2">
-                                {material.title}
-                              </CardTitle>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
-                                {material.description}
-                              </p>
-                            </div>
-                            <div className="ml-2">
-                              {material.file_type === 'pdf' ? (
-                                <FileText className="w-8 h-8 text-red-500" />
-                              ) : (
-                                <Eye className="w-8 h-8 text-blue-500" />
-                              )}
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="flex flex-col justify-end">
-                          <div className="space-y-3">
-                            <div className="flex flex-wrap gap-2">
-                              <Badge className={typeColors[material.type]}>
-                                {typeNames[material.type]}
-                              </Badge>
-                              <Badge variant="outline">
-                                {subjectNames[material.subject]}
-                              </Badge>
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              <span className="font-medium">
-                                {cargoOptions.find(c => c.value === material.cargo)?.label}
-                              </span>
-                            </div>
-                            <div className="flex justify-between items-center pt-2">
-                              <span className="text-xs text-gray-400 truncate w-2/5">
-                                {material.file_name}
-                              </span>
+                      {materialViewMode === 'list' ? (
+                        <Card className="shadow hover:shadow-lg transition-all cursor-pointer"
+                              onClick={() => handleMaterialClick(material)}>
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-4">
+                              <div className="flex-shrink-0">
+                                {material.file_type === 'pdf' ? (
+                                  <FileText className="w-12 h-12 text-red-500" />
+                                ) : (
+                                  <Eye className="w-12 h-12 text-blue-500" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 truncate">
+                                  {material.title}
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                                  {material.description}
+                                </p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  <Badge className={typeColors[material.type]} size="sm">
+                                    {typeNames[material.type]}
+                                  </Badge>
+                                  <Badge variant="outline" size="sm">
+                                    {subjectNames[material.subject]}
+                                  </Badge>
+                                </div>
+                              </div>
                               <div className="flex items-center gap-2">
-                                 {isAdmin && (
+                                {isAdmin && (
                                   <Button
-                                    variant="destructive"
+                                    variant="ghost"
                                     size="sm"
                                     onClick={(e) => handleDeleteMaterial(e, material.id)}
-                                    title="Excluir Material (Admin)"
                                   >
-                                    <Trash2 className="w-4 h-4"/>
+                                    <Trash2 className="w-4 h-4 text-red-500" />
                                   </Button>
                                 )}
                                 <Button
                                   size="sm"
-                                  className="bg-indigo-600 hover:bg-indigo-700"
+                                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleMaterialClick(material);
                                   }}
                                 >
-                                  <Eye className="w-4 h-4 mr-1" />
                                   Ver
                                 </Button>
                               </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      ) : (
+                        <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+                              onClick={() => handleMaterialClick(material)}>
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-3' : 'flex-grow'}>
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                                  {material.title}
+                                </CardTitle>
+                                {materialViewMode === 'grid' && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
+                                    {material.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="ml-2">
+                                {material.file_type === 'pdf' ? (
+                                  <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                                ) : (
+                                  <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                                )}
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className={`flex flex-col justify-end ${materialViewMode === 'compact' ? 'p-3 pt-0' : ''}`}>
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap gap-1">
+                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-xs' : ''}`}>
+                                  {typeNames[material.type]}
+                                </Badge>
+                                <Badge variant="outline" className={materialViewMode === 'compact' ? 'text-xs' : ''}>
+                                  {subjectNames[material.subject]}
+                                </Badge>
+                              </div>
+                              {materialViewMode !== 'compact' && (
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  <span className="font-medium">
+                                    {cargoOptions.find(c => c.value === material.cargo)?.label}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex justify-between items-center pt-1">
+                                {materialViewMode !== 'compact' && (
+                                  <span className="text-xs text-gray-400 truncate w-2/5">
+                                    {material.file_name}
+                                  </span>
+                                )}
+                                <div className={`flex items-center gap-1 ${materialViewMode === 'compact' ? 'w-full justify-end' : ''}`}>
+                                  {isAdmin && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => handleDeleteMaterial(e, material.id)}
+                                    >
+                                      <Trash2 className="w-3 h-3 text-red-500" />
+                                    </Button>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleMaterialClick(material);
+                                    }}
+                                  >
+                                    <Eye className="w-3 h-3 mr-1" />
+                                    {materialViewMode !== 'compact' && 'Ver'}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -729,7 +826,36 @@ ${videoNotes}
 
           <TabsContent value="articles" className="mt-6">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Artigos de Estudo</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
+                  <Button
+                    variant={articleViewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('grid')}
+                    className={articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                  >
+                    <Grid3x3 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={articleViewMode === 'list' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('list')}
+                    className={articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={articleViewMode === 'compact' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('compact')}
+                    className={articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
                 <Select value={selectedArticleSubject} onValueChange={(value) => {
@@ -777,69 +903,131 @@ ${videoNotes}
               </Card>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className={
+                  articleViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
+                  articleViewMode === 'list' ? 'space-y-4' :
+                  'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3'
+                }>
                   {currentArticles.map((article, index) => (
                     <motion.div
                       key={article.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                      transition={{ delay: index * 0.03 }}
                     >
-                      <Card 
-                        className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
-                        onClick={() => handleArticleClick(article)}
-                      >
-                        {article.cover_image_url && (
-                          <div className="h-32 overflow-hidden">
-                            <img
-                              src={article.cover_image_url}
-                              alt={article.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                        <CardHeader className="flex-grow p-3">
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">
-                              {subjectNames[article.subject] || article.subject}
-                            </Badge>
-                            {article.topic && (
-                              <Badge variant="outline" className="text-xs">
-                                {article.topic}
-                              </Badge>
-                            )}
-                            {article.is_featured && (
-                              <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-                                ⭐
-                              </Badge>
-                            )}
-                          </div>
-                          <CardTitle className="text-sm line-clamp-2">
-                            {article.title}
-                          </CardTitle>
-                          {article.summary && (
-                            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
-                              {article.summary}
-                            </p>
+                      {articleViewMode === 'list' ? (
+                        <Card 
+                          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                          onClick={() => handleArticleClick(article)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex gap-4">
+                              {article.cover_image_url && (
+                                <div className="w-32 h-24 flex-shrink-0 rounded overflow-hidden">
+                                  <img
+                                    src={article.cover_image_url}
+                                    alt={article.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">
+                                    {subjectNames[article.subject] || article.subject}
+                                  </Badge>
+                                  {article.topic && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {article.topic}
+                                    </Badge>
+                                  )}
+                                  {article.is_featured && (
+                                    <Badge className="bg-yellow-100 text-yellow-800 text-xs">⭐</Badge>
+                                  )}
+                                </div>
+                                <h3 className="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-1 line-clamp-1">
+                                  {article.title}
+                                </h3>
+                                {article.summary && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    {article.summary}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                  {article.reading_time && (
+                                    <span className="flex items-center gap-1">
+                                      <Timer className="w-3 h-3" />
+                                      {article.reading_time} min
+                                    </span>
+                                  )}
+                                  {article.views_count > 0 && (
+                                    <span className="flex items-center gap-1">
+                                      <Eye className="w-3 h-3" />
+                                      {article.views_count}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ) : (
+                        <Card 
+                          className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
+                          onClick={() => handleArticleClick(article)}
+                        >
+                          {article.cover_image_url && (
+                            <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
+                              <img
+                                src={article.cover_image_url}
+                                alt={article.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
                           )}
-                        </CardHeader>
-                        <CardContent className="p-3 pt-0">
-                          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                            {article.reading_time && (
-                              <span className="flex items-center gap-1">
-                                <Timer className="w-3 h-3" />
-                                {article.reading_time} min
-                              </span>
+                          <CardHeader className={`flex-grow ${articleViewMode === 'compact' ? 'p-2' : 'p-3'}`}>
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              <Badge className={`bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
+                                {subjectNames[article.subject] || article.subject}
+                              </Badge>
+                              {article.topic && articleViewMode !== 'compact' && (
+                                <Badge variant="outline" className="text-xs">
+                                  {article.topic}
+                                </Badge>
+                              )}
+                              {article.is_featured && (
+                                <Badge className={`bg-yellow-100 text-yellow-800 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
+                                  ⭐
+                                </Badge>
+                              )}
+                            </div>
+                            <CardTitle className={`line-clamp-2 ${articleViewMode === 'compact' ? 'text-xs' : 'text-sm'}`}>
+                              {article.title}
+                            </CardTitle>
+                            {article.summary && articleViewMode !== 'compact' && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                                {article.summary}
+                              </p>
                             )}
-                            {article.views_count > 0 && (
-                              <span className="flex items-center gap-1">
-                                <Eye className="w-3 h-3" />
-                                {article.views_count}
-                              </span>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardHeader>
+                          <CardContent className={articleViewMode === 'compact' ? 'p-2 pt-0' : 'p-3 pt-0'}>
+                            <div className={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${articleViewMode === 'compact' ? 'text-[10px]' : 'text-xs'}`}>
+                              {article.reading_time && (
+                                <span className="flex items-center gap-1">
+                                  <Timer className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
+                                  {article.reading_time} min
+                                </span>
+                              )}
+                              {article.views_count > 0 && (
+                                <span className="flex items-center gap-1">
+                                  <Eye className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
+                                  {article.views_count}
+                                </span>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
                     </motion.div>
                   ))}
                 </div>
