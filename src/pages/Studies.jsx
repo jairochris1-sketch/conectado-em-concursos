@@ -138,6 +138,7 @@ export default function StudiesPage() {
   const [selectedVideoSubject, setSelectedVideoSubject] = useState('all');
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
+  const [videoPlayerSize, setVideoPlayerSize] = useState('normal'); // normal, medium, large
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
@@ -1211,7 +1212,11 @@ ${videoNotes}
             {/* Video Player Section */}
             <div className="flex-1 flex flex-col lg:flex-row h-full">
               {/* Main Video Player */}
-              <div className="flex-1 flex flex-col bg-black">
+              <div className={`flex flex-col bg-black ${
+                videoPlayerSize === 'large' ? 'flex-[2]' : 
+                videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
+                'flex-1'
+              }`}>
                 <div className="flex-1 relative">
                   <iframe
                     className="w-full h-full"
@@ -1251,25 +1256,55 @@ ${videoNotes}
                     <p className="text-gray-400 text-sm mb-3 line-clamp-2">{playingVideo.description}</p>
                   )}
                   
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={handlePreviousVideo} 
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                      className="text-white border-gray-600 hover:bg-gray-700"
-                    >
-                      ← Anterior
-                    </Button>
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      onClick={handleNextVideo} 
-                      disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      Próximo →
-                    </Button>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handlePreviousVideo} 
+                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
+                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50"
+                      >
+                        ← Anterior
+                      </Button>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        onClick={handleNextVideo} 
+                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
+                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                      >
+                        Próximo →
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400 text-xs mr-2">Tamanho:</span>
+                      <Button 
+                        variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
+                        size="sm" 
+                        onClick={() => setVideoPlayerSize('normal')}
+                        className={videoPlayerSize === 'normal' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
+                      >
+                        Normal
+                      </Button>
+                      <Button 
+                        variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
+                        size="sm" 
+                        onClick={() => setVideoPlayerSize('medium')}
+                        className={videoPlayerSize === 'medium' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
+                      >
+                        Médio
+                      </Button>
+                      <Button 
+                        variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
+                        size="sm" 
+                        onClick={() => setVideoPlayerSize('large')}
+                        className={videoPlayerSize === 'large' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
+                      >
+                        Grande
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

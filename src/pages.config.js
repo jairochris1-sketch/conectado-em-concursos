@@ -1,4 +1,5 @@
 import Admin from './pages/Admin';
+import AssistirAula from './pages/AssistirAula';
 import ChatGPT from './pages/ChatGPT';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
@@ -16,18 +17,18 @@ import SavedContests from './pages/SavedContests';
 import Schedule from './pages/Schedule';
 import SimuladosDigital from './pages/SimuladosDigital';
 import Statistics from './pages/Statistics';
+import Studies from './pages/Studies';
 import Subscription from './pages/Subscription';
 import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Studies from './pages/Studies';
-import AssistirAula from './pages/AssistirAula';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
+    "AssistirAula": AssistirAula,
     "ChatGPT": ChatGPT,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
@@ -45,13 +46,12 @@ export const PAGES = {
     "Schedule": Schedule,
     "SimuladosDigital": SimuladosDigital,
     "Statistics": Statistics,
+    "Studies": Studies,
     "Subscription": Subscription,
     "Welcome": Welcome,
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Studies": Studies,
-    "AssistirAula": AssistirAula,
 }
 
 export const pagesConfig = {
