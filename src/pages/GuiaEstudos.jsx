@@ -89,23 +89,23 @@ export default function GuiaEstudos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
-            <div className="bg-white shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
-              <h2 className="text-sm font-semibold mb-3 text-gray-700">Guias</h2>
+            <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
+              <h2 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-200">Guias</h2>
               <div className="space-y-2">
                 {guides.map((g) => (
-                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
-                    <button className="text-left w-full font-medium text-sm" onClick={() => setSlug(g.page_key)}>
+                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <button className="text-left w-full font-medium text-sm text-gray-900 dark:text-gray-100" onClick={() => setSlug(g.page_key)}>
                       {(g.title || g.page_key).replaceAll('_', ' ')}
                     </button>
                     {guideArticlesMap[g.page_key]?.length > 0 && (
                       <ul className="mt-2 pl-3 space-y-1">
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
-                            <a href={`#art-${a.id}`} className="text-xs text-gray-600 hover:text-indigo-600">
+                            <a href={`#art-${a.id}`} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
                               {a.title}
                             </a>
                           </li>
@@ -121,7 +121,7 @@ export default function GuiaEstudos() {
             </div>
           </aside>
           <section className="md:col-span-8 lg:col-span-9">
-            <div className="bg-white shadow-xl rounded-md p-8">
+            <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-8">
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -134,12 +134,14 @@ export default function GuiaEstudos() {
                   value={content.title}
                   onChange={(e) => setContent({ ...content, title: e.target.value })}
                   placeholder="Título do guia"
+                  className="dark:bg-gray-700 dark:text-white"
                 />
                 <Textarea
                   value={content.subtitle}
                   onChange={(e) => setContent({ ...content, subtitle: e.target.value })}
                   placeholder="Descrição do guia"
                   rows={3}
+                  className="dark:bg-gray-700 dark:text-white"
                 />
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleSaveContent} className="bg-indigo-600 hover:bg-indigo-700 text-white">Salvar</Button>
@@ -149,14 +151,14 @@ export default function GuiaEstudos() {
             )}
           </div>
         )}
-        <h1 className="text-3xl font-extrabold mb-2">{content.title}</h1>
-        <p className="text-gray-600 mb-6">{content.subtitle}</p>
+        <h1 className="text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">{content.title}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
 
-        {loading && <div className="text-gray-700">Carregando conteúdo...</div>}
+        {loading && <div className="text-gray-700 dark:text-gray-300">Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-xl font-bold mb-3">Vídeos</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Vídeos</h2>
             <div className="space-y-6">
               {videos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
@@ -190,16 +192,22 @@ export default function GuiaEstudos() {
 
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
-            <h2 className="text-xl font-bold">Artigos</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
             {articles.map((a) => (
-              <article key={a.id} id={`art-${a.id}`} className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-1">{a.title}</h3>
+              <article key={a.id} id={`art-${a.id}`} className="prose prose-lg max-w-none dark:prose-invert">
+                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">{a.title}</h3>
                 <div className="flex items-center gap-2 mb-3">
                   {a.author && <Badge variant="outline">{a.author}</Badge>}
                   {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: a.content }} />
-                <hr className="my-6" />
+                <div 
+                  className="dark:text-gray-200" 
+                  dangerouslySetInnerHTML={{ __html: a.content }}
+                  style={{
+                    color: 'inherit'
+                  }}
+                />
+                <hr className="my-6 dark:border-gray-700" />
               </article>
             ))}
           </section>

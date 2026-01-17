@@ -1658,11 +1658,13 @@ ${videoNotes}
               </div>
               <div className="p-6 max-h-[70vh] overflow-y-auto">
                 <div 
-                  className={`prose max-w-none ${articleDarkMode ? 'prose-invert' : ''}`}
+                  className={`prose prose-lg max-w-none ${articleDarkMode ? 'prose-invert dark:prose-invert' : ''}`}
                   dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
                   style={articleDarkMode ? {
-                    color: '#e5e7eb',
-                  } : {}}
+                    color: '#e5e7eb'
+                  } : {
+                    color: '#111827'
+                  }}
                 />
               </div>
             </div>

@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { BookOpen, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { BookOpen, Plus, Edit, Trash2, Save, X, Upload as UploadIcon } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },
@@ -39,20 +40,22 @@ const categoryOptions = [
 ];
 
 const quillModules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    [{ 'font': [] }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    [{ 'indent': '-1' }, { 'indent': '+1' }],
-    [{ 'align': [] }],
-    ['blockquote', 'code-block'],
-    ['link', 'image', 'video'],
-    ['clean']
-  ]
+  toolbar: {
+    container: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      [{ 'align': [] }],
+      ['blockquote', 'code-block'],
+      ['link', 'image', 'video'],
+      ['clean']
+    ]
+  }
 };
 
 export default function ArticleManager() {
@@ -80,6 +83,7 @@ export default function ArticleManager() {
 
   const [tagInput, setTagInput] = useState('');
   const [filteredTopics, setFilteredTopics] = useState([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -203,6 +207,45 @@ export default function ArticleManager() {
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
+  };
+
+  const handleImageUpload = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      setUploadingImage(true);
+      try {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        
+        // Inserir imagem no editor
+        const quill = document.querySelector('.ql-editor');
+        if (quill) {
+          const img = document.createElement('img');
+          img.src = file_url;
+          img.style.maxWidth = '100%';
+          quill.appendChild(img);
+          
+          // Atualizar o conteúdo do formData
+          setFormData(prev => ({
+            ...prev,
+            content: prev.content + `<img src="${file_url}" style="max-width: 100%;" />`
+          }));
+        }
+        
+        alert('Imagem enviada com sucesso!');
+      } catch (error) {
+        console.error('Erro ao enviar imagem:', error);
+        alert('Erro ao enviar imagem. Tente novamente.');
+      } finally {
+        setUploadingImage(false);
+      }
+    };
   };
 
   const articlesBySubject = articles.reduce((acc, article) => {
@@ -397,8 +440,18 @@ export default function ArticleManager() {
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Conteúdo do Artigo *</CardTitle>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={handleImageUpload}
+                disabled={uploadingImage}
+              >
+                <UploadIcon className="w-4 h-4 mr-2" />
+                {uploadingImage ? 'Enviando...' : 'Inserir Imagem'}
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="min-h-[400px]">
