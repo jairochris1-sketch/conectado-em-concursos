@@ -29,7 +29,6 @@ export default function ComoEstudarPrimeiroLugar() {
         setContent({ title: guide.title || "", subtitle: guide.subtitle || "" });
         setContentId(guide.id);
         setArticles(guideArticlesMap[selectedGuide] || []);
-        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === selectedGuide));
       }
     }
   }, [selectedGuide, guides, guideArticlesMap]);
