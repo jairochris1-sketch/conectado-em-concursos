@@ -57,6 +57,11 @@ const navigationItems = [
     icon: FileText,
   },
   {
+    title: "Favoritas",
+    url: createPageUrl("FavoriteQuestions"),
+    icon: Star,
+  },
+  {
     title: "Provas",
     url: createPageUrl("Exams"),
     icon: BookCopy,
