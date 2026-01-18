@@ -774,13 +774,13 @@ export default function QuestionFilters({ onFilterSubmit }) {
             ) : (
               <div className="flex gap-2 items-center">
                 <Input
-                  placeholder="Nome do filtro"
-                  value={filterName}
-                  onChange={(e) => e.target.value.length <= 50 && setFilterName(e.target.value)} // Limit input length
-                  className="w-40 bg-white dark:bg-gray-700 dark:text-gray-50"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSaveFilter()}
-                  maxLength={50} // HTML attribute for max length
-                />
+                   placeholder="Nome do filtro"
+                   value={filterName}
+                   onChange={(e) => e.target.value.length <= 50 && setFilterName(e.target.value)}
+                   className="w-40 bg-white text-gray-900 dark:bg-gray-700 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600"
+                   onKeyPress={(e) => e.key === 'Enter' && handleSaveFilter()}
+                   maxLength={50}
+                 />
                 <Button size="sm" onClick={handleSaveFilter} className="bg-green-600 hover:bg-green-700">
                   <Save className="w-4 h-4 mr-1" /> Salvar
                 </Button>
