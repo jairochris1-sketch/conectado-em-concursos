@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -191,7 +190,8 @@ const FilterSection = ({ title, options, selectedValues, onSelectionChange, sear
         <CollapsibleTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-between h-12 bg-slate-700 text-white hover:bg-slate-600 border-slate-600"
+            className="w-full justify-between h-12 text-white hover:opacity-90 border-0"
+            style={{ backgroundColor: 'var(--primary-color)' }}
           >
             <span className="font-medium">{title}</span>
             {selectedValues.length > 0 && (
@@ -475,7 +475,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filtros de Questões</h2>
             {getAllSelectedCount() > 0 && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <Badge variant="secondary" className="text-white dark:text-white" style={{ backgroundColor: 'var(--primary-color)' }}>
                 {getAllSelectedCount()} filtros ativos
               </Badge>
             )}
@@ -806,14 +806,15 @@ export default function QuestionFilters({ onFilterSubmit }) {
         <CollapsibleTrigger asChild>
           <Button
             variant="outline"
-            className="w-full justify-between h-12 bg-slate-700 text-white hover:bg-slate-600 border-slate-600 rounded-lg"
+            className="w-full justify-between h-12 text-white hover:opacity-90 border-0 rounded-lg"
+            style={{ backgroundColor: 'var(--primary-color)' }}
           >
             <span className="font-medium flex items-center gap-2">
               <Bookmark className="w-4 h-4" /> Meus Filtros Salvos
             </span>
             <div className="flex items-center gap-2">
               {savedFilters.length > 0 && (
-                <span className="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full">
+                <span className="ml-2 px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: 'var(--primary-color)' }}>
                   {savedFilters.length}
                 </span>
               )}
@@ -828,7 +829,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
                 <div key={filter.id} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <span className="font-medium text-sm text-gray-800 dark:text-gray-200">{filter.name}</span>
                   <div className="flex items-center gap-1">
-                    <Button size="sm" variant="default" className="bg-blue-600 hover:bg-blue-700" onClick={() => handleApplySavedFilter(filter)}>Aplicar</Button>
+                    <Button size="sm" variant="default" className="text-white hover:opacity-90" style={{ backgroundColor: 'var(--primary-color)' }} onClick={() => handleApplySavedFilter(filter)}>Aplicar</Button>
                     <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/50" onClick={() => setFilterToDelete(filter)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
