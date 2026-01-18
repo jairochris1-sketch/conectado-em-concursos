@@ -1413,12 +1413,13 @@ ${videoNotes}
             <div className="flex-1 flex flex-col lg:flex-row h-full">
               {/* Main Video Player */}
               <div 
-                className="flex flex-col bg-black"
-                style={{
-                  flex: videoPlayerSize === 'large' ? '2' : 
-                        videoPlayerSize === 'medium' ? '1.5' : 
-                        '1'
-                }}
+               className="flex flex-col bg-black transition-all duration-300"
+               style={{
+                 flexGrow: videoPlayerSize === 'large' ? 3 : 
+                           videoPlayerSize === 'medium' ? 2 : 
+                           1,
+                 minWidth: 0
+               }}
               >
                 <div className="flex-1 relative">
                   <iframe
