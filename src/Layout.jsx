@@ -62,6 +62,11 @@ const navigationItems = [
     icon: BookCopy,
   },
   {
+    title: "Resumos",
+    url: createPageUrl("ComoEstudarPrimeiroLugar"),
+    icon: BookOpenIcon,
+  },
+  {
     title: "Área de Estudos",
     url: createPageUrl("Studies"),
     icon: BookOpen,
