@@ -651,7 +651,8 @@ export default function Layout({ children, currentPageName }) {
 
         <div className="flex items-center gap-2 ml-4">
           <NotificationDropdown />
-          
+          <ThemeToggle />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-black/10">
