@@ -705,24 +705,45 @@ export default function Layout({ children, currentPageName }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="bg-yellow-400 text-yellow-900 p-3 text-center text-sm font-medium relative z-30 print-hide"
+            className="bg-gradient-to-r from-amber-50 to-yellow-50 border-t-4 border-amber-400 shadow-md relative z-30 print-hide"
           >
-            <div className="flex items-center justify-center gap-2">
-              <AlertTriangle className="w-5 h-5" />
-              <span>
-                Seu período de teste encerra em <strong>{trialNotification.days} {trialNotification.days > 1 ? 'dias' : 'dia'}</strong>. 
-                <Link to={createPageUrl('Subscription')} className="font-bold underline hover:text-yellow-800 ml-1">
-                  Assine agora
-                </Link> para não perder o acesso!
-              </span>
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 mt-1">
+                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100">
+                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                  </div>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm md:text-base font-bold text-amber-900 mb-1">
+                    🎯 Período de Teste Ativo!
+                  </h3>
+                  <p className="text-xs md:text-sm text-amber-800 mb-2">
+                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Avançado</strong>.
+                  </p>
+                  <p className="text-xs text-amber-700 mb-3">
+                    Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
+                  </p>
+                  <Link to={createPageUrl('Subscription')}>
+                    <Button 
+                      size="sm" 
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+                    >
+                      Assinar Agora
+                    </Button>
+                  </Link>
+                </div>
+
+                <button 
+                  onClick={() => setShowTrialBanner(false)}
+                  className="flex-shrink-0 p-1 rounded-lg text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
+                  aria-label="Fechar aviso"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-            <button 
-              onClick={() => setShowTrialBanner(false)}
-              className="absolute top-1/2 right-4 -translate-y-1/2 p-1 rounded-full hover:bg-black/10"
-              aria-label="Fechar aviso"
-            >
-              <X className="w-4 h-4" />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
