@@ -360,7 +360,7 @@ export default function Exams() {
                 ) : (
                   <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-3">
-                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-2 mb-2">
+                      <p className="text-sm font-semibold text-blue-700 dark:text-white group-hover:text-blue-800 dark:group-hover:text-blue-100 transition-colors line-clamp-2 mb-2">
                         {exam.exam_name}
                       </p>
                       <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
