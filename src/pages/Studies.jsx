@@ -187,7 +187,7 @@ export default function StudiesPage() {
       setCurrentUser(user);
 
       const [materialsData, flashcardsData, reviewsData, videosData, articlesData] = await Promise.all([
-        StudyMaterial.list('order,-created_date'),
+        StudyMaterial.list('-created_date'),
         Flashcard.list('-created_date'),
         FlashcardReview.list('-created_date'),
         YouTubeVideo.filter({ is_active: true }),
