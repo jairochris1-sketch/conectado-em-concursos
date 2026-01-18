@@ -333,8 +333,8 @@ export default function GuiaEstudos() {
               </div>
               <div className="space-y-2">
                 {filteredGuides.map((g) => (
-                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? (darkMode ? 'border-indigo-500 bg-indigo-900/30' : 'border-indigo-500 bg-indigo-50') : (darkMode ? 'border-gray-700' : 'border-gray-200')}`}>
-                    <button className={`text-left w-full font-medium text-sm ${darkMode ? 'text-gray-100' : 'text-gray-900'}`} onClick={() => setSlug(g.page_key)}>
+                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? (darkMode ? 'border-indigo-500 bg-indigo-900/30' : 'border-indigo-500 bg-indigo-50') : (darkMode ? 'border-gray-700 bg-gray-900/20' : 'border-gray-200 bg-white hover:bg-gray-50')}`}>
+                    <button className={`text-left w-full font-medium text-sm ${darkMode ? 'text-gray-100' : 'text-gray-900'} hover:${darkMode ? 'text-white' : 'text-black'}`} onClick={() => setSlug(g.page_key)}>
                       {(g.title || g.page_key).replaceAll('_', ' ')}
                     </button>
                     {guideArticlesMap[g.page_key]?.length > 0 && (
