@@ -57,7 +57,7 @@ export default function Questions() {
         return;
     }
     try {
-      const questionsData = await Question.list("-created_date", 1000);
+      const questionsData = await Question.list("-created_date", 500);
       const shuffledQuestions = shuffleArray([...questionsData]);
       setAllQuestions(shuffledQuestions);
       
@@ -75,7 +75,7 @@ export default function Questions() {
       
       setCurrentPage(1);
 
-      const historyData = await ResponseHistory.filter({ created_by: currentUser.email });
+      const historyData = await ResponseHistory.filter({ created_by: currentUser.email }, "-created_date", 200);
       const historyByQuestion = {};
       
       historyData.forEach(response => {
@@ -96,7 +96,7 @@ export default function Questions() {
     if (!currentUser) return { submitted: 0, correct: 0, accuracy: 0 };
 
     try {
-      const userAnswersData = await UserAnswer.filter({ created_by: currentUser.email });
+      const userAnswersData = await UserAnswer.filter({ created_by: currentUser.email }, "-created_date", 500);
       const submitted = userAnswersData.length;
       const correct = userAnswersData.filter(a => a.is_correct).length;
       const accuracy = submitted > 0 ? Math.round((correct / submitted) * 100) : 0;

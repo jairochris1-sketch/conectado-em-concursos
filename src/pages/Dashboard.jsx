@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { UserAnswer, Simulation, User } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -55,8 +54,8 @@ export default function Dashboard() {
         
         // Carrega os dados apenas depois de confirmar o usuário
         const [answersData, simulationsData] = await Promise.all([
-          UserAnswer.filter({ created_by: user.email }, "-created_date", 1000), // Filtro por usuário
-          Simulation.filter({ created_by: user.email }, "-created_date", 100)  // Filtro por usuário
+          UserAnswer.filter({ created_by: user.email }, "-created_date", 100), // Limitado a 100
+          Simulation.filter({ created_by: user.email }, "-created_date", 20)  // Limitado a 20
         ]);
 
         setAnswers(answersData);
