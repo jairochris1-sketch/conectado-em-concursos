@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronUp, ChevronDown, ZoomIn, ZoomOut, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, ZoomIn, ZoomOut } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Set worker
@@ -11,10 +11,8 @@ export default function PdfViewer({ pdfUrl }) {
   const [totalPages, setTotalPages] = useState(0);
   const [zoom, setZoom] = useState(100);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const viewerRef = useRef(null);
 
   // Load PDF
   useEffect(() => {
@@ -61,16 +59,6 @@ export default function PdfViewer({ pdfUrl }) {
     renderPage();
   }, [pdf, currentPage, zoom]);
 
-  const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      viewerRef.current?.requestFullscreen().catch(err => console.error(err));
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -80,7 +68,7 @@ export default function PdfViewer({ pdfUrl }) {
   }
 
   return (
-    <div ref={viewerRef} className="flex flex-col h-full bg-gray-100">
+    <div className="flex flex-col h-full bg-gray-100">
       {/* Toolbar */}
       <div className="bg-white border-b border-gray-300 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
@@ -130,19 +118,6 @@ export default function PdfViewer({ pdfUrl }) {
             <ChevronDown className="w-5 h-5 text-gray-600" />
           </button>
         </div>
-
-        {/* Fullscreen Button */}
-        <button
-          onClick={handleFullscreen}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors ml-2"
-          title={isFullscreen ? "Sair de tela cheia" : "Tela cheia"}
-        >
-          {isFullscreen ? (
-            <Minimize2 className="w-5 h-5 text-gray-600" />
-          ) : (
-            <Maximize2 className="w-5 h-5 text-gray-600" />
-          )}
-        </button>
       </div>
 
       {/* Canvas Container */}
