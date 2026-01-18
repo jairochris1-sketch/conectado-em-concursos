@@ -165,7 +165,7 @@ export default function AdminPage() {
     const checkAdmin = async () => {
       try {
         const user = await User.me();
-        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com'];
+        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
         if (adminEmails.includes(user.email)) {
           setIsAdmin(true);
           loadQuestions();
