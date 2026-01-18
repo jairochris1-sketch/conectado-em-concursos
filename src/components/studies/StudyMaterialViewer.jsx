@@ -59,25 +59,14 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
         {/* Content Viewer */}
          <div className={`flex-1 overflow-auto p-6 md:p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
           {material.file_type === 'pdf' ? (
-            <div className="w-full h-full min-h-[600px]">
+            <div className="w-full h-full flex flex-col">
               <iframe
                 src={getPdfViewerUrl(material.file_url)}
                 width="100%"
-                height="600px"
-                className="border rounded-lg"
+                height="100%"
+                className="border rounded-lg flex-1"
                 title={material.title}
               />
-              <div className={`mt-4 p-4 rounded-lg flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                <div className="text-center">
-                  <FileText className={`w-12 h-12 mx-auto mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
-                  <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Visualizando: {material.file_name}
-                  </p>
-                  <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Use o botão "Imprimir" para salvar ou imprimir este documento
-                  </p>
-                </div>
-              </div>
             </div>
           ) : (
             <div className="w-full h-full">
