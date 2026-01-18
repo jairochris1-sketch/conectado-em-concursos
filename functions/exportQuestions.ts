@@ -81,28 +81,111 @@ Deno.serve(async (req) => {
 
     const { format = 'csv' } = await req.json().catch(() => ({ format: 'csv' }));
 
-    // Fetch up to 1000 questions using user-scoped token (read is public)
-    const questions = await base44.entities.Question.filter({}, '-created_date', 1000);
+    // Streaming response para grandes volumes
+    const isXml = String(format).toLowerCase() === 'xml';
+    const contentType = isXml ? 'application/xml; charset=utf-8' : 'text/csv; charset=utf-8';
+    const filename = isXml ? 'questions.xml' : 'questions.csv';
 
-    let text; let contentType; let filename;
-    if (String(format).toLowerCase() === 'xml') {
-      text = toXML(questions || []);
-      contentType = 'application/xml; charset=utf-8';
-      filename = 'questions.xml';
-    } else {
-      text = toCSV(questions || []);
-      contentType = 'text/csv; charset=utf-8';
-      filename = 'questions.csv';
-    }
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          // Cabeçalhos iniciais
+          if (!isXml) {
+            // BOM + CSV headers
+            const headers = [
+              'id','subject','topic','institution','year','cargo','exam_name','type','statement','command',
+              'options','correct_answer','explanation','tags','edital_url','prova_url','gabarito_url',
+              'created_date','updated_date','created_by'
+            ];
+            controller.enqueue(encoder.encode('\uFEFF' + headers.join(',') + '\n'));
+          } else {
+            controller.enqueue(encoder.encode('<?xml version="1.0" encoding="UTF-8"?>\n<questions>\n'));
+          }
 
-    // Prepend BOM for CSV to ensure Excel opens UTF-8 correctly
-    const withBom = (contentType.startsWith('text/csv') ? '\uFEFF' + text : text);
-    return new Response(withBom, {
+          // Processar em chunks de 100 questões por vez
+          const CHUNK_SIZE = 100;
+          let skip = 0;
+          let hasMore = true;
+
+          while (hasMore) {
+            // Buscar chunk usando asServiceRole para garantir acesso total
+            const questions = await base44.asServiceRole.entities.Question.filter(
+              {}, 
+              '-created_date', 
+              CHUNK_SIZE,
+              skip
+            );
+
+            if (!questions || questions.length === 0) {
+              hasMore = false;
+              break;
+            }
+
+            // Processar e enviar chunk
+            if (isXml) {
+              for (const q of questions) {
+                const lines = [];
+                lines.push(`  <question id="${xmlEscape(q.id)}">`);
+                const simple = ['subject','topic','institution','year','cargo','exam_name','type','statement','command','correct_answer','explanation','edital_url','prova_url','gabarito_url','created_date','updated_date','created_by'];
+                for (const key of simple) {
+                  const val = q[key] !== undefined && q[key] !== null ? xmlEscape(q[key]) : '';
+                  lines.push(`    <${key}>${val}</${key}>`);
+                }
+                lines.push('    <tags>');
+                (q.tags || []).forEach(t => lines.push(`      <tag>${xmlEscape(t)}</tag>`));
+                lines.push('    </tags>');
+                lines.push('    <options>');
+                (q.options || []).forEach(op => {
+                  const letter = xmlEscape(op.letter || '');
+                  const text = xmlEscape(op.text || '');
+                  lines.push(`      <option letter="${letter}">${text}</option>`);
+                });
+                lines.push('    </options>');
+                lines.push('  </question>');
+                controller.enqueue(encoder.encode(lines.join('\n') + '\n'));
+              }
+            } else {
+              for (const q of questions) {
+                const optionsStr = q.options ? JSON.stringify(q.options) : '';
+                const tagsStr = q.tags ? JSON.stringify(q.tags) : '';
+                const line = [
+                  q.id, q.subject, q.topic, q.institution, q.year, q.cargo, q.exam_name, q.type,
+                  q.statement, q.command, optionsStr, q.correct_answer, q.explanation, tagsStr,
+                  q.edital_url, q.prova_url, q.gabarito_url, q.created_date, q.updated_date, q.created_by
+                ].map(csvEscape).join(',');
+                controller.enqueue(encoder.encode(line + '\n'));
+              }
+            }
+
+            // Verificar se há mais questões
+            if (questions.length < CHUNK_SIZE) {
+              hasMore = false;
+            } else {
+              skip += CHUNK_SIZE;
+            }
+          }
+
+          // Fechar tags XML
+          if (isXml) {
+            controller.enqueue(encoder.encode('</questions>'));
+          }
+
+          controller.close();
+        } catch (error) {
+          console.error('Stream error:', error);
+          controller.error(error);
+        }
+      }
+    });
+
+    return new Response(stream, {
       status: 200,
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename=${filename}`,
-        'Cache-Control': 'no-store'
+        'Cache-Control': 'no-store',
+        'Transfer-Encoding': 'chunked'
       }
     });
   } catch (error) {
