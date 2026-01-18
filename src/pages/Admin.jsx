@@ -286,8 +286,8 @@ export default function AdminPage() {
       toast.loading('Exportando questões...');
       const response = await base44.functions.invoke('exportQuestions', { format });
       
-      // A resposta vem como texto
-      const blob = new Blob([response.data], { 
+      // A resposta vem como texto diretamente
+      const blob = new Blob([response], { 
         type: format === 'xml' ? 'application/xml; charset=utf-8' : 'text/csv; charset=utf-8' 
       });
       
