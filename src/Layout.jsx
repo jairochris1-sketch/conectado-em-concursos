@@ -85,11 +85,6 @@ const moreMenuItems = [
     icon: Star,
   },
   {
-    title: "Resumos",
-    url: createPageUrl("ComoEstudarPrimeiroLugar"),
-    icon: BookOpenIcon,
-  },
-  {
     title: "Relatórios",
     url: createPageUrl("PerformanceReports"),
     icon: BarChart3,
