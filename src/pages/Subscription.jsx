@@ -24,7 +24,6 @@ const plans = [
     features: [
       '20 questões por dia',
       'Estatísticas básicas',
-      'Comentários da comunidade',
     ],
     unavailableFeatures: [
       'Resumos',
@@ -34,6 +33,7 @@ const plans = [
       'Flashcards',
       'Questões inéditas',
       'Simulados',
+      'Comentários da comunidade',
     ],
     color: 'gray',
     highlight: false,
