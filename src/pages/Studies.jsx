@@ -1539,33 +1539,31 @@ ${videoNotes}
                       Minhas Anotações
                     </h4>
                     <div className="flex gap-1">
-                      <Button
-                        onClick={handleSaveNotes}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white h-7 px-2"
-                        title="Salvar"
-                      >
-                        <Save className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        onClick={handleDownloadNotes}
-                        size="sm"
-                        variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
-                        title="Baixar"
-                      >
-                        <Download className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        onClick={handlePrintNotes}
-                        size="sm"
-                        variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
-                        title="Imprimir"
-                      >
-                        <Printer className="w-3 h-3" />
-                      </Button>
-                    </div>
+                       <Button
+                         onClick={handleSaveNotes}
+                         size="sm"
+                         className="bg-green-600 hover:bg-green-700 text-white h-7 px-2"
+                         title="Salvar"
+                       >
+                         <Save className="w-3 h-3" />
+                       </Button>
+                       <Button
+                         onClick={handleDownloadNotes}
+                         size="sm"
+                         className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
+                         title="Baixar"
+                       >
+                         <Download className="w-3 h-3" />
+                       </Button>
+                       <Button
+                         onClick={handlePrintNotes}
+                         size="sm"
+                         className="bg-gray-600 hover:bg-gray-700 text-white h-7 px-2"
+                         title="Imprimir"
+                       >
+                         <Printer className="w-3 h-3" />
+                       </Button>
+                     </div>
                   </div>
                   
                   <Textarea
