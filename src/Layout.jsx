@@ -67,6 +67,11 @@ const navigationItems = [
     icon: BookOpenIcon,
   },
   {
+    title: "Relatórios",
+    url: createPageUrl("PerformanceReports"),
+    icon: BarChart3,
+  },
+  {
     title: "Área de Estudos",
     url: createPageUrl("Studies"),
     icon: BookOpen,
