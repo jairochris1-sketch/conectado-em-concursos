@@ -764,8 +764,8 @@ ${videoNotes}
                                 <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
-                                {materialViewMode === 'grid' && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
+                                {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description && (
+                                  <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
                                     {material.description}
                                   </p>
                                 )}
