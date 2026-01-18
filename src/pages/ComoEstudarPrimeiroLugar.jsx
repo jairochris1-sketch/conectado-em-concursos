@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ArticleSearch from "@/components/articles/ArticleSearch";
+import HighlightedContent from "@/components/articles/HighlightedContent";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -20,6 +22,8 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState('guia_aprovacao');
+  const [filteredArticles, setFilteredArticles] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -226,18 +230,30 @@ export default function ComoEstudarPrimeiroLugar() {
 
         {!loading && articles.length > 0 && (
           <section className="space-y-4 md:space-y-6">
+            <div className="mb-6">
+              <ArticleSearch
+                articles={articles}
+                onFilteredArticles={setFilteredArticles}
+                onSearch={setSearchTerm}
+              />
+            </div>
+
             <h2 className="text-lg md:text-xl font-bold">Artigos</h2>
-            {articles.map((a) => (
-              <article key={a.id} id={`art-${a.id}`} className="prose prose-sm md:prose max-w-none">
-                <h3 className="text-base md:text-lg font-semibold mb-2">{a.title}</h3>
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  {a.author && <Badge variant="outline" className="text-xs">{a.author}</Badge>}
-                  {a.reading_time && <Badge variant="secondary" className="text-xs">{a.reading_time} min</Badge>}
-                </div>
-                <div dangerouslySetInnerHTML={{ __html: a.content }} />
-                <hr className="my-4 md:my-6" />
-              </article>
-            ))}
+            {filteredArticles.length > 0 ? (
+              filteredArticles.map((a) => (
+                <article key={a.id} id={`art-${a.id}`} className="prose prose-sm md:prose max-w-none">
+                  <h3 className="text-base md:text-lg font-semibold mb-2">{a.title}</h3>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {a.author && <Badge variant="outline" className="text-xs">{a.author}</Badge>}
+                    {a.reading_time && <Badge variant="secondary" className="text-xs">{a.reading_time} min</Badge>}
+                  </div>
+                  <HighlightedContent content={a.content} searchTerm={searchTerm} />
+                  <hr className="my-4 md:my-6" />
+                </article>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-8">Nenhum artigo encontrado com os filtros selecionados.</p>
+            )}
           </section>
         )}
 
