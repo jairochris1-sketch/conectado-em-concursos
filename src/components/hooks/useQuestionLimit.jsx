@@ -17,8 +17,8 @@ export function useQuestionLimit() {
         const plan = user?.current_plan || 'gratuito';
         setUserPlan(plan);
 
-        // Apenas planos gratuitos têm limite
-        if (plan !== 'gratuito') {
+        // Admins e planos pagos não têm limite
+        if (user?.role === 'admin' || plan !== 'gratuito') {
           setIsBlocked(false);
           setLoading(false);
           return;
