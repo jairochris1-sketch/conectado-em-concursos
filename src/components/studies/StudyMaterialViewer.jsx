@@ -7,11 +7,12 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
       <div className="flex-1 flex flex-col bg-white">
-         {/* Minimal Header */}
-         <div className="flex justify-between items-center p-3 border-b border-gray-200">
+         {/* Header com título */}
+         <div className="flex justify-between items-center p-3 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-800 flex-1">{material.title}</h2>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600"
+              className="p-2 text-gray-400 hover:text-gray-600 ml-2"
               aria-label="Fechar"
             >
               <X className="w-6 h-6" />
