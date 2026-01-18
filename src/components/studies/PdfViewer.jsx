@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronUp, ChevronDown, ZoomIn, ZoomOut } from 'lucide-react';
+import { ChevronUp, ChevronDown, ZoomIn, ZoomOut, Maximize2, Minimize2 } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Set worker
@@ -11,8 +11,10 @@ export default function PdfViewer({ pdfUrl }) {
   const [totalPages, setTotalPages] = useState(0);
   const [zoom, setZoom] = useState(100);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const viewerRef = useRef(null);
 
   // Load PDF
   useEffect(() => {
