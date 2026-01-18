@@ -1503,43 +1503,43 @@ ${videoNotes}
 
               {/* Playlist Sidebar with Notes */}
               <aside className="w-full lg:w-80 bg-gray-900 border-l border-gray-800 flex flex-col max-h-full overflow-hidden">
-                <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10">
-                  <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
-                  <p className="text-gray-400 text-sm">
-                    {subjectNames[playingVideo.subject] || playingVideo.subject}
-                  </p>
-                </div>
+                <div className="bg-gray-800 px-3 py-2 border-b border-gray-700 flex-shrink-0">
+                   <h3 className="text-white font-semibold text-sm">Playlist</h3>
+                   <p className="text-gray-400 text-xs">
+                     {subjectNames[playingVideo.subject] || playingVideo.subject}
+                   </p>
+                 </div>
 
-                <div className="flex-1 overflow-y-auto">
-                  <div className="p-2">
+                 <div className="flex-1 overflow-y-auto min-h-0">
+                   <div className="p-1">
                     {filteredVideos.map((video, idx) => {
                       const videoId = video.video_id || extractYouTubeId(video.youtube_url);
                       const isActive = video.id === playingVideo.id;
                       return (
                         <button 
-                          key={video.id} 
-                          onClick={() => {
-                            localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                            handlePlayVideo(video);
-                          }}
-                          className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
-                            isActive 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                          }`}
+                         key={video.id} 
+                         onClick={() => {
+                           localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
+                           handlePlayVideo(video);
+                         }}
+                         className={`w-full text-left p-2 mb-1 rounded transition-all text-xs ${
+                           isActive 
+                             ? 'bg-blue-600 text-white' 
+                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                         }`}
                         >
-                          <div className="flex items-start gap-3">
-                            <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                          <div className="flex items-start gap-2">
+                            <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold ${
                               isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
                             }`}>
                               {idx + 1}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                              <div className={`font-medium text-xs line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
                                 {video.title}
                               </div>
                               {video.duration && (
-                                <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                                <div className={`text-[10px] ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
                                   {video.duration}
                                 </div>
                               )}
