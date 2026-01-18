@@ -1478,32 +1478,34 @@ ${videoNotes}
                       </Button>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-400 text-xs mr-2">Tamanho:</span>
-                      <Button 
-                        variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
-                        size="sm" 
-                        onClick={() => setVideoPlayerSize('normal')}
-                        className={videoPlayerSize === 'normal' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
-                      >
-                        Normal
-                      </Button>
-                      <Button 
-                        variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
-                        size="sm" 
-                        onClick={() => setVideoPlayerSize('medium')}
-                        className={videoPlayerSize === 'medium' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
-                      >
-                        Médio
-                      </Button>
-                      <Button 
-                        variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
-                        size="sm" 
-                        onClick={() => setVideoPlayerSize('large')}
-                        className={videoPlayerSize === 'large' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white border-gray-600 hover:bg-gray-700'}
-                      >
-                        Grande
-                      </Button>
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-300 text-sm font-medium">Tamanho do player:</span>
+                      <div className="flex gap-2 bg-gray-900 px-3 py-2 rounded-lg border border-gray-700">
+                        <Button 
+                          variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
+                          size="sm" 
+                          onClick={() => setVideoPlayerSize('normal')}
+                          className={`font-semibold transition-all ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                        >
+                          Normal
+                        </Button>
+                        <Button 
+                          variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
+                          size="sm" 
+                          onClick={() => setVideoPlayerSize('medium')}
+                          className={`font-semibold transition-all ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                        >
+                          Médio
+                        </Button>
+                        <Button 
+                          variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
+                          size="sm" 
+                          onClick={() => setVideoPlayerSize('large')}
+                          className={`font-semibold transition-all ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                        >
+                          Grande
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
