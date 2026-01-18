@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import ArticleSearch from "@/components/articles/ArticleSearch";
-import HighlightedContent from "@/components/articles/HighlightedContent";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -22,8 +20,6 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState('guia_aprovacao');
-  const [filteredArticles, setFilteredArticles] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -165,7 +161,7 @@ export default function ComoEstudarPrimeiroLugar() {
                   placeholder="Descrição do guia"
                   rows={3}
                 />
-                <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
                   <Button size="sm" onClick={handleSaveContent} className="bg-indigo-600 hover:bg-indigo-700 text-white">Salvar</Button>
                   <Button size="sm" variant="outline" onClick={() => setEditMode(false)}>Cancelar</Button>
                 </div>
@@ -177,35 +173,35 @@ export default function ComoEstudarPrimeiroLugar() {
         <p className="text-sm md:text-base text-gray-600 mb-6">{content.subtitle}</p>
 
         {!loading && articles.some(a => a.is_featured) && (
-            <section className="mb-8">
-              <h2 className="text-lg md:text-xl font-bold mb-3">Recomendados</h2>
-              <div className="space-y-3">
-                {articles.filter(a => a.is_featured).map((a) => (
-                  <Card key={a.id}>
-                    <CardContent className="p-3 md:p-4">
-                      <a href={`#art-${a.id}`} className="text-blue-700 font-semibold hover:underline block break-words">{a.title}</a>
-                      {a.summary && <p className="text-xs md:text-sm text-gray-600 mt-1">{a.summary}</p>}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
+          <section className="mb-8">
+            <h2 className="text-xl font-bold mb-3">Recomendados</h2>
+            <div className="space-y-4">
+              {articles.filter(a => a.is_featured).map((a) => (
+                <Card key={a.id}>
+                  <CardContent className="p-4">
+                    <a href={`#art-${a.id}`} className="text-blue-700 font-semibold hover:underline">{a.title}</a>
+                    {a.summary && <p className="text-sm text-gray-600 mt-1">{a.summary}</p>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {loading && <div className="text-gray-700">Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-lg md:text-xl font-bold mb-3">Vídeos</h2>
-            <div className="space-y-4">
+            <h2 className="text-xl font-bold mb-3">Vídeos</h2>
+            <div className="space-y-6">
               {videos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
                 return (
                   <div key={v.id} className="w-full">
-                    <div className="aspect-video bg-black rounded overflow-hidden">
+                    <div className="aspect-video bg-black rounded">
                       {id ? (
                         <iframe
-                          className="w-full h-full"
+                          className="w-full h-full rounded"
                           src={`https://www.youtube.com/embed/${id}`}
                           title={v.title}
                           frameBorder="0"
@@ -213,12 +209,12 @@ export default function ComoEstudarPrimeiroLugar() {
                           allowFullScreen
                         />
                       ) : (
-                        <Card><CardContent className="p-3 md:p-4">{v.title}</CardContent></Card>
+                        <Card><CardContent className="p-4">{v.title}</CardContent></Card>
                       )}
                     </div>
                     <div className="mt-2">
                       <Link to={createPageUrl(`AssistirAula?slug=guia_aprovacao&videoId=${id}`)}>
-                        <Button size="sm" variant="outline" className="w-full md:w-auto">Assistir aula</Button>
+                        <Button size="sm" variant="outline">Assistir aula</Button>
                       </Link>
                     </div>
                   </div>
@@ -229,31 +225,19 @@ export default function ComoEstudarPrimeiroLugar() {
         )}
 
         {!loading && articles.length > 0 && (
-          <section className="space-y-4 md:space-y-6">
-            <div className="mb-6">
-              <ArticleSearch
-                articles={articles}
-                onFilteredArticles={setFilteredArticles}
-                onSearch={setSearchTerm}
-              />
-            </div>
-
-            <h2 className="text-lg md:text-xl font-bold">Artigos</h2>
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((a) => (
-                <article key={a.id} id={`art-${a.id}`} className="prose prose-sm md:prose max-w-none">
-                  <h3 className="text-base md:text-lg font-semibold mb-2">{a.title}</h3>
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    {a.author && <Badge variant="outline" className="text-xs">{a.author}</Badge>}
-                    {a.reading_time && <Badge variant="secondary" className="text-xs">{a.reading_time} min</Badge>}
-                  </div>
-                  <HighlightedContent content={a.content} searchTerm={searchTerm} />
-                  <hr className="my-4 md:my-6" />
-                </article>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 py-8">Nenhum artigo encontrado com os filtros selecionados.</p>
-            )}
+          <section className="space-y-6">
+            <h2 className="text-xl font-bold">Artigos</h2>
+            {articles.map((a) => (
+              <article key={a.id} id={`art-${a.id}`} className="prose max-w-none">
+                <h3 className="text-lg font-semibold mb-1">{a.title}</h3>
+                <div className="flex items-center gap-2 mb-3">
+                  {a.author && <Badge variant="outline">{a.author}</Badge>}
+                  {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
+                </div>
+                <div dangerouslySetInnerHTML={{ __html: a.content }} />
+                <hr className="my-6" />
+              </article>
+            ))}
           </section>
         )}
 

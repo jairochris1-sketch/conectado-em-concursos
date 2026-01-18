@@ -4,11 +4,11 @@ import { Home, FileText, User, BookCopy, BookOpen, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null, color: '#4F46E5' },
-  { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null, color: '#7C3AED' },
-  { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null, color: '#DC2626' },
-  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos', color: '#2563EB' },
-  { name: 'Perfil', url: createPageUrl('Profile'), icon: User, feature: null, color: '#059669' }
+  { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null },
+  { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
+  { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
+  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
+  { name: 'Perfil', url: createPageUrl('Profile'), icon: User, feature: null }
 ];
 
 export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className }) {
@@ -28,10 +28,14 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
             <Link
               key={item.name}
               to={hasAccess ? item.url : createPageUrl("Subscription")}
-              className="flex flex-col items-center justify-center w-full transition-colors duration-200 relative text-gray-500 dark:text-gray-400"
-              style={isCurrentPage ? { color: item.color } : {}} 
+              className={`flex flex-col items-center justify-center w-full transition-colors duration-200 relative ${
+                isCurrentPage
+                  ? 'dark:text-blue-400' 
+                  : 'text-gray-500 dark:text-gray-400'
+              }`}
+              style={isCurrentPage ? { color: 'var(--primary-color)' } : {}} 
               onMouseEnter={(e) => {
-                if (!isCurrentPage) e.currentTarget.style.color = item.color; 
+                if (!isCurrentPage) e.currentTarget.style.color = 'var(--primary-color)'; 
               }}
               onMouseLeave={(e) => {
                 if (!isCurrentPage) e.currentTarget.style.color = '';
