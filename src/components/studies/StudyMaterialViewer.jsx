@@ -10,16 +10,16 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
-      <div className={`flex-1 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="flex-1 flex flex-col bg-white">
          {/* Minimal Header */}
-         <div className={`flex justify-between items-center p-3 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-           <button
-             onClick={onClose}
-             className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
-             aria-label="Fechar"
-           >
-             <X className="w-6 h-6" />
-           </button>
+         <div className="flex justify-between items-center p-3 border-b border-gray-200">
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600"
+              aria-label="Fechar"
+            >
+              <X className="w-6 h-6" />
+            </button>
          </div>
 
         {/* Content Viewer */}
