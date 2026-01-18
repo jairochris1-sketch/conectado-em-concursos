@@ -25,6 +25,7 @@ import NotificationManager from '../components/admin/NotificationManager';
 import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
+import FeedbackManager from '../components/admin/FeedbackManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -338,10 +339,14 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-11 md:grid-cols-11">
+          <TabsList className="grid w-full grid-cols-12 md:grid-cols-12">
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
               Usuários
+            </TabsTrigger>
+            <TabsTrigger value="feedbacks">
+              <Zap className="w-4 h-4 mr-2" />
+              Feedbacks
             </TabsTrigger>
             <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
               <Pencil className="w-4 h-4 mr-2" />
@@ -472,6 +477,10 @@ export default function AdminPage() {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="feedbacks" className="mt-6">
+            <FeedbackManager />
           </TabsContent>
         </Tabs>
       </div>
