@@ -145,10 +145,14 @@ export default function StudiesPage() {
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
   const [videoPlayerSize, setVideoPlayerSize] = useState('normal'); // normal, medium, large
+  const [videoQuality, setVideoQuality] = useState('auto'); // auto, hd, sd
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
   const videosPerPage = 40;
+  
+  // Lazy loading state para vídeos
+  const [loadedVideoThumbnails, setLoadedVideoThumbnails] = useState(new Set());
 
   // State for Articles
   const [articles, setArticles] = useState([]);
@@ -939,6 +943,7 @@ ${videoNotes}
                                   <img
                                     src={article.cover_image_url}
                                     alt={article.title}
+                                    loading="lazy"
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -989,13 +994,14 @@ ${videoNotes}
                           onClick={() => handleArticleClick(article)}
                         >
                           {article.cover_image_url && (
-                            <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
-                              <img
-                                src={article.cover_image_url}
-                                alt={article.title}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
+                           <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
+                             <img
+                               src={article.cover_image_url}
+                               alt={article.title}
+                               loading="lazy"
+                               className="w-full h-full object-cover"
+                             />
+                           </div>
                           )}
                           <CardHeader className={`flex-grow ${articleViewMode === 'compact' ? 'p-2' : 'p-3'}`}>
                             <div className="flex flex-wrap gap-1 mb-1">
@@ -1172,7 +1178,11 @@ ${videoNotes}
                               <img
                                 src={thumbnailUrl}
                                 alt={video.title}
+                                loading="lazy"
                                 className="w-full h-full object-cover"
+                                onLoad={() => {
+                                  setLoadedVideoThumbnails(prev => new Set(prev).add(video.id));
+                                }}
                               />
                               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="bg-white rounded-full p-4">
@@ -1431,7 +1441,7 @@ ${videoNotes}
                 <div className="flex-1 relative min-h-0">
                   <iframe
                     className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
+                    src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0&quality=${videoQuality === 'hd' ? 'hd720' : videoQuality === 'sd' ? 'small' : 'default'}`}
                     title={playingVideo.title}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1493,6 +1503,35 @@ ${videoNotes}
                             className={`text-xs px-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
                           >
                             Grande
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1 bg-gray-900 px-2 py-1 rounded border border-gray-700">
+                          <Button 
+                            variant={videoQuality === 'auto' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoQuality('auto')}
+                            className={`text-xs px-2 ${videoQuality === 'auto' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            Auto
+                          </Button>
+                          <Button 
+                            variant={videoQuality === 'hd' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoQuality('hd')}
+                            className={`text-xs px-2 ${videoQuality === 'hd' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            HD
+                          </Button>
+                          <Button 
+                            variant={videoQuality === 'sd' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoQuality('sd')}
+                            className={`text-xs px-2 ${videoQuality === 'sd' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            SD
                           </Button>
                         </div>
                       </div>
