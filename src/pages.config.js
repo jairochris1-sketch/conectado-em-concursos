@@ -6,11 +6,9 @@ import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
-import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Profile from './pages/Profile';
-import Questions from './pages/Questions';
 import Ranking from './pages/Ranking';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
@@ -23,6 +21,8 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import GuiaEstudos from './pages/GuiaEstudos';
+import Questions from './pages/Questions';
 import __Layout from './Layout.jsx';
 
 
@@ -35,11 +35,9 @@ export const PAGES = {
     "DigitalWhiteboard": DigitalWhiteboard,
     "ExamView": ExamView,
     "Exams": Exams,
-    "GuiaEstudos": GuiaEstudos,
     "Home": Home,
     "Notes": Notes,
     "Profile": Profile,
-    "Questions": Questions,
     "Ranking": Ranking,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
@@ -52,6 +50,8 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "GuiaEstudos": GuiaEstudos,
+    "Questions": Questions,
 }
 
 export const pagesConfig = {

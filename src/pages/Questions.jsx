@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Question, UserAnswer, User, ResponseHistory } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -46,6 +45,8 @@ export default function Questions() {
     return localStorage.getItem('questions-layout') || 'classic'; // Alterado de 'compact' para 'classic'
   });
   const [fontSize, setFontSize] = useState(1);
+  const [todayQuestionsCount, setTodayQuestionsCount] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   const questionsPerPage = 10;
 
@@ -112,6 +113,20 @@ export default function Questions() {
       try {
         const user = await User.me();
         setCurrentUser(user);
+        
+        // Verificar questões respondidas hoje
+        if (user && user.current_plan === 'gratuito') {
+          const userAnswersData = await UserAnswer.filter({ created_by: user.email });
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const todayAnswers = userAnswersData.filter(a => {
+            const answerDate = new Date(a.created_date);
+            answerDate.setHours(0, 0, 0, 0);
+            return answerDate.getTime() === today.getTime();
+          });
+          setTodayQuestionsCount(todayAnswers.length);
+          setIsBlocked(todayAnswers.length >= 20);
+        }
       } catch (error) {
         console.error("Erro ao carregar usuário:", error);
       }
@@ -218,6 +233,12 @@ export default function Questions() {
     const userAnswer = userAnswers[question.id];
     if (!userAnswer) return;
 
+    // Verificar limite de questões para usuários gratuitos
+    if (currentUser?.current_plan === 'gratuito' && todayQuestionsCount >= 20) {
+      setIsBlocked(true);
+      return;
+    }
+
     const isCorrect = userAnswer === question.correct_answer;
     
     const previousAttempts = await ResponseHistory.filter({ 
@@ -261,6 +282,15 @@ export default function Questions() {
           submitted: true
         }
       }));
+      
+      // Atualizar contador de questões diárias para usuários gratuitos
+      if (currentUser?.current_plan === 'gratuito') {
+        const newCount = todayQuestionsCount + 1;
+        setTodayQuestionsCount(newCount);
+        if (newCount >= 20) {
+          setIsBlocked(true);
+        }
+      }
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
     }
@@ -298,6 +328,11 @@ export default function Questions() {
                 <Award className="w-4 h-4" />
                 {stats.accuracy}% de acerto ({stats.correct}/{stats.submitted})
               </span>
+              {currentUser?.current_plan === 'gratuito' && (
+                <span className={`flex items-center gap-1 font-semibold ${todayQuestionsCount >= 20 ? 'text-red-600 dark:text-red-400' : todayQuestionsCount >= 15 ? 'text-yellow-600 dark:text-yellow-400' : ''}`}>
+                  📝 {todayQuestionsCount}/20 questões hoje
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3 justify-end">
@@ -336,6 +371,32 @@ export default function Questions() {
           <QuestionFilters onFilterSubmit={handleFilterSubmit} />
 
           <div className="space-y-4 md:space-y-6">
+            {isBlocked && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">
+                      Limite diário atingido
+                    </h3>
+                    <p className="text-sm text-red-700 dark:text-red-300 mb-2">
+                      Você já respondeu 20 questões hoje. Usuários do plano gratuito podem resolver até 20 questões por dia.
+                    </p>
+                    <Button
+                      size="sm"
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      onClick={() => window.location.href = '/subscription'}
+                    >
+                      Assinar Plano Premium
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
             {isLoading && allQuestions.length > 0 ? (
                <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
                   <RefreshCw className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
@@ -354,6 +415,7 @@ export default function Questions() {
                   questionsPerPage={questionsPerPage}
                   layoutMode={layoutMode}
                   fontSize={fontSize}
+                  isBlocked={isBlocked}
                 />
                 {totalPages > 1 && (
                   <Pagination
