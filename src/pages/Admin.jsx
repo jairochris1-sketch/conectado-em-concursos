@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
-import { exportQuestions } from '@/functions/exportQuestions';
+import { base44 } from '@/api/base44Client';
 
 // Direct imports for components
 import ModernQuestionForm from '../components/admin/ModernQuestionForm';
@@ -284,17 +284,17 @@ export default function AdminPage() {
   const handleExport = async (format) => {
     try {
       toast.loading('Exportando questões...');
-      const response = await exportQuestions({ format });
+      const response = await base44.functions.invoke('exportQuestions', { format });
       
-      // A resposta é um blob ou string
-      const blob = response.data instanceof Blob ? response.data : new Blob([response.data], { 
-        type: format === 'xml' ? 'application/xml' : 'text/csv' 
+      // A resposta vem como texto
+      const blob = new Blob([response.data], { 
+        type: format === 'xml' ? 'application/xml; charset=utf-8' : 'text/csv; charset=utf-8' 
       });
       
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `questions_${new Date().toISOString().split('T')[0]}.${format}`;
+      a.download = `conectadoemconcursos_questions_${new Date().toISOString().split('T')[0]}.${format}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
