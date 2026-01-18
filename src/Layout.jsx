@@ -157,6 +157,8 @@ const featureAccess = {
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
   'Resumos': ['avancado'],
+  'Provas': ['gratuito', 'padrao', 'avancado'],
+  'Visualização de Prova': ['gratuito', 'padrao', 'avancado'],
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
