@@ -57,6 +57,19 @@ const navigationItems = [
     icon: FileText,
   },
   {
+    title: "Área de Estudos",
+    url: createPageUrl("Studies"),
+    icon: BookOpen,
+  },
+  {
+    title: "Planos",
+    url: createPageUrl("Subscription"),
+    icon: CreditCard,
+  }
+];
+
+const moreMenuItems = [
+  {
     title: "Favoritas",
     url: createPageUrl("FavoriteQuestions"),
     icon: Star,
@@ -76,19 +89,6 @@ const navigationItems = [
     url: createPageUrl("PerformanceReports"),
     icon: BarChart3,
   },
-  {
-    title: "Área de Estudos",
-    url: createPageUrl("Studies"),
-    icon: BookOpen,
-  },
-  {
-    title: "Planos",
-    url: createPageUrl("Subscription"),
-    icon: CreditCard, // changed from DollarSign
-  }
-];
-
-const moreMenuItems = [
   {
     title: "ChatGPT",
     url: createPageUrl("ChatGPT"),
