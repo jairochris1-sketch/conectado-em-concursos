@@ -1408,16 +1408,27 @@ ${videoNotes}
 
         {/* Modal do Player de Vídeo em formato Playlist */}
         {playingVideo && (
-          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
+          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col overflow-hidden">
+            {/* Top Close Bar */}
+            <div className="bg-gray-800 px-4 py-2 flex justify-between items-center border-b border-gray-700">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-white text-sm font-semibold truncate">{playingVideo.title}</h2>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleCloseVideo}
+                className="text-gray-400 hover:text-white flex-shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
             {/* Video Player Section */}
-            <div className="flex-1 flex flex-col lg:flex-row h-full">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
               {/* Main Video Player */}
-              <div className={`flex flex-col bg-black ${
-                videoPlayerSize === 'large' ? 'flex-[2]' : 
-                videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
-                'flex-1'
-              }`}>
-                <div className="flex-1 relative">
+              <div className="flex-1 flex flex-col bg-black min-h-0">
+                <div className="flex-1 relative min-h-0">
                   <iframe
                     className="w-full h-full"
                     src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
@@ -1428,83 +1439,62 @@ ${videoNotes}
                   />
                 </div>
 
-                {/* Bottom Bar with Title and Navigation */}
-                <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h2 className="text-white text-lg font-semibold mb-1">{playingVideo.title}</h2>
-                      <div className="flex items-center gap-3 text-sm text-gray-400">
-                        {playingVideo.instructor && (
-                          <span>Prof. {playingVideo.instructor}</span>
-                        )}
-                        {playingVideo.topic && (
-                          <span>• {playingVideo.topic}</span>
-                        )}
-                      </div>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={handleCloseVideo}
-                      className="text-gray-400 hover:text-white"
-                    >
-                      <X className="w-5 h-5" />
-                    </Button>
-                  </div>
-                  
-                  {playingVideo.description && (
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{playingVideo.description}</p>
-                  )}
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handlePreviousVideo} 
-                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50"
-                      >
-                        ← Anterior
-                      </Button>
-                      <Button 
-                        variant="default" 
-                        size="sm" 
-                        onClick={handleNextVideo} 
-                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-                      >
-                        Próximo →
-                      </Button>
-                    </div>
+                {/* Bottom Control Bar */}
+                <div className="bg-gray-800 px-3 py-2 border-t border-gray-700 flex-shrink-0">
+                  <div className="flex flex-col gap-2">
+                    {playingVideo.description && (
+                      <p className="text-gray-400 text-xs line-clamp-1">{playingVideo.description}</p>
+                    )}
                     
-                    <div className="flex items-center gap-3">
-                      <span className="text-gray-300 text-sm font-medium">Tamanho do player:</span>
-                      <div className="flex gap-2 bg-gray-900 px-3 py-2 rounded-lg border border-gray-700">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-2">
                         <Button 
-                          variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
+                          variant="outline" 
                           size="sm" 
-                          onClick={() => setVideoPlayerSize('normal')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                          onClick={handlePreviousVideo} 
+                          disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
+                          className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs"
                         >
-                          Normal
+                          ← Anterior
                         </Button>
                         <Button 
-                          variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
+                          variant="default" 
                           size="sm" 
-                          onClick={() => setVideoPlayerSize('medium')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                          onClick={handleNextVideo} 
+                          disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
+                          className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs"
                         >
-                          Médio
+                          Próximo →
                         </Button>
-                        <Button 
-                          variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
-                          size="sm" 
-                          onClick={() => setVideoPlayerSize('large')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
-                        >
-                          Grande
-                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1 bg-gray-900 px-2 py-1 rounded border border-gray-700">
+                          <Button 
+                            variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoPlayerSize('normal')}
+                            className={`text-xs px-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            Normal
+                          </Button>
+                          <Button 
+                            variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoPlayerSize('medium')}
+                            className={`text-xs px-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            Médio
+                          </Button>
+                          <Button 
+                            variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
+                            size="sm" 
+                            onClick={() => setVideoPlayerSize('large')}
+                            className={`text-xs px-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                          >
+                            Grande
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1512,7 +1502,7 @@ ${videoNotes}
               </div>
 
               {/* Playlist Sidebar with Notes */}
-              <aside className="w-full lg:w-96 bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen">
+              <aside className="w-full lg:w-80 bg-gray-900 border-l border-gray-800 flex flex-col max-h-full overflow-hidden">
                 <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10">
                   <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
                   <p className="text-gray-400 text-sm">
