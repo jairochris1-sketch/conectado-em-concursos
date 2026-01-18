@@ -7,7 +7,7 @@ import QuestionList from "../components/questions/QuestionList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookCopy, Printer, FileText, ClipboardList, CheckSquare } from "lucide-react";
+import { ArrowLeft, BookCopy, FileText, ClipboardList, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
@@ -222,9 +222,7 @@ export default function ExamView() {
     }
   };
   
-  const handlePrint = () => {
-    window.print();
-  };
+
 
   const handleDownload = (url, filename) => {
     if (url) {
@@ -275,7 +273,7 @@ export default function ExamView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 w-full overflow-hidden">
       <style>
         {`
           @media print {
@@ -348,10 +346,7 @@ export default function ExamView() {
                 <span className="hidden sm:inline">Gabarito</span>
               </Button>
             )}
-            <Button onClick={handlePrint} variant="outline" size="sm" className="flex-1 sm:flex-initial text-xs px-2 py-1 h-8">
-              <Printer className="mr-1 h-3 w-3" />
-              <span className="hidden sm:inline">Imprimir</span>
-            </Button>
+
           </div>
         </div>
   
