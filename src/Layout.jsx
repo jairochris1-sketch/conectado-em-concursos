@@ -57,6 +57,11 @@ const navigationItems = [
     icon: FileText,
   },
   {
+    title: "Provas",
+    url: createPageUrl("Exams"),
+    icon: BookCopy,
+  },
+  {
     title: "Área de Estudos",
     url: createPageUrl("Studies"),
     icon: BookOpen,
@@ -73,11 +78,6 @@ const moreMenuItems = [
     title: "Favoritas",
     url: createPageUrl("FavoriteQuestions"),
     icon: Star,
-  },
-  {
-    title: "Provas",
-    url: createPageUrl("Exams"),
-    icon: BookCopy,
   },
   {
     title: "Resumos",
