@@ -18,43 +18,16 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
       <div className={`flex-1 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        {/* Header */}
-        <div className={`flex justify-between items-center p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="flex-1">
-            <h2 className={`text-xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              {material.title}
-            </h2>
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              {material.description}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 ml-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDarkMode(!darkMode)}
-              className={darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
-              title={darkMode ? 'Modo Claro' : 'Modo Escuro'}
-            >
-              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrint}
-              className="flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir
-            </Button>
-            <button
-              onClick={onClose}
-              className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
+         {/* Minimal Header */}
+         <div className={`flex justify-between items-center p-3 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+           <button
+             onClick={onClose}
+             className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
+             aria-label="Fechar"
+           >
+             <X className="w-6 h-6" />
+           </button>
+         </div>
 
         {/* Content Viewer */}
          <div className={`flex-1 overflow-auto p-6 md:p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
