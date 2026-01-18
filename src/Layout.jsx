@@ -204,7 +204,7 @@ export default function Layout({ children, currentPageName }) {
     accuracy: 0,
   });
 
-  const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com');
+  const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
   
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';

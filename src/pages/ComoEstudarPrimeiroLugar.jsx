@@ -38,7 +38,7 @@ export default function ComoEstudarPrimeiroLugar() {
           SiteContent.list('-created_date', 500)
         ]);
 
-        setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
+        setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com'));
 
         const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
         const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";

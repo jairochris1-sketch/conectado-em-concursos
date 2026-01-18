@@ -93,7 +93,7 @@ export default function GuiaEstudos() {
         ]);
 
         setCurrentUser(user);
-        setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
+        setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com'));
 
         if (user) {
           const userFavs = await FavoriteArticle.filter({ user_email: user.email });
