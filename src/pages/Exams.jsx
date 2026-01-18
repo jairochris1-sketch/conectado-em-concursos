@@ -303,7 +303,7 @@ export default function Exams() {
                 {viewMode === 'grid' ? (
                   <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-base text-blue-700 dark:text-white group-hover:text-blue-800 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
+                      <CardTitle className="text-base text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
                         {exam.exam_name}
                       </CardTitle>
                     </CardHeader>
@@ -332,7 +332,7 @@ export default function Exams() {
                   <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="text-lg font-semibold text-blue-700 dark:text-white group-hover:text-blue-800 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
+                        <p className="text-lg font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
                           {exam.exam_name}
                         </p>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -360,7 +360,7 @@ export default function Exams() {
                 ) : (
                   <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-3">
-                      <p className="text-sm font-semibold text-blue-700 dark:text-white group-hover:text-blue-800 dark:group-hover:text-blue-100 transition-colors line-clamp-2 mb-2">
+                      <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 mb-2">
                         {exam.exam_name}
                       </p>
                       <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
