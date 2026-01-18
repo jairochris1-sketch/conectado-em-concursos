@@ -299,21 +299,21 @@ export default function ExamView() {
         `}
       </style>
       <div id="printable-exam-area">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 print-hide">
-          <Button onClick={() => navigate(createPageUrl('Exams'))} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6 print-hide">
+          <Button onClick={() => navigate(createPageUrl('Exams'))} variant="outline" size="sm" className="w-full sm:w-auto">
+            <ArrowLeft className="mr-1 h-3 w-3" />
+            <span className="text-xs">Voltar</span>
           </Button>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
             {examInfo.edital_url && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleDownload(examInfo.edital_url, `Edital-${examInfo.name}.pdf`)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 flex-1 sm:flex-initial text-xs px-2 py-1 h-8"
               >
-                <FileText className="w-4 h-4 text-blue-600" />
-                Edital
+                <FileText className="w-3 h-3 text-blue-600" />
+                <span className="hidden sm:inline">Edital</span>
               </Button>
             )}
             {examInfo.prova_url && (
@@ -321,10 +321,10 @@ export default function ExamView() {
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleDownload(examInfo.prova_url, `Prova-${examInfo.name}.pdf`)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 flex-1 sm:flex-initial text-xs px-2 py-1 h-8"
               >
-                <ClipboardList className="w-4 h-4 text-green-600" />
-                Prova
+                <ClipboardList className="w-3 h-3 text-green-600" />
+                <span className="hidden sm:inline">Prova</span>
               </Button>
             )}
             {examInfo.gabarito_url && (
@@ -332,25 +332,25 @@ export default function ExamView() {
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleDownload(examInfo.gabarito_url, `Gabarito-${examInfo.name}.pdf`)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 flex-1 sm:flex-initial text-xs px-2 py-1 h-8"
               >
-                <CheckSquare className="w-4 h-4 text-purple-600" />
-                Gabarito
+                <CheckSquare className="w-3 h-3 text-purple-600" />
+                <span className="hidden sm:inline">Gabarito</span>
               </Button>
             )}
-            <Button onClick={handlePrint} variant="outline">
-              <Printer className="mr-2 h-4 w-4" />
-              Imprimir Prova
+            <Button onClick={handlePrint} variant="outline" size="sm" className="flex-1 sm:flex-initial text-xs px-2 py-1 h-8">
+              <Printer className="mr-1 h-3 w-3" />
+              <span className="hidden sm:inline">Imprimir</span>
             </Button>
           </div>
         </div>
   
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{examInfo.name}</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-white dark:text-white">{examInfo.name}</h1>
+          <p className="text-base md:text-lg text-gray-300 dark:text-gray-300 mt-1">
             {institutionNames[examInfo.institution] || examInfo.institution.toUpperCase()} - {examInfo.year}
           </p>
-          <p className="text-md text-gray-500 dark:text-gray-500">
+          <p className="text-sm md:text-md text-gray-400 dark:text-gray-400">
             Cargo: {examInfo.cargo}
           </p>
         </div>
