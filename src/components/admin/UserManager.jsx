@@ -11,9 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Shield, Ban, Clock, UserCheck, Eye, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { Search, Shield, Ban, Clock, UserCheck, Eye, AlertTriangle, CheckCircle2, XCircle, ShieldCheck, UserX } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { base44 } from '@/api/base44Client';
 
 const roleLabels = {
   admin: { label: 'Administrador', color: 'bg-red-100 text-red-800' },
@@ -163,6 +164,28 @@ export default function UserManager() {
     }
   };
 
+  const handleToggleAdmin = async (user) => {
+    const isCurrentlyAdmin = user.role === 'admin';
+    const newRole = isCurrentlyAdmin ? 'user' : 'admin';
+    
+    if (!window.confirm(`Tem certeza que deseja ${isCurrentlyAdmin ? 'REMOVER' : 'TORNAR'} ${user.full_name} como ADMIN?`)) return;
+
+    try {
+      const response = await base44.functions.invoke('updateUserRole', {
+        email: user.email,
+        role: newRole
+      });
+
+      if (response.success) {
+        toast.success(response.message);
+        loadUsers();
+      }
+    } catch (error) {
+      console.error('Erro ao alterar role:', error);
+      toast.error('Erro ao alterar permissão de admin');
+    }
+  };
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -243,6 +266,7 @@ export default function UserManager() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
                 <TableHead>Permissão</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Plano</TableHead>
@@ -257,6 +281,11 @@ export default function UserManager() {
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.full_name}</TableCell>
                     <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Badge className={user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}>
+                        {user.role === 'admin' ? 'Admin' : 'User'}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <Badge className={roleLabels[user.role_type || 'leitor'].color}>
                         {roleLabels[user.role_type || 'leitor'].label}
@@ -274,6 +303,14 @@ export default function UserManager() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant={user.role === 'admin' ? 'destructive' : 'default'}
+                          onClick={() => handleToggleAdmin(user)}
+                          title={user.role === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
+                        >
+                          {user.role === 'admin' ? <UserX className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
