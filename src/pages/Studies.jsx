@@ -602,36 +602,36 @@ ${videoNotes}
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <CardTitle className="flex items-center gap-2">
                     <Filter className="w-5 h-5" />
                     Filtros de Busca de Materiais
                   </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
                     <Button
                       variant={materialViewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('grid')}
-                      className={materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <Grid3x3 className="w-4 h-4" />
+                      <Grid3x3 className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'list' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('list')}
-                      className={materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <List className="w-4 h-4" />
+                      <List className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'compact' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('compact')}
-                      className={materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <LayoutGrid className="w-4 h-4" />
+                      <LayoutGrid className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
@@ -838,35 +838,35 @@ ${videoNotes}
 
           <TabsContent value="articles" className="mt-6">
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
-                  <Button
-                    variant={articleViewMode === 'grid' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('grid')}
-                    className={articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <Grid3x3 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={articleViewMode === 'list' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('list')}
-                    className={articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={articleViewMode === 'compact' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('compact')}
-                    className={articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </Button>
-                </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
+               <div className="flex items-center gap-1">
+                 <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
+                 <Button
+                   variant={articleViewMode === 'grid' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('grid')}
+                   className={`h-8 px-2 ${articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <Grid3x3 className="w-3 h-3" />
+                 </Button>
+                 <Button
+                   variant={articleViewMode === 'list' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('list')}
+                   className={`h-8 px-2 ${articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <List className="w-3 h-3" />
+                 </Button>
+                 <Button
+                   variant={articleViewMode === 'compact' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('compact')}
+                   className={`h-8 px-2 ${articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <LayoutGrid className="w-3 h-3" />
+                 </Button>
+               </div>
               </div>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
