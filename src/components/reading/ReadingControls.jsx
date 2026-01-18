@@ -19,7 +19,7 @@ export default function ReadingControls({ settings, onSettingsChange, onToggleFo
     <div className="flex items-center gap-2">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="text-gray-900 dark:text-white">
             <Settings className="w-4 h-4 mr-2" />
             Personalizar
           </Button>
@@ -95,7 +95,7 @@ export default function ReadingControls({ settings, onSettingsChange, onToggleFo
         </PopoverContent>
       </Popover>
 
-      <Button variant="outline" size="sm" onClick={onToggleFocusMode}>
+      <Button variant="outline" size="sm" onClick={onToggleFocusMode} className="text-gray-900 dark:text-white">
         <Maximize2 className="w-4 h-4 mr-2" />
         Modo Foco
       </Button>
