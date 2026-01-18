@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, BookCopy, Printer, FileText, ClipboardList, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
+import DailyLimitBanner from "@/components/limits/DailyLimitBanner";
 
 const institutionNames = {
   fcc: "FCC - Fundação Carlos Chagas",
@@ -50,6 +52,8 @@ export default function ExamView() {
   const [userAnswers, setUserAnswers] = useState({});
   const [submittedAnswers, setSubmittedAnswers] = useState({});
   const [responseHistory, setResponseHistory] = useState({});
+  
+  const { isBlocked, questionsAnsweredToday, dailyLimit, incrementCount, remainingQuestions } = useQuestionLimit();
 
   const institution = searchParams.get("institution");
   const year = searchParams.get("year");
@@ -178,6 +182,10 @@ export default function ExamView() {
     const userAnswer = userAnswers[question.id];
     if (!userAnswer) return;
 
+    if (isBlocked) {
+      return;
+    }
+
     try {
       const isCorrect = userAnswer === question.correct_answer;
       
@@ -206,6 +214,8 @@ export default function ExamView() {
           user_answer: userAnswer
         }
       }));
+
+      incrementCount();
 
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
@@ -354,6 +364,12 @@ export default function ExamView() {
             Cargo: {examInfo.cargo}
           </p>
         </div>
+
+        <DailyLimitBanner 
+          questionsAnsweredToday={questionsAnsweredToday}
+          dailyLimit={dailyLimit}
+          remainingQuestions={remainingQuestions}
+        />
   
         <div className="space-y-6">
           <QuestionList
@@ -366,6 +382,7 @@ export default function ExamView() {
             currentPage={1}
             questionsPerPage={questions.length}
             layoutMode="classic"
+            isBlocked={isBlocked}
           />
         </div>
       </div>
