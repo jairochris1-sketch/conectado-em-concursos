@@ -673,7 +673,7 @@ export default function QuestionList({
                   )
                 )}
 
-                {question.explanation && (showExplanation || isSubmitted) && (
+                {question.explanation && showExplanation && (
                   <div className="rounded-lg p-4 mb-4 text-white print-hide" style={{ backgroundColor: '#344151', border: '1px solid #2a3441' }}>
                     <div className="flex items-start gap-3">
                       <Lightbulb className="w-5 h-5 text-yellow-300 mt-0.5" />
