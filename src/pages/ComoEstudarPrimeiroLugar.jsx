@@ -19,11 +19,30 @@ export default function ComoEstudarPrimeiroLugar() {
   const [editMode, setEditMode] = useState(false);
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
-  const [selectedGuide, setSelectedGuide] = useState('guia_aprovacao');
+  const [selectedGuide, setSelectedGuide] = useState(null);
 
-  // Atualizar artigos/vídeos quando mudar de guia no mobile
+  // Determinar guia a partir da URL, localStorage ou primeiro guia disponível
+  useEffect(() => {
+    if (guides.length === 0 || selectedGuide) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const urlSlug = params.get('slug');
+    const savedGuide = localStorage.getItem('lastSelectedGuide');
+
+    let guideToSelect = urlSlug || savedGuide || guides[0]?.page_key;
+    
+    if (guideToSelect && guides.some(g => g.page_key === guideToSelect)) {
+      setSelectedGuide(guideToSelect);
+    } else if (guides.length > 0) {
+      setSelectedGuide(guides[0].page_key);
+    }
+  }, [guides, selectedGuide]);
+
+  // Atualizar artigos/vídeos quando mudar de guia e salvar no localStorage
   useEffect(() => {
     if (selectedGuide) {
+      localStorage.setItem('lastSelectedGuide', selectedGuide);
+      
       const guide = guides.find(g => g.page_key === selectedGuide);
       if (guide) {
         setContent({ title: guide.title || "", subtitle: guide.subtitle || "" });
@@ -59,18 +78,7 @@ export default function ComoEstudarPrimeiroLugar() {
           .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || (a.title || a.page_key).localeCompare(b.title || b.page_key));
         setGuides(allGuides);
 
-        // Sempre usar o primeiro guia como padrão ou guia_aprovacao se existir
-        const existing = allGuides.find(g => g.page_key === 'guia_aprovacao') || allGuides[0] || null;
-        if (existing) {
-          setSelectedGuide(existing.page_key);
-        }
-        if (existing) {
-          setContent({ title: existing.title || defaultTitle, subtitle: existing.subtitle || defaultSubtitle });
-          setContentId(existing.id);
-        } else {
-          setContent({ title: defaultTitle, subtitle: defaultSubtitle });
-          setContentId(null);
-        }
+        // Não definir selectedGuide aqui, deixar para o useEffect de determinação
 
         const allArts = arts || [];
         const map = {};
