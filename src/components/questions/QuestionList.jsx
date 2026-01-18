@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -99,7 +98,8 @@ export default function QuestionList({
   currentPage,
   questionsPerPage,
   layoutMode = 'compact',
-  fontSize = 1
+  fontSize = 1,
+  isBlocked = false
 }) {
   const [commentsVisible, setCommentsVisible] = useState({});
   const [favorites, setFavorites] = useState({});
@@ -628,9 +628,11 @@ export default function QuestionList({
                   <div className="mb-4 print-hide">
                     <Button
                       onClick={() => onSubmitAnswer(question)}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md font-medium"
+                      disabled={isBlocked}
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      title={isBlocked ? "Limite diário de questões atingido" : ""}
                     >
-                      Responder
+                      {isBlocked ? "Limite Atingido" : "Responder"}
                     </Button>
                   </div>
                 )}
