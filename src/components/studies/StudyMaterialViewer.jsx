@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, Maximize2 } from 'lucide-react';
 import PdfViewer from './PdfViewer';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
