@@ -283,30 +283,41 @@ export default function AdminPage() {
   };
 
   const handleExport = async (format) => {
+    const loadingToast = toast.loading('Exportando questões...');
     try {
-      toast.loading('Exportando questões...');
+      // Chamar a função backend
       const response = await base44.functions.invoke('exportQuestions', { format });
       
-      // A resposta vem como texto diretamente
+      // Verificar se a resposta é válida
+      if (!response) {
+        throw new Error('Resposta vazia do servidor');
+      }
+
+      // Criar blob a partir da resposta
       const blob = new Blob([response], { 
         type: format === 'xml' ? 'application/xml; charset=utf-8' : 'text/csv; charset=utf-8' 
       });
       
+      // Download do arquivo
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `conectadoemconcursos_questions_${new Date().toISOString().split('T')[0]}.${format}`;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
       
-      toast.dismiss();
+      // Cleanup
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      }, 100);
+      
+      toast.dismiss(loadingToast);
       toast.success(`${format.toUpperCase()} exportado com sucesso!`);
     } catch (error) {
       console.error('Erro ao exportar:', error);
-      toast.dismiss();
-      toast.error('Erro ao exportar questões. Tente novamente.');
+      toast.dismiss(loadingToast);
+      toast.error(`Erro ao exportar questões: ${error.message}`);
     }
   };
 
