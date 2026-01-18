@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
+import { Article, YouTubeVideo, SiteContent, User, FavoriteArticle } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart } from "lucide-react";
+import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
 import ArticleFeedback from "../components/feedback/ArticleFeedback";
@@ -46,6 +47,11 @@ export default function GuiaEstudos() {
   });
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [readingProgress, setReadingProgress] = useState({});
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [favorites, setFavorites] = useState([]);
+  const [favoriteIds, setFavoriteIds] = useState(new Set());
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -60,6 +66,7 @@ export default function GuiaEstudos() {
   });
 
   const filteredArticles = articles.filter(a => {
+    if (showFavoritesOnly && !favoriteIds.has(a.id)) return false;
     if (!articleSearch.trim()) return true;
     const search = articleSearch.toLowerCase();
     return a.title.toLowerCase().includes(search) || 
@@ -85,7 +92,14 @@ export default function GuiaEstudos() {
           SiteContent.list('-created_date', 500)
         ]);
 
+        setCurrentUser(user);
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
+
+        if (user) {
+          const userFavs = await FavoriteArticle.filter({ user_email: user.email });
+          setFavorites(userFavs);
+          setFavoriteIds(new Set(userFavs.map(f => f.article_id)));
+        }
 
         const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
         const defaultSubtitle = "Guia prático com materiais selecionados. Itens exibidos sem bloqueios, em formato limpo.";
@@ -149,6 +163,46 @@ export default function GuiaEstudos() {
     localStorage.setItem('readingProgress', JSON.stringify(progress));
   };
 
+  const handleScroll = (e) => {
+    const element = e.target;
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight - element.clientHeight;
+    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    setScrollProgress(progress);
+  };
+
+  const toggleFavorite = async (article) => {
+    if (!currentUser) {
+      toast.error('Faça login para favoritar artigos');
+      return;
+    }
+
+    try {
+      if (favoriteIds.has(article.id)) {
+        const fav = favorites.find(f => f.article_id === article.id);
+        if (fav) {
+          await FavoriteArticle.delete(fav.id);
+          setFavorites(favorites.filter(f => f.id !== fav.id));
+          const newIds = new Set(favoriteIds);
+          newIds.delete(article.id);
+          setFavoriteIds(newIds);
+          toast.success('Removido dos favoritos');
+        }
+      } else {
+        const newFav = await FavoriteArticle.create({
+          article_id: article.id,
+          article_title: article.title,
+          user_email: currentUser.email
+        });
+        setFavorites([...favorites, newFav]);
+        setFavoriteIds(new Set([...favoriteIds, article.id]));
+        toast.success('Adicionado aos favoritos');
+      }
+    } catch (error) {
+      toast.error('Erro ao atualizar favoritos');
+    }
+  };
+
   useEffect(() => {
     const savedProgress = localStorage.getItem('readingProgress');
     if (savedProgress) {
@@ -176,14 +230,29 @@ export default function GuiaEstudos() {
     return (
       <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="sticky top-0 z-10 border-b backdrop-blur-sm" style={{ backgroundColor: darkMode ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)' }}>
+          <div 
+            className="h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300" 
+            style={{ width: `${scrollProgress}%` }}
+          />
           <div className="mx-auto px-6 py-4 flex items-center justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => setFocusMode(false)}
-              className={darkMode ? 'bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700 hover:text-white' : ''}
-            >
-              Sair do Modo Foco
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setFocusMode(false)}
+                className={darkMode ? 'bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700 hover:text-white' : ''}
+              >
+                Sair do Modo Foco
+              </Button>
+              <Button
+                variant={favoriteIds.has(selectedArticle.id) ? "default" : "outline"}
+                size="icon"
+                onClick={() => toggleFavorite(selectedArticle)}
+                className={favoriteIds.has(selectedArticle.id) ? 'bg-red-500 hover:bg-red-600 text-white' : (darkMode ? 'bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700' : '')}
+                title={favoriteIds.has(selectedArticle.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              >
+                <Heart className={`w-5 h-5 ${favoriteIds.has(selectedArticle.id) ? 'fill-current' : ''}`} />
+              </Button>
+            </div>
             <div className="flex items-center gap-3">
               <ReadingControls
                 settings={readingSettings}
@@ -204,13 +273,16 @@ export default function GuiaEstudos() {
         <div className={`mx-auto py-12 px-6 ${maxWidthClasses[readingSettings.maxWidth]}`}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <article 
-              className="lg:col-span-8"
+              className="lg:col-span-8 max-h-[80vh] overflow-y-auto"
               style={{
                 fontFamily: readingSettings.fontFamily,
                 fontSize: `${readingSettings.fontSize}px`,
                 lineHeight: readingSettings.lineHeight
               }}
-              onScroll={(e) => handleArticleScroll(selectedArticle.id, e.target.scrollTop)}
+              onScroll={(e) => {
+                handleArticleScroll(selectedArticle.id, e.target.scrollTop);
+                handleScroll(e);
+              }}
             >
               <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 {selectedArticle.title}
@@ -412,7 +484,20 @@ export default function GuiaEstudos() {
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Artigos</h2>
+              <div className="flex items-center gap-2">
+                <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Artigos</h2>
+                {favorites.length > 0 && (
+                  <Button
+                    variant={showFavoritesOnly ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                    className={showFavoritesOnly ? 'bg-red-500 hover:bg-red-600 text-white' : (darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600' : '')}
+                  >
+                    <Heart className={`w-4 h-4 mr-1 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                    Favoritos ({favorites.length})
+                  </Button>
+                )}
+              </div>
               <div className="relative w-64">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
@@ -440,19 +525,36 @@ export default function GuiaEstudos() {
                           Continuar leitura
                         </Badge>
                       )}
+                      {favoriteIds.has(a.id) && (
+                        <Badge className="bg-red-100 text-red-800">
+                          <Heart className="w-3 h-3 mr-1 fill-current" />
+                          Favorito
+                        </Badge>
+                      )}
                     </div>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedArticle(a);
-                      setFocusMode(true);
-                    }}
-                    className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
-                  >
-                    Modo Foco
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant={favoriteIds.has(a.id) ? "default" : "outline"}
+                      onClick={() => toggleFavorite(a)}
+                      className={favoriteIds.has(a.id) ? 'bg-red-500 hover:bg-red-600 text-white' : (darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600' : '')}
+                      title={favoriteIds.has(a.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                    >
+                      <Heart className={`w-4 h-4 ${favoriteIds.has(a.id) ? 'fill-current' : ''}`} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedArticle(a);
+                        setFocusMode(true);
+                      }}
+                      className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
+                    >
+                      Modo Foco
+                    </Button>
+                  </div>
                 </div>
                 <article 
                   className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert' : ''}`}
