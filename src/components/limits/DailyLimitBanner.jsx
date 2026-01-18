@@ -36,13 +36,16 @@ export default function DailyLimitBanner({ questionsAnsweredToday, dailyLimit, r
                 Você respondeu <strong>{questionsAnsweredToday} questões</strong> hoje e atingiu o limite de <strong>{dailyLimit} questões diárias</strong> do Plano Gratuito.
                 Volte amanhã para continuar estudando ou faça upgrade agora!
               </p>
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
                 <Link to={createPageUrl('Subscription')}>
                   <Button className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white font-semibold w-full sm:w-auto">
                     <Crown className="w-4 h-4 mr-2" />
                     Assinar Agora - Questões Ilimitadas
                   </Button>
                 </Link>
+                <p className="text-xs text-red-700 dark:text-red-300 max-w-md leading-relaxed">
+                  Saia na frente da concorrência! Temos resumos estratégicos das principais matérias cobradas em Concursos Públicos, além de provas recentes aplicadas em Sergipe e outros.
+                </p>
               </div>
             </>
           ) : (
