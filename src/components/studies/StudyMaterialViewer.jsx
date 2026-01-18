@@ -4,19 +4,38 @@ import PdfViewer from './PdfViewer';
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   if (!isOpen || !material) return null;
 
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.querySelector('[data-pdf-viewer]')?.requestFullscreen().catch(err => console.error(err));
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="flex flex-col bg-white rounded-lg shadow-2xl w-full h-[95vh] max-w-6xl">
+      <div className="flex flex-col bg-white rounded-lg shadow-2xl w-full h-[95vh] max-w-6xl" data-pdf-viewer>
          {/* Header com título */}
          <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
             <h2 className="text-lg font-semibold text-gray-800 flex-1">{material.title}</h2>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 ml-2"
-              aria-label="Fechar"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <div className="flex items-center gap-2">
+              {material.file_type === 'pdf' && (
+                <button
+                  onClick={handleFullscreen}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                  title="Tela cheia"
+                >
+                  <Maximize2 className="w-6 h-6" />
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                aria-label="Fechar"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
          </div>
 
         {/* Content Viewer */}
