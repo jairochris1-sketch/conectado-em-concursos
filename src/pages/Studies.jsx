@@ -1552,53 +1552,49 @@ ${videoNotes}
                 </div>
 
                 {/* Notes Section */}
-                <div className="border-t border-gray-800 bg-gray-800 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-white text-sm font-semibold flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Minhas Anotações
+                <div className="border-t border-gray-800 bg-gray-800 p-2 flex-shrink-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-white text-xs font-semibold flex items-center gap-1">
+                      <FileText className="w-3 h-3" />
+                      Anotações
                     </h4>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       <Button
                         onClick={handleSaveNotes}
                         size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white h-7 px-2"
+                        className="bg-green-600 hover:bg-green-700 text-white h-6 px-1.5"
                         title="Salvar"
                       >
-                        <Save className="w-3 h-3" />
+                        <Save className="w-2.5 h-2.5" />
                       </Button>
                       <Button
                         onClick={handleDownloadNotes}
                         size="sm"
                         variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
+                        className="text-white border-gray-600 hover:bg-gray-700 h-6 px-1.5"
                         title="Baixar"
                       >
-                        <Download className="w-3 h-3" />
+                        <Download className="w-2.5 h-2.5" />
                       </Button>
                       <Button
                         onClick={handlePrintNotes}
                         size="sm"
                         variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-7 px-2"
+                        className="text-white border-gray-600 hover:bg-gray-700 h-6 px-1.5"
                         title="Imprimir"
                       >
-                        <Printer className="w-3 h-3" />
+                        <Printer className="w-2.5 h-2.5" />
                       </Button>
                     </div>
                   </div>
-                  
+
                   <Textarea
                     value={videoNotes}
                     onChange={(e) => setVideoNotes(e.target.value)}
-                    placeholder="Faça suas anotações sobre este vídeo aqui..."
-                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
-                    rows={8}
+                    placeholder="Anotações..."
+                    className="bg-gray-900 text-white border-gray-700 resize-none text-xs"
+                    rows={3}
                   />
-                  
-                  <p className="text-xs text-gray-500 mt-2">
-                    Salvas automaticamente no navegador.
-                  </p>
                 </div>
               </aside>
             </div>
