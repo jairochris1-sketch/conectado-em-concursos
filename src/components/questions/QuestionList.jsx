@@ -477,27 +477,28 @@ export default function QuestionList({
                   )}
                 </div>
                 
-                <div className={`mt-2 text-sm ${textStyles.secondary}`}>
-                  <span>Ano: <strong>{question.year}</strong></span>
-                  <span className="mx-2">•</span>
-                  <span>Banca: <strong className="text-orange-600">{institutionNames[question.institution] || question.institution.toUpperCase()}</strong></span>
-                  {question.cargo && (
-                    <>
-                      <span className="mx-2">•</span>
-                      <span>Cargo: <strong>{question.cargo}</strong></span>
-                    </>
-                  )}
+                <div className={`mt-2 text-xs md:text-sm ${textStyles.secondary} leading-relaxed`}>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="whitespace-nowrap">Ano: <strong>{question.year}</strong></span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="whitespace-nowrap">Banca: <strong className="text-orange-600">{institutionNames[question.institution] || question.institution.toUpperCase()}</strong></span>
+                    {question.cargo && (
+                      <>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="break-words">Cargo: <strong className="break-words">{question.cargo}</strong></span>
+                      </>
+                    )}
+                  </div>
                   {question.exam_name && (
-                    <>
-                      <span className="mx-2">•</span>
+                    <div className="mt-1">
                       <span>Prova: </span>
                       <Link 
                         to={createPageUrl(`ExamView?institution=${question.institution}&year=${question.year}&exam_name=${encodeURIComponent(question.exam_name)}&cargo=${encodeURIComponent(question.cargo || '')}`)}
-                        className="font-bold text-orange-600 hover:underline"
+                        className="font-bold text-orange-600 hover:underline break-words"
                       >
                          {question.exam_name} {question.cargo && `(${question.cargo})`}
                       </Link>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
