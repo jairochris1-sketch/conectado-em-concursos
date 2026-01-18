@@ -62,9 +62,9 @@ const navigationItems = [
     icon: BookCopy,
   },
   {
-    title: "ChatGPT",
-    url: createPageUrl("ChatGPT"),
-    icon: Bot,
+    title: "Resumos",
+    url: createPageUrl("ComoEstudarPrimeiroLugar"),
+    icon: BookOpenIcon,
   },
   {
     title: "Área de Estudos",
@@ -79,6 +79,11 @@ const navigationItems = [
 ];
 
 const moreMenuItems = [
+  {
+    title: "ChatGPT",
+    url: createPageUrl("ChatGPT"),
+    icon: Bot,
+  },
   {
     title: "Cronograma de Estudos",
     url: createPageUrl("Schedule"),
@@ -114,11 +119,6 @@ const moreMenuItems = [
     url: createPageUrl("Statistics"),
     icon: BarChart3,
   },
-  {
-    title: "Como estudar para ser aprovado",
-    url: createPageUrl("ComoEstudarPrimeiroLugar"),
-    icon: BookOpenIcon,
-  },
 ];
 
 const pageNameTranslations = {
@@ -142,7 +142,7 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  ComoEstudarPrimeiroLugar: "Como estudar para ser aprovado em primeiro lugar",
+  ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
 };
 
@@ -156,7 +156,7 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Como estudar para ser aprovado em primeiro lugar': ['gratuito', 'padrao', 'avancado'],
+  'Resumos': ['gratuito', 'padrao', 'avancado'],
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
