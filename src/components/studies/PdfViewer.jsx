@@ -114,7 +114,7 @@ export default function PdfViewer({ pdfUrl }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-100">
+    <div ref={viewerRef} className="flex flex-col h-full bg-gray-100">
       {/* Toolbar */}
       <div className="bg-white border-b border-gray-300 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
@@ -141,28 +141,49 @@ export default function PdfViewer({ pdfUrl }) {
         </div>
 
         {/* Page Info */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Página Anterior"
-          >
-            <ChevronUp className="w-5 h-5 text-gray-600" />
-          </button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Página Anterior"
+            >
+              <ChevronUp className="w-5 h-5 text-gray-600" />
+            </button>
 
-          <span className="text-sm font-medium text-gray-700 min-w-24 text-center">
-            {currentPage} / {totalPages}
-          </span>
+            <span className="text-sm font-medium text-gray-700 min-w-24 text-center">
+              {currentPage} / {totalPages}
+            </span>
 
-          <button
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Próxima Página"
-          >
-            <ChevronDown className="w-5 h-5 text-gray-600" />
-          </button>
+            <button
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Próxima Página"
+            >
+              <ChevronDown className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1 border-l border-gray-300 pl-4">
+            <button
+              onClick={handlePrint}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Imprimir"
+            >
+              <Printer className="w-5 h-5 text-gray-600" />
+            </button>
+
+            <button
+              onClick={handleFullscreen}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Tela Cheia"
+            >
+              <Maximize2 className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
         </div>
       </div>
 
