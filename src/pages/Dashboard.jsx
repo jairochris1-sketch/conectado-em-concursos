@@ -284,7 +284,7 @@ export default function Dashboard() {
               </Button>
             </Link>
             <Link to={createPageUrl("Ranking")}>
-              <Button size="lg" className="w-full sm:w-auto border-2 border-white text-white hover:bg-white/20 hover:text-white font-semibold">
+              <Button size="lg" className="w-full sm:w-auto border-2 border-white text-white bg-white/10 hover:bg-white/30 font-semibold">
                 <Trophy className="w-5 h-5 mr-2" />
                 Ver Minha Posição
               </Button>
