@@ -152,7 +152,7 @@ export default function Dashboard() {
           {/* Título + mensagens */}
           <div>
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-              Meu Painel
+              {currentUser?.full_name || 'Meu Painel'}
             </h1>
             <div className="mt-2 space-y-1 text-gray-700 dark:text-gray-300 text-sm md:text-base">
               <p>👋 {getGreeting()}, {currentUser?.full_name || 'user'}!</p>
@@ -171,13 +171,13 @@ export default function Dashboard() {
                 Resolver Questões
               </Button>
             </Link>
-            <Link to={createPageUrl("Ranking")} className="sm:w-auto">
+            <Link to={createPageUrl("Studies")} className="sm:w-auto">
               <Button 
                 variant="outline" 
                 className="w-full sm:w-auto rounded-md border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
               >
-                <Trophy className="w-4 h-4 mr-2" />
-                Ver Ranking
+                <FileText className="w-4 h-4 mr-2" />
+                Área de Estudos
               </Button>
             </Link>
           </div>
