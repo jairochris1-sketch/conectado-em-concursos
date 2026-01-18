@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Search, Sun, Moon, BookMarked } from "lucide-react";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
+import ArticleFeedback from "../components/feedback/ArticleFeedback";
 
 export default function GuiaEstudos() {
   const [searchParams] = useSearchParams();
@@ -222,10 +223,15 @@ export default function GuiaEstudos() {
                 }}
               />
             </article>
-            <aside className="lg:col-span-4">
+            <aside className="lg:col-span-4 space-y-4">
               <div className={`sticky top-24 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
                 <AnnotationTools articleId={selectedArticle.id} darkMode={darkMode} />
               </div>
+              <ArticleFeedback 
+                articleId={selectedArticle.id} 
+                articleTitle={selectedArticle.title}
+                darkMode={darkMode}
+              />
             </aside>
           </div>
         </div>
