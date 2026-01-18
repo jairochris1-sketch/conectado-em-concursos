@@ -704,10 +704,10 @@ ${videoNotes}
                       transition={{ delay: index * 0.05 }}
                     >
                       {materialViewMode === 'list' ? (
-                        <Card className="shadow hover:shadow-lg transition-all cursor-pointer"
+                        <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
                               onClick={() => handleMaterialClick(material)}>
                           <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 overflow-hidden">
                               <div className="flex-shrink-0">
                                 {material.file_type === 'pdf' ? (
                                   <FileText className="w-12 h-12 text-red-500" />
@@ -715,7 +715,7 @@ ${videoNotes}
                                   <Eye className="w-12 h-12 text-blue-500" />
                                 )}
                               </div>
-                              <div className="flex-1 min-w-0">
+                              <div className="flex-1 min-w-0 overflow-hidden">
                                 <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 truncate">
                                   {material.title}
                                 </h3>
@@ -731,7 +731,7 @@ ${videoNotes}
                                   </Badge>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 flex-shrink-0">
                                 {isAdmin && (
                                   <Button
                                     variant="ghost"
