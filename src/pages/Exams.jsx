@@ -303,7 +303,7 @@ export default function Exams() {
                 {viewMode === 'grid' ? (
                   <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-base text-blue-700 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors line-clamp-2">
+                      <CardTitle className="text-base text-blue-700 dark:text-white group-hover:text-blue-800 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
                         {exam.exam_name}
                       </CardTitle>
                     </CardHeader>
