@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronUp, ChevronDown, ZoomIn, ZoomOut } from 'lucide-react';
+import { ChevronUp, ChevronDown, ZoomIn, ZoomOut, Maximize2, Printer } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Set worker
