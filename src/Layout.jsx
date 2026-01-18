@@ -57,6 +57,11 @@ const navigationItems = [
     icon: FileText,
   },
   {
+    title: "Favoritas",
+    url: createPageUrl("FavoriteQuestions"),
+    icon: Star,
+  },
+  {
     title: "Provas",
     url: createPageUrl("Exams"),
     icon: BookCopy,
@@ -65,6 +70,11 @@ const navigationItems = [
     title: "Resumos",
     url: createPageUrl("ComoEstudarPrimeiroLugar"),
     icon: BookOpenIcon,
+  },
+  {
+    title: "Relatórios",
+    url: createPageUrl("PerformanceReports"),
+    icon: BarChart3,
   },
   {
     title: "Área de Estudos",
@@ -79,16 +89,6 @@ const navigationItems = [
 ];
 
 const moreMenuItems = [
-  {
-    title: "Favoritas",
-    url: createPageUrl("FavoriteQuestions"),
-    icon: Star,
-  },
-  {
-    title: "Relatórios",
-    url: createPageUrl("PerformanceReports"),
-    icon: BarChart3,
-  },
   {
     title: "ChatGPT",
     url: createPageUrl("ChatGPT"),
