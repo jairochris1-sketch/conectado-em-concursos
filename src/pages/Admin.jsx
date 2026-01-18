@@ -283,20 +283,29 @@ export default function AdminPage() {
 
   const handleExport = async (format) => {
     try {
-      const { data, status } = await exportQuestions({ format });
-      if (status !== 200) throw new Error('Falha ao exportar');
-      const mime = format === 'xml' ? 'application/xml' : 'text/csv';
-      const blob = new Blob([data], { type: mime });
+      toast.loading('Exportando questões...');
+      const response = await exportQuestions({ format });
+      
+      // A resposta é um blob ou string
+      const blob = response.data instanceof Blob ? response.data : new Blob([response.data], { 
+        type: format === 'xml' ? 'application/xml' : 'text/csv' 
+      });
+      
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `questions.${format}`;
+      a.download = `questions_${new Date().toISOString().split('T')[0]}.${format}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-    } catch (e) {
-      toast.error('Erro ao exportar. Tente novamente.');
+      
+      toast.dismiss();
+      toast.success(`${format.toUpperCase()} exportado com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao exportar:', error);
+      toast.dismiss();
+      toast.error('Erro ao exportar questões. Tente novamente.');
     }
   };
 
