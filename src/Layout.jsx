@@ -444,23 +444,33 @@ export default function Layout({ children, currentPageName }) {
                 </Button>
               </div>
 
-              <div className="p-4 flex items-center gap-3 border-b border-black border-opacity-20">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
-                  <AvatarFallback className="bg-white text-xs">
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain"/>
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold text-sm truncate">{user.full_name || 'Usuário'}</p>
-                  {user.job_title && (
-                    <p className="text-xs text-gray-200 truncate">{user.job_title}</p>
-                  )}
-                  <div className={`mt-1 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
-                    <PlanInfo.icon className="w-3 h-3" />
-                    {PlanInfo.label}
+              <div className="p-4 flex items-center justify-between border-b border-black border-opacity-20">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
+                    <AvatarFallback className="bg-white text-xs">
+                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain"/>
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold text-sm truncate">{user.full_name || 'Usuário'}</p>
+                    {user.job_title && (
+                      <p className="text-xs text-gray-200 truncate">{user.job_title}</p>
+                    )}
+                    <div className={`mt-1 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
+                      <PlanInfo.icon className="w-3 h-3" />
+                      {PlanInfo.label}
+                    </div>
                   </div>
                 </div>
+                <Button 
+                  onClick={handleLogout} 
+                  size="sm"
+                  variant="ghost"
+                  className="text-white hover:bg-black/20"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
               </div>
 
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -508,12 +518,6 @@ export default function Layout({ children, currentPageName }) {
                   </>
                 )}
               </nav>
-              <div className="p-4 border-t border-black border-opacity-20">
-                  <Button onClick={handleLogout} variant="destructive" className="w-full bg-red-600 hover:bg-red-700">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sair
-                  </Button>
-              </div>
             </motion.div>
           </>
         )}
