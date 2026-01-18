@@ -177,7 +177,11 @@ export default function GuiaEstudos() {
       <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="sticky top-0 z-10 border-b backdrop-blur-sm" style={{ backgroundColor: darkMode ? 'rgba(17, 24, 39, 0.95)' : 'rgba(255, 255, 255, 0.95)' }}>
           <div className="mx-auto px-6 py-4 flex items-center justify-between">
-            <Button variant="outline" onClick={() => setFocusMode(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setFocusMode(false)}
+              className={darkMode ? 'bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700 hover:text-white' : ''}
+            >
               Sair do Modo Foco
             </Button>
             <div className="flex items-center gap-3">
@@ -290,7 +294,12 @@ export default function GuiaEstudos() {
             {isAdmin && (
               <div>
                 {!editMode ? (
-                  <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setEditMode(true)}
+                    className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
+                  >
                     Editar guia
                   </Button>
                 ) : (
@@ -310,7 +319,14 @@ export default function GuiaEstudos() {
                     />
                     <div className="flex gap-2">
                       <Button size="sm" onClick={handleSaveContent} className="bg-indigo-600 hover:bg-indigo-700 text-white">Salvar</Button>
-                      <Button size="sm" variant="outline" onClick={() => setEditMode(false)}>Cancelar</Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => setEditMode(false)}
+                        className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
+                      >
+                        Cancelar
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -377,7 +393,13 @@ export default function GuiaEstudos() {
                     </div>
                     <div className="mt-2">
                       <Link to={createPageUrl(`AssistirAula?slug=${slug}&videoId=${id}`)}>
-                        <Button size="sm" variant="outline">Assistir aula</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
+                        >
+                          Assistir aula
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -427,6 +449,7 @@ export default function GuiaEstudos() {
                       setSelectedArticle(a);
                       setFocusMode(true);
                     }}
+                    className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 hover:text-white' : ''}
                   >
                     Modo Foco
                   </Button>
