@@ -339,62 +339,60 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-            <TabsList className="inline-flex w-auto min-w-full md:grid md:w-full md:grid-cols-12 mb-4">
-              <TabsTrigger value="users" className="whitespace-nowrap flex-shrink-0">
-                <Users className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Usuários</span>
-              </TabsTrigger>
-              <TabsTrigger value="feedbacks" className="whitespace-nowrap flex-shrink-0">
-                <Zap className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Feedbacks</span>
-              </TabsTrigger>
-              <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)} className="whitespace-nowrap flex-shrink-0">
-                <Pencil className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Questões</span>
-              </TabsTrigger>
-              <TabsTrigger value="new-question" className="whitespace-nowrap flex-shrink-0">
-                <PlusCircle className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">{selectedQuestion ? 'Editar' : 'Nova'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="import" className="whitespace-nowrap flex-shrink-0">
-                <Upload className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Importar</span>
-              </TabsTrigger>
-              <TabsTrigger value="provas" className="whitespace-nowrap flex-shrink-0">
-                <Upload className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Provas</span>
-              </TabsTrigger>
-              <TabsTrigger value="assinaturas" className="whitespace-nowrap flex-shrink-0">
-                <CreditCard className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Assinaturas</span>
-              </TabsTrigger>
-              <TabsTrigger value="conteudo" className="whitespace-nowrap flex-shrink-0">
-                <FileText className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Conteúdo</span>
-              </TabsTrigger>
-              <TabsTrigger value="videos" className="whitespace-nowrap flex-shrink-0">
-                <Play className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Vídeos</span>
-              </TabsTrigger>
-              <TabsTrigger value="artigos" className="whitespace-nowrap flex-shrink-0">
-                <Newspaper className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Artigos</span>
-              </TabsTrigger>
-              <TabsTrigger value="assuntos" className="whitespace-nowrap flex-shrink-0">
-                <BookOpen className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Assuntos</span>
-              </TabsTrigger>
-              <TabsTrigger value="guias" className="whitespace-nowrap flex-shrink-0">
-                <Bookmark className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Guias</span>
-              </TabsTrigger>
-              <TabsTrigger value="exportar" className="whitespace-nowrap flex-shrink-0">
-                <Download className="w-4 h-4 mr-1 md:mr-2" />
-                <span className="text-xs md:text-sm">Exportar</span>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="grid w-full grid-cols-12 md:grid-cols-12">
+            <TabsTrigger value="users">
+              <Users className="w-4 h-4 mr-2" />
+              Usuários
+            </TabsTrigger>
+            <TabsTrigger value="feedbacks">
+              <Zap className="w-4 h-4 mr-2" />
+              Feedbacks
+            </TabsTrigger>
+            <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Questões
+            </TabsTrigger>
+            <TabsTrigger value="new-question">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              {selectedQuestion ? 'Editar' : 'Nova Questão'}
+            </TabsTrigger>
+            <TabsTrigger value="import">
+              <Upload className="w-4 h-4 mr-2" />
+              Importar
+            </TabsTrigger>
+            <TabsTrigger value="provas">
+              <Upload className="w-4 h-4 mr-2" />
+              Provas
+            </TabsTrigger>
+            <TabsTrigger value="assinaturas">
+              <CreditCard className="w-4 h-4 mr-2" />
+              Assinaturas
+            </TabsTrigger>
+            <TabsTrigger value="conteudo">
+              <FileText className="w-4 h-4 mr-2" />
+              Conteúdo
+            </TabsTrigger>
+            <TabsTrigger value="videos">
+              <Play className="w-4 h-4 mr-2" />
+              Vídeos
+            </TabsTrigger>
+            <TabsTrigger value="artigos">
+              <Newspaper className="w-4 h-4 mr-2" />
+              Artigos
+            </TabsTrigger>
+            <TabsTrigger value="assuntos">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Assuntos
+            </TabsTrigger>
+            <TabsTrigger value="guias">
+              <Bookmark className="w-4 h-4 mr-2" />
+              Guias
+            </TabsTrigger>
+            <TabsTrigger value="exportar">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="users">
             <UserManager />
