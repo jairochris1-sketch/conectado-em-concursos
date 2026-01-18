@@ -17,6 +17,13 @@ export function useQuestionLimit() {
         const plan = user?.current_plan || 'gratuito';
         setUserPlan(plan);
 
+        // Admin não tem limite de questões
+        if (user?.role === 'admin') {
+          setIsBlocked(false);
+          setLoading(false);
+          return;
+        }
+
         // Apenas planos gratuitos têm limite
         if (plan !== 'gratuito') {
           setIsBlocked(false);
