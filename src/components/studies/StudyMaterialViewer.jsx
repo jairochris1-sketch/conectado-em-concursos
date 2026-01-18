@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Printer, FileText, Image, Moon, Sun } from 'lucide-react';
+import { X, FileText, Image, Moon, Sun } from 'lucide-react';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   const [darkMode, setDarkMode] = useState(false);
