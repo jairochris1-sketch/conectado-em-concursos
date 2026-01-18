@@ -13,13 +13,30 @@ const Avatar = React.forwardRef(({ className, ...props }, ref) => (
 ));
 Avatar.displayName = "Avatar";
 
-const AvatarImage = React.forwardRef(({ className, ...props }, ref) => (
-  <img
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-));
+const AvatarImage = React.forwardRef(({ className, onError, src, ...props }, ref) => {
+  const [imgError, setImgError] = React.useState(false);
+
+  const handleError = (e) => {
+    setImgError(true);
+    if (onError) onError(e);
+  };
+
+  // Se a imagem quebrou, retorna null para forçar o fallback
+  if (imgError || !src) {
+    return null;
+  }
+
+  return (
+    <img
+      ref={ref}
+      src={src}
+      className={cn("aspect-square h-full w-full object-cover", className)}
+      onError={handleError}
+      loading="lazy"
+      {...props}
+    />
+  );
+});
 AvatarImage.displayName = "AvatarImage";
 
 const AvatarFallback = React.forwardRef(({ className, ...props }, ref) => (
