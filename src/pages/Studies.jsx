@@ -1417,16 +1417,44 @@ ${videoNotes}
                 videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
                 'flex-1'
               }`}>
-                <div className="flex-1 relative">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
-                    title={playingVideo.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+                <div className="flex-1 relative group">
+                   <iframe
+                     className="w-full h-full"
+                     src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
+                     title={playingVideo.title}
+                     frameBorder="0"
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                     allowFullScreen
+                   />
+
+                   {/* Video Size Controls */}
+                   <div className="absolute top-4 right-4 bg-gray-900/80 backdrop-blur px-2 py-1.5 rounded-lg border border-gray-700 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <Button 
+                       variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
+                       size="sm" 
+                       onClick={() => setVideoPlayerSize('normal')}
+                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                     >
+                       Normal
+                     </Button>
+                     <Button 
+                       variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
+                       size="sm" 
+                       onClick={() => setVideoPlayerSize('medium')}
+                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                     >
+                       Médio
+                     </Button>
+                     <Button 
+                       variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
+                       size="sm" 
+                       onClick={() => setVideoPlayerSize('large')}
+                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
+                     >
+                       Grande
+                     </Button>
+                   </div>
+                 </div>
 
                 {/* Bottom Bar with Title and Navigation */}
                 <div className="bg-gray-800 px-3 md:px-6 py-2 md:py-4 border-t border-gray-700">
@@ -1456,7 +1484,7 @@ ${videoNotes}
                     <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{playingVideo.description}</p>
                   )}
                   
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-3">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Button 
                         variant="outline" 
@@ -1476,36 +1504,6 @@ ${videoNotes}
                       >
                         Próximo →
                       </Button>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 overflow-x-auto">
-                      <span className="text-gray-300 text-xs md:text-sm font-medium whitespace-nowrap">Player:</span>
-                      <div className="flex gap-1 bg-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-lg border border-gray-700">
-                        <Button 
-                          variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
-                          size="sm" 
-                          onClick={() => setVideoPlayerSize('normal')}
-                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
-                        >
-                          Normal
-                        </Button>
-                        <Button 
-                          variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
-                          size="sm" 
-                          onClick={() => setVideoPlayerSize('medium')}
-                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
-                        >
-                          Médio
-                        </Button>
-                        <Button 
-                          variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
-                          size="sm" 
-                          onClick={() => setVideoPlayerSize('large')}
-                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
-                        >
-                          Grande
-                        </Button>
-                      </div>
                     </div>
                   </div>
                 </div>
