@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User } from '@/entities/User';
 import { Question } from '@/entities/Question';
 import { Topic } from '@/entities/Topic';
@@ -26,10 +26,12 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
-import QuestionsList from '../components/admin/QuestionsList';
-import ProvasEnviadasList from '../components/admin/ProvasEnviadasList';
-import SubscriptionsList from '../components/admin/SubscriptionsList';
-import VideoManager from '../components/admin/VideoManager';
+
+// Lazy load admin components
+const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
+const ProvasEnviadasList = lazy(() => import('@/components/admin/ProvasEnviadasList'));
+const SubscriptionsList = lazy(() => import('@/components/admin/SubscriptionsList'));
+const VideoManager = lazy(() => import('@/components/admin/VideoManager'));
 
 // Mapeamento completo de disciplinas
 const subjectNames = {
@@ -397,15 +399,17 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="questions">
-            <QuestionsList
-              questions={questions}
-              isDataLoading={isDataLoading}
-              onEditQuestion={handleEditQuestion}
-              onDeleteQuestion={handleDeleteQuestion}
-              onRefreshQuestions={loadQuestions}
-              subjectNames={subjectNames}
-              institutionNames={institutionNames}
-            />
+            <Suspense fallback={<div>Carregando lista de questões...</div>}>
+              <QuestionsList
+                questions={questions}
+                isDataLoading={isDataLoading}
+                onEditQuestion={handleEditQuestion}
+                onDeleteQuestion={handleDeleteQuestion}
+                onRefreshQuestions={loadQuestions}
+                subjectNames={subjectNames}
+                institutionNames={institutionNames}
+              />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="new-question">
@@ -423,11 +427,15 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="provas">
-            <ProvasEnviadasList />
+            <Suspense fallback={<div>Carregando provas enviadas...</div>}>
+              <ProvasEnviadasList />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="assinaturas">
-            <SubscriptionsList />
+            <Suspense fallback={<div>Carregando assinaturas...</div>}>
+              <SubscriptionsList />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="conteudo">
@@ -442,7 +450,9 @@ export default function AdminPage() {
           </TabsContent>
           
           <TabsContent value="videos">
-            <VideoManager />
+            <Suspense fallback={<div>Carregando gerenciador de vídeos...</div>}>
+              <VideoManager />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="artigos" className="mt-6">
