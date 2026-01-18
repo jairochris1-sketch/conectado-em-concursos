@@ -428,11 +428,12 @@ export default function QuestionList({
               key={question.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: Math.min(index * 0.05, 0.3) }}
               className={getQuestionCardStyle()}
               style={{ 
                 marginBottom: layoutMode === 'classic' ? '0.75rem' : '1rem',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'Arial, sans-serif',
+                willChange: 'transform, opacity'
               }}
             >
               <div className={`${textStyles.headerBg} px-6 py-3 ${textStyles.border} border-b print-hide`}>

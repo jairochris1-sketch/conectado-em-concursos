@@ -434,32 +434,32 @@ export default function Layout({ children, currentPageName }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed top-0 left-0 h-full w-72 text-white z-50 shadow-lg md:hidden flex flex-col"
-              style={{ backgroundColor: 'var(--primary-color)' }}
+              className="fixed top-0 left-0 h-full w-80 text-white z-50 shadow-2xl md:hidden flex flex-col overflow-hidden"
+              style={{ backgroundColor: 'var(--primary-color)', maxWidth: '85vw' }}
             >
-              <div className="flex items-center justify-between p-4 border-b border-black border-opacity-20">
+              <div className="flex items-center justify-between p-4 border-b border-black border-opacity-20 flex-shrink-0">
                 <h2 className="font-bold text-lg">Menu Principal</h2>
-                <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
-                  <X className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white active:scale-90 transition-transform" onClick={() => setIsMobileMenuOpen(false)}>
+                  <X className="w-6 h-6" />
                 </Button>
               </div>
 
-              <div className="p-4 flex items-center justify-between border-b border-black border-opacity-20">
-                <div className="flex items-center gap-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
+              <div className="p-4 flex items-center justify-between border-b border-black border-opacity-20 flex-shrink-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <Avatar className="w-12 h-12 flex-shrink-0">
+                    <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} loading="lazy" />
                     <AvatarFallback className="bg-white text-xs">
-                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain"/>
+                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain" loading="lazy" />
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-semibold text-sm truncate">{user.full_name || 'Usuário'}</p>
                     {user.job_title && (
                       <p className="text-xs text-gray-200 truncate">{user.job_title}</p>
                     )}
                     <div className={`mt-1 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
                       <PlanInfo.icon className="w-3 h-3" />
-                      {PlanInfo.label}
+                      <span className="truncate">{PlanInfo.label}</span>
                     </div>
                   </div>
                 </div>
@@ -467,29 +467,33 @@ export default function Layout({ children, currentPageName }) {
                   onClick={handleLogout} 
                   size="sm"
                   variant="ghost"
-                  className="text-white hover:bg-black/20"
+                  className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-5 h-5" />
                 </Button>
               </div>
 
-              <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+              <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain">
                 {[...navigationItems, ...moreMenuItems].map((item) => {
                   const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                  const isCurrentPage = location.pathname === item.url;
                   return (
                     <Link
                       key={item.title}
                       to={hasAccess ? item.url : createPageUrl("Subscription")}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-between p-3 rounded-lg text-gray-300 transition-colors"
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.2)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
+                        isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'
+                      }`}
+                      style={isCurrentPage ? {} : {}}
+                      onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
+                      onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <div className="flex items-center gap-3">
-                        <item.icon style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                        <span>{item.title}</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <item.icon className="w-5 h-5 flex-shrink-0" />
+                        <span className="truncate text-sm font-medium">{item.title}</span>
                       </div>
-                      {!hasAccess && <Lock className="w-4 h-4 text-yellow-400" />}
+                      {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
                     </Link>
                   );
                 })}
