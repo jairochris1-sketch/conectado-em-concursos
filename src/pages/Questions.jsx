@@ -326,15 +326,6 @@ export default function Questions() {
                 A <Plus className="w-4 h-4 ml-1" />
               </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLayoutToggle}
-              className="flex items-center gap-2"
-            >
-              <FileText className="w-4 h-4" />
-              {layoutMode === 'compact' ? 'Layout Clássico' : 'Layout Compacto'}
-            </Button>
             <ThemeToggle />
           </div>
         </motion.div>
