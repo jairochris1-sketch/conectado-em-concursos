@@ -492,7 +492,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
                 placeholder="Digite para buscar no enunciado ou comando..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="pl-10 bg-white dark:bg-gray-700 dark:text-gray-50 focus:border-blue-500 focus:ring-blue-500"
+                className="pl-10 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-50 placeholder-gray-500 dark:placeholder-gray-400 border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
           </div>
