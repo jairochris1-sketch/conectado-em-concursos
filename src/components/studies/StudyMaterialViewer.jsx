@@ -1,12 +1,8 @@
-import { useState } from 'react';
-import { X, FileText, Image } from 'lucide-react';
+import { X } from 'lucide-react';
+import PdfViewer from './PdfViewer';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   if (!isOpen || !material) return null;
-
-  const getPdfViewerUrl = (pdfUrl) => {
-    return `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
@@ -23,27 +19,19 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
          </div>
 
         {/* Content Viewer */}
-         <div className="flex-1 overflow-auto bg-white">
+         <div className="flex-1 overflow-hidden bg-gray-100">
           {material.file_type === 'pdf' ? (
-            <div className="w-full h-full flex flex-col">
-              <iframe
-                src={getPdfViewerUrl(material.file_url)}
-                width="100%"
-                height="100%"
-                className="border rounded-lg flex-1"
-                title={material.title}
-              />
-            </div>
+            <PdfViewer pdfUrl={material.file_url} />
           ) : (
-            <div className="w-full h-full">
+            <div className="w-full h-full flex items-center justify-center">
               <img
                 src={material.file_url}
                 alt={material.title}
-                className="w-full h-full object-contain"
+                className="max-w-full max-h-full object-contain"
               />
             </div>
           )}
-        </div>
+         </div>
       </div>
     </div>
   );
