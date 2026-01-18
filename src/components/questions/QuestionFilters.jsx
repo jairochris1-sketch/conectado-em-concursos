@@ -785,16 +785,16 @@ export default function QuestionFilters({ onFilterSubmit }) {
                   <Save className="w-4 h-4 mr-1" /> Salvar
                 </Button>
                 <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setShowSaveInput(false);
-                    setFilterName('');
-                  }}
-                  className="bg-white dark:bg-gray-700 dark:text-gray-50 dark:hover:bg-gray-600"
-                >
-                  Cancelar
-                </Button>
+                   size="sm"
+                   variant="outline"
+                   onClick={() => {
+                     setShowSaveInput(false);
+                     setFilterName('');
+                   }}
+                   className="bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-50 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                 >
+                   Cancelar
+                 </Button>
               </div>
             )}
           </div>
