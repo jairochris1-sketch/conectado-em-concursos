@@ -234,11 +234,11 @@ export default function GuiaEstudos() {
   }
 
   return (
-    <div className={`min-h-screen py-8 px-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen py-8 px-4 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}>
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
-            <div className={`shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className={`shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto ${darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
               <h2 className={`text-sm font-semibold mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Guias</h2>
               <div className="relative mb-3">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -434,10 +434,9 @@ export default function GuiaEstudos() {
                   }}
                 >
                   <div 
-                    className={darkMode ? 'text-gray-200' : ''} 
                     dangerouslySetInnerHTML={{ __html: a.content }}
                     style={{
-                      color: 'inherit'
+                      color: darkMode ? '#e5e7eb' : '#1f2937'
                     }}
                   />
                 </article>

@@ -223,20 +223,13 @@ export default function ArticleManager() {
       try {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
         
-        // Inserir imagem no editor
-        const quill = document.querySelector('.ql-editor');
-        if (quill) {
-          const img = document.createElement('img');
-          img.src = file_url;
-          img.style.maxWidth = '100%';
-          quill.appendChild(img);
-          
-          // Atualizar o conteúdo do formData
-          setFormData(prev => ({
-            ...prev,
-            content: prev.content + `<img src="${file_url}" style="max-width: 100%;" />`
-          }));
-        }
+        // Inserir imagem no conteúdo HTML diretamente
+        const imgTag = `<img src="${file_url}" alt="Imagem inserida" style="max-width: 100%; height: auto; margin: 1rem 0;" />`;
+        
+        setFormData(prev => ({
+          ...prev,
+          content: prev.content + imgTag
+        }));
         
         alert('Imagem enviada com sucesso!');
       } catch (error) {
