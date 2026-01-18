@@ -49,9 +49,6 @@ const plans = [
       'Questões ilimitadas',
       'Estatísticas detalhadas',
       'Flashcards ilimitados',
-      'Caderno de Erros e Acertos',
-      'IA para gerar simulados',
-      'Ferramentas de Vídeos',
       'Comentários da comunidade',
     ],
     unavailableFeatures: [
