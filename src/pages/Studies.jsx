@@ -1429,16 +1429,16 @@ ${videoNotes}
                 </div>
 
                 {/* Bottom Bar with Title and Navigation */}
-                <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h2 className="text-white text-lg font-semibold mb-1">{playingVideo.title}</h2>
-                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                <div className="bg-gray-800 px-3 md:px-6 py-2 md:py-4 border-t border-gray-700">
+                  <div className="flex items-start justify-between mb-2 md:mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-white text-sm md:text-lg font-semibold mb-1 line-clamp-2">{playingVideo.title}</h2>
+                      <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-400">
                         {playingVideo.instructor && (
-                          <span>Prof. {playingVideo.instructor}</span>
+                          <span className="truncate">Prof. {playingVideo.instructor}</span>
                         )}
                         {playingVideo.topic && (
-                          <span>• {playingVideo.topic}</span>
+                          <span className="hidden md:inline">• {playingVideo.topic}</span>
                         )}
                       </div>
                     </div>
@@ -1453,17 +1453,17 @@ ${videoNotes}
                   </div>
                   
                   {playingVideo.description && (
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{playingVideo.description}</p>
+                    <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{playingVideo.description}</p>
                   )}
                   
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-3">
+                    <div className="flex items-center gap-2">
                       <Button 
                         variant="outline" 
                         size="sm" 
                         onClick={handlePreviousVideo} 
                         disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50"
+                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2"
                       >
                         ← Anterior
                       </Button>
@@ -1472,20 +1472,20 @@ ${videoNotes}
                         size="sm" 
                         onClick={handleNextVideo} 
                         disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2"
                       >
                         Próximo →
                       </Button>
                     </div>
                     
-                    <div className="flex items-center gap-3">
-                      <span className="text-gray-300 text-sm font-medium">Tamanho do player:</span>
-                      <div className="flex gap-2 bg-gray-900 px-3 py-2 rounded-lg border border-gray-700">
+                    <div className="flex items-center gap-2 overflow-x-auto">
+                      <span className="text-gray-300 text-xs md:text-sm font-medium whitespace-nowrap">Player:</span>
+                      <div className="flex gap-1 bg-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-lg border border-gray-700">
                         <Button 
                           variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
                           size="sm" 
                           onClick={() => setVideoPlayerSize('normal')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
                         >
                           Normal
                         </Button>
@@ -1493,7 +1493,7 @@ ${videoNotes}
                           variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
                           size="sm" 
                           onClick={() => setVideoPlayerSize('medium')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
                         >
                           Médio
                         </Button>
@@ -1501,7 +1501,7 @@ ${videoNotes}
                           variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
                           size="sm" 
                           onClick={() => setVideoPlayerSize('large')}
-                          className={`font-semibold transition-all ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
+                          className={`font-semibold transition-all text-xs h-6 px-2 md:h-auto md:px-3 md:py-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-white'}`}
                         >
                           Grande
                         </Button>
