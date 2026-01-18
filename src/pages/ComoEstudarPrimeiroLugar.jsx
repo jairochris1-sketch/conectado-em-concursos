@@ -21,6 +21,19 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState('guia_aprovacao');
 
+  // Atualizar artigos/vídeos quando mudar de guia no mobile
+  useEffect(() => {
+    if (selectedGuide) {
+      const guide = guides.find(g => g.page_key === selectedGuide);
+      if (guide) {
+        setContent({ title: guide.title || "", subtitle: guide.subtitle || "" });
+        setContentId(guide.id);
+        setArticles(guideArticlesMap[selectedGuide] || []);
+        setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === selectedGuide));
+      }
+    }
+  }, [selectedGuide, guides, guideArticlesMap]);
+
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
@@ -87,21 +100,24 @@ export default function ComoEstudarPrimeiroLugar() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-4 md:py-8 px-4">
-      <div className="mx-auto max-w-7xl">
-        <div className="md:hidden mb-4">
-          <Select value={selectedGuide} onValueChange={setSelectedGuide}>
-            <SelectTrigger className="w-full bg-white">
-              <SelectValue placeholder="Selecione um guia" />
-            </SelectTrigger>
-            <SelectContent>
-              {guides.map((g) => (
-                <SelectItem key={g.id} value={g.page_key}>
-                  {(g.title || g.page_key).replaceAll('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="mx-auto max-w-7xl">
+            <div className="md:hidden mb-4 overflow-x-auto -mx-4 px-4">
+              <div className="flex gap-2 pb-2">
+                {guides.map((g) => (
+                  <button
+                    key={g.id}
+                    onClick={() => setSelectedGuide(g.page_key)}
+                    className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors flex-shrink-0 ${
+                      selectedGuide === g.page_key
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white text-gray-700 border border-gray-300'
+                    }`}
+                  >
+                    {(g.title || g.page_key).replaceAll('_', ' ')}
+                  </button>
+                ))}
+              </div>
+            </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
