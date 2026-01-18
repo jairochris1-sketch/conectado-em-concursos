@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -24,6 +24,7 @@ import TopicManager from '../components/admin/TopicManager';
 import NotificationManager from '../components/admin/NotificationManager';
 import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
+import UserManager from '../components/admin/UserManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -326,7 +327,11 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-10 md:grid-cols-10">
+          <TabsList className="grid w-full grid-cols-11 md:grid-cols-11">
+            <TabsTrigger value="users">
+              <Users className="w-4 h-4 mr-2" />
+              Usuários
+            </TabsTrigger>
             <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
               <Pencil className="w-4 h-4 mr-2" />
               Questões
@@ -372,6 +377,10 @@ export default function AdminPage() {
               Exportar
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="users">
+            <UserManager />
+          </TabsContent>
 
           <TabsContent value="questions">
             <Suspense fallback={<div>Carregando lista de questões...</div>}>
