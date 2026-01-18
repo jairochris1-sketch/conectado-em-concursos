@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { UserRanking, UserAnswer } from "@/entities/all";
 import { User } from "@/entities/User";
@@ -10,26 +9,45 @@ const calculatePoints = (correct, total) => {
 };
 
 const calculateStreak = (answers) => {
-  const dates = [...new Set(answers.map(a => new Date(a.created_date).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
-  let streak = 0;
-  const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0); // Normalize current date to start of day
+  if (!answers || answers.length === 0) return 0;
   
-  for (let i = 0; i < dates.length; i++) {
-    const date = new Date(dates[i]);
-    date.setHours(0, 0, 0, 0); // Normalize answer date to start of day
+  const uniqueDates = [...new Set(
+    answers.map(a => {
+      const date = new Date(a.created_date);
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    })
+  )].sort((a, b) => b - a); // Ordenar do mais recente para o mais antigo
 
-    // Check if the current date is yesterday (i=0, currentDate - 1 day),
-    // or the day before yesterday (i=1, currentDate - 2 days), etc.
-    const expectedDate = new Date(currentDate);
-    expectedDate.setDate(currentDate.getDate() - i);
+  if (uniqueDates.length === 0) return 0;
 
-    if (date.toDateString() === expectedDate.toDateString()) {
+  let streak = 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayTime = today.getTime();
+  
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayTime = yesterday.getTime();
+
+  // Verificar se tem atividade hoje OU ontem para iniciar o streak
+  const mostRecentDate = uniqueDates[0];
+  if (mostRecentDate !== todayTime && mostRecentDate !== yesterdayTime) {
+    return 0; // Sem atividade recente
+  }
+
+  // Contar dias consecutivos
+  let checkDate = mostRecentDate === todayTime ? todayTime : yesterdayTime;
+  
+  for (const dateTime of uniqueDates) {
+    if (dateTime === checkDate) {
       streak++;
-    } else {
-      break;
+      checkDate = checkDate - (24 * 60 * 60 * 1000); // Voltar 1 dia
+    } else if (dateTime < checkDate) {
+      break; // Quebrou a sequência
     }
   }
+  
   return streak;
 };
 
@@ -51,70 +69,64 @@ export default function RankingPage() {
   const loadRankingData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [user, allRankingsResult] = await Promise.all([
-        User.me(),
-        UserRanking.list("-total_points", 50)
-      ]);
-
+      const user = await User.me();
       setCurrentUser(user);
+
+      // Buscar respostas do usuário
+      const userAnswers = await UserAnswer.filter({ created_by: user.email });
+      const totalQuestions = userAnswers.length;
+      const correctAnswers = userAnswers.filter(a => a.is_correct).length;
+      const totalPoints = calculatePoints(correctAnswers, totalQuestions);
+      const streakDays = calculateStreak(userAnswers);
+      const level = Math.floor(totalPoints / 1000) + 1;
+      const badges = getBadges(totalPoints, correctAnswers, totalQuestions);
+
+      // Buscar ou criar ranking do usuário
+      let userRank = await UserRanking.filter({ created_by: user.email });
       
-      let allRankings = allRankingsResult;
-      let userRank = allRankings.find(r => r.created_by === user.email);
-      
-      if (!userRank) {
-        // Calcular estatísticas do usuário
-        const userAnswers = await UserAnswer.filter({ created_by: user.email });
-        const totalQuestions = userAnswers.length;
-        const correctAnswers = userAnswers.filter(a => a.is_correct).length;
-        const totalPoints = calculatePoints(correctAnswers, totalQuestions);
-        
+      if (userRank.length === 0) {
+        // Criar novo registro de ranking
         userRank = await UserRanking.create({
           user_name: user.full_name || "Usuário",
           total_points: totalPoints,
           questions_answered: totalQuestions,
           correct_answers: correctAnswers,
-          streak_days: calculateStreak(userAnswers),
-          level: Math.floor(totalPoints / 1000) + 1,
-          badges: getBadges(totalPoints, correctAnswers, totalQuestions),
-          created_by: user.email,
+          streak_days: streakDays,
+          level: level,
+          badges: badges
+        });
+      } else {
+        // Atualizar registro existente
+        userRank = userRank[0];
+        await UserRanking.update(userRank.id, {
+          user_name: user.full_name || "Usuário",
+          total_points: totalPoints,
+          questions_answered: totalQuestions,
+          correct_answers: correctAnswers,
+          streak_days: streakDays,
+          level: level,
+          badges: badges
         });
         
-        allRankings = [...allRankings, userRank];
-      } else {
-        // If userRank exists, ensure its data is up-to-date
-        const userAnswers = await UserAnswer.filter({ created_by: user.email });
-        const totalQuestions = userAnswers.length;
-        const correctAnswers = userAnswers.filter(a => a.is_correct).length;
-        const newTotalPoints = calculatePoints(correctAnswers, totalQuestions);
-        const newStreak = calculateStreak(userAnswers);
-        const newLevel = Math.floor(newTotalPoints / 1000) + 1;
-        const newBadges = getBadges(newTotalPoints, correctAnswers, totalQuestions);
-
-        // Check if update is needed
-        if (userRank.total_points !== newTotalPoints ||
-            userRank.questions_answered !== totalQuestions ||
-            userRank.correct_answers !== correctAnswers ||
-            userRank.streak_days !== newStreak ||
-            userRank.level !== newLevel ||
-            JSON.stringify(userRank.badges) !== JSON.stringify(newBadges)) {
-          
-          userRank = await UserRanking.update(userRank.id, {
-            user_name: user.full_name || "Usuário",
-            total_points: newTotalPoints,
-            questions_answered: totalQuestions,
-            correct_answers: correctAnswers,
-            streak_days: newStreak,
-            level: newLevel,
-            badges: newBadges,
-          });
-
-          // Replace the old userRank in allRankings with the updated one
-          allRankings = allRankings.map(r => r.id === userRank.id ? userRank : r);
-        }
+        // Recarregar dados atualizados
+        userRank = {
+          ...userRank,
+          user_name: user.full_name || "Usuário",
+          total_points: totalPoints,
+          questions_answered: totalQuestions,
+          correct_answers: correctAnswers,
+          streak_days: streakDays,
+          level: level,
+          badges: badges
+        };
       }
 
       setUserRanking(userRank);
-      setRankings(allRankings.sort((a, b) => b.total_points - a.total_points));
+
+      // Buscar todos os rankings
+      const allRankings = await UserRanking.list("-total_points", 100);
+      setRankings(allRankings);
+      
     } catch (error) {
       console.error("Erro ao carregar ranking:", error);
     }
@@ -159,6 +171,42 @@ export default function RankingPage() {
             Veja sua posição e compita com outros estudantes
           </p>
         </div>
+
+        {/* User's Position Card */}
+        {userRanking && displayUserPosition && (
+          <div className="mb-6 rounded-2xl p-5 bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center text-xl font-bold">
+                  {displayUserPosition}º
+                </div>
+                <div>
+                  <div className="text-lg font-bold">Sua Posição</div>
+                  <div className="text-sm opacity-90">
+                    {userRanking.questions_answered} questões • {userRanking.correct_answers} acertos
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs opacity-90">Sequência: {userRanking.streak_days} dias 🔥</span>
+                    {userRanking.badges?.length > 0 && (
+                      <div className="flex gap-1">
+                        {userRanking.badges.map((badge, idx) => (
+                          <span key={idx} className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-extrabold">{userRanking.total_points.toLocaleString()}</div>
+                <div className="text-xs opacity-90">pontos</div>
+                <div className="text-sm mt-1">Nível {userRanking.level}</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Top 3 cards */}
         <div className="space-y-4 mb-6">
