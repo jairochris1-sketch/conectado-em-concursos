@@ -16,8 +16,8 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`rounded-lg shadow-xl max-w-6xl max-h-[90vh] w-full flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="fixed inset-0 z-50 flex flex-col">
+      <div className={`flex-1 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         {/* Header */}
         <div className={`flex justify-between items-center p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex-1">
