@@ -57,7 +57,7 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
         </div>
 
         {/* Content Viewer */}
-        <div className={`flex-1 overflow-auto p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+         <div className={`flex-1 overflow-auto p-6 md:p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
           {material.file_type === 'pdf' ? (
             <div className="w-full h-full min-h-[600px]">
               <iframe
