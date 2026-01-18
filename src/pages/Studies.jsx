@@ -145,6 +145,7 @@ export default function StudiesPage() {
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
   const [videoPlayerSize, setVideoPlayerSize] = useState('normal'); // normal, medium, large
+  const [showNotes, setShowNotes] = useState(true); // State to toggle notes panel
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
@@ -1482,102 +1483,115 @@ ${videoNotes}
               </div>
 
               {/* Playlist Sidebar with Notes */}
-              <aside className="w-full lg:w-96 bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen">
-                <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10">
-                  <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
-                  <p className="text-gray-400 text-sm">
-                    {subjectNames[playingVideo.subject] || playingVideo.subject}
-                  </p>
+              <aside className={`${showNotes ? 'w-full lg:w-96' : 'w-12'} bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen transition-all`}>
+                <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10 flex items-center justify-between">
+                  {showNotes ? (
+                    <>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
+                        <p className="text-gray-400 text-sm">
+                          {subjectNames[playingVideo.subject] || playingVideo.subject}
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => setShowNotes(false)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-400 hover:text-white"
+                        title="Fechar painel"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => setShowNotes(true)}
+                      size="sm"
+                      variant="ghost"
+                      className="text-gray-400 hover:text-white w-full"
+                      title="Abrir painel"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto">
-                  <div className="p-2">
-                    {filteredVideos.map((video, idx) => {
-                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
-                      const isActive = video.id === playingVideo.id;
-                      return (
-                        <button 
-                          key={video.id} 
-                          onClick={() => {
-                            localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                            handlePlayVideo(video);
-                          }}
-                          className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
-                            isActive 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                              isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
-                            }`}>
-                              {idx + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
-                                {video.title}
-                              </div>
-                              {video.duration && (
-                                <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
-                                  {video.duration}
+                {showNotes && (
+                  <>
+                    <div className="flex-1 overflow-y-auto">
+                      <div className="p-2">
+                        {filteredVideos.map((video, idx) => {
+                          const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                          const isActive = video.id === playingVideo.id;
+                          return (
+                            <button 
+                              key={video.id} 
+                              onClick={() => {
+                                localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
+                                handlePlayVideo(video);
+                              }}
+                              className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
+                                isActive 
+                                  ? 'bg-blue-600 text-white' 
+                                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                  isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
+                                }`}>
+                                  {idx + 1}
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                                    {video.title}
+                                  </div>
+                                  {video.duration && (
+                                    <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                                      {video.duration}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
 
-                {/* Notes Section */}
-                <div className="border-t border-gray-800 bg-gray-800 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-white text-sm font-semibold flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Minhas Anotações
-                    </h4>
-                    <div className="flex gap-1">
-                       <Button
-                         onClick={handleSaveNotes}
-                         size="sm"
-                         className="bg-green-600 hover:bg-green-700 text-white h-7 px-2"
-                         title="Salvar"
-                       >
-                         <Save className="w-3 h-3" />
-                       </Button>
-                       <Button
-                         onClick={handleDownloadNotes}
-                         size="sm"
-                         className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
-                         title="Baixar"
-                       >
-                         <Download className="w-3 h-3" />
-                       </Button>
-                       <Button
-                         onClick={handlePrintNotes}
-                         size="sm"
-                         className="bg-gray-600 hover:bg-gray-700 text-white h-7 px-2"
-                         title="Imprimir"
-                       >
-                         <Printer className="w-3 h-3" />
-                       </Button>
-                     </div>
-                  </div>
-                  
-                  <Textarea
-                    value={videoNotes}
-                    onChange={(e) => setVideoNotes(e.target.value)}
-                    placeholder="Faça suas anotações sobre este vídeo aqui..."
-                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
-                    rows={8}
-                  />
-                  
-                  <p className="text-xs text-gray-500 mt-2">
-                    Salvas automaticamente no navegador.
-                  </p>
-                </div>
+                    {/* Notes Section */}
+                    <div className="border-t border-gray-800 bg-gray-800 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-white text-sm font-semibold flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Minhas Anotações
+                        </h4>
+                        <div className="flex gap-1">
+                          <Button
+                            onClick={handleDownloadNotes}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
+                            title="Baixar"
+                          >
+                            <Download className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Textarea
+                        value={videoNotes}
+                        onChange={(e) => setVideoNotes(e.target.value)}
+                        placeholder="Faça suas anotações sobre este vídeo aqui..."
+                        className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
+                        rows={8}
+                      />
+
+                      <p className="text-xs text-gray-500 mt-2">
+                        Salvas automaticamente no navegador.
+                      </p>
+                    </div>
+                  </>
+                )}
               </aside>
             </div>
           </div>
