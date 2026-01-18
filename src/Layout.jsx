@@ -67,7 +67,7 @@ const navigationItems = [
     icon: BookCopy,
   },
   {
-    title: "Guia de Estudos",
+    title: "Resumos",
     url: createPageUrl("ComoEstudarPrimeiroLugar"),
     icon: BookOpenIcon,
   },
@@ -152,7 +152,7 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  ComoEstudarPrimeiroLugar: "Guia de Estudos",
+  ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
 };
 
