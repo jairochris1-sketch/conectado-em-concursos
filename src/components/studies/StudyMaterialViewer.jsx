@@ -5,10 +5,10 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   if (!isOpen || !material) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col">
-      <div className="flex-1 flex flex-col bg-white">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <div className="flex-1 flex flex-col bg-white rounded-lg shadow-2xl h-[95vh] max-h-[95vh]">
          {/* Header com título */}
-         <div className="flex justify-between items-center p-3 border-b border-gray-200 bg-gray-50">
+         <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
             <h2 className="text-lg font-semibold text-gray-800 flex-1">{material.title}</h2>
             <button
               onClick={onClose}
