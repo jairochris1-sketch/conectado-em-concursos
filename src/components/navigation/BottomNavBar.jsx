@@ -1,14 +1,13 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, FileText, User, BookCopy, Bot, Lock } from "lucide-react";
+import { Home, FileText, User, BookCopy, BookOpen, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null },
   { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
   { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
-  { name: 'ChatGPT', url: createPageUrl('ChatGPT'), icon: Bot, feature: 'ChatGPT' },
+  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
   { name: 'Perfil', url: createPageUrl('Profile'), icon: User, feature: null }
 ];
 
