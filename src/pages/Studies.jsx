@@ -1417,7 +1417,7 @@ ${videoNotes}
                 videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
                 'flex-1'
               }`}>
-                <div className="flex-1 relative group">
+                <div className="flex-1 relative">
                    <iframe
                      className="w-full h-full"
                      src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
@@ -1426,34 +1426,6 @@ ${videoNotes}
                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                      allowFullScreen
                    />
-
-                   {/* Video Size Controls */}
-                   <div className="absolute top-4 right-4 bg-gray-900/80 backdrop-blur px-2 py-1.5 rounded-lg border border-gray-700 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                     <Button 
-                       variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
-                       size="sm" 
-                       onClick={() => setVideoPlayerSize('normal')}
-                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                     >
-                       Normal
-                     </Button>
-                     <Button 
-                       variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
-                       size="sm" 
-                       onClick={() => setVideoPlayerSize('medium')}
-                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                     >
-                       Médio
-                     </Button>
-                     <Button 
-                       variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
-                       size="sm" 
-                       onClick={() => setVideoPlayerSize('large')}
-                       className={`text-xs h-6 px-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                     >
-                       Grande
-                     </Button>
-                   </div>
                  </div>
 
                 {/* Bottom Bar with Title and Navigation */}
