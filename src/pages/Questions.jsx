@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Question, UserAnswer, User, ResponseHistory } from "@/entities/all";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,13 @@ import {
   FileText,
   // BookCopy, // This import is no longer directly used and ExamList is removed.
   Plus,
-  Minus
+  Minus,
+  Lock
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 import QuestionFilters from "../components/questions/QuestionFilters";
 import QuestionList from "../components/questions/QuestionList";
@@ -32,6 +35,7 @@ const shuffleArray = (array) => {
 };
 
 export default function Questions() {
+  const navigate = useNavigate();
   const [allQuestions, setAllQuestions] = useState([]);
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +45,7 @@ export default function Questions() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [stats, setStats] = useState({ submitted: 0, correct: 0, accuracy: 0 });
+  const [dailyQuestionsCount, setDailyQuestionsCount] = useState(0);
   // const [viewMode, setViewMode] = useState("questions"); // Removed as Tabs component is removed
   const [layoutMode, setLayoutMode] = useState(() => {
     return localStorage.getItem('questions-layout') || 'classic'; // Alterado de 'compact' para 'classic'
@@ -130,6 +135,17 @@ export default function Questions() {
       const updateStats = async () => {
         const newStats = await getStats();
         setStats(newStats);
+
+        // Calcular questões respondidas hoje
+        const userAnswersData = await UserAnswer.filter({ created_by: currentUser.email });
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayAnswers = userAnswersData.filter(a => {
+          const answerDate = new Date(a.created_date);
+          answerDate.setHours(0, 0, 0, 0);
+          return answerDate.getTime() === today.getTime();
+        });
+        setDailyQuestionsCount(todayAnswers.length);
       };
       updateStats();
     }
@@ -218,6 +234,22 @@ export default function Questions() {
     const userAnswer = userAnswers[question.id];
     if (!userAnswer) return;
 
+    // Verificar limite diário para usuários gratuitos
+    if (currentUser.current_plan === 'gratuito' && dailyQuestionsCount >= 20) {
+      toast.error(
+        'Limite diário atingido! Usuários gratuitos podem responder até 20 questões por dia.',
+        {
+          description: 'Assine um plano para responder questões ilimitadas!',
+          action: {
+            label: 'Ver Planos',
+            onClick: () => navigate(createPageUrl('Subscription'))
+          },
+          duration: 5000
+        }
+      );
+      return;
+    }
+
     const isCorrect = userAnswer === question.correct_answer;
     
     const previousAttempts = await ResponseHistory.filter({ 
@@ -261,6 +293,24 @@ export default function Questions() {
           submitted: true
         }
       }));
+
+      // Atualizar contador de questões diárias
+      setDailyQuestionsCount(prev => prev + 1);
+
+      // Avisar quando estiver próximo do limite (usuários gratuitos)
+      if (currentUser.current_plan === 'gratuito') {
+        const newCount = dailyQuestionsCount + 1;
+        if (newCount === 15) {
+          toast.warning('Você já respondeu 15 questões hoje! Restam apenas 5.', {
+            description: 'Assine para ter acesso ilimitado'
+          });
+        } else if (newCount === 20) {
+          toast.error('Você atingiu o limite diário de 20 questões!', {
+            description: 'Volte amanhã ou assine um plano para continuar',
+            duration: 5000
+          });
+        }
+      }
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
     }
@@ -298,6 +348,12 @@ export default function Questions() {
                 <Award className="w-4 h-4" />
                 {stats.accuracy}% de acerto ({stats.correct}/{stats.submitted})
               </span>
+              {currentUser && currentUser.current_plan === 'gratuito' && (
+                <span className={`flex items-center gap-1 ${dailyQuestionsCount >= 20 ? 'text-red-600 dark:text-red-400 font-semibold' : dailyQuestionsCount >= 15 ? 'text-orange-600 dark:text-orange-400' : ''}`}>
+                  <Lock className="w-4 h-4" />
+                  {dailyQuestionsCount}/20 questões hoje
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3 justify-end">

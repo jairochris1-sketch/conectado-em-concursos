@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Article, YouTubeVideo, SiteContent, User, FavoriteArticle } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, Lock } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
@@ -16,6 +16,7 @@ import ArticleFeedback from "../components/feedback/ArticleFeedback";
 
 export default function GuiaEstudos() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const initialSlug = (searchParams.get("slug") || "guia_aprovacao").toLowerCase();
 
   const [slug, setSlug] = useState(initialSlug);
@@ -94,6 +95,13 @@ export default function GuiaEstudos() {
 
         setCurrentUser(user);
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com'));
+
+        // Verificar acesso ao plano avançado
+        if (user && user.current_plan === 'gratuito') {
+          toast.error('Esta área é exclusiva para assinantes do plano Avançado');
+          navigate(createPageUrl('Subscription'));
+          return;
+        }
 
         if (user) {
           const userFavs = await FavoriteArticle.filter({ user_email: user.email });
