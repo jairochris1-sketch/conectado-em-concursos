@@ -340,57 +340,57 @@ export default function AdminPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-12 md:grid-cols-12">
-            <TabsTrigger value="users">
-              <Users className="w-4 h-4 mr-2" />
-              Usuários
+            <TabsTrigger value="users" className="flex-col gap-1 py-3">
+              <Users className="w-5 h-5 text-blue-500" />
+              <span className="text-xs">Usuários</span>
             </TabsTrigger>
-            <TabsTrigger value="feedbacks">
-              <Zap className="w-4 h-4 mr-2" />
-              Feedbacks
+            <TabsTrigger value="feedbacks" className="flex-col gap-1 py-3">
+              <Zap className="w-5 h-5 text-yellow-500" />
+              <span className="text-xs">Feedbacks</span>
             </TabsTrigger>
-            <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)}>
-              <Pencil className="w-4 h-4 mr-2" />
-              Questões
+            <TabsTrigger value="questions" onClick={() => setSelectedQuestion(null)} className="flex-col gap-1 py-3">
+              <Pencil className="w-5 h-5 text-green-500" />
+              <span className="text-xs">Questões</span>
             </TabsTrigger>
-            <TabsTrigger value="new-question">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              {selectedQuestion ? 'Editar' : 'Nova Questão'}
+            <TabsTrigger value="new-question" className="flex-col gap-1 py-3">
+              <PlusCircle className="w-5 h-5 text-emerald-500" />
+              <span className="text-xs">{selectedQuestion ? 'Editar' : 'Nova'}</span>
             </TabsTrigger>
-            <TabsTrigger value="import">
-              <Upload className="w-4 h-4 mr-2" />
-              Importar
+            <TabsTrigger value="import" className="flex-col gap-1 py-3">
+              <Upload className="w-5 h-5 text-purple-500" />
+              <span className="text-xs">Importar</span>
             </TabsTrigger>
-            <TabsTrigger value="provas">
-              <Upload className="w-4 h-4 mr-2" />
-              Provas
+            <TabsTrigger value="provas" className="flex-col gap-1 py-3">
+              <FileText className="w-5 h-5 text-indigo-500" />
+              <span className="text-xs">Provas</span>
             </TabsTrigger>
-            <TabsTrigger value="assinaturas">
-              <CreditCard className="w-4 h-4 mr-2" />
-              Assinaturas
+            <TabsTrigger value="assinaturas" className="flex-col gap-1 py-3">
+              <CreditCard className="w-5 h-5 text-pink-500" />
+              <span className="text-xs">Planos</span>
             </TabsTrigger>
-            <TabsTrigger value="conteudo">
-              <FileText className="w-4 h-4 mr-2" />
-              Conteúdo
+            <TabsTrigger value="conteudo" className="flex-col gap-1 py-3">
+              <FileText className="w-5 h-5 text-orange-500" />
+              <span className="text-xs">Conteúdo</span>
             </TabsTrigger>
-            <TabsTrigger value="videos">
-              <Play className="w-4 h-4 mr-2" />
-              Vídeos
+            <TabsTrigger value="videos" className="flex-col gap-1 py-3">
+              <Play className="w-5 h-5 text-red-500" />
+              <span className="text-xs">Vídeos</span>
             </TabsTrigger>
-            <TabsTrigger value="artigos">
-              <Newspaper className="w-4 h-4 mr-2" />
-              Artigos
+            <TabsTrigger value="artigos" className="flex-col gap-1 py-3">
+              <Newspaper className="w-5 h-5 text-cyan-500" />
+              <span className="text-xs">Artigos</span>
             </TabsTrigger>
-            <TabsTrigger value="assuntos">
-              <BookOpen className="w-4 h-4 mr-2" />
-              Assuntos
+            <TabsTrigger value="assuntos" className="flex-col gap-1 py-3">
+              <BookOpen className="w-5 h-5 text-teal-500" />
+              <span className="text-xs">Assuntos</span>
             </TabsTrigger>
-            <TabsTrigger value="guias">
-              <Bookmark className="w-4 h-4 mr-2" />
-              Guias
+            <TabsTrigger value="guias" className="flex-col gap-1 py-3">
+              <Bookmark className="w-5 h-5 text-amber-500" />
+              <span className="text-xs">Guias</span>
             </TabsTrigger>
-            <TabsTrigger value="exportar">
-              <Download className="w-4 h-4 mr-2" />
-              Exportar
+            <TabsTrigger value="exportar" className="flex-col gap-1 py-3">
+              <Download className="w-5 h-5 text-gray-500" />
+              <span className="text-xs">Exportar</span>
             </TabsTrigger>
           </TabsList>
 
