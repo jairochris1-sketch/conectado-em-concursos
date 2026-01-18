@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -18,6 +19,7 @@ export default function ComoEstudarPrimeiroLugar() {
   const [editMode, setEditMode] = useState(false);
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
+  const [selectedGuide, setSelectedGuide] = useState('guia_aprovacao');
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -84,8 +86,23 @@ export default function ComoEstudarPrimeiroLugar() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-gray-100 py-4 md:py-8 px-4">
       <div className="mx-auto max-w-7xl">
+        <div className="md:hidden mb-4">
+          <Select value={selectedGuide} onValueChange={setSelectedGuide}>
+            <SelectTrigger className="w-full bg-white">
+              <SelectValue placeholder="Selecione um guia" />
+            </SelectTrigger>
+            <SelectContent>
+              {guides.map((g) => (
+                <SelectItem key={g.id} value={g.page_key}>
+                  {(g.title || g.page_key).replaceAll('_', ' ')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
             <div className="bg-white shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
@@ -124,7 +141,7 @@ export default function ComoEstudarPrimeiroLugar() {
             </div>
           </aside>
           <section className="md:col-span-8 lg:col-span-9">
-            <div className="bg-white shadow-xl rounded-md p-8">
+            <div className="bg-white shadow-xl rounded-md p-4 md:p-8">
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -152,8 +169,8 @@ export default function ComoEstudarPrimeiroLugar() {
             )}
           </div>
         )}
-        <h1 className="text-3xl font-extrabold mb-2">{content.title}</h1>
-        <p className="text-gray-600 mb-6">{content.subtitle}</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold mb-2">{content.title}</h1>
+        <p className="text-sm md:text-base text-gray-600 mb-6">{content.subtitle}</p>
 
         {!loading && articles.some(a => a.is_featured) && (
           <section className="mb-8">
