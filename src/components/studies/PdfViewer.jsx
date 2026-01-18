@@ -61,6 +61,50 @@ export default function PdfViewer({ pdfUrl }) {
     renderPage();
   }, [pdf, currentPage, zoom]);
 
+  const handleFullscreen = async () => {
+    try {
+      if (!isFullscreen) {
+        await viewerRef.current?.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Erro ao alternar tela cheia:', error);
+    }
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Imprimir PDF</title>
+          <style>
+            body { margin: 0; padding: 0; }
+            img { width: 100%; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          <canvas id="printCanvas"></canvas>
+          <script>
+            const canvas = document.getElementById('printCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = () => {
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx.drawImage(img, 0, 0);
+              window.print();
+            };
+            img.src = '${canvasRef.current?.toDataURL()}';
+          </script>
+        </body>
+      </html>
+    `);
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
