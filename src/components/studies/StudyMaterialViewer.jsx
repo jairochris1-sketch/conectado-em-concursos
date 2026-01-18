@@ -2,13 +2,7 @@ import { useState } from 'react';
 import { X, FileText, Image } from 'lucide-react';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
-  const [darkMode, setDarkMode] = useState(false);
-  
   if (!isOpen || !material) return null;
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   const getPdfViewerUrl = (pdfUrl) => {
     return `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
