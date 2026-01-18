@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import ReactQuill from "react-quill";
+import { base44 } from "@/api/base44Client";
+import { Image, Video, Upload } from "lucide-react";
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },
@@ -41,7 +43,7 @@ const quillModules = {
     [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
     [{ align: [] }],
     ["blockquote", "code-block"],
-    ["link"],
+    ["link", "image", "video"],
     ["clean"],
   ],
 };
@@ -64,6 +66,11 @@ export default function GuideManager() {
   const [articleContent, setArticleContent] = useState("");
   const [articleFeatured, setArticleFeatured] = useState(true);
   const [currentGuideArticles, setCurrentGuideArticles] = useState([]);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
 
   const orderedGuides = useMemo(() =>
     [...guides].sort((a, b) => {
@@ -197,6 +204,70 @@ export default function GuideManager() {
     }
   };
 
+
+  const handleUploadImage = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      setUploadingMedia(true);
+      try {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const imgTag = `<img src="${file_url}" alt="Imagem" style="max-width: 100%; height: auto; margin: 1rem 0;" />`;
+        setArticleContent(prev => prev + imgTag);
+        toast.success('Imagem inserida com sucesso!');
+      } catch (error) {
+        console.error('Erro ao enviar imagem:', error);
+        toast.error('Erro ao enviar imagem. Tente novamente.');
+      } finally {
+        setUploadingMedia(false);
+      }
+    };
+  };
+
+  const handleInsertImageUrl = () => {
+    if (!imageUrl.trim()) {
+      toast.error('Insira uma URL válida');
+      return;
+    }
+    const imgTag = `<img src="${imageUrl}" alt="Imagem" style="max-width: 100%; height: auto; margin: 1rem 0;" />`;
+    setArticleContent(prev => prev + imgTag);
+    setImageUrl("");
+    setShowImageDialog(false);
+    toast.success('Imagem inserida!');
+  };
+
+  const handleInsertVideo = () => {
+    if (!videoUrl.trim()) {
+      toast.error('Insira uma URL válida');
+      return;
+    }
+    
+    let embedUrl = videoUrl;
+    
+    // Converter URL do YouTube para embed
+    if (videoUrl.includes('youtube.com/watch?v=')) {
+      const videoId = videoUrl.split('v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    } else if (videoUrl.includes('youtu.be/')) {
+      const videoId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    const videoTag = `<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 1rem 0;">
+      <iframe src="${embedUrl}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>`;
+    
+    setArticleContent(prev => prev + videoTag);
+    setVideoUrl("");
+    setShowVideoDialog(false);
+    toast.success('Vídeo inserido!');
+  };
 
   const handleCreateArticle = async () => {
     if (!articleGuideSlug) {
@@ -350,6 +421,67 @@ export default function GuideManager() {
 
               <div>
                 <label className="text-sm font-medium">Conteúdo</label>
+                <div className="mb-2 flex gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={handleUploadImage}
+                    disabled={uploadingMedia}
+                  >
+                    <Upload className="w-4 h-4 mr-1" />
+                    {uploadingMedia ? 'Enviando...' : 'Upload Imagem'}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowImageDialog(!showImageDialog)}
+                  >
+                    <Image className="w-4 h-4 mr-1" />
+                    Imagem via URL
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowVideoDialog(!showVideoDialog)}
+                  >
+                    <Video className="w-4 h-4 mr-1" />
+                    Vídeo
+                  </Button>
+                </div>
+
+                {showImageDialog && (
+                  <div className="mb-2 p-3 border rounded bg-gray-50 dark:bg-gray-800">
+                    <label className="text-sm font-medium mb-1 block">URL da Imagem</label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="https://exemplo.com/imagem.jpg"
+                      />
+                      <Button size="sm" onClick={handleInsertImageUrl}>Inserir</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowImageDialog(false)}>Cancelar</Button>
+                    </div>
+                  </div>
+                )}
+
+                {showVideoDialog && (
+                  <div className="mb-2 p-3 border rounded bg-gray-50 dark:bg-gray-800">
+                    <label className="text-sm font-medium mb-1 block">URL do Vídeo (YouTube)</label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                      <Button size="sm" onClick={handleInsertVideo}>Inserir</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowVideoDialog(false)}>Cancelar</Button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="border rounded">
                   <ReactQuill theme="snow" value={articleContent} onChange={setArticleContent} modules={quillModules} />
                 </div>
