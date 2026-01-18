@@ -34,15 +34,6 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
             >
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrint}
-              className="flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Imprimir
-            </Button>
             <button
               onClick={onClose}
               className={`p-2 ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
