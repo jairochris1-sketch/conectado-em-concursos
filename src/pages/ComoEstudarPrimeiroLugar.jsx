@@ -58,7 +58,12 @@ export default function ComoEstudarPrimeiroLugar() {
           .filter(sc => typeof sc.page_key === 'string' && sc.page_key.toLowerCase().startsWith('guia_'))
           .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || (a.title || a.page_key).localeCompare(b.title || b.page_key));
         setGuides(allGuides);
-        const existing = allGuides.find(g => g.page_key === 'guia_aprovacao') || null;
+
+        // Sempre usar o primeiro guia como padrão ou guia_aprovacao se existir
+        const existing = allGuides.find(g => g.page_key === 'guia_aprovacao') || allGuides[0] || null;
+        if (existing) {
+          setSelectedGuide(existing.page_key);
+        }
         if (existing) {
           setContent({ title: existing.title || defaultTitle, subtitle: existing.subtitle || defaultSubtitle });
           setContentId(existing.id);
