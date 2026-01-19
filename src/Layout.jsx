@@ -86,11 +86,6 @@ const moreMenuItems = [
   icon: MessageSquare
 },
 {
-  title: "Resumos Compartilhados",
-  url: createPageUrl("SharedSummaries"),
-  icon: BookOpen
-},
-{
   title: "Favoritas",
   url: createPageUrl("FavoriteQuestions"),
   icon: Star
@@ -165,8 +160,7 @@ const pageNameTranslations = {
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
-  Community: "Fórum da Comunidade",
-  SharedSummaries: "Resumos Compartilhados"
+  Community: "Fórum da Comunidade"
 };
 
 const featureAccess = {
