@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send } from "lucide-react";
+import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 const categories = [
@@ -36,6 +38,10 @@ export default function CommunityPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+  const [editingPost, setEditingPost] = useState(null);
+  const [editingReply, setEditingReply] = useState(null);
+  const [deletePostId, setDeletePostId] = useState(null);
+  const [deleteReplyId, setDeleteReplyId] = useState(null);
 
   const [newPost, setNewPost] = useState({
     title: "",
@@ -176,6 +182,88 @@ export default function CommunityPage() {
     setReplies(updatedReplies);
   };
 
+  const handleEditPost = async () => {
+    if (!editingPost.title || !editingPost.content || !editingPost.subject) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    try {
+      await ForumPost.update(editingPost.id, {
+        title: editingPost.title,
+        content: editingPost.content,
+        subject: editingPost.subject,
+        topic: editingPost.topic
+      });
+
+      toast.success("Post atualizado!");
+      setEditingPost(null);
+      
+      if (selectedPost?.id === editingPost.id) {
+        setSelectedPost({ ...selectedPost, ...editingPost });
+      }
+      loadData();
+    } catch (error) {
+      toast.error("Erro ao atualizar post");
+    }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      await ForumReply.filter({ post_id: deletePostId }).then(replies => 
+        Promise.all(replies.map(r => ForumReply.delete(r.id)))
+      );
+      await ForumPost.delete(deletePostId);
+      
+      toast.success("Post excluído!");
+      setDeletePostId(null);
+      setSelectedPost(null);
+      loadData();
+    } catch (error) {
+      toast.error("Erro ao excluir post");
+    }
+  };
+
+  const handleEditReply = async (reply) => {
+    if (!editingReply.content.trim()) {
+      toast.error("Digite o conteúdo da resposta");
+      return;
+    }
+
+    try {
+      await ForumReply.update(reply.id, {
+        content: editingReply.content
+      });
+
+      toast.success("Resposta atualizada!");
+      setEditingReply(null);
+      
+      const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
+      setReplies(updatedReplies);
+    } catch (error) {
+      toast.error("Erro ao atualizar resposta");
+    }
+  };
+
+  const handleDeleteReply = async () => {
+    try {
+      await ForumReply.delete(deleteReplyId);
+      
+      await ForumPost.update(selectedPost.id, {
+        replies_count: Math.max(0, (selectedPost.replies_count || 0) - 1)
+      });
+
+      toast.success("Resposta excluída!");
+      setDeleteReplyId(null);
+      
+      const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
+      setReplies(updatedReplies);
+      loadData();
+    } catch (error) {
+      toast.error("Erro ao excluir resposta");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
@@ -207,9 +295,28 @@ export default function CommunityPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Badge>{categories.find(s => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
+                  {selectedPost.author_email === user.email && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
+                          <Edit2 className="w-4 h-4 mr-2" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setDeletePostId(selectedPost.id)} className="text-red-600">
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
               </div>
             </CardHeader>
@@ -259,17 +366,52 @@ export default function CommunityPage() {
                           {reply.is_best_answer && (
                             <Badge variant="outline" className="text-green-600">Melhor Resposta</Badge>
                           )}
+                          {reply.author_email === user.email && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
+                                  <MoreVertical className="w-3 h-3" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => setEditingReply(reply)}>
+                                  <Edit2 className="w-3 h-3 mr-2" />
+                                  Editar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
+                                  <Trash2 className="w-3 h-3 mr-2" />
+                                  Excluir
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
                         </div>
-                        <p className="text-sm whitespace-pre-wrap mb-2">{reply.content}</p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleLikeReply(reply)}
-                          className={reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}
-                        >
-                          <ThumbsUp className="w-3 h-3 mr-1" />
-                          {reply.likes_count || 0}
-                        </Button>
+                        {editingReply?.id === reply.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={editingReply.content}
+                              onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
+                              rows={3}
+                            />
+                            <div className="flex gap-2">
+                              <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-sm whitespace-pre-wrap mb-2">{reply.content}</p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleLikeReply(reply)}
+                              className={reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}
+                            >
+                              <ThumbsUp className="w-3 h-3 mr-1" />
+                              {reply.likes_count || 0}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -290,6 +432,88 @@ export default function CommunityPage() {
             </CardContent>
           </Card>
         </div>
+
+        <Dialog open={!!editingPost} onOpenChange={() => setEditingPost(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Editar Discussão</DialogTitle>
+            </DialogHeader>
+            {editingPost && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Título</label>
+                  <Input
+                    value={editingPost.title}
+                    onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Categoria</label>
+                  <Select value={editingPost.subject} onValueChange={(v) => setEditingPost({ ...editingPost, subject: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(s => (
+                        <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
+                  <Input
+                    value={editingPost.topic || ""}
+                    onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Conteúdo</label>
+                  <Textarea
+                    value={editingPost.content}
+                    onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                    rows={6}
+                  />
+                </div>
+                <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir discussão?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente o post e todas as suas respostas.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeletePost} className="bg-red-600 hover:bg-red-700">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
