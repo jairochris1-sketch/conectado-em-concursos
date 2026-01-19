@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Topic } from '@/entities/Topic';
 import { Subject } from '@/entities/Subject';
+import { Cargo } from '@/entities/Cargo';
 import { Question } from '@/entities/Question';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Trash2, Edit, PlusCircle, BookOpen, FileText } from 'lucide-react';
+import { Trash2, Edit, PlusCircle, BookOpen, FileText, Briefcase } from 'lucide-react';
 
 const slugify = (text) =>
   text
@@ -26,16 +27,20 @@ export default function TopicManager() {
   const [topics, setTopics] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [customSubjects, setCustomSubjects] = useState([]);
+  const [cargos, setCargos] = useState([]);
   const [editingTopic, setEditingTopic] = useState(null);
   const [editingSubject, setEditingSubject] = useState(null);
+  const [editingCargo, setEditingCargo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('topics');
 
   const { register: registerTopic, handleSubmit: handleSubmitTopic, reset: resetTopic, setValue: setValueTopic, watch: watchTopic } = useForm();
   const { register: registerSubject, handleSubmit: handleSubmitSubject, reset: resetSubject, setValue: setValueSubject, watch: watchSubject } = useForm();
+  const { register: registerCargo, handleSubmit: handleSubmitCargo, reset: resetCargo, setValue: setValueCargo, watch: watchCargo } = useForm();
   
   const watchedTopicLabel = watchTopic('label');
   const watchedSubjectLabel = watchSubject('label');
+  const watchedCargoLabel = watchCargo('label');
 
   useEffect(() => {
     if (watchedTopicLabel && !editingTopic) {
@@ -50,16 +55,22 @@ export default function TopicManager() {
   }, [watchedSubjectLabel, setValueSubject, editingSubject]);
 
   useEffect(() => {
+    if (watchedCargoLabel && !editingCargo) {
+      setValueCargo('value', slugify(watchedCargoLabel));
+    }
+  }, [watchedCargoLabel, setValueCargo, editingCargo]);
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [topicsData, questionSchema, customSubjectsData] = await Promise.all([
+      const [topicsData, customSubjectsData, cargosData] = await Promise.all([
         Topic.list(),
-        Question.schema(),
-        Subject.list('order')
+        Subject.list('order'),
+        Cargo.list('order')
       ]);
       
       // Remover duplicatas de topics
@@ -79,10 +90,7 @@ export default function TopicManager() {
       
       setTopics(uniqueTopicsArray);
       setCustomSubjects(customSubjectsData || []);
-      
-      if (questionSchema?.properties?.subject?.enum) {
-        setSubjects(questionSchema.properties.subject.enum);
-      }
+      setCargos(cargosData || []);
     } catch (error) {
       toast.error('Falha ao carregar dados.');
       console.error(error);
@@ -150,6 +158,37 @@ export default function TopicManager() {
     }
   };
 
+  const onSubmitCargo = async (data) => {
+    try {
+      const existingCargo = cargos.find(c => 
+        c.value === data.value && 
+        (!editingCargo || c.id !== editingCargo.id)
+      );
+      
+      if (existingCargo) {
+        toast.error('Já existe um cargo com este valor.');
+        return;
+      }
+
+      if (editingCargo) {
+        await Cargo.update(editingCargo.id, data);
+        toast.success('Cargo atualizado com sucesso!');
+      } else {
+        await Cargo.create({
+          ...data,
+          order: cargos.length
+        });
+        toast.success('Cargo criado com sucesso!');
+      }
+      resetCargo();
+      setEditingCargo(null);
+      fetchData();
+    } catch (error) {
+      toast.error('Ocorreu um erro.');
+      console.error(error);
+    }
+  };
+
   const handleEditTopic = (topic) => {
     setEditingTopic(topic);
     setValueTopic('label', topic.label);
@@ -162,6 +201,13 @@ export default function TopicManager() {
     setValueSubject('label', subject.label);
     setValueSubject('value', subject.value);
     setValueSubject('order', subject.order || 0);
+  };
+
+  const handleEditCargo = (cargo) => {
+    setEditingCargo(cargo);
+    setValueCargo('label', cargo.label);
+    setValueCargo('value', cargo.value);
+    setValueCargo('order', cargo.order || 0);
   };
 
   const handleDeleteTopic = async (topicId) => {
@@ -190,6 +236,19 @@ export default function TopicManager() {
     }
   };
 
+  const handleDeleteCargo = async (cargoId) => {
+    if (window.confirm('Tem certeza que deseja excluir este cargo? Isso não afetará as questões já cadastradas.')) {
+      try {
+        await Cargo.delete(cargoId);
+        toast.success('Cargo excluído.');
+        fetchData();
+      } catch (error) {
+        toast.error('Falha ao excluir o cargo.');
+        console.error(error);
+      }
+    }
+  };
+
   const cancelEditTopic = () => {
     setEditingTopic(null);
     resetTopic();
@@ -200,20 +259,22 @@ export default function TopicManager() {
     resetSubject();
   };
 
+  const cancelEditCargo = () => {
+    setEditingCargo(null);
+    resetCargo();
+  };
+
   const topicsBySubject = topics.reduce((acc, topic) => {
     (acc[topic.subject] = acc[topic.subject] || []).push(topic);
     return acc;
   }, {});
 
-  // Combinar disciplinas padrão + customizadas para seletor de tópicos
-  const allSubjectsForTopics = [
-    ...subjects,
-    ...customSubjects.filter(cs => cs.is_active).map(cs => cs.value)
-  ];
+  // Combinar disciplinas customizadas para seletor de tópicos
+  const allSubjectsForTopics = customSubjects.filter(cs => cs.is_active).map(cs => cs.value);
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-2 mb-6">
+      <TabsList className="grid w-full grid-cols-3 mb-6">
         <TabsTrigger value="topics">
           <FileText className="w-4 h-4 mr-2" />
           Assuntos
@@ -221,6 +282,10 @@ export default function TopicManager() {
         <TabsTrigger value="subjects">
           <BookOpen className="w-4 h-4 mr-2" />
           Disciplinas
+        </TabsTrigger>
+        <TabsTrigger value="cargos">
+          <Briefcase className="w-4 h-4 mr-2" />
+          Cargos
         </TabsTrigger>
       </TabsList>
 
@@ -380,6 +445,97 @@ export default function TopicManager() {
                                 size="icon" 
                                 className="text-red-500 hover:text-red-600" 
                                 onClick={() => handleDeleteSubject(subject.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="cargos">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="w-5 h-5" />
+                  {editingCargo ? 'Editar Cargo' : 'Novo Cargo'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmitCargo(onSubmitCargo)} className="space-y-4">
+                  <div>
+                    <Label htmlFor="cargo-label">Nome do Cargo</Label>
+                    <Input 
+                      id="cargo-label" 
+                      {...registerCargo('label', { required: true })} 
+                      placeholder="Ex: Analista Judiciário" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cargo-value">Valor (Automático)</Label>
+                    <Input 
+                      id="cargo-value" 
+                      {...registerCargo('value', { required: true })} 
+                      readOnly 
+                      placeholder="ex: analista_judiciario" 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cargo-order">Ordem de Exibição</Label>
+                    <Input 
+                      id="cargo-order" 
+                      type="number" 
+                      {...registerCargo('order')} 
+                      placeholder="0" 
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit">{editingCargo ? 'Salvar' : 'Criar'}</Button>
+                    {editingCargo && <Button type="button" variant="outline" onClick={cancelEditCargo}>Cancelar</Button>}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Cargos Cadastrados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? <p>Carregando...</p> : (
+                  <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                    {cargos.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Nenhum cargo cadastrado ainda.</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {cargos.map(cargo => (
+                          <li key={cargo.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-800 dark:text-gray-200">{cargo.label}</p>
+                              <p className="text-xs text-gray-500">{cargo.value}</p>
+                              <p className="text-xs text-gray-400">Ordem: {cargo.order || 0}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="ghost" size="icon" onClick={() => handleEditCargo(cargo)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-red-500 hover:text-red-600" 
+                                onClick={() => handleDeleteCargo(cargo.id)}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
