@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Check, Loader2, ArrowLeft, X, Shield, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
@@ -441,28 +442,66 @@ export default function SubscriptionPage() {
     
     return (
       <div className="min-h-screen bg-gray-800 text-white p-8 flex items-center justify-center">
-        <div className="max-w-md mx-auto w-full">
-          <div className="text-center mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => setShowQuickForm(false)}
-              className="text-gray-300 mb-4 flex items-center mx-auto"
+        <div className="max-w-lg mx-auto w-full">
+          <div className="text-center mb-8">
+            <Link 
+              to="#" 
+              onClick={(e) => { e.preventDefault(); setShowQuickForm(false); }}
+              className="text-gray-400 hover:text-gray-200 transition-colors mb-6 inline-flex items-center justify-center"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar aos Planos
-            </Button>
-            <h1 className="text-2xl font-bold mb-2">Quase lá!</h1>
-            <p className="text-gray-300 mb-4">
-              Precisamos só de mais alguns dados para processar sua assinatura do plano <strong className="text-white">{plan.name}</strong>.
+            </Link>
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-4 mt-4">🎉 Quase lá!</h1>
+            <p className="text-gray-300 text-base md:text-lg mb-2">
+              Estamos a um passo de ativar seu plano <strong className="text-white">{plan.name}</strong>.
+            </p>
+            <p className="text-gray-400 text-sm">
+              Precisamos de algumas informações adicionais para prosseguir com o pagamento.
             </p>
           </div>
 
-          <Card className="bg-gray-700 border-gray-600">
+          <Card className="bg-gray-800 border-gray-700 text-white shadow-2xl">
+            <CardHeader className="border-b border-gray-700 pb-6">
+              <CardTitle className="text-2xl font-bold text-center">{plan.name}</CardTitle>
+              {(selectedPlan.cycle === 'semiannual' || selectedPlan.cycle === 'annual') && pricing.originalPrice && (
+                <p className="text-sm text-gray-400 text-center line-through mt-2">
+                  De R$ {pricing.originalPrice}
+                </p>
+              )}
+              <div className="flex items-baseline justify-center gap-2 mt-3">
+                <span className="text-5xl font-extrabold">R$ {pricing.price}</span>
+                <span className="text-lg opacity-70">{selectedPlan.cycle === 'annual' ? '/ ano' : (selectedPlan.cycle === 'semiannual' ? '/ semestre' : '/ mês')}</span>
+              </div>
+              {pricing.installments && (
+                <p className="text-center text-yellow-300 text-base font-semibold mt-3">
+                  {pricing.installments}
+                </p>
+              )}
+              {pricing.savings && (
+                <p className="text-center text-green-400 text-sm mt-2">
+                  💰 Economize R$ {pricing.savings}
+                </p>
+              )}
+            </CardHeader>
             <CardContent className="p-6">
-              <form onSubmit={handleQuickFormSubmit} className="space-y-4">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-200">✨ O que está incluído:</h3>
+                <ul className="space-y-3">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-3 text-sm">
+                      <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <form onSubmit={handleQuickFormSubmit} className="space-y-5 pt-6 border-t border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-200 mb-4">📋 Complete seus dados:</h3>
                 {!user.cpf && (
                   <div>
-                    <Label htmlFor="cpf-input" className="text-white">CPF *</Label>
+                    <Label htmlFor="cpf-input" className="text-gray-200 text-sm">CPF <span className="text-red-400">*</span></Label>
                     <Input
                       id="cpf-input"
                       type="text"
@@ -470,14 +509,14 @@ export default function SubscriptionPage() {
                       value={missingData.cpf}
                       onChange={(e) => setMissingData(prev => ({ ...prev, cpf: e.target.value }))}
                       required
-                      className="bg-gray-600 border-gray-500 text-white placeholder-gray-400 mt-1"
+                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 )}
                 
                 {!user.phone && (
                   <div>
-                    <Label htmlFor="phone-input" className="text-white">Telefone *</Label>
+                    <Label htmlFor="phone-input" className="text-gray-200 text-sm">Telefone <span className="text-red-400">*</span></Label>
                     <Input
                       id="phone-input"
                       type="tel"
@@ -485,49 +524,31 @@ export default function SubscriptionPage() {
                       value={missingData.phone}
                       onChange={(e) => setMissingData(prev => ({ ...prev, phone: e.target.value }))}
                       required
-                      className="bg-gray-600 border-gray-500 text-white placeholder-gray-400 mt-1"
+                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 )}
 
-                {(user.cpf || user.phone) && Object.keys(checkMissingData(user)).length === 0 && (
-                    <div className="text-center text-sm text-gray-400">
-                        Seus dados de CPF e Telefone já estão completos.
+                {(user.cpf && user.phone) && Object.keys(checkMissingData(user)).length === 0 && (
+                    <div className="text-center text-sm text-green-400 bg-green-900/20 py-3 px-4 rounded-lg">
+                      ✅ Seus dados estão completos!
                     </div>
                 )}
 
-                <div className="pt-4 border-t border-gray-600 mt-6">
-                  <div className="text-center mb-4">
-                    <div className="text-lg font-bold">
-                      R$ {pricing.price} {selectedPlan.cycle === 'annual' ? '/ ano' : (selectedPlan.cycle === 'semiannual' ? '/ semestre' : '/ mês')}
-                    </div>
-                    {pricing.savings && (
-                      <div className="text-sm text-green-400">
-                        Economize R$ {pricing.savings}
-                      </div>
-                    )}
-                    {selectedPlan.cycle === 'semiannual' && pricing.installments && (
-                      <div className="text-sm text-yellow-300">
-                        {pricing.installments}
-                      </div>
-                    )}
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting || (Object.keys(checkMissingData(user)).length > 0 && (!missingData.cpf || !missingData.phone))}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Processando...
-                      </>
-                    ) : (
-                      'Continuar para Pagamento'
-                    )}
-                  </Button>
-                </div>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting || (Object.keys(checkMissingData(user)).length > 0 && (!missingData.cpf || !missingData.phone))}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-base md:text-lg py-6 rounded-lg shadow-lg transition-all transform hover:scale-105 mt-6"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Processando...
+                    </>
+                  ) : (
+                    '🚀 Confirmar e Pagar'
+                  )}
+                </Button>
               </form>
             </CardContent>
           </Card>
