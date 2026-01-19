@@ -1265,7 +1265,7 @@ ${videoNotes}
                               </div>
 
                               <h3
-                              className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer line-clamp-2"
+                              className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer line-clamp-2"
                               onClick={() => handlePlayVideo(video)}
                               style={{ fontWeight: 600 }}>
 
