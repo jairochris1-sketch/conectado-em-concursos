@@ -213,6 +213,16 @@ export default function AdminPage() {
     }
   };
 
+  const loadInstitutions = async () => {
+    try {
+      const institutionsData = await base44.entities.Institution.list('order');
+      setAllInstitutions(institutionsData);
+    } catch (error) {
+      console.error('Erro ao carregar bancas:', error);
+      toast.error('Erro ao carregar bancas.');
+    }
+  };
+
   const handleEditFAQ = (faq) => {
     setEditingFAQ(faq);
     setActiveTab('faq');
