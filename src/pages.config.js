@@ -25,6 +25,8 @@ import studies from './pages/studies';
 import subscription from './pages/subscription';
 import Dashboard from './pages/Dashboard';
 import Studies from './pages/Studies';
+import Community from './pages/Community';
+import SharedSummaries from './pages/SharedSummaries';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +58,8 @@ export const PAGES = {
     "subscription": subscription,
     "Dashboard": Dashboard,
     "Studies": Studies,
+    "Community": Community,
+    "SharedSummaries": SharedSummaries,
 }
 
 export const pagesConfig = {

@@ -25,7 +25,8 @@ import {
   Award,
   Pencil,
   ClipboardList,
-  BookOpen as BookOpenIcon // Added for the new item
+  BookOpen as BookOpenIcon,
+  MessageSquare
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -79,6 +80,16 @@ const navigationItems = [
 
 
 const moreMenuItems = [
+{
+  title: "Fórum",
+  url: createPageUrl("Community"),
+  icon: MessageSquare
+},
+{
+  title: "Resumos Compartilhados",
+  url: createPageUrl("SharedSummaries"),
+  icon: BookOpen
+},
 {
   title: "Favoritas",
   url: createPageUrl("FavoriteQuestions"),
@@ -153,7 +164,9 @@ const pageNameTranslations = {
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Resumos",
-  GuiaEstudos: "Guia de Estudos"
+  GuiaEstudos: "Guia de Estudos",
+  Community: "Fórum da Comunidade",
+  SharedSummaries: "Resumos Compartilhados"
 };
 
 const featureAccess = {
