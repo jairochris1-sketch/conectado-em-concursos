@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { User } from "@/entities/User";
-import { UserFollow, ForumPost, ForumReply, UserAnswer } from "@/entities/all";
+import { UserFollow } from "@/entities/UserFollow";
+import { ForumPost } from "@/entities/ForumPost";
+import { ForumReply } from "@/entities/ForumReply";
+import { UserAnswer } from "@/entities/UserAnswer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -34,32 +37,41 @@ export default function ActivityFeedPage() {
 
       const followingEmails = followingList.map(f => f.following_email);
 
-      const [posts, replies, answers] = await Promise.all([
-        ForumPost.list("-created_date", 50),
-        ForumReply.list("-created_date", 50),
-        UserAnswer.list("-created_date", 100)
+      // Fetch activities only from users being followed (more efficient)
+      const allActivities = [];
+      const userMap = Object.fromEntries(followingList.map(f => [f.following_email, f]));
+
+      // Fetch posts, replies and answers in parallel but with filters
+      const results = await Promise.all([
+        Promise.all(followingEmails.map(email => ForumPost.filter({ author_email: email }, "-created_date", 10))),
+        Promise.all(followingEmails.map(email => ForumReply.filter({ author_email: email }, "-created_date", 10))),
+        Promise.all(followingEmails.map(email => UserAnswer.filter({ created_by: email }, "-created_date", 20)))
       ]);
 
-      const allActivities = [
-        ...posts.filter(p => followingEmails.includes(p.author_email)).map(p => ({
+      const posts = results[0].flat();
+      const replies = results[1].flat();
+      const answers = results[2].flat();
+
+      allActivities.push(
+        ...posts.map(p => ({
           type: "post",
           data: p,
-          user: followingList.find(f => f.following_email === p.author_email),
+          user: userMap[p.author_email],
           date: p.created_date
         })),
-        ...replies.filter(r => followingEmails.includes(r.author_email)).map(r => ({
+        ...replies.map(r => ({
           type: "reply",
           data: r,
-          user: followingList.find(f => f.following_email === r.author_email),
+          user: userMap[r.author_email],
           date: r.created_date
         })),
-        ...answers.filter(a => followingEmails.includes(a.created_by)).map(a => ({
+        ...answers.map(a => ({
           type: "answer",
           data: a,
-          user: followingList.find(f => f.following_email === a.created_by),
+          user: userMap[a.created_by],
           date: a.created_date
         }))
-      ];
+      );
 
       allActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
       setActivities(allActivities.slice(0, 50));
