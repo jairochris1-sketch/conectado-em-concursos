@@ -477,9 +477,10 @@ export default function Layout({ children, currentPageName }) {
                   onClick={handleLogout} 
                   size="sm"
                   variant="ghost"
-                  className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0"
+                  className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0 flex flex-col items-center gap-1 h-auto py-2"
                 >
                   <LogOut className="w-5 h-5" />
+                  <span className="text-xs">Sair</span>
                 </Button>
               </div>
 
