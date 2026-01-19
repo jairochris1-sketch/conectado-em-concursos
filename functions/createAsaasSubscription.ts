@@ -191,7 +191,7 @@ Deno.serve(async (req) => {
 
             return Response.json({
                 success: true,
-                payment_url: firstPayment.invoiceUrl
+                payment_url: firstPayment.invoiceUrl || `https://www.asaas.com/subscribe/${subscription.id}`
             });
 
         } catch (subscriptionError) {
