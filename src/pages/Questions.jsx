@@ -19,6 +19,7 @@ import { ThemeToggle } from "../components/ui/theme-toggle";
 import { Toaster } from "@/components/ui/sonner";
 import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
 import DailyLimitBanner from "@/components/limits/DailyLimitBanner";
+import StudyTimer from "../components/questions/StudyTimer";
 
 const shuffleArray = (array) => {
   let currentIndex = array.length,  randomIndex;
@@ -327,13 +328,7 @@ export default function Questions() {
                 A <Plus className="w-4 h-4 ml-1" />
               </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red-500 hover:text-red-600 hover:bg-red-50"
-            >
-              <Clock className="w-5 h-5" />
-            </Button>
+            <StudyTimer />
             <ThemeToggle />
           </div>
         </motion.div>
