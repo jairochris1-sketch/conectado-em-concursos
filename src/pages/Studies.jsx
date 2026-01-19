@@ -731,7 +731,7 @@ ${videoNotes}
                           }
                               </div>
                               <div className="flex-1 min-w-0 overflow-hidden">
-                                <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 truncate">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                                   {material.title}
                                 </h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
@@ -776,7 +776,7 @@ ${videoNotes}
                           <CardHeader className={materialViewMode === 'compact' ? 'p-3' : 'flex-grow'}>
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
-                                <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
                                 {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description &&
