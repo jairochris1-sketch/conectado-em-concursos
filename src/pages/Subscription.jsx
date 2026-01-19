@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Check, Loader2, ArrowLeft, X, Shield, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
 
@@ -373,7 +374,8 @@ export default function SubscriptionPage() {
       }
     } catch (error) {
       console.error('Erro ao criar assinatura:', error);
-      alert('Erro ao processar assinatura. Tente novamente.');
+      const errorMsg = error.response?.data?.error || error.message || 'Erro ao processar assinatura. Tente novamente.';
+      toast.error(errorMsg);
     }
 
     setIsSubmitting(false);
@@ -397,7 +399,7 @@ export default function SubscriptionPage() {
       await processSubscription(selectedPlan.key, selectedPlan.cycle);
     } catch (error) {
       console.error('Erro ao salvar dados:', error);
-      alert('Erro ao salvar dados. Tente novamente.');
+      toast.error('Erro ao salvar dados. Tente novamente.');
     }
   };
 
