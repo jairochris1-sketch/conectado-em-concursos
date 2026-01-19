@@ -363,11 +363,9 @@ export default function SubscriptionPage() {
 
       console.log('Resposta recebida:', response);
 
-      if (response?.data?.success) {
-        toast.success('Assinatura criada! Redirecionando para pagamento...');
-        window.open(response.data.payment_url, '_blank');
-        setShowPendingBanner(true);
-        setTimeout(() => loadUserData(), 1000);
+      if (response?.data?.success && response?.data?.payment_url) {
+        toast.success('Assinatura criada! Abrindo página de pagamento...');
+        window.location.href = response.data.payment_url;
       } else {
         throw new Error(response?.data?.error || 'Erro ao processar assinatura');
       }
