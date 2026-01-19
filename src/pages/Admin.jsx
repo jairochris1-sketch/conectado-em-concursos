@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageCircle } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -26,7 +26,6 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
-import AdminChat from '../components/admin/AdminChat';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -389,10 +388,6 @@ export default function AdminPage() {
               <Bookmark className="w-4 h-4 mr-2" />
               Guias
             </TabsTrigger>
-            <TabsTrigger value="chat">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Chat
-            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
@@ -486,10 +481,6 @@ export default function AdminPage() {
 
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
-          </TabsContent>
-
-          <TabsContent value="chat" className="mt-6">
-            <AdminChat />
           </TabsContent>
         </Tabs>
       </div>

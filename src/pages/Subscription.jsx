@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
 import { Subscription } from '@/entities/Subscription';
+import { createAsaasSubscription } from '@/functions/createAsaasSubscription';
 import { cancelAsaasSubscription } from '@/functions/cancelAsaasSubscription';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Check, Loader2, ArrowLeft, X, Shield, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { toast } from 'sonner';
 import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
 
@@ -34,8 +33,7 @@ const plans = [
       'Flashcards',
       'Questões inéditas',
       'Simulados',
-      'Fórum da Comunidade',
-      'Ranking de Usuários',
+      'Comentários da comunidade',
     ],
     color: 'gray',
     highlight: false,
@@ -51,16 +49,13 @@ const plans = [
       'Questões ilimitadas',
       'Estatísticas detalhadas',
       'Flashcards ilimitados',
-      'Fórum da Comunidade',
-      'Ranking de Usuários',
-      'Resumos de Disciplinas',
+      'Comentários da comunidade',
     ],
     unavailableFeatures: [
+      'Resumos',
       'Área de Estudos',
-      'Provas Completas',
-      'Lousa Digital',
+      'Provas',
       'Questões inéditas',
-      'Simulados Personalizados',
     ],
     color: 'teal',
     highlight: false,
@@ -74,15 +69,13 @@ const plans = [
     buttonText: 'Assinar',
     features: [
       'Questões ilimitadas',
-      'Resumos de Disciplinas',
+      'Resumos de disciplinas',
       'Área de Estudos (PDFs e Materiais)',
-      'Provas Completas',
-      'Estatísticas Avançadas',
+      'Provas completas',
+      'Estatísticas avançadas',
       'Flashcards ilimitados',
-      'Fórum da Comunidade',
-      'Ranking de Usuários',
       'Questões inéditas',
-      'Simulados Personalizados',
+      'Simulados personalizados',
       'Lousa Digital',
       'Acesso a todas as funcionalidades',
     ],
@@ -334,13 +327,19 @@ export default function SubscriptionPage() {
       }
     }
 
-    // Sempre mostrar o formulário de dados para confirmação
-    setMissingData({
-      cpf: user?.cpf || '',
-      phone: user?.phone || ''
-    });
-    setSelectedPlan({ key: planKey, cycle });
-    setShowQuickForm(true);
+    const missing = checkMissingData(user);
+    
+    if (Object.keys(missing).length > 0) {
+      setMissingData({
+        cpf: user?.cpf || '',
+        phone: user?.phone || ''
+      });
+      setSelectedPlan({ key: planKey, cycle });
+      setShowQuickForm(true);
+      return;
+    }
+
+    await processSubscription(planKey, cycle);
   };
 
   const processSubscription = async (planKey, cycle) => {
@@ -348,9 +347,7 @@ export default function SubscriptionPage() {
     setLoadingPlan(`${planKey}-${cycle}`);
 
     try {
-      console.log('Iniciando criação de assinatura...', { planKey, cycle, user: user?.email });
-      
-      const response = await base44.functions.invoke('createAsaasSubscription', {
+      const response = await createAsaasSubscription({
         plan: planKey,
         cycle: cycle,
         customerData: {
@@ -361,23 +358,21 @@ export default function SubscriptionPage() {
         }
       });
 
-      console.log('Resposta recebida:', response);
-
-      if (response?.data?.success && response?.data?.payment_url) {
-        toast.success('Assinatura criada! Abrindo página de pagamento...');
-        window.location.href = response.data.payment_url;
+      if (response.data.success) {
+        window.open(response.data.payment_url, '_blank');
+        setShowPendingBanner(true);
+        loadUserData();
       } else {
-        throw new Error(response?.data?.error || 'Erro ao processar assinatura');
+        throw new Error(response.data.error || 'Erro ao processar assinatura');
       }
     } catch (error) {
       console.error('Erro ao criar assinatura:', error);
-      const errorMsg = error.response?.data?.error || error.message || 'Erro ao processar assinatura. Tente novamente.';
-      toast.error(errorMsg);
-    } finally {
-      setIsSubmitting(false);
-      setLoadingPlan(null);
-      setShowQuickForm(false);
+      alert('Erro ao processar assinatura. Tente novamente.');
     }
+
+    setIsSubmitting(false);
+    setLoadingPlan(null);
+    setShowQuickForm(false);
   };
 
   const handleQuickFormSubmit = async (e) => {
@@ -396,7 +391,7 @@ export default function SubscriptionPage() {
       await processSubscription(selectedPlan.key, selectedPlan.cycle);
     } catch (error) {
       console.error('Erro ao salvar dados:', error);
-      toast.error('Erro ao salvar dados. Tente novamente.');
+      alert('Erro ao salvar dados. Tente novamente.');
     }
   };
 
