@@ -54,17 +54,17 @@ Deno.serve(async (req) => {
             console.warn('Aviso: Erro ao limpar assinaturas pendentes:', cleanupError);
         }
 
-        // Definir valores dos planos - CORRIGIDO
+        // Definir valores dos planos
         const planPrices = {
             padrao: {
-                monthly: 49.90,
-                semiannual: 249.50,
-                annual: 479.00
+                monthly: 39.90,
+                semiannual: 119.70,
+                annual: 239.40
             },
             avancado: {
-                monthly: 99.90,
-                semiannual: 499.50,
-                annual: 999.00
+                monthly: 80.90,
+                semiannual: 242.70,
+                annual: 485.40
             }
         };
 
