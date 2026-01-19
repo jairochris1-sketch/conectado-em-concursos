@@ -145,14 +145,11 @@ export default function StudiesPage() {
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
   const [videoPlayerSize, setVideoPlayerSize] = useState('normal'); // normal, medium, large
-  const [videoQuality, setVideoQuality] = useState('auto'); // auto, hd, sd
+  const [showNotes, setShowNotes] = useState(true); // State to toggle notes panel
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
   const videosPerPage = 40;
-  
-  // Lazy loading state para vídeos
-  const [loadedVideoThumbnails, setLoadedVideoThumbnails] = useState(new Set());
 
   // State for Articles
   const [articles, setArticles] = useState([]);
@@ -606,36 +603,36 @@ ${videoNotes}
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <CardTitle className="flex items-center gap-2">
                     <Filter className="w-5 h-5" />
                     Filtros de Busca de Materiais
                   </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
                     <Button
                       variant={materialViewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('grid')}
-                      className={materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <Grid3x3 className="w-4 h-4" />
+                      <Grid3x3 className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'list' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('list')}
-                      className={materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <List className="w-4 h-4" />
+                      <List className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'compact' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('compact')}
-                      className={materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}
+                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
                     >
-                      <LayoutGrid className="w-4 h-4" />
+                      <LayoutGrid className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
@@ -768,8 +765,8 @@ ${videoNotes}
                                 <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
-                                {materialViewMode === 'grid' && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
+                                {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description && (
+                                  <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
                                     {material.description}
                                   </p>
                                 )}
@@ -842,35 +839,35 @@ ${videoNotes}
 
           <TabsContent value="articles" className="mt-6">
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Visualização:</span>
-                  <Button
-                    variant={articleViewMode === 'grid' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('grid')}
-                    className={articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <Grid3x3 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={articleViewMode === 'list' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('list')}
-                    className={articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={articleViewMode === 'compact' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setArticleViewMode('compact')}
-                    className={articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                  </Button>
-                </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
+               <div className="flex items-center gap-1">
+                 <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
+                 <Button
+                   variant={articleViewMode === 'grid' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('grid')}
+                   className={`h-8 px-2 ${articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <Grid3x3 className="w-3 h-3" />
+                 </Button>
+                 <Button
+                   variant={articleViewMode === 'list' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('list')}
+                   className={`h-8 px-2 ${articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <List className="w-3 h-3" />
+                 </Button>
+                 <Button
+                   variant={articleViewMode === 'compact' ? 'default' : 'outline'}
+                   size="sm"
+                   onClick={() => setArticleViewMode('compact')}
+                   className={`h-8 px-2 ${articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                 >
+                   <LayoutGrid className="w-3 h-3" />
+                 </Button>
+               </div>
               </div>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
@@ -943,7 +940,6 @@ ${videoNotes}
                                   <img
                                     src={article.cover_image_url}
                                     alt={article.title}
-                                    loading="lazy"
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -994,14 +990,13 @@ ${videoNotes}
                           onClick={() => handleArticleClick(article)}
                         >
                           {article.cover_image_url && (
-                           <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
-                             <img
-                               src={article.cover_image_url}
-                               alt={article.title}
-                               loading="lazy"
-                               className="w-full h-full object-cover"
-                             />
-                           </div>
+                            <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
+                              <img
+                                src={article.cover_image_url}
+                                alt={article.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
                           )}
                           <CardHeader className={`flex-grow ${articleViewMode === 'compact' ? 'p-2' : 'p-3'}`}>
                             <div className="flex flex-wrap gap-1 mb-1">
@@ -1178,11 +1173,7 @@ ${videoNotes}
                               <img
                                 src={thumbnailUrl}
                                 alt={video.title}
-                                loading="lazy"
                                 className="w-full h-full object-cover"
-                                onLoad={() => {
-                                  setLoadedVideoThumbnails(prev => new Set(prev).add(video.id));
-                                }}
                               />
                               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="bg-white rounded-full p-4">
@@ -1418,223 +1409,189 @@ ${videoNotes}
 
         {/* Modal do Player de Vídeo em formato Playlist */}
         {playingVideo && (
-          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col overflow-hidden">
-            {/* Top Close Bar */}
-            <div className="bg-gray-800 px-4 py-2 flex justify-between items-center border-b border-gray-700">
-              <div className="flex-1 min-w-0">
-                <h2 className="text-white text-sm font-semibold truncate">{playingVideo.title}</h2>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleCloseVideo}
-                className="text-gray-400 hover:text-white flex-shrink-0"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-
+          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
             {/* Video Player Section */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row h-full">
               {/* Main Video Player */}
-              <div className="flex-1 flex flex-col bg-black min-h-0">
-                <div className="flex-1 relative min-h-0">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0&quality=${videoQuality === 'hd' ? 'hd720' : videoQuality === 'sd' ? 'small' : 'default'}`}
-                    title={playingVideo.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+              <div className={`flex flex-col bg-black ${
+                videoPlayerSize === 'large' ? 'flex-[2]' : 
+                videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
+                'flex-1'
+              }`}>
+                <div className="flex-1 relative">
+                   <iframe
+                     className="w-full h-full"
+                     src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
+                     title={playingVideo.title}
+                     frameBorder="0"
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                     allowFullScreen
+                   />
+                 </div>
 
-                {/* Bottom Control Bar */}
-                <div className="bg-gray-800 px-3 py-2 border-t border-gray-700 flex-shrink-0">
-                  <div className="flex flex-col gap-2">
-                    {playingVideo.description && (
-                      <p className="text-gray-400 text-xs line-clamp-1">{playingVideo.description}</p>
-                    )}
-                    
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={handlePreviousVideo} 
-                          disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                          className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs"
-                        >
-                          ← Anterior
-                        </Button>
-                        <Button 
-                          variant="default" 
-                          size="sm" 
-                          onClick={handleNextVideo} 
-                          disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                          className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs"
-                        >
-                          Próximo →
-                        </Button>
+                {/* Bottom Bar with Title and Navigation */}
+                <div className="bg-gray-800 px-3 md:px-6 py-2 md:py-4 border-t border-gray-700">
+                  <div className="flex items-start justify-between mb-2 md:mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-white text-sm md:text-lg font-semibold mb-1 line-clamp-2">{playingVideo.title}</h2>
+                      <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-400">
+                        {playingVideo.instructor && (
+                          <span className="truncate">Prof. {playingVideo.instructor}</span>
+                        )}
+                        {playingVideo.topic && (
+                          <span className="hidden md:inline">• {playingVideo.topic}</span>
+                        )}
                       </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1 bg-gray-900 px-2 py-1 rounded border border-gray-700">
-                          <Button 
-                            variant={videoPlayerSize === 'normal' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoPlayerSize('normal')}
-                            className={`text-xs px-2 ${videoPlayerSize === 'normal' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            Normal
-                          </Button>
-                          <Button 
-                            variant={videoPlayerSize === 'medium' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoPlayerSize('medium')}
-                            className={`text-xs px-2 ${videoPlayerSize === 'medium' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            Médio
-                          </Button>
-                          <Button 
-                            variant={videoPlayerSize === 'large' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoPlayerSize('large')}
-                            className={`text-xs px-2 ${videoPlayerSize === 'large' ? 'bg-cyan-500 hover:bg-cyan-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            Grande
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-1 bg-gray-900 px-2 py-1 rounded border border-gray-700">
-                          <Button 
-                            variant={videoQuality === 'auto' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoQuality('auto')}
-                            className={`text-xs px-2 ${videoQuality === 'auto' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            Auto
-                          </Button>
-                          <Button 
-                            variant={videoQuality === 'hd' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoQuality('hd')}
-                            className={`text-xs px-2 ${videoQuality === 'hd' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            HD
-                          </Button>
-                          <Button 
-                            variant={videoQuality === 'sd' ? 'default' : 'outline'}
-                            size="sm" 
-                            onClick={() => setVideoQuality('sd')}
-                            className={`text-xs px-2 ${videoQuality === 'sd' ? 'bg-green-500 hover:bg-green-600 text-white border-0' : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'}`}
-                          >
-                            SD
-                          </Button>
-                        </div>
-                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleCloseVideo}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
+                  
+                  {playingVideo.description && (
+                    <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{playingVideo.description}</p>
+                  )}
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handlePreviousVideo} 
+                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
+                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2"
+                      >
+                        ← Anterior
+                      </Button>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        onClick={handleNextVideo} 
+                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
+                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2"
+                      >
+                        Próximo →
+                      </Button>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Playlist Sidebar with Notes */}
-              <aside className="w-full lg:w-80 bg-gray-900 border-l border-gray-800 flex flex-col max-h-full overflow-hidden">
-                <div className="bg-gray-800 px-3 py-2 border-b border-gray-700 flex-shrink-0">
-                   <h3 className="text-white font-semibold text-sm">Playlist</h3>
-                   <p className="text-gray-400 text-xs">
-                     {subjectNames[playingVideo.subject] || playingVideo.subject}
-                   </p>
-                 </div>
+              <aside className={`${showNotes ? 'w-full lg:w-96' : 'w-12'} bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen transition-all`}>
+                <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10 flex items-center justify-between">
+                  {showNotes ? (
+                    <>
+                      <div>
+                        <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
+                        <p className="text-gray-400 text-sm">
+                          {subjectNames[playingVideo.subject] || playingVideo.subject}
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => setShowNotes(false)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-gray-400 hover:text-white"
+                        title="Fechar painel"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => setShowNotes(true)}
+                      size="sm"
+                      variant="ghost"
+                      className="text-gray-400 hover:text-white w-full"
+                      title="Abrir painel"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
 
-                 <div className="flex-1 overflow-y-auto min-h-0">
-                   <div className="p-1">
-                    {filteredVideos.map((video, idx) => {
-                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
-                      const isActive = video.id === playingVideo.id;
-                      return (
-                        <button 
-                         key={video.id} 
-                         onClick={() => {
-                           localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                           handlePlayVideo(video);
-                         }}
-                         className={`w-full text-left p-2 mb-1 rounded transition-all text-xs ${
-                           isActive 
-                             ? 'bg-blue-600 text-white' 
-                             : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                         }`}
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                              isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
-                            }`}>
-                              {idx + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className={`font-medium text-xs line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
-                                {video.title}
-                              </div>
-                              {video.duration && (
-                                <div className={`text-[10px] ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
-                                  {video.duration}
+                {showNotes && (
+                  <>
+                    <div className="flex-1 overflow-y-auto">
+                      <div className="p-2">
+                        {filteredVideos.map((video, idx) => {
+                          const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                          const isActive = video.id === playingVideo.id;
+                          return (
+                            <button 
+                              key={video.id} 
+                              onClick={() => {
+                                localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
+                                handlePlayVideo(video);
+                              }}
+                              className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
+                                isActive 
+                                  ? 'bg-blue-600 text-white' 
+                                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
+                                  isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
+                                }`}>
+                                  {idx + 1}
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Notes Section */}
-                <div className="border-t border-gray-800 bg-gray-800 p-2 flex-shrink-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-white text-xs font-semibold flex items-center gap-1">
-                      <FileText className="w-3 h-3" />
-                      Anotações
-                    </h4>
-                    <div className="flex gap-0.5">
-                      <Button
-                        onClick={handleSaveNotes}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white h-6 px-1.5"
-                        title="Salvar"
-                      >
-                        <Save className="w-2.5 h-2.5" />
-                      </Button>
-                      <Button
-                        onClick={handleDownloadNotes}
-                        size="sm"
-                        variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-6 px-1.5"
-                        title="Baixar"
-                      >
-                        <Download className="w-2.5 h-2.5" />
-                      </Button>
-                      <Button
-                        onClick={handlePrintNotes}
-                        size="sm"
-                        variant="outline"
-                        className="text-white border-gray-600 hover:bg-gray-700 h-6 px-1.5"
-                        title="Imprimir"
-                      >
-                        <Printer className="w-2.5 h-2.5" />
-                      </Button>
+                                <div className="flex-1 min-w-0">
+                                  <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
+                                    {video.title}
+                                  </div>
+                                  {video.duration && (
+                                    <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                                      {video.duration}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
 
-                  <Textarea
-                    value={videoNotes}
-                    onChange={(e) => setVideoNotes(e.target.value)}
-                    placeholder="Anotações..."
-                    className="bg-gray-900 text-white border-gray-700 resize-none text-xs"
-                    rows={3}
-                  />
-                </div>
+                    {/* Notes Section */}
+                    <div className="border-t border-gray-800 bg-gray-800 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-white text-sm font-semibold flex items-center gap-2">
+                          <FileText className="w-4 h-4" />
+                          Minhas Anotações
+                        </h4>
+                        <div className="flex gap-1">
+                          <Button
+                            onClick={handleDownloadNotes}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
+                            title="Baixar"
+                          >
+                            <Download className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Textarea
+                        value={videoNotes}
+                        onChange={(e) => setVideoNotes(e.target.value)}
+                        placeholder="Faça suas anotações sobre este vídeo aqui..."
+                        className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
+                        rows={8}
+                      />
+
+                      <p className="text-xs text-gray-500 mt-2">
+                        Salvas automaticamente no navegador.
+                      </p>
+                    </div>
+                  </>
+                )}
               </aside>
             </div>
           </div>
