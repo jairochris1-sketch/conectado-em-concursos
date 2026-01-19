@@ -32,7 +32,8 @@ import {
   Sun,
   Grid3x3,
   List,
-  LayoutGrid
+  LayoutGrid,
+  BookUser
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -561,7 +562,7 @@ ${videoNotes}
         >
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookOpen className="w-8 h-8" /> Área de Estudos
+              <BookUser className="w-8 h-8" /> Área de Estudos
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Seus materiais, resumos e flashcards, tudo em um só lugar.
