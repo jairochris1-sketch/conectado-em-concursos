@@ -144,8 +144,13 @@ export default function StudiesPage() {
   const [selectedVideoSubject, setSelectedVideoSubject] = useState('all');
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
-  const [videoPlayerSize, setVideoPlayerSize] = useState('normal'); // normal, medium, large
+  const [videoPlayerSize, setVideoPlayerSize] = useState(() => {
+    return localStorage.getItem('videoPlayerSize') || 'normal';
+  }); // normal, medium, large
   const [showNotes, setShowNotes] = useState(true); // State to toggle notes panel
+  const [videoDisplaySize, setVideoDisplaySize] = useState(() => {
+    return localStorage.getItem('videoDisplaySize') || 'normal';
+  }); // small, normal, large - for video card thumbnails
 
   // Paginação de vídeos
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
@@ -176,6 +181,14 @@ export default function StudiesPage() {
   useEffect(() => {
     localStorage.setItem('articleViewMode', articleViewMode);
   }, [articleViewMode]);
+
+  useEffect(() => {
+    localStorage.setItem('videoPlayerSize', videoPlayerSize);
+  }, [videoPlayerSize]);
+
+  useEffect(() => {
+    localStorage.setItem('videoDisplaySize', videoDisplaySize);
+  }, [videoDisplaySize]);
 
   // General State
   const [isLoading, setIsLoading] = useState(true);
@@ -1135,9 +1148,56 @@ ${videoNotes}
                   />
                 </div>
                 
-                <Badge variant="secondary" className="text-sm">
-                  {filteredVideos.length} {filteredVideos.length === 1 ? 'vídeo' : 'vídeos'}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-sm">
+                    {filteredVideos.length} {filteredVideos.length === 1 ? 'vídeo' : 'vídeos'}
+                  </Badge>
+                  
+                  <div className="flex items-center gap-1 border rounded-lg p-1">
+                    <Button
+                      variant={videoDisplaySize === 'small' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('small')}
+                      className="h-7 px-2"
+                      title="Miniatura pequena"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-1 h-1 bg-current rounded-sm"></div>
+                          <div className="w-1 h-1 bg-current rounded-sm"></div>
+                        </div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant={videoDisplaySize === 'normal' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('normal')}
+                      className="h-7 px-2"
+                      title="Miniatura normal"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+                          <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+                        </div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant={videoDisplaySize === 'large' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('large')}
+                      className="h-7 px-2"
+                      title="Miniatura grande"
+                    >
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-2 h-2 bg-current rounded-sm"></div>
+                          <div className="w-2 h-2 bg-current rounded-sm"></div>
+                        </div>
+                      </div>
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1167,7 +1227,11 @@ ${videoNotes}
                         <Card className="overflow-hidden hover:shadow-xl transition-all cursor-pointer">
                           <div className="flex flex-col md:flex-row">
                             <div 
-                              className="md:w-80 h-48 md:h-auto bg-gray-200 flex-shrink-0 relative group"
+                              className={`${
+                                videoDisplaySize === 'small' ? 'md:w-48 h-32' :
+                                videoDisplaySize === 'large' ? 'md:w-96 h-64' :
+                                'md:w-80 h-48'
+                              } md:h-auto bg-gray-200 flex-shrink-0 relative group`}
                               onClick={() => handlePlayVideo(video)}
                             >
                               <img
