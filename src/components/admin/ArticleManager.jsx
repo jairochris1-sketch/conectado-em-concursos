@@ -10,8 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { BookOpen, Plus, Edit, Trash2, Save, X, Upload as UploadIcon } from 'lucide-react';
+import { BookOpen, Plus, Edit, Trash2, Save, X, Upload as UploadIcon, Image as ImageIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import MediaManager from './MediaManager';
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },
@@ -84,6 +85,7 @@ export default function ArticleManager() {
   const [tagInput, setTagInput] = useState('');
   const [filteredTopics, setFilteredTopics] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showMediaManager, setShowMediaManager] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -209,36 +211,13 @@ export default function ArticleManager() {
     }));
   };
 
-  const handleImageUpload = async () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-
-      setUploadingImage(true);
-      try {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        
-        // Inserir imagem no conteúdo HTML diretamente
-        const imgTag = `<img src="${file_url}" alt="Imagem inserida" style="max-width: 100%; height: auto; margin: 1rem 0;" />`;
-        
-        setFormData(prev => ({
-          ...prev,
-          content: prev.content + imgTag
-        }));
-        
-        alert('Imagem enviada com sucesso!');
-      } catch (error) {
-        console.error('Erro ao enviar imagem:', error);
-        alert('Erro ao enviar imagem. Tente novamente.');
-      } finally {
-        setUploadingImage(false);
-      }
-    };
+  const handleSelectImage = (imageUrl) => {
+    const imgTag = `<img src="${imageUrl}" alt="Imagem inserida" style="max-width: 100%; height: auto; margin: 1rem 0;" />`;
+    
+    setFormData(prev => ({
+      ...prev,
+      content: prev.content + imgTag
+    }));
   };
 
   const articlesBySubject = articles.reduce((acc, article) => {
@@ -439,11 +418,10 @@ export default function ArticleManager() {
                 type="button" 
                 variant="outline" 
                 size="sm"
-                onClick={handleImageUpload}
-                disabled={uploadingImage}
+                onClick={() => setShowMediaManager(true)}
               >
-                <UploadIcon className="w-4 h-4 mr-2" />
-                {uploadingImage ? 'Enviando...' : 'Inserir Imagem'}
+                <ImageIcon className="w-4 h-4 mr-2" />
+                Gerenciar Mídia
               </Button>
             </CardHeader>
             <CardContent>
@@ -569,6 +547,12 @@ export default function ArticleManager() {
           })}
         </div>
       )}
+
+      <MediaManager
+        isOpen={showMediaManager}
+        onClose={() => setShowMediaManager(false)}
+        onSelectImage={handleSelectImage}
+      />
     </div>
   );
 }
