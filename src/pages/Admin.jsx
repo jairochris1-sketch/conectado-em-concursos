@@ -153,14 +153,7 @@ export default function AdminPage() {
     return subjects;
   });
   
-  const [allInstitutions, setAllInstitutions] = useState(() => {
-    const institutions = STATIC_INSTITUTIONS.map(key => ({
-      id: key,
-      name: institutionNames[key] || key.toUpperCase()
-    }));
-    institutions.sort((a, b) => a.name.localeCompare(b.name));
-    return institutions;
-  });
+  const [allInstitutions, setAllInstitutions] = useState([]);
 
   useEffect(() => {
     const checkAdmin = async () => {
