@@ -13,8 +13,8 @@ import {
   Flame,
   Award,
   CheckCircle,
-  Search } from
-"lucide-react";
+  Search
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 import StatsCards from "../components/dashboard/StatsCards";
@@ -25,14 +25,14 @@ import AppearanceSettings from "../components/dashboard/AppearanceSettings"; // 
 
 // Array com as frases motivacionais
 const motivationalQuotes = [
-"💪 “Disciplina hoje é liberdade amanhã. Continue firme!”",
-"📚 “A prova é só um dia, mas a sua preparação é todos os dias. Não pare agora!”",
-"🚀 “A persistência transforma sonhos em conquistas. Você está no caminho certo.”",
-"🌟 “Estudar pode ser cansativo, mas desistir nunca será uma opção para quem tem grandes objetivos.”",
-"🔑 “O segredo não é correr mais rápido, mas nunca parar. A aprovação vem para quem persiste.”",
-"🎯 “Cada sacrifício feito hoje será recompensado com a sua vitória amanhã.”",
-"🏆 “Concurso público não é sorte, é preparação. Continue e a sua hora vai chegar!”"];
-
+  "💪 “Disciplina hoje é liberdade amanhã. Continue firme!”",
+  "📚 “A prova é só um dia, mas a sua preparação é todos os dias. Não pare agora!”",
+  "🚀 “A persistência transforma sonhos em conquistas. Você está no caminho certo.”",
+  "🌟 “Estudar pode ser cansativo, mas desistir nunca será uma opção para quem tem grandes objetivos.”",
+  "🔑 “O segredo não é correr mais rápido, mas nunca parar. A aprovação vem para quem persiste.”",
+  "🎯 “Cada sacrifício feito hoje será recompensado com a sua vitória amanhã.”",
+  "🏆 “Concurso público não é sorte, é preparação. Continue e a sua hora vai chegar!”"
+];
 
 
 export default function Dashboard() {
@@ -40,7 +40,7 @@ export default function Dashboard() {
   const [simulations, setSimulations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-
+  
   // Seleciona uma frase com base na semana do ano
   const weekOfYear = getWeek(new Date());
   const motivationalQuote = motivationalQuotes[weekOfYear % motivationalQuotes.length];
@@ -51,11 +51,11 @@ export default function Dashboard() {
       try {
         const user = await User.me();
         setCurrentUser(user);
-
+        
         // Carrega os dados apenas depois de confirmar o usuário
         const [answersData, simulationsData] = await Promise.all([
-        UserAnswer.filter({ created_by: user.email }, "-created_date", 100), // Limitado a 100
-        Simulation.filter({ created_by: user.email }, "-created_date", 20) // Limitado a 20
+          UserAnswer.filter({ created_by: user.email }, "-created_date", 100), // Limitado a 100
+          Simulation.filter({ created_by: user.email }, "-created_date", 20)  // Limitado a 20
         ]);
 
         setAnswers(answersData);
@@ -73,14 +73,14 @@ export default function Dashboard() {
 
   const calculateStats = () => {
     const today = new Date().toDateString();
-    const todayAnswers = answers.filter((a) => new Date(a.created_date).toDateString() === today);
-    const totalCorrect = answers.filter((a) => a.is_correct).length;
-    const accuracyRate = answers.length > 0 ? totalCorrect / answers.length * 100 : 0;
+    const todayAnswers = answers.filter(a => new Date(a.created_date).toDateString() === today);
+    const totalCorrect = answers.filter(a => a.is_correct).length;
+    const accuracyRate = answers.length > 0 ? (totalCorrect / answers.length) * 100 : 0;
 
     // Calcular streak (dias consecutivos estudando)
-    const dates = [...new Set(answers.map((a) => new Date(a.created_date).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
+    const dates = [...new Set(answers.map(a => new Date(a.created_date).toDateString()))].sort((a,b) => new Date(b) - new Date(a));
     let streak = 0;
-
+    
     if (dates.length > 0) {
       const todayDate = new Date();
       todayDate.setHours(0, 0, 0, 0);
@@ -90,14 +90,14 @@ export default function Dashboard() {
 
       const diffTime = todayDate - lastStudyDate;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays <= 1) {// Se estudou hoje ou ontem, o streak é válido
+      
+      if (diffDays <= 1) { // Se estudou hoje ou ontem, o streak é válido
         streak = 1;
         for (let i = 0; i < dates.length - 1; i++) {
           const current = new Date(dates[i]);
-          current.setHours(0, 0, 0, 0);
-          const next = new Date(dates[i + 1]);
-          next.setHours(0, 0, 0, 0);
+          current.setHours(0,0,0,0);
+          const next = new Date(dates[i+1]);
+          next.setHours(0,0,0,0);
           const dayDiff = (current - next) / (1000 * 60 * 60 * 24);
           if (dayDiff === 1) {
             streak++;
@@ -120,7 +120,7 @@ export default function Dashboard() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-
+    
     if (hour >= 5 && hour < 12) {
       return "Bom dia";
     } else if (hour >= 12 && hour < 18) {
@@ -136,8 +136,8 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>);
-
+      </div>
+    );
   }
 
   return (
@@ -147,8 +147,8 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-4 mb-6 md:mb-8">
-
+          className="flex flex-col gap-4 mb-6 md:mb-8"
+        >
           {/* Título + mensagens */}
           <div>
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
@@ -163,19 +163,19 @@ export default function Dashboard() {
           {/* CTA principal + Ver Ranking */}
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Link to={createPageUrl("Questions")} className="flex-1">
-              <Button className="bg-red-500 text-white px-4 py-5 text-base font-medium opacity-100 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-primary/90 h-9 w-full shadow-sm md:py-6 md:text-lg"
-
-              style={{ backgroundColor: 'var(--primary-color)' }}>
-
+              <Button 
+                className="w-full text-white shadow-sm rounded-md py-5 md:py-6 text-base md:text-lg"
+                style={{ backgroundColor: 'var(--primary-color)' }}
+              >
                 <FileText className="w-5 h-5 mr-2" />
                 Resolver Questões
               </Button>
             </Link>
             <Link to={createPageUrl("Studies")} className="sm:w-auto">
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto rounded-md border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800">
-
+              <Button 
+                variant="outline" 
+                className="w-full sm:w-auto rounded-md border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
                 <FileText className="w-4 h-4 mr-2" />
                 Área de Estudos
               </Button>
@@ -190,29 +190,29 @@ export default function Dashboard() {
             value={stats.todayQuestions}
             icon={FileText}
             gradient="from-blue-500 to-blue-600"
-            trend={`+${Math.round(stats.todayQuestions / (stats.totalQuestions || 1) * 100)}% do total`} />
-
+            trend={`+${Math.round((stats.todayQuestions / (stats.totalQuestions || 1)) * 100)}% do total`}
+          />
           <StatsCards
             title="Taxa de Acerto"
             value={`${stats.accuracyRate}%`}
             icon={Target}
             gradient="from-green-500 to-emerald-600"
-            trend="Média geral" />
-
+            trend="Média geral"
+          />
           <StatsCards
             title="Streak Atual"
             value={`${stats.streak} dias`}
             icon={Flame}
             gradient="from-orange-500 to-red-500"
-            trend="Dias consecutivos" />
-
+            trend="Dias consecutivos"
+          />
           <StatsCards
             title="Total de Questões"
             value={stats.totalQuestions.toLocaleString()}
             icon={Award}
             gradient="from-purple-500 to-indigo-600"
-            trend="Questões resolvidas" />
-
+            trend="Questões resolvidas"
+          />
         </div>
 
         {/* Gráficos e conteúdo principal */}
@@ -269,8 +269,8 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="rounded-2xl p-6 md:p-8 text-white text-center shadow-2xl"
-          style={{ backgroundColor: 'var(--primary-color)' }}>
-
+          style={{ backgroundColor: 'var(--primary-color)' }}
+        >
           <Trophy className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-yellow-300" />
           <h2 className="text-xl md:text-2xl font-bold mb-4">Continue firme na sua jornada!</h2>
           <p className="text-base md:text-lg mb-6 opacity-90">
@@ -292,6 +292,6 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
-    </div>);
-
+    </div>
+  );
 }
