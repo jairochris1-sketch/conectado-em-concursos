@@ -487,6 +487,10 @@ export default function AdminPage() {
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
           </TabsContent>
+
+          <TabsContent value="chat" className="mt-6">
+            <AdminChat />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
