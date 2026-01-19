@@ -818,6 +818,8 @@ export default function Layout({ children, currentPageName }) {
 
       <ProvaUploader isOpen={showProvaUploader} onOpenChange={setShowProvaUploader} />
 
+      {location.pathname !== createPageUrl('Welcome') && <ChatWidget />}
+
       <AnimatePresence>
         {showScrollTop && (
           <motion.div
