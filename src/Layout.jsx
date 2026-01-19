@@ -46,6 +46,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import NotificationDropdown from './components/notifications/NotificationDropdown';
 import { ThemeToggle } from './components/ui/theme-toggle';
+import ChatWidget from './components/chat/ChatWidget';
 
 const navigationItems = [
   {
