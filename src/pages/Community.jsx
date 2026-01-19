@@ -12,13 +12,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-const subjects = [
+const categories = [
+  { value: "depoimentos", label: "Depoimentos de Aprovação" },
+  { value: "dicas_estudos", label: "Dicas de Estudos" },
+  { value: "motivacao", label: "Motivação" },
+  { value: "organizacao", label: "Organização e Rotina" },
   { value: "portugues", label: "Português" },
   { value: "matematica", label: "Matemática" },
   { value: "direito_constitucional", label: "Direito Constitucional" },
   { value: "direito_administrativo", label: "Direito Administrativo" },
   { value: "informatica", label: "Informática" },
-  { value: "conhecimentos_gerais", label: "Conhecimentos Gerais" }
+  { value: "conhecimentos_gerais", label: "Conhecimentos Gerais" },
+  { value: "outros", label: "Outros Assuntos" }
 ];
 
 export default function CommunityPage() {
@@ -203,7 +208,7 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Badge>{subjects.find(s => s.value === selectedPost.subject)?.label}</Badge>
+                  <Badge>{categories.find(s => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
                 </div>
               </div>
@@ -318,13 +323,13 @@ export default function CommunityPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Disciplina</label>
+                  <label className="text-sm font-medium mb-2 block">Categoria</label>
                   <Select value={newPost.subject} onValueChange={(v) => setNewPost({ ...newPost, subject: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione a disciplina" />
+                      <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      {subjects.map(s => (
+                      {categories.map(s => (
                         <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                       ))}
                     </SelectContent>
@@ -362,11 +367,11 @@ export default function CommunityPage() {
           />
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
             <SelectTrigger className="w-64">
-              <SelectValue placeholder="Todas as disciplinas" />
+              <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas as disciplinas</SelectItem>
-              {subjects.map(s => (
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {categories.map(s => (
                 <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
               ))}
             </SelectContent>
@@ -398,7 +403,7 @@ export default function CommunityPage() {
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Badge>{subjects.find(s => s.value === post.subject)?.label}</Badge>
+                        <Badge>{categories.find(s => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
