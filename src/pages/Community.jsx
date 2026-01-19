@@ -60,6 +60,20 @@ export default function CommunityPage() {
   }, []);
 
   useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const userData = await User.me();
+        if (userData.current_plan !== 'avancado' && userData.email !== 'conectadoemconcursos@gmail.com' && userData.email !== 'jairochris1@gmail.com' && userData.email !== 'juniorgmj2016@gmail.com') {
+          window.location.href = createPageUrl('Subscription');
+        }
+      } catch (error) {
+        console.error('Erro ao verificar acesso:', error);
+      }
+    };
+    checkAccess();
+  }, []);
+
+  useEffect(() => {
     filterPosts();
   }, [posts, searchTerm, selectedSubject]);
 

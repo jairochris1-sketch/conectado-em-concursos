@@ -147,8 +147,8 @@ export default function RankingPage() {
     const checkAccess = async () => {
       try {
         const userData = await User.me();
-        if (userData.current_plan !== 'avancado' && userData.role !== 'admin') {
-          window.location.href = '/pages/Subscription';
+        if (userData.current_plan !== 'avancado' && userData.email !== 'conectadoemconcursos@gmail.com' && userData.email !== 'jairochris1@gmail.com' && userData.email !== 'juniorgmj2016@gmail.com') {
+          window.location.href = createPageUrl('Subscription');
         }
       } catch (error) {
         console.error('Erro ao verificar acesso:', error);
