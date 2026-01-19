@@ -562,7 +562,7 @@ export default function Layout({ children, currentPageName }) {
             return (
               <Link
                 key={item.title}
-                to={hasAccess ? item.url : createPageUrl("Subscription")} className="text-gray-300 px-2 py-2 text-base font-semibold uppercase rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
+                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-slate-300 text-yellow-100 px-2 py-2 text-base font-semibold uppercase rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
 
 
 
@@ -574,8 +574,8 @@ export default function Layout({ children, currentPageName }) {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
 
-                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
+                        <item.icon className="bg-transparent lucide lucide-book-open flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        <span className="bg-transparent text-base font-bold text-center normal-case leading-tight truncate">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
                     </Link>);
 
