@@ -389,6 +389,10 @@ export default function AdminPage() {
               <Bookmark className="w-4 h-4 mr-2" />
               Guias
             </TabsTrigger>
+            <TabsTrigger value="chat">
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Chat
+            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
