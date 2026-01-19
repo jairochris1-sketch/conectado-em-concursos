@@ -63,8 +63,7 @@ export default function CommunityPage() {
     const checkAccess = async () => {
       try {
         const userData = await User.me();
-        const isAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com' || userData.email === 'juniorgmj2016@gmail.com';
-        if (userData.current_plan === 'gratuito' && !isAdmin) {
+        if (userData.current_plan !== 'avancado' && userData.email !== 'conectadoemconcursos@gmail.com' && userData.email !== 'jairochris1@gmail.com' && userData.email !== 'juniorgmj2016@gmail.com') {
           window.location.href = createPageUrl('Subscription');
         }
       } catch (error) {

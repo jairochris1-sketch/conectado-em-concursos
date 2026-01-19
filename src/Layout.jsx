@@ -126,6 +126,11 @@ const moreMenuItems = [
   icon: ClipboardList
 },
 {
+  title: "Simulados Digital",
+  url: createPageUrl("SimuladosDigital"),
+  icon: ClipboardList
+},
+{
   title: "Meu Perfil",
   url: createPageUrl("Profile"),
   icon: Shield
@@ -173,9 +178,10 @@ const featureAccess = {
   'Planos': ['gratuito', 'padrao', 'avancado'],
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
+  'Simulados Digital': ['padrao', 'avancado'],
   'Resumos': ['avancado'],
-  'Fórum': ['padrao', 'avancado'],
-  'Ranking de Usuários': ['padrao', 'avancado']
+  'Fórum': ['avancado'],
+  'Ranking de Usuários': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
