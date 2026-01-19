@@ -86,6 +86,11 @@ const moreMenuItems = [
   icon: MessageSquare
 },
 {
+  title: "Feed de Atividades",
+  url: createPageUrl("ActivityFeed"),
+  icon: BookOpen
+},
+{
   title: "Favoritas",
   url: createPageUrl("FavoriteQuestions"),
   icon: Star
@@ -160,7 +165,8 @@ const pageNameTranslations = {
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
-  Community: "Fórum da Comunidade"
+  Community: "Fórum da Comunidade",
+  ActivityFeed: "Feed de Atividades"
 };
 
 const featureAccess = {

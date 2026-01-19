@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { User } from "@/entities/User";
+import { UserFollow } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User as UserIcon, Loader2 } from "lucide-react"; // Removed Info icon as it's no longer used
+import { Camera, Save, User as UserIcon, Loader2, Users } from "lucide-react";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
 // createPageUrl is no longer used, can be removed if not used elsewhere.
 
@@ -123,6 +124,10 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [showFollowersDialog, setShowFollowersDialog] = useState(false);
+  const [showFollowingDialog, setShowFollowingDialog] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -145,6 +150,14 @@ export default function ProfilePage() {
         preferred_subjects: userData.preferred_subjects || [],
         profile_photo_url: userData.profile_photo_url || ""
       });
+
+      const [followersList, followingList] = await Promise.all([
+        UserFollow.filter({ following_email: userData.email }),
+        UserFollow.filter({ follower_email: userData.email })
+      ]);
+      
+      setFollowers(followersList);
+      setFollowing(followingList);
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
     }
@@ -265,12 +278,69 @@ export default function ProfilePage() {
                         disabled={isUploadingPhoto}
                       />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{formData.full_name || 'Usuário'}</h3>
                       <p className="text-sm text-gray-600">{formData.email}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
+                      <div className="flex gap-4 mt-3">
+                        <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Users className="w-4 h-4 mr-1" />
+                              {followers.length} Seguidores
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Seguidores</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                              {followers.map(follower => (
+                                <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                  <Avatar className="w-10 h-10">
+                                    <AvatarImage src={follower.following_photo_url} />
+                                    <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
+                                  </Avatar>
+                                  <span className="font-medium">{follower.following_name}</span>
+                                </div>
+                              ))}
+                              {followers.length === 0 && (
+                                <p className="text-center text-gray-500 py-8">Você ainda não tem seguidores</p>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+
+                        <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Users className="w-4 h-4 mr-1" />
+                              {following.length} Seguindo
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Seguindo</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                              {following.map(follow => (
+                                <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                  <Avatar className="w-10 h-10">
+                                    <AvatarImage src={follow.following_photo_url} />
+                                    <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
+                                  </Avatar>
+                                  <span className="font-medium">{follow.following_name}</span>
+                                </div>
+                              ))}
+                              {following.length === 0 && (
+                                <p className="text-center text-gray-500 py-8">Você ainda não segue ninguém</p>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

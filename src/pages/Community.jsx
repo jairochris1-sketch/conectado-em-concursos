@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FollowButton from "@/components/social/FollowButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -288,11 +289,19 @@ export default function CommunityPage() {
                     <AvatarImage src={selectedPost.author_photo_url} />
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
-                    <p className="text-sm text-gray-500">
-                      Por {selectedPost.author_name} • {new Date(selectedPost.created_date).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-gray-500">
+                        Por {selectedPost.author_name} • {new Date(selectedPost.created_date).toLocaleDateString()}
+                      </p>
+                      <FollowButton 
+                        targetEmail={selectedPost.author_email}
+                        targetName={selectedPost.author_name}
+                        targetPhotoUrl={selectedPost.author_photo_url}
+                        size="sm"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2 items-center">
