@@ -354,6 +354,8 @@ export default function SubscriptionPage() {
     setLoadingPlan(`${planKey}-${cycle}`);
 
     try {
+      console.log('Iniciando criação de assinatura...', { planKey, cycle, user: user?.email });
+      
       const response = await createAsaasSubscription({
         plan: planKey,
         cycle: cycle,
@@ -365,22 +367,25 @@ export default function SubscriptionPage() {
         }
       });
 
-      if (response.data.success) {
+      console.log('Resposta recebida:', response);
+
+      if (response?.data?.success) {
+        toast.success('Assinatura criada! Redirecionando para pagamento...');
         window.open(response.data.payment_url, '_blank');
         setShowPendingBanner(true);
-        loadUserData();
+        setTimeout(() => loadUserData(), 1000);
       } else {
-        throw new Error(response.data.error || 'Erro ao processar assinatura');
+        throw new Error(response?.data?.error || 'Erro ao processar assinatura');
       }
     } catch (error) {
       console.error('Erro ao criar assinatura:', error);
       const errorMsg = error.response?.data?.error || error.message || 'Erro ao processar assinatura. Tente novamente.';
       toast.error(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+      setLoadingPlan(null);
+      setShowQuickForm(false);
     }
-
-    setIsSubmitting(false);
-    setLoadingPlan(null);
-    setShowQuickForm(false);
   };
 
   const handleQuickFormSubmit = async (e) => {
