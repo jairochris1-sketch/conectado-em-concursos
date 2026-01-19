@@ -117,8 +117,9 @@ Deno.serve(async (req) => {
                 console.log('Novo cliente criado:', customer.id);
             }
         } catch (customerError) {
-            console.error('Erro no processamento do cliente:', customerError);
-            return Response.json({ error: 'Erro ao processar dados do cliente' }, { status: 400 });
+            console.error('Erro no processamento do cliente:', customerError.message);
+            console.error('Stack:', customerError.stack);
+            return Response.json({ error: 'Erro ao processar dados do cliente: ' + customerError.message }, { status: 400 });
         }
 
         // 2. Criar assinatura recorrente
