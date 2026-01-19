@@ -1,8 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Question } from '@/entities/Question';
 import { Topic } from '@/entities/Topic';
+import { Subject } from '@/entities/Subject';
+import { Cargo } from '@/entities/Cargo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -45,54 +46,7 @@ const formatTopicLabel = (value) => {
     .trim();
 };
 
-const cargoOptions = [
-  { value: "advogado", label: "Advogado" },
-  { value: "agente_de_limpeza", label: "Agente de Limpeza" },
-  { value: "agente_policia", label: "Agente de Polícia" },
-  { value: "agente_policia_federal", label: "Agente de Polícia Federal" },
-  { value: "agente_penitenciario", label: "Agente Penitenciário" },
-  { value: "analista_bancario", label: "Analista Bancário" },
-  { value: "analista_receita_federal", label: "Analista da Receita Federal" },
-  { value: "analista_sistemas", label: "Analista de Sistemas" },
-  { value: "analista_judiciario", label: "Analista Judiciário" },
-  { value: "assistente_administrativo", label: "Assistente Administrativo" },
-  { value: "auditor_fiscal", label: "Auditor Fiscal" },
-  { value: "contador", label: "Contador" },
-  { value: "delegado_policia", label: "Delegado de Polícia" },
-  { value: "delegado_policia_civil", label: "Delegado de Polícia Civil" },
-  { value: "delegado_policia_civil_substituto", label: "Delegado de Polícia Civil Substituto" },
-  { value: "delegado_policia_federal", label: "Delegado de Polícia Federal" },
-  { value: "delegado_policia_substituto", label: "Delegado de Polícia Substituto" },
-  { value: "enfermeiro", label: "Enfermeiro" },
-  { value: "engenheiro", label: "Engenheiro" },
-  { value: "escrivao_policia_civil", label: "Escrivão de Polícia Civil" },
-  { value: "escriturario", label: "Escriturário" },
-  { value: "gari", label: "Gari" },
-  { value: "guarda_civil_municipal", label: "Guarda Civil Municipal" },
-  { value: "guarda_municipal", label: "Guarda Municipal" },
-  { value: "medico", label: "Médico" },
-  { value: "policial_civil", label: "Policial Civil" },
-  { value: "policial_federal", label: "Policial Federal" },
-  { value: "professor_1_ao_5_ano", label: "Professor - 1 ao 5 Ano Ensino Fundamental" },
-  { value: "professor_artes", label: "Professor (Artes)" },
-  { value: "professor_biologia", label: "Professor (Biologia)" },
-  { value: "professor_ciencias", label: "Professor (Ciências)" },
-  { value: "professor_educacao_basica", label: "Professor (Educação Básica)" },
-  { value: "professor_educacao_fisica", label: "Professor (Educação Física)" },
-  { value: "professor_fisica", label: "Professor (Física)" },
-  { value: "professor_geografia", label: "Professor (Geografia)" },
-  { value: "professor_historia", label: "Professor (História)" },
-  { value: "professor_ingles", label: "Professor (Inglês)" },
-  { value: "professor_matematica", label: "Professor (Matemática)" },
-  { value: "professor_portugues", label: "Professor (Português)" },
-  { value: "professor_quimica", label: "Professor (Química)" },
-  { value: "professor_educacao_basica_anos_iniciais", label: "Professor de Educação Básica dos anos iniciais" },
-  { value: "professor_educacao_basica_fundamental_medio", label: "Professor de Educação Básica - Ensino Fundamental e Médio" },
-  { value: "tecnico_bancario", label: "Técnico Bancário" },
-  { value: "tecnico_receita_federal", label: "Técnico da Receita Federal" },
-  { value: "tecnico_informatica", label: "Técnico em Informática" },
-  { value: "tecnico_judiciario", label: "Técnico Judiciário" }
-];
+
 
 // Configuração da barra de ferramentas do editor
 const quillModules = {
@@ -115,12 +69,26 @@ export default function ModernQuestionForm({
 }) {
   const [topics, setTopics] = useState([]);
   const [examNames, setExamNames] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [cargos, setCargos] = useState([]);
 
-  // Log para debug
+  // Carregar disciplinas e cargos
   useEffect(() => {
-    console.log('ModernQuestionForm - allSubjects:', allSubjects);
-    console.log('ModernQuestionForm - allInstitutions:', allInstitutions);
-  }, [allSubjects, allInstitutions]);
+    const fetchData = async () => {
+      try {
+        const [subjectsData, cargosData] = await Promise.all([
+          Subject.list('order'),
+          Cargo.list('order')
+        ]);
+        setSubjects(subjectsData || []);
+        setCargos(cargosData || []);
+      } catch (error) {
+        console.error("Erro ao carregar disciplinas e cargos:", error);
+        toast.error("Falha ao carregar disciplinas e cargos.");
+      }
+    };
+    fetchData();
+  }, []);
 
   const getDefaultOptions = (type) => {
     if (type === 'true_false') {
@@ -303,10 +271,10 @@ export default function ModernQuestionForm({
                           <SelectValue placeholder="Selecione uma disciplina" />
                         </SelectTrigger>
                         <SelectContent>
-                          {allSubjects && allSubjects.length > 0 ? (
-                            allSubjects.map(subject => (
-                              <SelectItem key={subject.id} value={subject.id}>
-                                {subject.name}
+                          {subjects && subjects.length > 0 ? (
+                            subjects.map(subject => (
+                              <SelectItem key={subject.id} value={subject.value}>
+                                {subject.label}
                               </SelectItem>
                             ))
                           ) : (
@@ -393,11 +361,15 @@ export default function ModernQuestionForm({
                           <SelectValue placeholder="Selecione um cargo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cargoOptions.sort((a, b) => a.label.localeCompare(b.label)).map(cargo => (
-                            <SelectItem key={cargo.value} value={cargo.value}>
-                              {cargo.label}
-                            </SelectItem>
-                          ))}
+                          {cargos && cargos.length > 0 ? (
+                            cargos.map(cargo => (
+                              <SelectItem key={cargo.id} value={cargo.value}>
+                                {cargo.label}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="__loading__" disabled>Carregando...</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     )}
