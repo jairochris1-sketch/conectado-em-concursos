@@ -175,15 +175,22 @@ const pageNameTranslations = {
 };
 
 const featureAccess = {
-  'Área de Estudos': ['gratuito', 'padrao', 'avancado'],
+  'Questões': ['gratuito', 'padrao', 'avancado'],
+  'Exams': ['gratuito', 'padrao', 'avancado'],
+  'Área de Estudos': ['avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
   'ChatGPT': ['avancado'],
   'Criar Simulado': ['gratuito', 'padrao', 'avancado'],
   'Concursos Abertos': ['gratuito', 'padrao', 'avancado'],
-  'Lousa Digital': ['avancado'],
+  'Lousa Digital': ['padrao', 'avancado'],
   'Minhas Anotações': ['gratuito', 'padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['padrao', 'avancado']
+  'Resumos': ['padrao', 'avancado'],
+  'Fórum': ['avancado'],
+  'Feed de Atividades': ['avancado'],
+  'Favoritas': ['gratuito', 'padrao', 'avancado'],
+  'Relatórios': ['padrao', 'avancado'],
+  'Ranking de Usuários': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -731,7 +738,7 @@ export default function Layout({ children, currentPageName }) {
                     🎯 Período de Teste Ativo!
                   </h3>
                   <p className="text-xs md:text-sm text-amber-800 mb-2">
-                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Padrão</strong>.
+                   Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso ao <strong>Plano Padrão</strong>.
                   </p>
                   <p className="text-xs text-amber-700 mb-3">
                     Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
