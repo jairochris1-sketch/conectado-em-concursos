@@ -26,6 +26,7 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
+import AdminChat from '../components/admin/AdminChat';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
