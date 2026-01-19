@@ -334,19 +334,13 @@ export default function SubscriptionPage() {
       }
     }
 
-    const missing = checkMissingData(user);
-    
-    if (Object.keys(missing).length > 0) {
-      setMissingData({
-        cpf: user?.cpf || '',
-        phone: user?.phone || ''
-      });
-      setSelectedPlan({ key: planKey, cycle });
-      setShowQuickForm(true);
-      return;
-    }
-
-    await processSubscription(planKey, cycle);
+    // Sempre mostrar o formulário de dados para confirmação
+    setMissingData({
+      cpf: user?.cpf || '',
+      phone: user?.phone || ''
+    });
+    setSelectedPlan({ key: planKey, cycle });
+    setShowQuickForm(true);
   };
 
   const processSubscription = async (planKey, cycle) => {
