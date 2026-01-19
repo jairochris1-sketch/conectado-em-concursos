@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
 import { Subscription } from '@/entities/Subscription';
-import { createAsaasSubscription } from '@/functions/createAsaasSubscription';
 import { cancelAsaasSubscription } from '@/functions/cancelAsaasSubscription';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -350,7 +350,7 @@ export default function SubscriptionPage() {
     try {
       console.log('Iniciando criação de assinatura...', { planKey, cycle, user: user?.email });
       
-      const response = await createAsaasSubscription({
+      const response = await base44.functions.invoke('createAsaasSubscription', {
         plan: planKey,
         cycle: cycle,
         customerData: {
