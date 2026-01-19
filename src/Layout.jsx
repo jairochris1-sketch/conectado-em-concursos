@@ -2,32 +2,33 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Home,
-  FileText,
-  BarChart3,
-  Calendar,
-  Trophy,
-  LogOut,
-  Shield,
-  Star,
-  Upload,
-  BookOpen,
-  BookCopy,
-  CreditCard,
-  Bot,
-  Lock,
-  User as UserIcon,
-  ChevronDown,
-  ArrowUp,
-  Menu,
-  X,
-  AlertTriangle,
-  Award,
-  Pencil,
-  ClipboardList,
-  BookOpen as BookOpenIcon,
-  MessageSquare
-} from "lucide-react";
+        Home,
+        FileText,
+        BarChart3,
+        Calendar,
+        Trophy,
+        LogOut,
+        Shield,
+        Star,
+        Upload,
+        BookOpen,
+        BookCopy,
+        CreditCard,
+        Bot,
+        Lock,
+        User as UserIcon,
+        ChevronDown,
+        ArrowUp,
+        Menu,
+        X,
+        AlertTriangle,
+        Award,
+        Pencil,
+        ClipboardList,
+        BookOpen as BookOpenIcon,
+        MessageSquare,
+        File as FileIcon
+      } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
@@ -81,6 +82,11 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
+  title: "Planos de Estudo",
+  url: createPageUrl("StudyPlanDocuments"),
+  icon: FileText
+},
+{
   title: "Fórum",
   url: createPageUrl("Community"),
   icon: MessageSquare
@@ -129,7 +135,12 @@ const moreMenuItems = [
   title: "Simulados Digital",
   url: createPageUrl("SimuladosDigital"),
   icon: ClipboardList
-},
+  },
+  {
+  title: "Planos Google Docs",
+  url: createPageUrl("StudyPlanDocuments"),
+  icon: FileIcon
+  },
 {
   title: "Meu Perfil",
   url: createPageUrl("Profile"),
