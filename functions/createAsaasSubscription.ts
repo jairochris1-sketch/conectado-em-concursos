@@ -106,23 +106,32 @@ Deno.serve(async (req) => {
             const subscription = await subResponse.json();
             console.log(`[ASAAS] Assinatura criada: ${subscription.id}`);
 
-            // 3. Buscar cobrança inicial
-            const paymentsResponse = await fetch(
-                `https://www.asaas.com/api/v3/payments?subscription=${subscription.id}`,
-                { headers: { 'access_token': asaasApiKey, 'Content-Type': 'application/json' } }
-            );
+            // 3. Gerar cobrança inicial
+            console.log(`[ASAAS] Gerando cobrança inicial`);
+            const chargeResponse = await fetch('https://www.asaas.com/api/v3/payments', {
+                method: 'POST',
+                headers: { 'access_token': asaasApiKey, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer: customer.id,
+                    subscription: subscription.id,
+                    billingType: 'BOLETO',
+                    value: price,
+                    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    description: `Conectado em Concursos - ${plan} ${cycle}`
+                })
+            });
 
-            if (!paymentsResponse.ok) {
-                throw new Error('Erro ao buscar cobrança');
+            let paymentUrl = '';
+            if (chargeResponse.ok) {
+                const charge = await chargeResponse.json();
+                console.log(`[ASAAS] Cobrança criada: ${charge.id}`);
+                paymentUrl = charge.invoiceUrl || '';
             }
 
-            const paymentsData = await paymentsResponse.json();
-            if (!paymentsData.data?.length) {
-                throw new Error('Nenhuma cobrança gerada');
+            if (!paymentUrl) {
+                console.log(`[ASAAS] Usando URL padrão de assinatura`);
+                paymentUrl = `https://www.asaas.com/pay/${subscription.id}`;
             }
-
-            const firstPayment = paymentsData.data[0];
-            console.log(`[ASAAS] Cobrança encontrada: ${firstPayment.id}`);
 
             // 4. Salvar no banco
             await base44.entities.Subscription.create({
@@ -137,11 +146,11 @@ Deno.serve(async (req) => {
                 trial_used: false
             });
 
-            console.log(`[ASAAS] Assinatura salva no banco de dados`);
+            console.log(`[ASAAS] Assinatura salva no banco. URL: ${paymentUrl}`);
 
             return Response.json({
                 success: true,
-                payment_url: firstPayment.invoiceUrl || `https://www.asaas.com/subscribe/${subscription.id}`
+                payment_url: paymentUrl
             });
 
         } catch (error) {
