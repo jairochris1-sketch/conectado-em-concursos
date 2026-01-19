@@ -179,7 +179,9 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['avancado']
+  'Resumos': ['avancado'],
+  'Fórum': ['avancado'],
+  'Ranking de Usuários': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
