@@ -547,11 +547,11 @@ export default function Layout({ children, currentPageName }) {
               <Pencil className="w-3 h-3 text-yellow-300 absolute bottom-0 right-0" />
             </div>
             <div>
-                <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
-                <h2 className="text-white text-sm font-bold text-left leading-tight">Conectado em Concursos Públicos SE</h2>
-                <div className="text-white text-sm font-bold text-center leading-tight" style={{ color: '#FFD700' }}>👇 Comece a estudar agora
-
-            </div>
+                <h2 className="font-bold text-white text-sm leading-tight">Conectado em Concursos Públicos SE</h2>
+                <h2 className="text-white text-sm font-bold text-left leading-tight"></h2>
+                <div className="text-xs leading-tight" style={{ color: '#FFD700' }}>
+                  ⭐⭐⭐⭐⭐
+                </div>
             </div>
         </Link>
 
