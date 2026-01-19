@@ -343,36 +343,37 @@ export default function SubscriptionPage() {
   };
 
   const processSubscription = async (planKey, cycle) => {
-    setIsSubmitting(true);
-    setLoadingPlan(`${planKey}-${cycle}`);
+  setIsSubmitting(true);
+  setLoadingPlan(`${planKey}-${cycle}`);
 
-    try {
-      const response = await createAsaasSubscription({
-        plan: planKey,
-        cycle: cycle,
-        customerData: {
-          name: user?.full_name || '',
-          email: user?.email || '',
-          cpf: user?.cpf || missingData.cpf,
-          phone: user?.phone || missingData.phone
-        }
-      });
-
-      if (response.data.success) {
-        window.open(response.data.payment_url, '_blank');
-        setShowPendingBanner(true);
-        loadUserData();
-      } else {
-        throw new Error(response.data.error || 'Erro ao processar assinatura');
+  try {
+    const response = await createAsaasSubscription({
+      plan: planKey,
+      cycle: cycle,
+      customerData: {
+        name: user?.full_name || '',
+        email: user?.email || '',
+        cpf: user?.cpf || missingData.cpf,
+        phone: user?.phone || missingData.phone
       }
-    } catch (error) {
-      console.error('Erro ao criar assinatura:', error);
-      alert('Erro ao processar assinatura. Tente novamente.');
-    }
+    });
 
-    setIsSubmitting(false);
-    setLoadingPlan(null);
-    setShowQuickForm(false);
+    if (response?.data?.success && response?.data?.payment_url) {
+      window.open(response.data.payment_url, '_blank');
+      setShowPendingBanner(true);
+      setTimeout(() => loadUserData(), 1000);
+    } else {
+      const errorMsg = response?.data?.error || 'Erro ao processar assinatura';
+      throw new Error(errorMsg);
+    }
+  } catch (error) {
+    console.error('Erro ao criar assinatura:', error);
+    alert(`Erro ao processar assinatura: ${error.message || 'Tente novamente.'}`);
+  }
+
+  setIsSubmitting(false);
+  setLoadingPlan(null);
+  setShowQuickForm(false);
   };
 
   const handleQuickFormSubmit = async (e) => {

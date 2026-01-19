@@ -190,22 +190,30 @@ Deno.serve(async (req) => {
             console.log('Assinatura salva no banco de dados');
 
             return Response.json({
-                success: true,
-                subscription_id: subscription.id,
-                payment_url: firstPayment.invoiceUrl
+                data: {
+                    success: true,
+                    subscription_id: subscription.id,
+                    payment_url: firstPayment.invoiceUrl
+                }
             });
 
         } catch (subscriptionError) {
             console.error('Erro na criação da assinatura:', subscriptionError);
             return Response.json({ 
-                error: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
+                data: {
+                    success: false,
+                    error: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
+                }
             }, { status: 400 });
         }
 
     } catch (error) {
         console.error("Erro geral:", error);
         return Response.json({ 
-            error: 'Erro interno do servidor. Tente novamente em alguns minutos.' 
+            data: {
+                success: false,
+                error: 'Erro interno do servidor. Tente novamente em alguns minutos.' 
+            }
         }, { status: 500 });
     }
 });
