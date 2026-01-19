@@ -581,7 +581,7 @@ ${videoNotes}
 
         <Tabs defaultValue="materials" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="materials" className="bg-gray-700 px-3 py-1 text-sm font-medium rounded-md justify-center whitespace-nowrap ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow flex items-center gap-2">
+            <TabsTrigger value="materials" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Materiais
             </TabsTrigger>
@@ -616,7 +616,7 @@ ${videoNotes}
 
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
-              <CardHeader className="bg-slate-700 p-6 flex flex-col space-y-1.5">
+              <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <CardTitle className="flex items-center gap-2">
                     <Filter className="w-5 h-5" />
@@ -651,7 +651,7 @@ ${videoNotes}
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="bg-slate-700 pt-0 p-6">
+              <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
@@ -731,7 +731,7 @@ ${videoNotes}
                           }
                               </div>
                               <div className="flex-1 min-w-0 overflow-hidden">
-                                <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 truncate">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                                   {material.title}
                                 </h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
@@ -773,14 +773,14 @@ ${videoNotes}
 
                   <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
                   onClick={() => handleMaterialClick(material)}>
-                          <CardHeader className="bg-slate-700 p-6 flex flex-col space-y-1.5 flex-grow">
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-3' : 'flex-grow'}>
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
-                                <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
                                 {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description &&
-                          <p className="text-slate-50 mt-2 text-sm dark:text-gray-400 line-clamp-2 line-clamp-3">
+                          <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
                                     {material.description}
                                   </p>
                           }
@@ -794,7 +794,7 @@ ${videoNotes}
                               </div>
                             </div>
                           </CardHeader>
-                          <CardContent className="bg-slate-700 pt-0 p-6 flex flex-col justify-end">
+                          <CardContent className={`flex flex-col justify-end ${materialViewMode === 'compact' ? 'p-3 pt-0' : ''}`}>
                             <div className="space-y-2">
                               <div className="flex flex-wrap gap-1">
                                 <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-xs' : ''}`}>
@@ -1265,7 +1265,7 @@ ${videoNotes}
                               </div>
 
                               <h3
-                              className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer line-clamp-2"
+                              className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer line-clamp-2"
                               onClick={() => handlePlayVideo(video)}
                               style={{ fontWeight: 600 }}>
 
