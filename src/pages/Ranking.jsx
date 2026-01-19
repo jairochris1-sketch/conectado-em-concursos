@@ -3,6 +3,7 @@ import { UserRanking, UserAnswer } from "@/entities/all";
 import { User } from "@/entities/User";
 import { Trophy } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import FollowButton from "@/components/social/FollowButton";
 
 const calculatePoints = (correct, total) => {
   const accuracy = total > 0 ? correct / total : 0;
@@ -242,7 +243,7 @@ export default function RankingPage() {
                       {r.user_name?.charAt(0)?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex-1">
                     <div className="text-lg md:text-xl font-bold">{r.user_name}</div>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="opacity-90">Nível {r.level}</span>
@@ -254,8 +255,14 @@ export default function RankingPage() {
                       </div>
                     </div>
                   </div>
+                  <FollowButton 
+                    targetEmail={r.created_by}
+                    targetName={r.user_name}
+                    targetPhotoUrl={r.profile_photo_url}
+                    size="sm"
+                  />
                 </div>
-                <div className="text-right">
+                <div className="text-right ml-4">
                   <div className="text-2xl font-extrabold">{r.total_points.toLocaleString()}</div>
                   <div className="text-xs opacity-90">pontos</div>
                 </div>
@@ -284,7 +291,7 @@ export default function RankingPage() {
                       {r.user_name?.charAt(0)?.toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex-1">
                     <div className="font-semibold">{r.user_name}</div>
                     <div className="flex items-center gap-3 text-xs text-white/80">
                       <span>Nível {r.level}</span>
@@ -294,8 +301,14 @@ export default function RankingPage() {
                       <span>{accuracy}%</span>
                     </div>
                   </div>
+                  <FollowButton 
+                    targetEmail={r.created_by}
+                    targetName={r.user_name}
+                    targetPhotoUrl={r.profile_photo_url}
+                    size="sm"
+                  />
                 </div>
-                <div className="text-right">
+                <div className="text-right ml-4">
                   <div className="text-lg font-bold">{r.total_points.toLocaleString()}</div>
                   <div className="text-xs text-white/70">pontos</div>
                 </div>
