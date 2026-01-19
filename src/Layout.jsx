@@ -139,11 +139,6 @@ const moreMenuItems = [
   title: "Minhas Estatísticas",
   url: createPageUrl("Statistics"),
   icon: BarChart3
-},
-{
-  title: "Histórico de Pagamentos",
-  url: createPageUrl("PaymentHistory"),
-  icon: CreditCard
 }];
 
 
@@ -175,22 +170,16 @@ const pageNameTranslations = {
 };
 
 const featureAccess = {
-  'Questões': ['gratuito', 'padrao', 'avancado'],
-  'Exams': ['gratuito', 'padrao', 'avancado'],
-  'Área de Estudos': ['avancado'],
+  'Área de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
-  'ChatGPT': ['avancado'],
-  'Criar Simulado': ['gratuito', 'padrao', 'avancado'],
-  'Concursos Abertos': ['gratuito', 'padrao', 'avancado'],
-  'Lousa Digital': ['padrao', 'avancado'],
-  'Minhas Anotações': ['gratuito', 'padrao', 'avancado'],
+  'ChatGPT': ['padrao', 'avancado'],
+  'Criar Simulado': ['avancado'],
+  'Concursos Abertos': ['padrao', 'avancado'],
+  'Planos': ['gratuito', 'padrao', 'avancado'],
+  'Lousa Digital': ['avancado'],
+  'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['padrao', 'avancado'],
-  'Fórum': ['avancado'],
-  'Feed de Atividades': ['avancado'],
-  'Favoritas': ['gratuito', 'padrao', 'avancado'],
-  'Relatórios': ['padrao', 'avancado'],
-  'Ranking de Usuários': ['padrao', 'avancado']
+  'Resumos': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -282,9 +271,9 @@ export default function Layout({ children, currentPageName }) {
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
         if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
-          console.log("Iniciando período de teste de 5 dias no plano Padrão.");
+          console.log("Iniciando período de teste para usuário 'gratuito'.");
           await User.updateMyUserData({
-            current_plan: 'padrao',
+            current_plan: 'avancado',
             trial_start_date: new Date().toISOString(),
             trial_used: true
           });
@@ -292,12 +281,12 @@ export default function Layout({ children, currentPageName }) {
           setUser(userData);
         }
 
-        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'padrao') {
+        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
           const trialStartDate = new Date(userData.trial_start_date);
           const now = new Date();
           const diffTime = now.getTime() - trialStartDate.getTime();
           const diffDays = diffTime / (1000 * 60 * 60 * 24);
-          const trialDuration = 5;
+          const trialDuration = 10;
           const daysRemaining = trialDuration - diffDays;
 
           if (daysRemaining <= 0) {
@@ -306,7 +295,7 @@ export default function Layout({ children, currentPageName }) {
             userData = { ...userData, current_plan: 'gratuito' };
             setUser(userData);
             setTrialNotification({ show: false, days: 0 });
-          } else if (daysRemaining > 0 && daysRemaining <= 2) {
+          } else if (daysRemaining > 0 && daysRemaining <= 3) {
             setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
           } else {
             setTrialNotification({ show: false, days: 0 });
@@ -379,7 +368,9 @@ export default function Layout({ children, currentPageName }) {
               }
             }
 
-            if (currentReferenceDate.getTime() === new Date(0).getTime()) {
+            if (currentReferenceDate.getTime() === new Date(0).getTime() && streak === 0) {
+              streak = 0;
+            } else if (currentReferenceDate.getTime() === new Date(0).getTime() && streak > 0) {
               streak = 0;
             }
           }
@@ -517,7 +508,7 @@ export default function Layout({ children, currentPageName }) {
                     className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
                     isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
                     }
-
+                    style={isCurrentPage ? {} : {}}
                     onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
                     onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
@@ -738,7 +729,7 @@ export default function Layout({ children, currentPageName }) {
                     🎯 Período de Teste Ativo!
                   </h3>
                   <p className="text-xs md:text-sm text-amber-800 mb-2">
-                   Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso ao <strong>Plano Padrão</strong>.
+                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Avançado</strong>.
                   </p>
                   <p className="text-xs text-amber-700 mb-3">
                     Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
@@ -786,7 +777,19 @@ export default function Layout({ children, currentPageName }) {
                   <div className="text-xs" style={{ color: '#FFD700' }}>⭐⭐⭐⭐⭐</div>
                 </div>
               </div>
+              <div className="flex items-center gap-2">
+                <Link to={createPageUrl("Subscription")}>
+                  <Button
+                  variant="default"
+                  size="sm"
+                  className="text-white"
+                  style={{ backgroundColor: 'var(--primary-color)' }}>
 
+                    <CreditCard className="w-4 h-4 mr-1" />
+                    Assinar
+                  </Button>
+                </Link>
+              </div>
             </div>
           </header>
 

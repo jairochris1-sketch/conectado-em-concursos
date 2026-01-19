@@ -1,4 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
+// Update SDK version and keep logic
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
     try {
@@ -9,47 +11,43 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Usuário não autenticado' }, { status: 401 });
         }
 
-        let requestData;
-        try {
-            requestData = await req.json();
-        } catch (e) {
-            return Response.json({ error: 'Dados inválidos' }, { status: 400 });
-        }
-        const { subscription_id } = requestData;
+        const { subscriptionId } = await req.json();
         const asaasApiKey = Deno.env.get("ASAAS_API_KEY");
 
         if (!asaasApiKey) {
             return Response.json({ error: 'API Key não configurada' }, { status: 500 });
         }
 
-        const subscription = await base44.entities.Subscription.get(subscription_id);
+        const subscription = await base44.entities.Subscription.get(subscriptionId);
 
-        if (!subscription || subscription.user_email !== user.email) {
+        if (!subscription || subscription.created_by !== user.email) {
             return Response.json({ error: 'Assinatura não encontrada ou não pertence a este usuário' }, { status: 404 });
         }
 
         if (!subscription.asaas_subscription_id) {
-            await base44.entities.Subscription.update(subscription_id, { status: 'cancelled' });
+            await base44.entities.Subscription.update(subscriptionId, { status: 'cancelled' });
             return Response.json({ success: true, message: 'Assinatura local cancelada.' });
         }
 
-        try {
-            const asaasResponse = await fetch(`https://www.asaas.com/api/v3/subscriptions/${subscription.asaas_subscription_id}`, {
-                method: 'DELETE',
-                headers: {
-                    'access_token': asaasApiKey,
-                }
-            });
-
-            if (!asaasResponse.ok) {
-                const asaasData = await asaasResponse.json();
-                console.warn(`Asaas: ${asaasData?.errors?.[0]?.description}. Prosseguindo com cancelamento local.`);
+        const asaasResponse = await fetch(`https://www.asaas.com/api/v3/subscriptions/${subscription.asaas_subscription_id}`, {
+            method: 'DELETE',
+            headers: {
+                'access_token': asaasApiKey,
             }
+        });
+
+        let asaasData = {};
+        try {
+            asaasData = await asaasResponse.json();
         } catch (e) {
-            console.warn('Erro ao chamar Asaas:', e?.message);
+            console.warn('Asaas JSON parse failed:', e?.message || e);
         }
 
-        await base44.entities.Subscription.update(subscription_id, { status: 'cancelled' });
+        if (!asaasResponse.ok && asaasData?.errors) {
+            console.warn(`Asaas: ${asaasData.errors[0]?.description}. Prosseguindo com o cancelamento local.`);
+        }
+
+        await base44.entities.Subscription.update(subscriptionId, { status: 'cancelled' });
 
         return Response.json({ success: true, message: 'Assinatura cancelada com sucesso.' });
 

@@ -1,11 +1,11 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+// Update SDK version and keep logic
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
     const asaasWebhookSecret = Deno.env.get("ASAAS_WEBHOOK_SECRET");
     const receivedToken = req.headers.get("asaas-webhook-token");
 
     if (!asaasWebhookSecret || receivedToken !== asaasWebhookSecret) {
-        console.warn('Acesso não autorizado - Token inválido');
         return Response.json({ error: "Acesso não autorizado" }, { status: 401 });
     }
 
@@ -16,10 +16,7 @@ Deno.serve(async (req) => {
         const payment = webhookData.payment;
         const subscriptionId = payment?.subscription;
 
-        console.log(`Webhook recebido: ${event} para assinatura ${subscriptionId}`);
-
         if (!subscriptionId) {
-            console.warn('Evento sem ID de assinatura recebido');
             return Response.json({ message: "Ignorando evento sem ID de assinatura" });
         }
 
@@ -28,10 +25,9 @@ Deno.serve(async (req) => {
         });
 
         if (subscriptions.length === 0) {
-            console.warn(`Assinatura ${subscriptionId} não encontrada`);
+            console.warn(`Assinatura ${subscriptionId} não encontrada no banco de dados.`);
             return Response.json({ error: "Assinatura não encontrada" }, { status: 404 });
         }
-
         const internalSubscription = subscriptions[0];
         
         let newStatus = internalSubscription.status;
@@ -44,19 +40,15 @@ Deno.serve(async (req) => {
                 updateData = {
                     status: newStatus,
                     next_payment_date: payment?.nextDueDate || internalSubscription.next_payment_date,
-                    end_date: payment?.dueDate
                 };
                 break;
             case "PAYMENT_OVERDUE":
                 newStatus = "overdue";
                 updateData = { status: newStatus };
                 break;
-            case "PAYMENT_FAILED":
-                newStatus = "pending";
-                updateData = { status: newStatus };
-                break;
             default:
-                console.log(`Evento ignorado: ${event}`);
+                // outros eventos ignorados
+                break;
         }
 
         if (internalSubscription.status !== newStatus) {
@@ -64,7 +56,6 @@ Deno.serve(async (req) => {
                 internalSubscription.id,
                 updateData
             );
-            console.log(`Status atualizado: ${internalSubscription.status} → ${newStatus}`);
 
             const users = await base44.asServiceRole.entities.User.filter({ email: internalSubscription.user_email });
             if (users.length > 0) {
@@ -75,48 +66,10 @@ Deno.serve(async (req) => {
             }
         }
 
-        // Registrar histórico de pagamento
-        try {
-            const paymentHistoryData = {
-                user_email: internalSubscription.user_email,
-                subscription_id: internalSubscription.id,
-                asaas_payment_id: payment.id || payment.paymentId,
-                amount: payment.value,
-                status: event === 'PAYMENT_RECEIVED' ? 'RECEIVED' : event === 'PAYMENT_CONFIRMED' ? 'CONFIRMED' : 'PENDING',
-                due_date: payment.dueDate,
-                paid_date: payment.confirmedDate || payment.paymentDate,
-                plan: internalSubscription.plan,
-                cycle: internalSubscription.cycle,
-                payment_method: payment.billingType || 'UNDEFINED',
-                invoice_url: payment.invoiceUrl,
-                description: payment.description
-            };
-
-            const existingPayments = await base44.asServiceRole.entities.PaymentHistory.filter({
-                asaas_payment_id: paymentHistoryData.asaas_payment_id
-            });
-
-            if (existingPayments.length === 0) {
-                await base44.asServiceRole.entities.PaymentHistory.create(paymentHistoryData);
-                console.log(`Histórico de pagamento criado: ${payment.id}`);
-            } else {
-                await base44.asServiceRole.entities.PaymentHistory.update(
-                    existingPayments[0].id,
-                    { status: paymentHistoryData.status, paid_date: paymentHistoryData.paid_date }
-                );
-                console.log(`Histórico de pagamento atualizado: ${payment.id}`);
-            }
-        } catch (paymentHistoryError) {
-            console.warn('Erro ao registrar histórico de pagamento:', paymentHistoryError);
-        }
-
         return Response.json({ message: "Webhook processado com sucesso" });
 
     } catch (error) {
         console.error("Erro ao processar webhook:", error);
-        return Response.json({ 
-            error: "Erro interno do servidor", 
-            details: String(error?.message || error) 
-        }, { status: 500 });
+        return Response.json({ error: "Erro interno do servidor", details: String(error?.message || error) }, { status: 500 });
     }
 });

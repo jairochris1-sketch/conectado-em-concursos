@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
     try {
@@ -6,39 +6,15 @@ Deno.serve(async (req) => {
         const user = await base44.auth.me();
 
         if (!user) {
-            return Response.json({ 
-                success: false,
-                message: 'Usuário não autenticado'
-            }, { status: 401 });
+            return Response.json({ error: 'Usuário não autenticado' }, { status: 401 });
         }
 
-        let requestData;
-        try {
-            requestData = await req.json();
-        } catch (parseError) {
-            console.error('Erro ao parsear JSON:', parseError);
-            return Response.json({ 
-                success: false,
-                message: 'Dados inválidos. Verifique os dados enviados.'
-            }, { status: 400 });
-        }
-
-        const { plan, cycle = 'monthly', customerData } = requestData;
+        const { plan, cycle = 'monthly', customerData } = await req.json();
         const asaasApiKey = Deno.env.get("ASAAS_API_KEY");
 
         if (!asaasApiKey) {
             console.error('ASAAS_API_KEY não encontrada');
-            return Response.json({ 
-                success: false,
-                message: 'Configuração do sistema incompleta'
-            }, { status: 500 });
-        }
-
-        if (!plan) {
-            return Response.json({ 
-                success: false,
-                message: 'Plano não foi especificado'
-            }, { status: 400 });
+            return Response.json({ error: 'Configuração do sistema incompleta' }, { status: 500 });
         }
 
         // Remover assinaturas pendentes antigas para evitar duplicatas
@@ -54,22 +30,22 @@ Deno.serve(async (req) => {
             console.warn('Aviso: Erro ao limpar assinaturas pendentes:', cleanupError);
         }
 
-        // Definir valores dos planos
+        // Definir valores dos planos - CORRIGIDO
         const planPrices = {
             padrao: {
                 monthly: 39.90,
-                semiannual: 119.70,
-                annual: 239.40
+                semiannual: 199.00,
+                annual: 399.00
             },
             avancado: {
-                monthly: 80.90,
-                semiannual: 242.70,
-                annual: 485.40
+                monthly: 79.80,
+                semiannual: 399.00,
+                annual: 798.00
             }
         };
 
         if (!planPrices[plan] || !planPrices[plan][cycle]) {
-            return Response.json({ success: false, message: 'Plano ou ciclo de cobrança inválido' }, { status: 400 });
+            return Response.json({ error: 'Plano ou ciclo de cobrança inválido' }, { status: 400 });
         }
 
         const price = planPrices[plan][cycle];
@@ -111,14 +87,14 @@ Deno.serve(async (req) => {
             } else {
                 // Criar novo cliente
                 const newCustomerData = {
-                    name: (customerData?.name) || user.full_name || 'Cliente',
+                    name: customerData.name || user.full_name || 'Cliente',
                     email: user.email
                 };
 
-                if (customerData?.cpf) {
+                if (customerData.cpf) {
                     newCustomerData.cpfCnpj = customerData.cpf.replace(/\D/g, '');
                 }
-                if (customerData?.phone) {
+                if (customerData.phone) {
                     newCustomerData.phone = customerData.phone.replace(/\D/g, '');
                 }
 
@@ -142,10 +118,7 @@ Deno.serve(async (req) => {
             }
         } catch (customerError) {
             console.error('Erro no processamento do cliente:', customerError);
-            return Response.json({ 
-                success: false,
-                message: 'Erro ao processar dados do cliente. CPF ou telefone podem estar inválidos.'
-            }, { status: 400 });
+            return Response.json({ error: 'Erro ao processar dados do cliente' }, { status: 400 });
         }
 
         // 2. Criar assinatura recorrente
@@ -219,22 +192,20 @@ Deno.serve(async (req) => {
             return Response.json({
                 success: true,
                 subscription_id: subscription.id,
-                payment_link: firstPayment.invoiceUrl
+                payment_url: firstPayment.invoiceUrl
             });
 
         } catch (subscriptionError) {
             console.error('Erro na criação da assinatura:', subscriptionError);
             return Response.json({ 
-                success: false,
-                message: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.'
+                error: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
             }, { status: 400 });
         }
 
     } catch (error) {
         console.error("Erro geral:", error);
         return Response.json({ 
-            success: false,
-            message: 'Erro interno do servidor. Tente novamente em alguns minutos.'
+            error: 'Erro interno do servidor. Tente novamente em alguns minutos.' 
         }, { status: 500 });
     }
 });
