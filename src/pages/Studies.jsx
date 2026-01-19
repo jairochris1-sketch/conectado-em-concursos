@@ -28,8 +28,6 @@ import {
   Download,
   Printer,
   User as UserIcon, // Renamed to avoid conflict with entity User
-  Moon,
-  Sun,
   Grid3x3,
   List,
   LayoutGrid,
@@ -162,7 +160,6 @@ export default function StudiesPage() {
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [selectedArticleSubject, setSelectedArticleSubject] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [articleDarkMode, setArticleDarkMode] = useState(false); // New state for article dark mode
   const [articleViewMode, setArticleViewMode] = useState(() => {
     return localStorage.getItem('articleViewMode') || 'grid';
   });
@@ -518,7 +515,6 @@ ${videoNotes}
 
   const handleArticleClick = async (article) => {
     setSelectedArticle(article);
-    setArticleDarkMode(false); // Reset dark mode when opening new article
     // Incrementar contador de visualizações
     try {
       await Article.update(article.id, { 
@@ -852,9 +848,54 @@ ${videoNotes}
           </TabsContent>
 
           <TabsContent value="articles" className="mt-6">
-            <div className="mb-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
+            {selectedArticle ? (
+              <div className="mb-6">
+                <Button
+                  onClick={() => setSelectedArticle(null)}
+                  variant="outline"
+                  size="sm"
+                  className="mb-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar para a lista
+                </Button>
+                
+                <Card className="bg-white dark:bg-gray-900">
+                  <CardHeader>
+                    <CardTitle className="text-2xl mb-2">{selectedArticle.title}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                        {subjectNames[selectedArticle.subject] || selectedArticle.subject}
+                      </Badge>
+                      {selectedArticle.topic && (
+                        <Badge variant="outline">{selectedArticle.topic}</Badge>
+                      )}
+                      {selectedArticle.author && (
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Por: {selectedArticle.author}
+                        </span>
+                      )}
+                      {selectedArticle.reading_time && (
+                        <Badge variant="secondary">
+                          <Timer className="w-3 h-3 mr-1" />
+                          {selectedArticle.reading_time} min
+                        </Badge>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div 
+                      className="prose prose-lg max-w-none dark:prose-invert"
+                      dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
                <div className="flex items-center gap-1">
                  <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
                  <Button
@@ -1662,63 +1703,7 @@ ${videoNotes}
           </div>
         )}
 
-        {/* Modal do Artigo com Modo Escuro */}
-        {selectedArticle && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <div className={`rounded-lg shadow-xl max-w-4xl w-full my-8 ${articleDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-              <div className={`flex justify-between items-start p-6 border-b ${articleDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                <div className="flex-1">
-                  <h2 className={`text-2xl font-bold mb-2 ${articleDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedArticle.title}
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-purple-100 text-purple-800">
-                      {subjectNames[selectedArticle.subject] || selectedArticle.subject}
-                    </Badge>
-                    {selectedArticle.topic && (
-                      <Badge variant="outline">
-                        {selectedArticle.topic}
-                      </Badge>
-                    )}
-                    {selectedArticle.author && (
-                      <span className={`text-sm ${articleDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Por: {selectedArticle.author}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setArticleDarkMode(!articleDarkMode)}
-                    size="icon"
-                    variant="ghost"
-                    className={articleDarkMode ? 'text-white hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}
-                    title={articleDarkMode ? 'Modo Claro' : 'Modo Escuro'}
-                  >
-                    {articleDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  </Button>
-                  <button
-                    onClick={() => setSelectedArticle(null)}
-                    className={`p-2 ${articleDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-6 max-h-[70vh] overflow-y-auto">
-                <div 
-                  className={`prose prose-lg max-w-none ${articleDarkMode ? 'prose-invert dark:prose-invert' : ''}`}
-                  dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                  style={articleDarkMode ? {
-                    color: '#e5e7eb'
-                  } : {
-                    color: '#111827'
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );
