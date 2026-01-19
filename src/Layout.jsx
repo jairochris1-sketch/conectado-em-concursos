@@ -139,6 +139,11 @@ const moreMenuItems = [
   title: "Minhas Estatísticas",
   url: createPageUrl("Statistics"),
   icon: BarChart3
+},
+{
+  title: "Histórico de Pagamentos",
+  url: createPageUrl("PaymentHistory"),
+  icon: CreditCard
 }];
 
 
