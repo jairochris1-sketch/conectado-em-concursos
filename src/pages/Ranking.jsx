@@ -4,7 +4,6 @@ import { User } from "@/entities/User";
 import { Trophy } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FollowButton from "@/components/social/FollowButton";
-import { createPageUrl } from "@/utils";
 
 const calculatePoints = (correct, total) => {
   const accuracy = total > 0 ? correct / total : 0;
@@ -142,20 +141,6 @@ export default function RankingPage() {
   useEffect(() => {
     loadRankingData();
   }, [loadRankingData]);
-
-  useEffect(() => {
-    const checkAccess = async () => {
-      try {
-        const userData = await User.me();
-        if (userData.current_plan !== 'avancado' && userData.email !== 'conectadoemconcursos@gmail.com' && userData.email !== 'jairochris1@gmail.com' && userData.email !== 'juniorgmj2016@gmail.com') {
-          window.location.href = createPageUrl('Subscription');
-        }
-      } catch (error) {
-        console.error('Erro ao verificar acesso:', error);
-      }
-    };
-    checkAccess();
-  }, []);
 
   if (isLoading) {
     return (
