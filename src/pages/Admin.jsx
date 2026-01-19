@@ -26,6 +26,7 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
+import InstitutionManager from '../components/admin/InstitutionManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -339,7 +340,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-12 md:grid-cols-12">
+          <TabsList className="grid w-full grid-cols-13 md:grid-cols-13">
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
               Usuários
@@ -383,6 +384,10 @@ export default function AdminPage() {
             <TabsTrigger value="assuntos">
               <BookOpen className="w-4 h-4 mr-2" />
               Assuntos
+            </TabsTrigger>
+            <TabsTrigger value="bancas">
+              <Shield className="w-4 h-4 mr-2" />
+              Bancas
             </TabsTrigger>
             <TabsTrigger value="guias">
               <Bookmark className="w-4 h-4 mr-2" />
@@ -448,7 +453,11 @@ export default function AdminPage() {
           <TabsContent value="assuntos">
             <TopicManager />
           </TabsContent>
-          
+
+          <TabsContent value="bancas">
+            <InstitutionManager />
+          </TabsContent>
+
           <TabsContent value="videos">
             <Suspense fallback={<div>Carregando gerenciador de vídeos...</div>}>
               <VideoManager />
