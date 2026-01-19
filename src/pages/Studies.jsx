@@ -33,8 +33,8 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  BookUser
-} from 'lucide-react';
+  BookUser } from
+'lucide-react';
 import { motion } from 'framer-motion';
 
 import StudyMaterialViewer from '../components/studies/StudyMaterialViewer';
@@ -45,31 +45,31 @@ import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
 
 const cargoOptions = [
-  { value: "all", label: "Todos os Cargos" },
-  { value: "materiais_questoes", label: "📝 Materiais de Questões" },
-  { value: "tecnico_judiciario", label: "Técnico Judiciário" },
-  { value: "analista_judiciario", label: "Analista Judiciário" },
-  { value: "agente_penitenciario", label: "Agente Penitenciário" },
-  { value: "policial_civil", label: "Policial Civil" },
-  { value: "policial_federal", label: "Policial Federal" },
-  { value: "auditor_fiscal", label: "Auditor Fiscal" },
-  { value: "tecnico_receita_federal", label: "Técnico da Receita Federal" },
-  { value: "analista_receita_federal", label: "Analista da Receita Federal" },
-  { value: "professor_educacao_basica", label: "Professor (Educação Básica)" },
-  { value: "professor_portugues", label: "Professor (Português)" },
-  { value: "professor_matematica", label: "Professor (Matemática)" },
-  { value: "enfermeiro", label: "Enfermeiro" },
-  { value: "medico", label: "Médico" },
-  { value: "contador", label: "Contador" },
-  { value: "advogado", label: "Advogado" },
-  { value: "engenheiro", label: "Engenheiro" },
-  { value: "analista_sistemas", label: "Analista de Sistemas" },
-  { value: "tecnico_informatica", label: "Técnico em Informática" },
-  { value: "assistente_administrativo", label: "Assistente Administrativo" },
-  { value: "escriturario", label: "Escriturário" },
-  { value: "tecnico_bancario", label: "Técnico Bancário" },
-  { value: "analista_bancario", label: "Analista Bancário" }
-];
+{ value: "all", label: "Todos os Cargos" },
+{ value: "materiais_questoes", label: "📝 Materiais de Questões" },
+{ value: "tecnico_judiciario", label: "Técnico Judiciário" },
+{ value: "analista_judiciario", label: "Analista Judiciário" },
+{ value: "agente_penitenciario", label: "Agente Penitenciário" },
+{ value: "policial_civil", label: "Policial Civil" },
+{ value: "policial_federal", label: "Policial Federal" },
+{ value: "auditor_fiscal", label: "Auditor Fiscal" },
+{ value: "tecnico_receita_federal", label: "Técnico da Receita Federal" },
+{ value: "analista_receita_federal", label: "Analista da Receita Federal" },
+{ value: "professor_educacao_basica", label: "Professor (Educação Básica)" },
+{ value: "professor_portugues", label: "Professor (Português)" },
+{ value: "professor_matematica", label: "Professor (Matemática)" },
+{ value: "enfermeiro", label: "Enfermeiro" },
+{ value: "medico", label: "Médico" },
+{ value: "contador", label: "Contador" },
+{ value: "advogado", label: "Advogado" },
+{ value: "engenheiro", label: "Engenheiro" },
+{ value: "analista_sistemas", label: "Analista de Sistemas" },
+{ value: "tecnico_informatica", label: "Técnico em Informática" },
+{ value: "assistente_administrativo", label: "Assistente Administrativo" },
+{ value: "escriturario", label: "Escriturário" },
+{ value: "tecnico_bancario", label: "Técnico Bancário" },
+{ value: "analista_bancario", label: "Analista Bancário" }];
+
 
 const subjectNames = {
   portugues: "Português",
@@ -166,7 +166,7 @@ export default function StudiesPage() {
   const [articleViewMode, setArticleViewMode] = useState(() => {
     return localStorage.getItem('articleViewMode') || 'grid';
   });
-  
+
   // New state for search
   const [articleSearchTerm, setArticleSearchTerm] = useState('');
   const [videoSearchTerm, setVideoSearchTerm] = useState('');
@@ -202,12 +202,12 @@ export default function StudiesPage() {
       setCurrentUser(user);
 
       const [materialsData, flashcardsData, reviewsData, videosData, articlesData] = await Promise.all([
-        StudyMaterial.list('-created_date'),
-        Flashcard.list('-created_date'),
-        FlashcardReview.list('-created_date'),
-        YouTubeVideo.filter({ is_active: true }),
-        Article.filter({ is_published: true }, 'created_date')
-      ]);
+      StudyMaterial.list('-created_date'),
+      Flashcard.list('-created_date'),
+      FlashcardReview.list('-created_date'),
+      YouTubeVideo.filter({ is_active: true }),
+      Article.filter({ is_published: true }, 'created_date')]
+      );
 
       // Process Study Materials
       setMaterials(materialsData);
@@ -228,11 +228,11 @@ export default function StudiesPage() {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
 
-      const dueCards = flashcardsData.filter(card => {
+      const dueCards = flashcardsData.filter((card) => {
         // Find the latest review for this card
-        const latestReview = reviewsData
-          .filter(r => r.flashcard_id === card.id)
-          .sort((a, b) => new Date(b.created_date).getTime() - new Date(a.created_date).getTime())[0];
+        const latestReview = reviewsData.
+        filter((r) => r.flashcard_id === card.id).
+        sort((a, b) => new Date(b.created_date).getTime() - new Date(a.created_date).getTime())[0];
 
         // If no review, it's due
         if (!latestReview) return true;
@@ -240,7 +240,7 @@ export default function StudiesPage() {
         // If there's a review, check its next_review_date
         const nextReviewDate = new Date(latestReview.next_review_date);
         nextReviewDate.setHours(0, 0, 0, 0); // Normalize to start of day for comparison
-        
+
         return nextReviewDate <= today;
       });
 
@@ -261,15 +261,15 @@ export default function StudiesPage() {
       let filtered = [...materials];
 
       if (selectedCargo !== 'all') {
-        filtered = filtered.filter(material => material.cargo === selectedCargo);
+        filtered = filtered.filter((material) => material.cargo === selectedCargo);
       }
 
       if (searchTerm.trim()) {
         const search = searchTerm.toLowerCase();
-        filtered = filtered.filter(material =>
-          material.title.toLowerCase().includes(search) ||
-          material.description?.toLowerCase().includes(search) ||
-          subjectNames[material.subject]?.toLowerCase().includes(search)
+        filtered = filtered.filter((material) =>
+        material.title.toLowerCase().includes(search) ||
+        material.description?.toLowerCase().includes(search) ||
+        subjectNames[material.subject]?.toLowerCase().includes(search)
         );
       }
 
@@ -281,42 +281,42 @@ export default function StudiesPage() {
 
   useEffect(() => {
     let filtered = [...articles];
-    
+
     if (selectedArticleSubject !== 'all') {
-      filtered = filtered.filter(article => article.subject === selectedArticleSubject);
+      filtered = filtered.filter((article) => article.subject === selectedArticleSubject);
     }
-    
+
     if (articleSearchTerm.trim()) {
       const search = articleSearchTerm.toLowerCase();
-      filtered = filtered.filter(article =>
-        article.title.toLowerCase().includes(search) ||
-        article.summary?.toLowerCase().includes(search) ||
-        article.topic?.toLowerCase().includes(search)
+      filtered = filtered.filter((article) =>
+      article.title.toLowerCase().includes(search) ||
+      article.summary?.toLowerCase().includes(search) ||
+      article.topic?.toLowerCase().includes(search)
       );
     }
-    
-    setFilteredArticles(filtered.sort((a, b) => 
-      new Date(a.created_date) - new Date(b.created_date)
+
+    setFilteredArticles(filtered.sort((a, b) =>
+    new Date(a.created_date) - new Date(b.created_date)
     ));
   }, [selectedArticleSubject, articles, articleSearchTerm]);
 
   useEffect(() => {
     let filtered = [...videos];
-    
+
     if (selectedVideoSubject !== 'all') {
-      filtered = filtered.filter(video => video.subject === selectedVideoSubject);
+      filtered = filtered.filter((video) => video.subject === selectedVideoSubject);
     }
-    
+
     if (videoSearchTerm.trim()) {
       const search = videoSearchTerm.toLowerCase();
-      filtered = filtered.filter(video =>
-        video.title.toLowerCase().includes(search) ||
-        video.description?.toLowerCase().includes(search) ||
-        video.instructor?.toLowerCase().includes(search) ||
-        video.topic?.toLowerCase().includes(search)
+      filtered = filtered.filter((video) =>
+      video.title.toLowerCase().includes(search) ||
+      video.description?.toLowerCase().includes(search) ||
+      video.instructor?.toLowerCase().includes(search) ||
+      video.topic?.toLowerCase().includes(search)
       );
     }
-    
+
     setFilteredVideos(filtered.sort((a, b) => (a.order || 0) - (b.order || 0)));
   }, [selectedVideoSubject, videos, videoSearchTerm]);
 
@@ -328,15 +328,15 @@ export default function StudiesPage() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1); // Start of tomorrow
 
-    const reviewedTodayCount = reviews.filter(r => {
+    const reviewedTodayCount = reviews.filter((r) => {
       const reviewDate = new Date(r.created_date);
       return reviewDate >= today && reviewDate < tomorrow;
     }).length;
 
     // Calculate average easiness factor from all reviews
-    const avgEasiness = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + (r.easiness_factor || 2.5), 0) / reviews.length
-      : 2.5;
+    const avgEasiness = reviews.length > 0 ?
+    reviews.reduce((sum, r) => sum + (r.easiness_factor || 2.5), 0) / reviews.length :
+    2.5;
 
     return {
       totalCards,
@@ -354,7 +354,7 @@ export default function StudiesPage() {
 
   const handleDeleteMaterial = async (e, materialId) => {
     e.stopPropagation(); // Impede que o clique no botão de excluir abra o modal de visualização
-    if(window.confirm("Tem certeza que deseja excluir este material de estudo? Esta ação não pode ser desfeita.")) {
+    if (window.confirm("Tem certeza que deseja excluir este material de estudo? Esta ação não pode ser desfeita.")) {
       try {
         await StudyMaterial.delete(materialId);
         await loadAllData(); // Recarrega a lista após a exclusão
@@ -371,7 +371,7 @@ export default function StudiesPage() {
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
   const handlePlayVideo = (video) => {
@@ -392,11 +392,11 @@ export default function StudiesPage() {
 
   const handlePreviousVideo = () => {
     if (!playingVideo) return;
-    
+
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-    
-    const currentIndex = filteredVideos.findIndex(v => v.id === playingVideo.id);
+
+    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
     if (currentIndex > 0) {
       const previousVideo = filteredVideos[currentIndex - 1];
       handlePlayVideo(previousVideo);
@@ -405,11 +405,11 @@ export default function StudiesPage() {
 
   const handleNextVideo = () => {
     if (!playingVideo) return;
-    
+
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-    
-    const currentIndex = filteredVideos.findIndex(v => v.id === playingVideo.id);
+
+    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
     if (currentIndex < filteredVideos.length - 1) {
       const nextVideo = filteredVideos[currentIndex + 1];
       handlePlayVideo(nextVideo);
@@ -521,8 +521,8 @@ ${videoNotes}
     setArticleDarkMode(false); // Reset dark mode when opening new article
     // Incrementar contador de visualizações
     try {
-      await Article.update(article.id, { 
-        views_count: (article.views_count || 0) + 1 
+      await Article.update(article.id, {
+        views_count: (article.views_count || 0) + 1
       });
     } catch (error) {
       console.error('Erro ao atualizar views:', error);
@@ -540,16 +540,16 @@ ${videoNotes}
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
   const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
-  
+
   if (isLoading) {
-      return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
             <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando área de estudos...</p>
           </div>
-        </div>
-      );
+        </div>);
+
   }
 
   return (
@@ -558,8 +558,8 @@ ${videoNotes}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
-        >
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
               <BookUser className="w-8 h-8" /> Área de Estudos
@@ -568,15 +568,15 @@ ${videoNotes}
               Seus materiais, resumos e flashcards, tudo em um só lugar.
             </p>
           </div>
-          {isAdmin && (
-            <Button
-              onClick={() => setShowUploader(!showUploader)}
-              className="bg-indigo-600 hover:bg-indigo-700"
-            >
+          {isAdmin &&
+          <Button
+            onClick={() => setShowUploader(!showUploader)}
+            className="bg-indigo-600 hover:bg-indigo-700">
+
               <Upload className="w-4 h-4 mr-2" />
               Adicionar Material
             </Button>
-          )}
+          }
         </motion.div>
 
         <Tabs defaultValue="materials" className="w-full">
@@ -601,18 +601,18 @@ ${videoNotes}
 
           <TabsContent value="materials" className="mt-6">
             {/* Uploader - apenas para admin */}
-            {showUploader && isAdmin && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
+            {showUploader && isAdmin &&
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8">
+
                 <StudyMaterialUploader
-                  onMaterialUploaded={loadAllData}
-                  onCancel={() => setShowUploader(false)}
-                />
+                onMaterialUploaded={loadAllData}
+                onCancel={() => setShowUploader(false)} />
+
               </motion.div>
-            )}
+            }
 
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
@@ -628,24 +628,24 @@ ${videoNotes}
                       variant={materialViewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('grid')}
-                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                    >
+                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+
                       <Grid3x3 className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'list' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('list')}
-                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                    >
+                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+
                       <List className="w-3 h-3" />
                     </Button>
                     <Button
                       variant={materialViewMode === 'compact' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('compact')}
-                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                    >
+                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+
                       <LayoutGrid className="w-3 h-3" />
                     </Button>
                   </div>
@@ -662,11 +662,11 @@ ${videoNotes}
                         <SelectValue placeholder="Escolha um cargo..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {cargoOptions.map(cargo => (
-                          <SelectItem key={cargo.value} value={cargo.value}>
+                        {cargoOptions.map((cargo) =>
+                        <SelectItem key={cargo.value} value={cargo.value}>
                             {cargo.label}
                           </SelectItem>
-                        ))}
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -680,8 +680,8 @@ ${videoNotes}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Digite o título, disciplina..."
-                        className="pl-10"
-                      />
+                        className="pl-10" />
+
                     </div>
                   </div>
                 </div>
@@ -690,45 +690,45 @@ ${videoNotes}
 
             {/* Lista de Materiais */}
             <div className="grid gap-6">
-              {filteredMaterials.length === 0 ? (
-                <Card className="text-center py-12">
+              {filteredMaterials.length === 0 ?
+              <Card className="text-center py-12">
                   <CardContent className="space-y-4">
                     <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                       Nenhum material encontrado
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      {selectedCargo !== 'all'
-                        ? `Não há materiais disponíveis para ${cargoOptions.find(c => c.value === selectedCargo)?.label}`
-                        : 'Tente ajustar os filtros de busca'
-                      }
+                      {selectedCargo !== 'all' ?
+                    `Não há materiais disponíveis para ${cargoOptions.find((c) => c.value === selectedCargo)?.label}` :
+                    'Tente ajustar os filtros de busca'
+                    }
                     </p>
                   </CardContent>
-                </Card>
-              ) : (
-                <div className={
-                  materialViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' :
-                  materialViewMode === 'list' ? 'space-y-4' :
-                  'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
-                }>
-                  {filteredMaterials.map((material, index) => (
-                    <motion.div
-                      key={material.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      {materialViewMode === 'list' ? (
-                        <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
-                              onClick={() => handleMaterialClick(material)}>
+                </Card> :
+
+              <div className={
+              materialViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' :
+              materialViewMode === 'list' ? 'space-y-4' :
+              'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
+              }>
+                  {filteredMaterials.map((material, index) =>
+                <motion.div
+                  key={material.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}>
+
+                      {materialViewMode === 'list' ?
+                  <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
+                  onClick={() => handleMaterialClick(material)}>
                           <CardContent className="p-4">
                             <div className="flex items-center gap-4 overflow-hidden">
                               <div className="flex-shrink-0">
-                                {material.file_type === 'pdf' ? (
-                                  <FileText className="w-12 h-12 text-red-500" />
-                                ) : (
-                                  <Eye className="w-12 h-12 text-blue-500" />
-                                )}
+                                {material.file_type === 'pdf' ?
+                          <FileText className="w-12 h-12 text-red-500" /> :
+
+                          <Eye className="w-12 h-12 text-blue-500" />
+                          }
                               </div>
                               <div className="flex-1 min-w-0 overflow-hidden">
                                 <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 truncate">
@@ -747,50 +747,50 @@ ${videoNotes}
                                 </div>
                               </div>
                               <div className="flex items-center gap-1 flex-shrink-0">
-                                {isAdmin && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => handleDeleteMaterial(e, material.id)}
-                                  >
+                                {isAdmin &&
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteMaterial(e, material.id)}>
+
                                     <Trash2 className="w-4 h-4 text-red-500" />
                                   </Button>
-                                )}
+                          }
                                 <Button
-                                  size="sm"
-                                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleMaterialClick(material);
-                                  }}
-                                >
+                            size="sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMaterialClick(material);
+                            }}>
+
                                   Ver
                                 </Button>
                               </div>
                             </div>
                           </CardContent>
-                        </Card>
-                      ) : (
-                        <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
-                              onClick={() => handleMaterialClick(material)}>
+                        </Card> :
+
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+                  onClick={() => handleMaterialClick(material)}>
                           <CardHeader className={materialViewMode === 'compact' ? 'p-3' : 'flex-grow'}>
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
                                 <CardTitle className={`text-blue-600 dark:text-blue-400 line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
-                                {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description && (
-                                  <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
+                                {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description &&
+                          <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
                                     {material.description}
                                   </p>
-                                )}
+                          }
                               </div>
                               <div className="ml-2">
-                                {material.file_type === 'pdf' ? (
-                                  <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
-                                ) : (
-                                  <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
-                                )}
+                                {material.file_type === 'pdf' ?
+                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} /> :
+
+                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                          }
                               </div>
                             </div>
                           </CardHeader>
@@ -804,37 +804,37 @@ ${videoNotes}
                                   {subjectNames[material.subject]}
                                 </Badge>
                               </div>
-                              {materialViewMode !== 'compact' && (
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {materialViewMode !== 'compact' &&
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                                   <span className="font-medium">
-                                    {cargoOptions.find(c => c.value === material.cargo)?.label}
+                                    {cargoOptions.find((c) => c.value === material.cargo)?.label}
                                   </span>
                                 </div>
-                              )}
+                        }
                               <div className="flex justify-between items-center pt-1">
-                                {materialViewMode !== 'compact' && (
-                                  <span className="text-xs text-gray-400 truncate w-2/5">
+                                {materialViewMode !== 'compact' &&
+                          <span className="text-xs text-gray-400 truncate w-2/5">
                                     {material.file_name}
                                   </span>
-                                )}
+                          }
                                 <div className={`flex items-center gap-1 ${materialViewMode === 'compact' ? 'w-full justify-end' : ''}`}>
-                                  {isAdmin && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={(e) => handleDeleteMaterial(e, material.id)}
-                                    >
+                                  {isAdmin &&
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => handleDeleteMaterial(e, material.id)}>
+
                                       <Trash2 className="w-3 h-3 text-red-500" />
                                     </Button>
-                                  )}
+                            }
                                   <Button
-                                    size="sm"
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleMaterialClick(material);
-                                    }}
-                                  >
+                              size="sm"
+                              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMaterialClick(material);
+                              }}>
+
                                     <Eye className="w-3 h-3 mr-1" />
                                     {materialViewMode !== 'compact' && 'Ver'}
                                   </Button>
@@ -843,11 +843,11 @@ ${videoNotes}
                             </div>
                           </CardContent>
                         </Card>
-                      )}
+                  }
                     </motion.div>
-                  ))}
+                )}
                 </div>
-              )}
+              }
             </div>
           </TabsContent>
 
@@ -858,27 +858,27 @@ ${videoNotes}
                <div className="flex items-center gap-1">
                  <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
                  <Button
-                   variant={articleViewMode === 'grid' ? 'default' : 'outline'}
-                   size="sm"
-                   onClick={() => setArticleViewMode('grid')}
-                   className={`h-8 px-2 ${articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                 >
+                    variant={articleViewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('grid')}
+                    className={`h-8 px-2 ${articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
                    <Grid3x3 className="w-3 h-3" />
                  </Button>
                  <Button
-                   variant={articleViewMode === 'list' ? 'default' : 'outline'}
-                   size="sm"
-                   onClick={() => setArticleViewMode('list')}
-                   className={`h-8 px-2 ${articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                 >
+                    variant={articleViewMode === 'list' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('list')}
+                    className={`h-8 px-2 ${articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
                    <List className="w-3 h-3" />
                  </Button>
                  <Button
-                   variant={articleViewMode === 'compact' ? 'default' : 'outline'}
-                   size="sm"
-                   onClick={() => setArticleViewMode('compact')}
-                   className={`h-8 px-2 ${articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-                 >
+                    variant={articleViewMode === 'compact' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('compact')}
+                    className={`h-8 px-2 ${articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
                    <LayoutGrid className="w-3 h-3" />
                  </Button>
                </div>
@@ -894,9 +894,9 @@ ${videoNotes}
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as Disciplinas</SelectItem>
-                    {Object.entries(subjectNames).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
+                    {Object.entries(subjectNames).map(([key, label]) =>
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 
@@ -909,8 +909,8 @@ ${videoNotes}
                       setCurrentArticlePage(1);
                     }}
                     placeholder="Buscar artigos por título, assunto..."
-                    className="pl-10"
-                  />
+                    className="pl-10" />
+
                 </div>
                 
                 <Badge variant="secondary" className="text-sm">
@@ -919,201 +919,201 @@ ${videoNotes}
               </div>
             </div>
 
-            {filteredArticles.length === 0 ? (
-              <Card>
+            {filteredArticles.length === 0 ?
+            <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <BookOpen className="w-16 h-16 text-gray-400 mb-4" />
                   <p className="text-gray-600 dark:text-gray-400 text-center">
                     Nenhum artigo disponível {selectedArticleSubject !== 'all' ? 'para esta disciplina' : 'no momento'}.
                   </p>
                 </CardContent>
-              </Card>
-            ) : (
-              <>
+              </Card> :
+
+            <>
                 <div className={
-                  articleViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
-                  articleViewMode === 'list' ? 'space-y-4' :
-                  'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3'
-                }>
-                  {currentArticles.map((article, index) => (
-                    <motion.div
-                      key={article.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
-                      {articleViewMode === 'list' ? (
-                        <Card 
-                          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                          onClick={() => handleArticleClick(article)}
-                        >
+              articleViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
+              articleViewMode === 'list' ? 'space-y-4' :
+              'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3'
+              }>
+                  {currentArticles.map((article, index) =>
+                <motion.div
+                  key={article.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}>
+
+                      {articleViewMode === 'list' ?
+                  <Card
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() => handleArticleClick(article)}>
+
                           <CardContent className="p-4">
                             <div className="flex gap-4">
-                              {article.cover_image_url && (
-                                <div className="w-32 h-24 flex-shrink-0 rounded overflow-hidden">
+                              {article.cover_image_url &&
+                        <div className="w-32 h-24 flex-shrink-0 rounded overflow-hidden">
                                   <img
-                                    src={article.cover_image_url}
-                                    alt={article.title}
-                                    className="w-full h-full object-cover"
-                                  />
+                            src={article.cover_image_url}
+                            alt={article.title}
+                            className="w-full h-full object-cover" />
+
                                 </div>
-                              )}
+                        }
                               <div className="flex-1 min-w-0">
                                 <div className="flex flex-wrap gap-1 mb-2">
                                   <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">
                                     {subjectNames[article.subject] || article.subject}
                                   </Badge>
-                                  {article.topic && (
-                                    <Badge variant="outline" className="text-xs">
+                                  {article.topic &&
+                            <Badge variant="outline" className="text-xs">
                                       {article.topic}
                                     </Badge>
-                                  )}
-                                  {article.is_featured && (
-                                    <Badge className="bg-yellow-100 text-yellow-800 text-xs">⭐</Badge>
-                                  )}
+                            }
+                                  {article.is_featured &&
+                            <Badge className="bg-yellow-100 text-yellow-800 text-xs">⭐</Badge>
+                            }
                                 </div>
                                 <h3 className="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-1 line-clamp-1">
                                   {article.title}
                                 </h3>
-                                {article.summary && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                {article.summary &&
+                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                                     {article.summary}
                                   </p>
-                                )}
+                          }
                                 <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                  {article.reading_time && (
-                                    <span className="flex items-center gap-1">
+                                  {article.reading_time &&
+                            <span className="flex items-center gap-1">
                                       <Timer className="w-3 h-3" />
                                       {article.reading_time} min
                                     </span>
-                                  )}
-                                  {article.views_count > 0 && (
-                                    <span className="flex items-center gap-1">
+                            }
+                                  {article.views_count > 0 &&
+                            <span className="flex items-center gap-1">
                                       <Eye className="w-3 h-3" />
                                       {article.views_count}
                                     </span>
-                                  )}
+                            }
                                 </div>
                               </div>
                             </div>
                           </CardContent>
-                        </Card>
-                      ) : (
-                        <Card 
-                          className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
-                          onClick={() => handleArticleClick(article)}
-                        >
-                          {article.cover_image_url && (
-                            <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
+                        </Card> :
+
+                  <Card
+                    className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
+                    onClick={() => handleArticleClick(article)}>
+
+                          {article.cover_image_url &&
+                    <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
                               <img
-                                src={article.cover_image_url}
-                                alt={article.title}
-                                className="w-full h-full object-cover"
-                              />
+                        src={article.cover_image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover" />
+
                             </div>
-                          )}
+                    }
                           <CardHeader className={`flex-grow ${articleViewMode === 'compact' ? 'p-2' : 'p-3'}`}>
                             <div className="flex flex-wrap gap-1 mb-1">
                               <Badge className={`bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
                                 {subjectNames[article.subject] || article.subject}
                               </Badge>
-                              {article.topic && articleViewMode !== 'compact' && (
-                                <Badge variant="outline" className="text-xs">
+                              {article.topic && articleViewMode !== 'compact' &&
+                        <Badge variant="outline" className="text-xs">
                                   {article.topic}
                                 </Badge>
-                              )}
-                              {article.is_featured && (
-                                <Badge className={`bg-yellow-100 text-yellow-800 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
+                        }
+                              {article.is_featured &&
+                        <Badge className={`bg-yellow-100 text-yellow-800 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
                                   ⭐
                                 </Badge>
-                              )}
+                        }
                             </div>
                             <CardTitle className={`line-clamp-2 ${articleViewMode === 'compact' ? 'text-xs' : 'text-sm'}`}>
                               {article.title}
                             </CardTitle>
-                            {article.summary && articleViewMode !== 'compact' && (
-                              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                            {article.summary && articleViewMode !== 'compact' &&
+                      <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
                                 {article.summary}
                               </p>
-                            )}
+                      }
                           </CardHeader>
                           <CardContent className={articleViewMode === 'compact' ? 'p-2 pt-0' : 'p-3 pt-0'}>
                             <div className={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${articleViewMode === 'compact' ? 'text-[10px]' : 'text-xs'}`}>
-                              {article.reading_time && (
-                                <span className="flex items-center gap-1">
+                              {article.reading_time &&
+                        <span className="flex items-center gap-1">
                                   <Timer className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
                                   {article.reading_time} min
                                 </span>
-                              )}
-                              {article.views_count > 0 && (
-                                <span className="flex items-center gap-1">
+                        }
+                              {article.views_count > 0 &&
+                        <span className="flex items-center gap-1">
                                   <Eye className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
                                   {article.views_count}
                                 </span>
-                              )}
+                        }
                             </div>
                           </CardContent>
                         </Card>
-                      )}
+                  }
                     </motion.div>
-                  ))}
+                )}
                 </div>
 
                 {/* Pagination */}
-                {totalArticlePages > 1 && (
-                  <div className="mt-8 flex justify-center items-center gap-2">
+                {totalArticlePages > 1 &&
+              <div className="mt-8 flex justify-center items-center gap-2">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentArticlePage(prev => Math.max(1, prev - 1))}
-                      disabled={currentArticlePage === 1}
-                    >
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentArticlePage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentArticlePage === 1}>
+
                       Anterior
                     </Button>
                     
                     <div className="flex gap-1">
                       {Array.from({ length: Math.min(5, totalArticlePages) }, (_, i) => {
-                        let pageNum;
-                        if (totalArticlePages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentArticlePage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentArticlePage >= totalArticlePages - 2) {
-                          pageNum = totalArticlePages - 4 + i;
-                        } else {
-                          pageNum = currentArticlePage - 2 + i;
-                        }
-                        
-                        return (
-                          <Button
-                            key={i}
-                            variant={currentArticlePage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentArticlePage(pageNum)}
-                            className="w-10"
-                          >
+                    let pageNum;
+                    if (totalArticlePages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentArticlePage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentArticlePage >= totalArticlePages - 2) {
+                      pageNum = totalArticlePages - 4 + i;
+                    } else {
+                      pageNum = currentArticlePage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={i}
+                        variant={currentArticlePage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentArticlePage(pageNum)}
+                        className="w-10">
+
                             {pageNum}
-                          </Button>
-                        );
-                      })}
+                          </Button>);
+
+                  })}
                     </div>
 
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentArticlePage(prev => Math.min(totalArticlePages, prev + 1))}
-                      disabled={currentArticlePage === totalArticlePages}
-                    >
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentArticlePage((prev) => Math.min(totalArticlePages, prev + 1))}
+                  disabled={currentArticlePage === totalArticlePages}>
+
                       Próxima
                     </Button>
                   </div>
-                )}
+              }
 
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
                   Página {currentArticlePage} de {totalArticlePages} • Mostrando {indexOfFirstArticle + 1}-{Math.min(indexOfLastArticle, filteredArticles.length)} de {filteredArticles.length} artigos
                 </div>
               </>
-            )}
+            }
           </TabsContent>
 
           <TabsContent value="videos" className="mt-6">
@@ -1130,9 +1130,9 @@ ${videoNotes}
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as Disciplinas</SelectItem>
-                    {Object.entries(subjectNames).map(([key, label]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
+                    {Object.entries(subjectNames).map(([key, label]) =>
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
                 
@@ -1145,8 +1145,8 @@ ${videoNotes}
                       setCurrentVideoPage(1);
                     }}
                     placeholder="Buscar vídeos por título, professor..."
-                    className="pl-10"
-                  />
+                    className="pl-10" />
+
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -1160,8 +1160,8 @@ ${videoNotes}
                       size="sm"
                       onClick={() => setVideoDisplaySize('small')}
                       className="h-7 px-2"
-                      title="Miniatura pequena"
-                    >
+                      title="Miniatura pequena">
+
                       <div className="flex flex-col gap-0.5">
                         <div className="flex gap-0.5">
                           <div className="w-1 h-1 bg-current rounded-sm"></div>
@@ -1174,8 +1174,8 @@ ${videoNotes}
                       size="sm"
                       onClick={() => setVideoDisplaySize('normal')}
                       className="h-7 px-2"
-                      title="Miniatura normal"
-                    >
+                      title="Miniatura normal">
+
                       <div className="flex flex-col gap-0.5">
                         <div className="flex gap-0.5">
                           <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
@@ -1188,8 +1188,8 @@ ${videoNotes}
                       size="sm"
                       onClick={() => setVideoDisplaySize('large')}
                       className="h-7 px-2"
-                      title="Miniatura grande"
-                    >
+                      title="Miniatura grande">
+
                       <div className="flex flex-col gap-0.5">
                         <div className="flex gap-0.5">
                           <div className="w-2 h-2 bg-current rounded-sm"></div>
@@ -1202,54 +1202,54 @@ ${videoNotes}
               </div>
             </div>
 
-            {filteredVideos.length === 0 ? (
-              <Card>
+            {filteredVideos.length === 0 ?
+            <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <Play className="w-16 h-16 text-gray-400 mb-4" />
                   <p className="text-gray-600 dark:text-gray-400 text-center">
                     Nenhuma vídeo-aula disponível {selectedVideoSubject !== 'all' ? 'para esta disciplina' : 'no momento'}.
                   </p>
                 </CardContent>
-              </Card>
-            ) : (
-              <>
+              </Card> :
+
+            <>
                 <div className="space-y-4">
                   {currentVideos.map((video, index) => {
-                    const videoId = video.video_id || extractYouTubeId(video.youtube_url);
-                    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-                    
-                    return (
-                      <motion.div
-                        key={video.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
+                  const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+
+                  return (
+                    <motion.div
+                      key={video.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}>
+
                         <Card className="overflow-hidden hover:shadow-xl transition-all cursor-pointer">
                           <div className="flex flex-col md:flex-row">
-                            <div 
-                              className={`${
-                                videoDisplaySize === 'small' ? 'md:w-48 h-32' :
-                                videoDisplaySize === 'large' ? 'md:w-96 h-64' :
-                                'md:w-80 h-48'
-                              } md:h-auto bg-gray-200 flex-shrink-0 relative group`}
-                              onClick={() => handlePlayVideo(video)}
-                            >
+                            <div
+                            className={`${
+                            videoDisplaySize === 'small' ? 'md:w-48 h-32' :
+                            videoDisplaySize === 'large' ? 'md:w-96 h-64' :
+                            'md:w-80 h-48'} md:h-auto bg-gray-200 flex-shrink-0 relative group`
+                            }
+                            onClick={() => handlePlayVideo(video)}>
+
                               <img
-                                src={thumbnailUrl}
-                                alt={video.title}
-                                className="w-full h-full object-cover"
-                              />
+                              src={thumbnailUrl}
+                              alt={video.title}
+                              className="w-full h-full object-cover" />
+
                               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="bg-white rounded-full p-4">
                                   <Play className="w-8 h-8 text-red-600" />
                                 </div>
                               </div>
-                              {video.duration && (
-                                <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
+                              {video.duration &&
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
                                   {video.duration}
                                 </div>
-                              )}
+                            }
                             </div>
 
                             <CardContent className="flex-1 p-4">
@@ -1257,113 +1257,113 @@ ${videoNotes}
                                 <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                   {subjectNames[video.subject] || video.subject}
                                 </Badge>
-                                {video.topic && (
-                                  <Badge variant="outline">
+                                {video.topic &&
+                              <Badge variant="outline">
                                     {video.topic}
                                   </Badge>
-                                )}
+                              }
                               </div>
 
-                              <h3 
-                                className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer line-clamp-2"
-                                onClick={() => handlePlayVideo(video)}
-                                style={{ fontWeight: 600 }}
-                              >
+                              <h3
+                              className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer line-clamp-2"
+                              onClick={() => handlePlayVideo(video)}
+                              style={{ fontWeight: 600 }}>
+
                                 {video.title}
                               </h3>
 
-                              {video.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                              {video.description &&
+                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                   {video.description}
                                 </p>
-                              )}
+                            }
 
                               <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                                {video.instructor && (
-                                  <span className="flex items-center gap-1">
+                                {video.instructor &&
+                              <span className="flex items-center gap-1">
                                     <UserIcon className="w-3 h-3" />
                                     {video.instructor}
                                   </span>
-                                )}
-                                {video.duration && (
-                                  <span className="flex items-center gap-1">
+                              }
+                                {video.duration &&
+                              <span className="flex items-center gap-1">
                                     <Timer className="w-3 h-3" />
                                     {video.duration}
                                   </span>
-                                )}
+                              }
                               </div>
 
                               <Button
-                                onClick={() => handlePlayVideo(video)}
-                                className="mt-4 bg-red-600 hover:bg-red-700 text-white"
-                                size="sm"
-                              >
+                              onClick={() => handlePlayVideo(video)}
+                              className="mt-4 bg-red-600 hover:bg-red-700 text-white"
+                              size="sm">
+
                                 <Play className="w-4 h-4 mr-2" />
                                 Assistir Agora
                               </Button>
                             </CardContent>
                           </div>
                         </Card>
-                      </motion.div>
-                    );
-                  })}
+                      </motion.div>);
+
+                })}
                 </div>
 
                 {/* Paginação */}
-                {totalVideoPages > 1 && (
-                  <div className="mt-8 flex justify-center items-center gap-2">
+                {totalVideoPages > 1 &&
+              <div className="mt-8 flex justify-center items-center gap-2">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentVideoPage(prev => Math.max(1, prev - 1))}
-                      disabled={currentVideoPage === 1}
-                    >
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentVideoPage === 1}>
+
                       Anterior
                     </Button>
                     
                     <div className="flex gap-1">
                       {Array.from({ length: Math.min(5, totalVideoPages) }, (_, i) => {
-                        let pageNum;
-                        if (totalVideoPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentVideoPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentVideoPage >= totalVideoPages - 2) {
-                          pageNum = totalVideoPages - 4 + i;
-                        } else {
-                          pageNum = currentVideoPage - 2 + i;
-                        }
-                        
-                        return (
-                          <Button
-                            key={i}
-                            variant={currentVideoPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentVideoPage(pageNum)}
-                            className="w-10"
-                          >
+                    let pageNum;
+                    if (totalVideoPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentVideoPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentVideoPage >= totalVideoPages - 2) {
+                      pageNum = totalVideoPages - 4 + i;
+                    } else {
+                      pageNum = currentVideoPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={i}
+                        variant={currentVideoPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentVideoPage(pageNum)}
+                        className="w-10">
+
                             {pageNum}
-                          </Button>
-                        );
-                      })}
+                          </Button>);
+
+                  })}
                     </div>
 
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentVideoPage(prev => Math.min(totalVideoPages, prev + 1))}
-                      disabled={currentVideoPage === totalVideoPages}
-                    >
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage((prev) => Math.min(totalVideoPages, prev + 1))}
+                  disabled={currentVideoPage === totalVideoPages}>
+
                       Próxima
                     </Button>
                   </div>
-                )}
+              }
 
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
                   Página {currentVideoPage} de {totalVideoPages} • Mostrando {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, filteredVideos.length)} de {filteredVideos.length} vídeos
                 </div>
               </>
-            )}
+            }
           </TabsContent>
 
           <TabsContent value="flashcards" className="mt-6">
@@ -1441,8 +1441,8 @@ ${videoNotes}
               <TabsContent value="review" className="mt-6">
                 <FlashcardReviewer
                   cardsDue={cardsDueToday}
-                  onReviewComplete={loadAllData}
-                />
+                  onReviewComplete={loadAllData} />
+
               </TabsContent>
               <TabsContent value="create" className="mt-6">
                 <FlashcardCreator onFlashcardCreated={loadAllData} />
@@ -1450,48 +1450,48 @@ ${videoNotes}
               <TabsContent value="library" className="mt-6">
                 <FlashcardLibrary
                   flashcards={flashcards}
-                  onUpdate={loadAllData}
-                />
+                  onUpdate={loadAllData} />
+
               </TabsContent>
               <TabsContent value="stats" className="mt-6">
                 <FlashcardStats
                   flashcards={flashcards}
-                  reviews={reviews}
-                />
+                  reviews={reviews} />
+
               </TabsContent>
             </Tabs>
           </TabsContent>
         </Tabs>
         
         {/* Viewer Modal */}
-        {selectedMaterial && (
-          <StudyMaterialViewer
-            material={selectedMaterial}
-            isOpen={!!selectedMaterial}
-            onClose={() => setSelectedMaterial(null)}
-          />
-        )}
+        {selectedMaterial &&
+        <StudyMaterialViewer
+          material={selectedMaterial}
+          isOpen={!!selectedMaterial}
+          onClose={() => setSelectedMaterial(null)} />
+
+        }
 
         {/* Modal do Player de Vídeo em formato Playlist */}
-        {playingVideo && (
-          <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
+        {playingVideo &&
+        <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col">
             {/* Video Player Section */}
             <div className="flex-1 flex flex-col lg:flex-row h-full">
               {/* Main Video Player */}
               <div className={`flex flex-col bg-black ${
-                videoPlayerSize === 'large' ? 'flex-[2]' : 
-                videoPlayerSize === 'medium' ? 'flex-[1.5]' : 
-                'flex-1'
-              }`}>
+            videoPlayerSize === 'large' ? 'flex-[2]' :
+            videoPlayerSize === 'medium' ? 'flex-[1.5]' :
+            'flex-1'}`
+            }>
                 <div className="flex-1 relative">
                    <iframe
-                     className="w-full h-full"
-                     src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
-                     title={playingVideo.title}
-                     frameBorder="0"
-                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                     allowFullScreen
-                   />
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
+                  title={playingVideo.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen />
+
                  </div>
 
                 {/* Bottom Bar with Title and Navigation */}
@@ -1500,46 +1500,46 @@ ${videoNotes}
                     <div className="flex-1 min-w-0">
                       <h2 className="text-white text-sm md:text-lg font-semibold mb-1 line-clamp-2">{playingVideo.title}</h2>
                       <div className="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm text-gray-400">
-                        {playingVideo.instructor && (
-                          <span className="truncate">Prof. {playingVideo.instructor}</span>
-                        )}
-                        {playingVideo.topic && (
-                          <span className="hidden md:inline">• {playingVideo.topic}</span>
-                        )}
+                        {playingVideo.instructor &&
+                      <span className="truncate">Prof. {playingVideo.instructor}</span>
+                      }
+                        {playingVideo.topic &&
+                      <span className="hidden md:inline">• {playingVideo.topic}</span>
+                      }
                       </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={handleCloseVideo}
-                      className="text-gray-400 hover:text-white"
-                    >
+                    <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCloseVideo}
+                    className="text-gray-400 hover:text-white">
+
                       <X className="w-5 h-5" />
                     </Button>
                   </div>
                   
-                  {playingVideo.description && (
-                    <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{playingVideo.description}</p>
-                  )}
+                  {playingVideo.description &&
+                <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{playingVideo.description}</p>
+                }
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handlePreviousVideo} 
-                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === 0}
-                        className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2"
-                      >
+                      <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePreviousVideo}
+                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === 0}
+                      className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2">
+
                         ← Anterior
                       </Button>
-                      <Button 
-                        variant="default" 
-                        size="sm" 
-                        onClick={handleNextVideo} 
-                        disabled={filteredVideos.findIndex(v => v.id === playingVideo.id) === filteredVideos.length - 1}
-                        className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2"
-                      >
+                      <Button
+                      variant="default"
+                      size="sm"
+                      onClick={handleNextVideo}
+                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === filteredVideos.length - 1}
+                      className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2">
+
                         Próximo →
                       </Button>
                     </div>
@@ -1550,8 +1550,8 @@ ${videoNotes}
               {/* Playlist Sidebar with Notes */}
               <aside className={`${showNotes ? 'w-full lg:w-96' : 'w-12'} bg-gray-900 border-l border-gray-800 flex flex-col max-h-screen transition-all`}>
                 <div className="sticky top-0 bg-gray-800 px-4 py-3 border-b border-gray-700 z-10 flex items-center justify-between">
-                  {showNotes ? (
-                    <>
+                  {showNotes ?
+                <>
                       <div>
                         <h3 className="text-white font-semibold mb-1">Playlist do Curso</h3>
                         <p className="text-gray-400 text-sm">
@@ -1559,68 +1559,68 @@ ${videoNotes}
                         </p>
                       </div>
                       <Button
-                        onClick={() => setShowNotes(false)}
-                        size="sm"
-                        variant="ghost"
-                        className="text-gray-400 hover:text-white"
-                        title="Fechar painel"
-                      >
+                    onClick={() => setShowNotes(false)}
+                    size="sm"
+                    variant="ghost"
+                    className="text-gray-400 hover:text-white"
+                    title="Fechar painel">
+
                         <X className="w-4 h-4" />
                       </Button>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => setShowNotes(true)}
-                      size="sm"
-                      variant="ghost"
-                      className="text-gray-400 hover:text-white w-full"
-                      title="Abrir painel"
-                    >
+                    </> :
+
+                <Button
+                  onClick={() => setShowNotes(true)}
+                  size="sm"
+                  variant="ghost"
+                  className="text-gray-400 hover:text-white w-full"
+                  title="Abrir painel">
+
                       <BookOpen className="w-4 h-4" />
                     </Button>
-                  )}
+                }
                 </div>
 
-                {showNotes && (
-                  <>
+                {showNotes &&
+              <>
                     <div className="flex-1 overflow-y-auto">
                       <div className="p-2">
                         {filteredVideos.map((video, idx) => {
-                          const videoId = video.video_id || extractYouTubeId(video.youtube_url);
-                          const isActive = video.id === playingVideo.id;
-                          return (
-                            <button 
-                              key={video.id} 
-                              onClick={() => {
-                                localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                                handlePlayVideo(video);
-                              }}
-                              className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
-                                isActive 
-                                  ? 'bg-blue-600 text-white' 
-                                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                              }`}
-                            >
+                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                      const isActive = video.id === playingVideo.id;
+                      return (
+                        <button
+                          key={video.id}
+                          onClick={() => {
+                            localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
+                            handlePlayVideo(video);
+                          }}
+                          className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
+                          isActive ?
+                          'bg-blue-600 text-white' :
+                          'bg-gray-800 text-gray-300 hover:bg-gray-700'}`
+                          }>
+
                               <div className="flex items-start gap-3">
                                 <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                  isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'
-                                }`}>
+                            isActive ? 'bg-white text-blue-600' : 'bg-gray-700 text-gray-400'}`
+                            }>
                                   {idx + 1}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
                                     {video.title}
                                   </div>
-                                  {video.duration && (
-                                    <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
+                                  {video.duration &&
+                              <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
                                       {video.duration}
                                     </div>
-                                  )}
+                              }
                                 </div>
                               </div>
-                            </button>
-                          );
-                        })}
+                            </button>);
+
+                    })}
                       </div>
                     </div>
 
@@ -1633,38 +1633,38 @@ ${videoNotes}
                         </h4>
                         <div className="flex gap-1">
                           <Button
-                            onClick={handleDownloadNotes}
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
-                            title="Baixar"
-                          >
+                        onClick={handleDownloadNotes}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white h-7 px-2"
+                        title="Baixar">
+
                             <Download className="w-3 h-3" />
                           </Button>
                         </div>
                       </div>
 
                       <Textarea
-                        value={videoNotes}
-                        onChange={(e) => setVideoNotes(e.target.value)}
-                        placeholder="Faça suas anotações sobre este vídeo aqui..."
-                        className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
-                        rows={8}
-                      />
+                    value={videoNotes}
+                    onChange={(e) => setVideoNotes(e.target.value)}
+                    placeholder="Faça suas anotações sobre este vídeo aqui..."
+                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
+                    rows={8} />
+
 
                       <p className="text-xs text-gray-500 mt-2">
                         Salvas automaticamente no navegador.
                       </p>
                     </div>
                   </>
-                )}
+              }
               </aside>
             </div>
           </div>
-        )}
+        }
 
         {/* Modal do Artigo com Modo Escuro */}
-        {selectedArticle && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        {selectedArticle &&
+        <div className="bg-gray-950 p-4 fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto">
             <div className={`rounded-lg shadow-xl max-w-4xl w-full my-8 ${articleDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
               <div className={`flex justify-between items-start p-6 border-b ${articleDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <div className="flex-1">
@@ -1675,51 +1675,51 @@ ${videoNotes}
                     <Badge className="bg-purple-100 text-purple-800">
                       {subjectNames[selectedArticle.subject] || selectedArticle.subject}
                     </Badge>
-                    {selectedArticle.topic && (
-                      <Badge variant="outline">
+                    {selectedArticle.topic &&
+                  <Badge variant="outline">
                         {selectedArticle.topic}
                       </Badge>
-                    )}
-                    {selectedArticle.author && (
-                      <span className={`text-sm ${articleDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  }
+                    {selectedArticle.author &&
+                  <span className={`text-sm ${articleDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         Por: {selectedArticle.author}
                       </span>
-                    )}
+                  }
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
-                    onClick={() => setArticleDarkMode(!articleDarkMode)}
-                    size="icon"
-                    variant="ghost"
-                    className={articleDarkMode ? 'text-white hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}
-                    title={articleDarkMode ? 'Modo Claro' : 'Modo Escuro'}
-                  >
+                  onClick={() => setArticleDarkMode(!articleDarkMode)}
+                  size="icon"
+                  variant="ghost"
+                  className={articleDarkMode ? 'text-white hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}
+                  title={articleDarkMode ? 'Modo Claro' : 'Modo Escuro'}>
+
                     {articleDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </Button>
                   <button
-                    onClick={() => setSelectedArticle(null)}
-                    className={`p-2 ${articleDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
-                  >
+                  onClick={() => setSelectedArticle(null)}
+                  className={`p-2 ${articleDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}>
+
                     <X className="w-6 h-6" />
                   </button>
                 </div>
               </div>
               <div className="p-6 max-h-[70vh] overflow-y-auto">
-                <div 
-                  className={`prose prose-lg max-w-none ${articleDarkMode ? 'prose-invert dark:prose-invert' : ''}`}
-                  dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                  style={articleDarkMode ? {
-                    color: '#e5e7eb'
-                  } : {
-                    color: '#111827'
-                  }}
-                />
+                <div
+                className={`prose prose-lg max-w-none ${articleDarkMode ? 'prose-invert dark:prose-invert' : ''}`}
+                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                style={articleDarkMode ? {
+                  color: '#e5e7eb'
+                } : {
+                  color: '#111827'
+                }} />
+
               </div>
             </div>
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }
