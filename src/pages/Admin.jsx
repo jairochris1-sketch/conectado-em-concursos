@@ -26,7 +26,6 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
-import InstitutionManager from '../components/admin/InstitutionManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -153,7 +152,14 @@ export default function AdminPage() {
     return subjects;
   });
   
-  const [allInstitutions, setAllInstitutions] = useState([]);
+  const [allInstitutions, setAllInstitutions] = useState(() => {
+    const institutions = STATIC_INSTITUTIONS.map(key => ({
+      id: key,
+      name: institutionNames[key] || key.toUpperCase()
+    }));
+    institutions.sort((a, b) => a.name.localeCompare(b.name));
+    return institutions;
+  });
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -165,7 +171,6 @@ export default function AdminPage() {
           loadQuestions();
           loadWelcomeContent();
           loadFAQs();
-          loadInstitutions();
         } else {
           navigate(createPageUrl('Dashboard'));
         }
@@ -211,16 +216,6 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Erro ao carregar FAQs:', error);
       toast.error('Erro ao carregar FAQs.');
-    }
-  };
-
-  const loadInstitutions = async () => {
-    try {
-      const institutionsData = await base44.entities.Institution.list('order');
-      setAllInstitutions(institutionsData);
-    } catch (error) {
-      console.error('Erro ao carregar bancas:', error);
-      toast.error('Erro ao carregar bancas.');
     }
   };
 
@@ -344,7 +339,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-           <TabsList className="flex flex-wrap gap-2 w-full bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
+          <TabsList className="grid w-full grid-cols-12 md:grid-cols-12">
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
               Usuários
@@ -388,10 +383,6 @@ export default function AdminPage() {
             <TabsTrigger value="assuntos">
               <BookOpen className="w-4 h-4 mr-2" />
               Assuntos
-            </TabsTrigger>
-            <TabsTrigger value="bancas">
-              <Shield className="w-4 h-4 mr-2" />
-              Bancas
             </TabsTrigger>
             <TabsTrigger value="guias">
               <Bookmark className="w-4 h-4 mr-2" />
@@ -457,11 +448,7 @@ export default function AdminPage() {
           <TabsContent value="assuntos">
             <TopicManager />
           </TabsContent>
-
-          <TabsContent value="bancas">
-            <InstitutionManager />
-          </TabsContent>
-
+          
           <TabsContent value="videos">
             <Suspense fallback={<div>Carregando gerenciador de vídeos...</div>}>
               <VideoManager />
