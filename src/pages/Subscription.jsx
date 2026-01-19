@@ -9,12 +9,23 @@ import { CheckCircle, X, AlertCircle, Loader2, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 
-const plans = [
+const planPrices = {
+  padrao: {
+    monthly: 39.90,
+    semiannual: 119.70,
+    annual: 239.40
+  },
+  avancado: {
+    monthly: 80.90,
+    semiannual: 242.70,
+    annual: 485.40
+  }
+};
+
+const basePlans = [
   {
     id: "gratuito",
     name: "Plano Gratuito",
-    price: "R$ 0",
-    period: "Para sempre",
     description: "Acesso básico ao platform",
     features: [
       "Acesso a questões públicas",
@@ -35,8 +46,6 @@ const plans = [
   {
     id: "padrao",
     name: "Plano Padrão",
-    price: "R$ 49,90",
-    period: "mês",
     description: "Para quem quer estudar sério",
     features: [
       "Acesso ilimitado a questões",
@@ -57,8 +66,6 @@ const plans = [
   {
     id: "avancado",
     name: "Plano Avançado",
-    price: "R$ 99,90",
-    period: "mês",
     description: "Máximo de recursos e suporte",
     features: [
       "Tudo do Plano Padrão",
@@ -76,11 +83,26 @@ const plans = [
   }
 ];
 
+const getCycleLabel = (cycle) => {
+  switch(cycle) {
+    case 'semiannual': return '6 meses';
+    case 'annual': return 'ao ano';
+    default: return 'mês';
+  }
+};
+
+const getPlanPrice = (planId, cycle) => {
+  if (planId === 'gratuito') return 'R$ 0';
+  const price = planPrices[planId][cycle];
+  return `R$ ${price.toFixed(2).replace('.', ',')}`;
+};
+
 export default function SubscriptionPage() {
   const [user, setUser] = useState(null);
   const [currentSubscription, setCurrentSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processingPlan, setProcessingPlan] = useState(null);
+  const [selectedCycle, setSelectedCycle] = useState("monthly");
 
   useEffect(() => {
     loadUserData();
@@ -121,7 +143,7 @@ export default function SubscriptionPage() {
     try {
       const response = await base44.functions.invoke("createAsaasSubscription", {
         plan: planId,
-        cycle: "monthly"
+        cycle: selectedCycle
       });
 
       if (response.data?.success) {
@@ -172,7 +194,7 @@ export default function SubscriptionPage() {
     );
   }
 
-  const currentPlan = plans.find(p => p.id === (user?.current_plan || "gratuito"));
+  const currentPlan = basePlans.find(p => p.id === (user?.current_plan || "gratuito"));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-8">
@@ -185,6 +207,40 @@ export default function SubscriptionPage() {
           <p className="text-xl text-slate-300">
             Desbloqueie todo o poder do Conectado em Concursos Públicos SE
           </p>
+          
+          {/* Cycle Toggle */}
+          <div className="flex justify-center gap-3 mt-8">
+            <button
+              onClick={() => setSelectedCycle('monthly')}
+              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                selectedCycle === 'monthly'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              Mensal
+            </button>
+            <button
+              onClick={() => setSelectedCycle('semiannual')}
+              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                selectedCycle === 'semiannual'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              Semestral
+            </button>
+            <button
+              onClick={() => setSelectedCycle('annual')}
+              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                selectedCycle === 'annual'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              Anual
+            </button>
+          </div>
         </div>
 
         {/* Current Plan Alert */}
@@ -200,7 +256,7 @@ export default function SubscriptionPage() {
 
         {/* Plans Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {plans.map((plan) => {
+          {basePlans.map((plan) => {
             const isCurrentPlan = user?.current_plan === plan.id;
             const isProcessing = processingPlan === plan.id;
 
@@ -236,11 +292,11 @@ export default function SubscriptionPage() {
                   <div className="mb-6">
                     <div className="flex items-baseline">
                       <span className={`text-4xl font-bold ${plan.textColor}`}>
-                        {plan.price}
+                        {plan.id === 'gratuito' ? 'R$ 0' : getPlanPrice(plan.id, selectedCycle)}
                       </span>
-                      {plan.period !== "Para sempre" && (
+                      {plan.id !== 'gratuito' && (
                         <span className="text-slate-500 dark:text-slate-400 ml-2">
-                          /{plan.period}
+                          /{getCycleLabel(selectedCycle)}
                         </span>
                       )}
                     </div>
