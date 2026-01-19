@@ -7,10 +7,8 @@ Deno.serve(async (req) => {
 
         if (!user) {
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Usuário não autenticado' 
-                }
+                success: false,
+                message: 'Usuário não autenticado'
             }, { status: 401 });
         }
 
@@ -20,10 +18,8 @@ Deno.serve(async (req) => {
         } catch (parseError) {
             console.error('Erro ao parsear JSON:', parseError);
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Dados inválidos. Verifique os dados enviados.' 
-                }
+                success: false,
+                message: 'Dados inválidos. Verifique os dados enviados.'
             }, { status: 400 });
         }
 
@@ -33,19 +29,15 @@ Deno.serve(async (req) => {
         if (!asaasApiKey) {
             console.error('ASAAS_API_KEY não encontrada');
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Configuração do sistema incompleta' 
-                }
+                success: false,
+                message: 'Configuração do sistema incompleta'
             }, { status: 500 });
         }
 
         if (!plan) {
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Plano não foi especificado' 
-                }
+                success: false,
+                message: 'Plano não foi especificado'
             }, { status: 400 });
         }
 
@@ -77,7 +69,7 @@ Deno.serve(async (req) => {
         };
 
         if (!planPrices[plan] || !planPrices[plan][cycle]) {
-            return Response.json({ error: 'Plano ou ciclo de cobrança inválido' }, { status: 400 });
+            return Response.json({ success: false, message: 'Plano ou ciclo de cobrança inválido' }, { status: 400 });
         }
 
         const price = planPrices[plan][cycle];
@@ -119,14 +111,14 @@ Deno.serve(async (req) => {
             } else {
                 // Criar novo cliente
                 const newCustomerData = {
-                    name: customerData.name || user.full_name || 'Cliente',
+                    name: (customerData?.name) || user.full_name || 'Cliente',
                     email: user.email
                 };
 
-                if (customerData.cpf) {
+                if (customerData?.cpf) {
                     newCustomerData.cpfCnpj = customerData.cpf.replace(/\D/g, '');
                 }
-                if (customerData.phone) {
+                if (customerData?.phone) {
                     newCustomerData.phone = customerData.phone.replace(/\D/g, '');
                 }
 
@@ -151,10 +143,8 @@ Deno.serve(async (req) => {
         } catch (customerError) {
             console.error('Erro no processamento do cliente:', customerError);
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Erro ao processar dados do cliente. CPF ou telefone podem estar inválidos.' 
-                }
+                success: false,
+                message: 'Erro ao processar dados do cliente. CPF ou telefone podem estar inválidos.'
             }, { status: 400 });
         }
 
@@ -227,30 +217,24 @@ Deno.serve(async (req) => {
             console.log('Assinatura salva no banco de dados');
 
             return Response.json({
-                data: {
-                    success: true,
-                    subscription_id: subscription.id,
-                    payment_url: firstPayment.invoiceUrl
-                }
+                success: true,
+                subscription_id: subscription.id,
+                payment_link: firstPayment.invoiceUrl
             });
 
         } catch (subscriptionError) {
             console.error('Erro na criação da assinatura:', subscriptionError);
             return Response.json({ 
-                data: {
-                    success: false,
-                    error: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
-                }
+                success: false,
+                message: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.'
             }, { status: 400 });
         }
 
     } catch (error) {
         console.error("Erro geral:", error);
         return Response.json({ 
-            data: {
-                success: false,
-                error: 'Erro interno do servidor. Tente novamente em alguns minutos.' 
-            }
+            success: false,
+            message: 'Erro interno do servidor. Tente novamente em alguns minutos.'
         }, { status: 500 });
     }
 });
