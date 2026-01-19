@@ -177,7 +177,7 @@ export default function ComoEstudarPrimeiroLugar() {
                 <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
                   Editar guia
                 </Button>
-                <Link to={createPageUrl("Admin")}>
+                <Link to={`${createPageUrl("Admin")}?tab=artigos`}>
                   <Button size="sm" variant="outline">
                     Editar artigo
                   </Button>
