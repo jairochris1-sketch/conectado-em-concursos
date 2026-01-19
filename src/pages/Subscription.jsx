@@ -316,7 +316,7 @@ export default function SubscriptionPage() {
     if (planKey === 'gratuito') return;
 
     if (trialInfo && trialInfo.daysRemaining > 0) {
-      const confirmSubscription = window.confirm(
+      const confirmSubscription = confirm(
         `Você ainda tem ${trialInfo.daysRemaining} dias de teste gratuito do Plano Avançado!\n\n` +
         `Ao assinar agora, você perderá o restante do seu período de teste.\n\n` +
         `Deseja continuar com a assinatura mesmo assim?`
@@ -398,7 +398,7 @@ export default function SubscriptionPage() {
   const handleCancelSubscription = async () => {
     if (!currentSubscription) return;
 
-    if (window.confirm('Tem certeza que deseja cancelar sua assinatura? Você perderá o acesso aos recursos premium no final do ciclo de faturamento.')) {
+    if (confirm('Tem certeza que deseja cancelar sua assinatura? Você perderá o acesso aos recursos premium no final do ciclo de faturamento.')) {
       setIsCancelling(true);
       setCancelError('');
       try {
