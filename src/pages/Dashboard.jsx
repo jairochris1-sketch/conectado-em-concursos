@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { UserAnswer, Simulation, User } from "@/entities/all";
+import { UserAnswer } from "@/entities/UserAnswer";
+import { Simulation } from "@/entities/Simulation";
+import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { getWeek } from "date-fns"; // Importar getWeek
+import { getWeek } from "date-fns";
 import {
   Trophy,
   Target,
@@ -21,7 +23,7 @@ import StatsCards from "../components/dashboard/StatsCards";
 import PerformanceChart from "../components/dashboard/PerformanceChart";
 import SubjectBreakdown from "../components/dashboard/SubjectBreakdown";
 import StudySuggestions from "../components/dashboard/StudySuggestions";
-import AppearanceSettings from "../components/dashboard/AppearanceSettings"; // Importar o novo componente
+import AppearanceSettings from "../components/dashboard/AppearanceSettings";
 
 // Array com as frases motivacionais
 const motivationalQuotes = [

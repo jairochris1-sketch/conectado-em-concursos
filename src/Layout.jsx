@@ -372,9 +372,7 @@ export default function Layout({ children, currentPageName }) {
               }
             }
 
-            if (currentReferenceDate.getTime() === new Date(0).getTime() && streak === 0) {
-              streak = 0;
-            } else if (currentReferenceDate.getTime() === new Date(0).getTime() && streak > 0) {
+            if (currentReferenceDate.getTime() === new Date(0).getTime()) {
               streak = 0;
             }
           }
@@ -512,7 +510,7 @@ export default function Layout({ children, currentPageName }) {
                     className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
                     isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
                     }
-                    style={isCurrentPage ? {} : {}}
+
                     onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
                     onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
