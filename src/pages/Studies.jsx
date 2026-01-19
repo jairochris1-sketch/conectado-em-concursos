@@ -1664,7 +1664,7 @@ ${videoNotes}
 
         {/* Modal do Artigo com Modo Escuro */}
         {selectedArticle &&
-        <div className="bg-gray-900 p-4 fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto">
+        <div className="bg-gray-950 p-4 fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto">
             <div className={`rounded-lg shadow-xl max-w-4xl w-full my-8 ${articleDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
               <div className={`flex justify-between items-start p-6 border-b ${articleDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <div className="flex-1">
