@@ -25,56 +25,47 @@ const planPrices = {
 const basePlans = [
   {
     id: "gratuito",
-    name: "Plano Gratuito",
-    description: "Acesso básico ao platform",
+    name: "Acesso Básico",
+    description: "Comece seus estudos gratuitamente",
     features: [
-      "Acesso a questões públicas",
-      "Criar simulados básicos",
-      "Anotações pessoais",
-      "Fórum da comunidade",
-      "10 questões por dia"
+      "10 questões por dia",
+      "Anotações pessoais"
     ],
     excluded: [
-      "Resumos avançados",
-      "Cronograma inteligente",
-      "ChatGPT integrado",
-      "Análise detalhada de performance"
+      "Acesso ao gabarito comentado"
     ],
     color: "bg-gray-100 dark:bg-gray-800",
     textColor: "text-gray-900 dark:text-white"
   },
   {
     id: "padrao",
-    name: "Plano Padrão",
+    name: "⭐ Plano Padrão",
     description: "Para quem quer estudar sério",
     features: [
-      "Acesso ilimitado a questões",
-      "Criar simulados avançados",
-      "Cronograma de estudos personalizado",
-      "Resumos de todas as disciplinas",
-      "Análise detalhada de performance",
-      "Suporte por email"
+      "Questões ilimitadas",
+      "Acesso ao gabarito comentado",
+      "Resumos",
+      "Lousa digital",
+      "Estatísticas de desempenho"
     ],
-    excluded: [
-      "ChatGPT integrado",
-      "Prioridade no suporte"
-    ],
+    excluded: [],
     color: "bg-blue-50 dark:bg-blue-900/20",
     textColor: "text-blue-900 dark:text-blue-100",
     highlight: true
   },
   {
     id: "avancado",
-    name: "Plano Avançado",
+    name: "🚀 Plano Avançado",
     description: "Máximo de recursos e suporte",
     features: [
-      "Tudo do Plano Padrão",
-      "ChatGPT integrado para dúvidas",
-      "Análise de vídeos educacionais",
-      "Lousa digital colaborativa",
-      "Prioridade no suporte",
-      "Acesso a conteúdo exclusivo",
-      "Certificados de desempenho"
+      "Questões ilimitadas",
+      "Ranking de usuários",
+      "Provas completas",
+      "Cronômetro de Estudos",
+      "Resumos",
+      "Fórum de dúvidas",
+      "Relatórios de desempenho",
+      "Área de estudos personalizada"
     ],
     excluded: [],
     color: "bg-yellow-50 dark:bg-yellow-900/20",
