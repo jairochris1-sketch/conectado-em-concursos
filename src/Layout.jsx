@@ -175,16 +175,15 @@ const pageNameTranslations = {
 };
 
 const featureAccess = {
-  'Área de Estudos': ['padrao', 'avancado'],
-  'Cronograma de Estudos': ['padrao', 'avancado'],
-  'ChatGPT': ['padrao', 'avancado'],
-  'Criar Simulado': ['avancado'],
-  'Concursos Abertos': ['padrao', 'avancado'],
-  'Planos': ['gratuito', 'padrao', 'avancado'],
-  'Lousa Digital': ['avancado'],
-  'Minhas Anotações': ['padrao', 'avancado'],
-  'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['avancado']
+  'Área de Estudos': ['gratuito', 'padrao', 'avancado'],
+  'Cronograma de Estudos': ['gratuito', 'padrao', 'avancado'],
+  'ChatGPT': ['gratuito', 'padrao', 'avancado'],
+  'Criar Simulado': ['gratuito', 'padrao', 'avancado'],
+  'Concursos Abertos': ['gratuito', 'padrao', 'avancado'],
+  'Lousa Digital': ['gratuito', 'padrao', 'avancado'],
+  'Minhas Anotações': ['gratuito', 'padrao', 'avancado'],
+  'Simulados Digital': ['gratuito', 'padrao', 'avancado'],
+  'Resumos': ['gratuito', 'padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -782,19 +781,7 @@ export default function Layout({ children, currentPageName }) {
                   <div className="text-xs" style={{ color: '#FFD700' }}>⭐⭐⭐⭐⭐</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Link to={createPageUrl("Subscription")}>
-                  <Button
-                  variant="default"
-                  size="sm"
-                  className="text-white"
-                  style={{ backgroundColor: 'var(--primary-color)' }}>
 
-                    <CreditCard className="w-4 h-4 mr-1" />
-                    Assinar
-                  </Button>
-                </Link>
-              </div>
             </div>
           </header>
 
