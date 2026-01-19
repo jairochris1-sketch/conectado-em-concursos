@@ -180,7 +180,7 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['avancado'],
+  'Resumos': ['padrao', 'avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
   'Fórum da Comunidade': ['padrao', 'avancado'],
   'Feed de Atividades': ['padrao', 'avancado'],
