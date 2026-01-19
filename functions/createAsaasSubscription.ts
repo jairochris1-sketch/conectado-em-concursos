@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
         // 1. Criar ou buscar cliente no Asaas
         let customer;
         try {
-            const existingCustomerResponse = await fetch(`https://www.asaas.com/api/v3/customers?email=${encodeURIComponent(user.email)}`, {
+            const existingCustomerResponse = await fetch(`https://sandbox.asaas.com/api/v3/customers?email=${encodeURIComponent(user.email)}`, {
                 headers: { 
                     'access_token': asaasApiKey,
                     'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
                     newCustomerData.phone = customerData.phone.replace(/\D/g, '');
                 }
 
-                const customerResponse = await fetch('https://www.asaas.com/api/v3/customers', {
+                const customerResponse = await fetch('https://sandbox.asaas.com/api/v3/customers', {
                     method: 'POST',
                     headers: {
                         'access_token': asaasApiKey,
@@ -161,7 +161,7 @@ Deno.serve(async (req) => {
 
             console.log('Dados da assinatura para Asaas:', subscriptionData);
 
-            const subscriptionResponse = await fetch('https://www.asaas.com/api/v3/subscriptions', {
+            const subscriptionResponse = await fetch('https://sandbox.asaas.com/api/v3/subscriptions', {
                 method: 'POST',
                 headers: {
                     'access_token': asaasApiKey,
@@ -180,7 +180,7 @@ Deno.serve(async (req) => {
             console.log('Assinatura criada com sucesso:', subscription.id);
             
             // 3. Buscar a cobrança inicial
-            const paymentsResponse = await fetch(`https://www.asaas.com/api/v3/payments?subscription=${subscription.id}`, {
+            const paymentsResponse = await fetch(`https://sandbox.asaas.com/api/v3/payments?subscription=${subscription.id}`, {
                 headers: { 
                     'access_token': asaasApiKey,
                     'Content-Type': 'application/json'
