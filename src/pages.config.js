@@ -27,6 +27,7 @@ import Admin from './pages/Admin';
 import Subscription from './pages/Subscription';
 import Community from './pages/Community';
 import Ranking from './pages/Ranking';
+import PaymentHistory from './pages/PaymentHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -60,6 +61,7 @@ export const PAGES = {
     "Subscription": Subscription,
     "Community": Community,
     "Ranking": Ranking,
+    "PaymentHistory": PaymentHistory,
 }
 
 export const pagesConfig = {
