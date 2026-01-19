@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ForumPost, ForumReply } from "@/entities/all";
+import { ForumPost } from "@/entities/ForumPost";
+import { ForumReply } from "@/entities/ForumReply";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

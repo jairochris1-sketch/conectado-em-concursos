@@ -124,17 +124,17 @@ export default function SubscriptionPage() {
         cycle: "monthly"
       });
 
-      if (response.data.success) {
+      if (response.data?.success) {
         toast.success("Assinatura criada! Redirecionando...");
         setTimeout(() => {
-          if (response.data.payment_link) {
+          if (response.data?.payment_link) {
             window.location.href = response.data.payment_link;
           } else {
             loadUserData();
           }
         }, 2000);
       } else {
-        toast.error(response.data.message || "Erro ao criar assinatura");
+        toast.error(response.data?.message || "Erro ao criar assinatura");
       }
     } catch (error) {
       console.error("Erro ao processar assinatura:", error);
