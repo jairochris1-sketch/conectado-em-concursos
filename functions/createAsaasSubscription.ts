@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
         try {
             const subscriptionData = {
                 customer: customer.id,
-                billingType: 'PIX',
+                billingType: 'UNDEFINED',
                 value: price,
                 nextDueDate: new Date().toISOString().split('T')[0],
                 cycle: asaasCycle,
