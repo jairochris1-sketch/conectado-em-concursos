@@ -171,13 +171,6 @@ export default function AdminPage() {
           loadQuestions();
           loadWelcomeContent();
           loadFAQs();
-          
-          // Verificar se há um parâmetro de aba na URL
-          const params = new URLSearchParams(window.location.search);
-          const tabParam = params.get('tab');
-          if (tabParam) {
-            setActiveTab(tabParam);
-          }
         } else {
           navigate(createPageUrl('Dashboard'));
         }
