@@ -4,6 +4,8 @@ import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { UserPlus, UserMinus } from "lucide-react";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
+import { createPageUrl } from "@/utils";
 
 export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
   const [user, setUser] = useState(null);
@@ -59,6 +61,16 @@ export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, 
         setIsFollowing(true);
         setFollowId(newFollow.id);
         toast.success(`Você agora está seguindo ${targetName}`);
+
+        await base44.entities.Notification.create({
+          user_email: targetEmail,
+          title: "Novo seguidor",
+          message: `${user.full_name} começou a seguir você`,
+          type: "follow",
+          action_url: createPageUrl("Profile"),
+          related_user_name: user.full_name,
+          related_user_photo: user.profile_photo_url
+        });
       }
     } catch (error) {
       toast.error("Erro ao processar ação");

@@ -1,14 +1,14 @@
-
 import { useState, useEffect } from 'react';
-import { Bell, CheckCheck } from 'lucide-react';
+import { Bell, CheckCheck, MessageSquare, Heart, UserPlus, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Notification } from '@/entities/Notification';
+import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
 // AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
 // Not used in this component, but kept as existing import.
@@ -26,24 +26,32 @@ export default function NotificationDropdown() {
     loadNotifications();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = base44.entities.Notification.subscribe((event) => {
+      if (event.type === 'create' && event.data.user_email === user.email) {
+        setNotifications(prev => [event.data, ...prev]);
+      } else if (event.type === 'update') {
+        setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
+      } else if (event.type === 'delete') {
+        setNotifications(prev => prev.filter(n => n.id !== event.id));
+      }
+    });
+
+    return unsubscribe;
+  }, [user]);
+
   const loadNotifications = async () => {
     try {
       const userData = await User.me();
       setUser(userData);
 
-      const allNotifications = await Notification.list('-created_date', 50);
-      
-      // Filtrar notificações relevantes para o usuário
-      const userNotifications = allNotifications.filter(notif => {
-        // Se não expirou
-        if (notif.expires_at && new Date(notif.expires_at) < new Date()) {
-          return false;
-        }
-        
-        // Se é global ou direcionada especificamente para o usuário
-        return notif.is_global || 
-               (notif.target_users && notif.target_users.includes(userData.email));
-      });
+      const userNotifications = await base44.entities.Notification.filter(
+        { user_email: userData.email },
+        '-created_date',
+        50
+      );
 
       setNotifications(userNotifications);
     } catch (error) {
@@ -54,29 +62,18 @@ export default function NotificationDropdown() {
 
   // Replaced old `markAsRead` and `handleNotificationClick` with the new combined function.
   const handleNotificationClick = async (notification) => {
-    if (!user) return; // Ensure user is loaded
+    if (!user) return;
 
     try {
-      let updatedReadBy = [...(notification.read_by || [])];
-      // Only add user.email if it's not already in the read_by list
-      if (!updatedReadBy.includes(user.email)) {
-        updatedReadBy.push(user.email);
-        await Notification.update(notification.id, { read_by: updatedReadBy });
+      if (!notification.is_read) {
+        await base44.entities.Notification.update(notification.id, { is_read: true });
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n)
+        );
       }
       
-      // Update local state to reflect the change
-      setNotifications(prev => 
-        prev.map(n => 
-          n.id === notification.id 
-            ? { ...n, read_by: updatedReadBy }
-            : n
-        )
-      );
-      
-      // Fechar dropdown
       setIsOpen(false);
       
-      // Redirecionar se houver URL
       if (notification.action_url) {
         window.location.href = notification.action_url;
       }
@@ -89,54 +86,38 @@ export default function NotificationDropdown() {
     if (!user) return;
 
     try {
-      // Filter for notifications not yet marked as read by the current user
-      const unreadNotifications = notifications.filter(n => 
-        !(n.read_by || []).includes(user.email)
+      const unreadNotifications = notifications.filter(n => !n.is_read);
+      
+      await Promise.all(
+        unreadNotifications.map(n => 
+          base44.entities.Notification.update(n.id, { is_read: true })
+        )
       );
 
-      // Prepare and execute all updates concurrently
-      const updatePromises = unreadNotifications.map(async (notification) => {
-        let readBy = notification.read_by || [];
-        if (!readBy.includes(user.email)) { // Prevent adding duplicate emails
-          readBy.push(user.email);
-          return Notification.update(notification.id, { read_by: readBy });
-        }
-        return Promise.resolve(); // If already read, no backend update is needed
-      });
-      await Promise.all(updatePromises); // Wait for all database updates to complete
-
-      // Update local state for all notifications
-      setNotifications(prev => prev.map(n => {
-        let currentReadBy = n.read_by || [];
-        if (!currentReadBy.includes(user.email)) {
-          return {
-            ...n,
-            read_by: [...currentReadBy, user.email]
-          };
-        }
-        return n; // Notification was already marked as read by this user
-      }));
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     } catch (error) {
       console.error('Erro ao marcar todas como lidas:', error);
     }
   };
 
-  // Simplified `isNotificationRead` to only check `read_by` array
-  const isNotificationRead = (notification) => {
-    return (notification.read_by || []).includes(user?.email);
+  const getUnreadCount = () => {
+    return notifications.filter(n => !n.is_read).length;
   };
 
-  const getUnreadCount = () => {
-    if (!user) return 0;
-    return notifications.filter(n => 
-      !isNotificationRead(n)
-    ).length;
+  const getNotificationIcon = (type) => {
+    switch(type) {
+      case 'reply': return <MessageSquare className="w-4 h-4" />;
+      case 'like': return <Heart className="w-4 h-4" />;
+      case 'follow': return <UserPlus className="w-4 h-4" />;
+      case 'activity': return <Activity className="w-4 h-4" />;
+      default: return <Bell className="w-4 h-4" />;
+    }
   };
 
   // Removed `getNotificationIcon` and `getNotificationStyle` as they are no longer used in the new rendering.
 
   const unreadCount = getUnreadCount();
-  const unreadNotifications = notifications.filter(n => !isNotificationRead(n));
+  const recentNotifications = notifications.slice(0, 10);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -171,39 +152,57 @@ export default function NotificationDropdown() {
           </div>
         </div>
 
-        {/* Removed isLoading check as per outline; directly check unreadNotifications length */}
-        {unreadNotifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+        {recentNotifications.length === 0 ? (
+          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
             <Bell className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Nenhuma notificação nova</p>
+            <p>Nenhuma notificação</p>
           </div>
         ) : (
-          <div className="space-y-1">
-            {unreadNotifications.map(notification => (
+          <div>
+            {recentNotifications.map(notification => (
               <button
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className="w-full p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0"
+                className={`w-full p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0 ${
+                  !notification.is_read ? 'bg-blue-50 dark:bg-blue-950/20' : ''
+                }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-2 ${
-                    notification.type === 'error' ? 'bg-red-500' :
-                    notification.type === 'warning' ? 'bg-yellow-500' :
-                    notification.type === 'success' ? 'bg-green-500' :
-                    notification.type === 'new_material' ? 'bg-blue-500' :
-                    'bg-blue-500' // Default color
-                  }`} />
+                  {notification.related_user_photo ? (
+                    <Avatar className="w-8 h-8 mt-1">
+                      <AvatarImage src={notification.related_user_photo} />
+                      <AvatarFallback>{notification.related_user_name?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className={`flex-shrink-0 w-8 h-8 rounded-full mt-1 flex items-center justify-center ${
+                      notification.type === 'reply' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' :
+                      notification.type === 'like' ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300' :
+                      notification.type === 'follow' ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300' :
+                      notification.type === 'activity' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300' :
+                      'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
+                    }`}>
+                      {getNotificationIcon(notification.type)}
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                    <p className="font-medium text-sm text-gray-900 dark:text-gray-100">
                       {notification.title}
                     </p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
                       {notification.message}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                      {new Date(notification.created_date).toLocaleDateString('pt-BR')}
+                      {new Date(notification.created_date).toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: 'short'
+                      })}
                     </p>
                   </div>
+                  {!notification.is_read && (
+                    <div className="w-2 h-2 rounded-full bg-blue-600 mt-2" />
+                  )}
                 </div>
               </button>
             ))}

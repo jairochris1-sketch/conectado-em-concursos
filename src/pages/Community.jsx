@@ -13,6 +13,8 @@ import FollowButton from "@/components/social/FollowButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { base44 } from "@/api/base44Client";
+import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 
 const categories = [
@@ -125,6 +127,19 @@ export default function CommunityPage() {
         : [...liked_by, user.email]
     });
 
+    if (!hasLiked && post.author_email !== user.email) {
+      await base44.entities.Notification.create({
+        user_email: post.author_email,
+        title: "Alguém curtiu sua discussão",
+        message: `${user.full_name} curtiu seu post: "${post.title}"`,
+        type: "like",
+        action_url: createPageUrl("Community"),
+        related_user_name: user.full_name,
+        related_user_photo: user.profile_photo_url,
+        entity_id: post.id
+      });
+    }
+
     loadData();
   };
 
@@ -157,6 +172,19 @@ export default function CommunityPage() {
         replies_count: (selectedPost.replies_count || 0) + 1
       });
 
+      if (selectedPost.author_email !== user.email) {
+        await base44.entities.Notification.create({
+          user_email: selectedPost.author_email,
+          title: "Nova resposta na sua discussão",
+          message: `${user.full_name} respondeu: "${replyContent.substring(0, 100)}${replyContent.length > 100 ? '...' : ''}"`,
+          type: "reply",
+          action_url: createPageUrl("Community"),
+          related_user_name: user.full_name,
+          related_user_photo: user.profile_photo_url,
+          entity_id: selectedPost.id
+        });
+      }
+
       toast.success("Resposta enviada!");
       setReplyContent("");
       
@@ -178,6 +206,19 @@ export default function CommunityPage() {
         ? liked_by.filter(e => e !== user.email)
         : [...liked_by, user.email]
     });
+
+    if (!hasLiked && reply.author_email !== user.email) {
+      await base44.entities.Notification.create({
+        user_email: reply.author_email,
+        title: "Alguém curtiu sua resposta",
+        message: `${user.full_name} curtiu sua resposta no fórum`,
+        type: "like",
+        action_url: createPageUrl("Community"),
+        related_user_name: user.full_name,
+        related_user_photo: user.profile_photo_url,
+        entity_id: reply.id
+      });
+    }
 
     const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
     setReplies(updatedReplies);
