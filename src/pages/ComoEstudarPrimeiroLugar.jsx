@@ -171,11 +171,18 @@ export default function ComoEstudarPrimeiroLugar() {
           <section className="md:col-span-8 lg:col-span-9">
             <div className="bg-white shadow-xl rounded-md p-4 md:p-8">
         {isAdmin && (
-          <div className="mb-4">
+          <div className="mb-4 flex gap-2">
             {!editMode ? (
-              <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
-                Editar guia
-              </Button>
+              <>
+                <Button size="sm" variant="outline" onClick={() => setEditMode(true)}>
+                  Editar guia
+                </Button>
+                <Link to={createPageUrl("Admin")}>
+                  <Button size="sm" variant="outline">
+                    Editar artigo
+                  </Button>
+                </Link>
+              </>
             ) : (
               <div className="space-y-2">
                 <Input
