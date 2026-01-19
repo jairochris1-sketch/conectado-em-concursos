@@ -340,7 +340,7 @@ export default function AdminPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-13 md:grid-cols-13">
+           <TabsList className="flex flex-wrap gap-2 w-full bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
               Usuários
