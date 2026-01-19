@@ -25,7 +25,7 @@ import {
   Award,
   Pencil,
   ClipboardList,
-  BookOpen as BookOpenIcon, // Added for the new item
+  BookOpen as BookOpenIcon // Added for the new item
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -38,98 +38,98 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger } from
+"@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 
 import NotificationDropdown from './components/notifications/NotificationDropdown';
 import { ThemeToggle } from './components/ui/theme-toggle';
 
 const navigationItems = [
-  {
-    title: "Meu Painel",
-    url: createPageUrl("Dashboard"),
-    icon: Home,
-  },
-  {
-    title: "Questões",
-    url: createPageUrl("Questions"),
-    icon: FileText,
-  },
-  {
-    title: "Provas",
-    url: createPageUrl("Exams"),
-    icon: BookCopy,
-  },
-  {
-    title: "Resumos",
-    url: createPageUrl("ComoEstudarPrimeiroLugar"),
-    icon: BookOpenIcon,
-  },
-  {
-    title: "Área de Estudos",
-    url: createPageUrl("Studies"),
-    icon: BookOpen,
-  },
-  {
-    title: "Planos",
-    url: createPageUrl("Subscription"),
-    icon: CreditCard,
-  }
-];
+{
+  title: "Meu Painel",
+  url: createPageUrl("Dashboard"),
+  icon: Home
+},
+{
+  title: "Questões",
+  url: createPageUrl("Questions"),
+  icon: FileText
+},
+{
+  title: "Provas",
+  url: createPageUrl("Exams"),
+  icon: BookCopy
+},
+{
+  title: "Resumos",
+  url: createPageUrl("ComoEstudarPrimeiroLugar"),
+  icon: BookOpenIcon
+},
+{
+  title: "Área de Estudos",
+  url: createPageUrl("Studies"),
+  icon: BookOpen
+},
+{
+  title: "Planos",
+  url: createPageUrl("Subscription"),
+  icon: CreditCard
+}];
+
 
 const moreMenuItems = [
-  {
-    title: "Favoritas",
-    url: createPageUrl("FavoriteQuestions"),
-    icon: Star,
-  },
-  {
-    title: "Relatórios",
-    url: createPageUrl("PerformanceReports"),
-    icon: BarChart3,
-  },
-  {
-    title: "ChatGPT",
-    url: createPageUrl("ChatGPT"),
-    icon: Bot,
-  },
-  {
-    title: "Cronograma de Estudos",
-    url: createPageUrl("Schedule"),
-    icon: Calendar,
-  },
-  {
-    title: "Ranking de Usuários",
-    url: createPageUrl("Ranking"),
-    icon: Trophy,
-  },
-  {
-    title: "Lousa Digital",
-    url: createPageUrl("DigitalWhiteboard"),
-    icon: Pencil,
-  },
-  {
-    title: "Minhas Anotações",
-    url: createPageUrl("Notes"),
-    icon: ClipboardList,
-  },
-  {
-    title: "Simulados Digital",
-    url: createPageUrl("SimuladosDigital"),
-    icon: ClipboardList,
-  },
-  {
-    title: "Meu Perfil",
-    url: createPageUrl("Profile"),
-    icon: Shield,
-  },
-  {
-    title: "Minhas Estatísticas",
-    url: createPageUrl("Statistics"),
-    icon: BarChart3,
-  },
-];
+{
+  title: "Favoritas",
+  url: createPageUrl("FavoriteQuestions"),
+  icon: Star
+},
+{
+  title: "Relatórios",
+  url: createPageUrl("PerformanceReports"),
+  icon: BarChart3
+},
+{
+  title: "ChatGPT",
+  url: createPageUrl("ChatGPT"),
+  icon: Bot
+},
+{
+  title: "Cronograma de Estudos",
+  url: createPageUrl("Schedule"),
+  icon: Calendar
+},
+{
+  title: "Ranking de Usuários",
+  url: createPageUrl("Ranking"),
+  icon: Trophy
+},
+{
+  title: "Lousa Digital",
+  url: createPageUrl("DigitalWhiteboard"),
+  icon: Pencil
+},
+{
+  title: "Minhas Anotações",
+  url: createPageUrl("Notes"),
+  icon: ClipboardList
+},
+{
+  title: "Simulados Digital",
+  url: createPageUrl("SimuladosDigital"),
+  icon: ClipboardList
+},
+{
+  title: "Meu Perfil",
+  url: createPageUrl("Profile"),
+  icon: Shield
+},
+{
+  title: "Minhas Estatísticas",
+  url: createPageUrl("Statistics"),
+  icon: BarChart3
+}];
+
 
 const pageNameTranslations = {
   Dashboard: "Meu Painel",
@@ -153,7 +153,7 @@ const pageNameTranslations = {
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Resumos",
-  GuiaEstudos: "Guia de Estudos",
+  GuiaEstudos: "Guia de Estudos"
 };
 
 const featureAccess = {
@@ -166,14 +166,14 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['avancado'],
+  'Resumos': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
   if (isAdmin) {
     return true;
   }
-  
+
   if (!featureAccess[featureTitle]) {
     return true;
   }
@@ -184,18 +184,18 @@ const planStyles = {
   gratuito: {
     label: "Plano Gratuito",
     icon: Award,
-    style: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+    style: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
   },
   padrao: {
     label: "Plano Padrão",
     icon: Star,
-    style: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+    style: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
   },
   avancado: {
     label: "Plano Avançado",
     icon: Shield,
-    style: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  },
+    style: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+  }
 };
 
 export default function Layout({ children, currentPageName }) {
@@ -211,11 +211,11 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarStats, setSidebarStats] = React.useState({
     streak: 0,
     todayQuestions: 0,
-    accuracy: 0,
+    accuracy: 0
   });
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
-  
+
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
@@ -254,43 +254,43 @@ export default function Layout({ children, currentPageName }) {
       try {
         let userData = await User.me();
         setUser(userData);
-        
-        const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
-        
-        if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
-            console.log("Iniciando período de teste para usuário 'gratuito'.");
-            await User.updateMyUserData({ 
-                current_plan: 'avancado',
-                trial_start_date: new Date().toISOString(),
-                trial_used: true
-            });
-            userData = await User.me(); 
-            setUser(userData);
-        }
-        
-        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
-            const trialStartDate = new Date(userData.trial_start_date);
-            const now = new Date();
-            const diffTime = now.getTime() - trialStartDate.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const trialDuration = 10;
-            const daysRemaining = trialDuration - diffDays;
 
-            if (daysRemaining <= 0) {
-                console.log("Trial expired. Downgrading plan to 'gratuito'.");
-                await User.updateMyUserData({ current_plan: 'gratuito' });
-                userData = { ...userData, current_plan: 'gratuito' }; 
-                setUser(userData);
-                setTrialNotification({ show: false, days: 0 });
-            } else if (daysRemaining > 0 && daysRemaining <= 3) {
-                setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
-            } else {
-                setTrialNotification({ show: false, days: 0 });
-            }
-        } else {
-            setTrialNotification({ show: false, days: 0 });
+        const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
+
+        if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
+          console.log("Iniciando período de teste para usuário 'gratuito'.");
+          await User.updateMyUserData({
+            current_plan: 'avancado',
+            trial_start_date: new Date().toISOString(),
+            trial_used: true
+          });
+          userData = await User.me();
+          setUser(userData);
         }
-        
+
+        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
+          const trialStartDate = new Date(userData.trial_start_date);
+          const now = new Date();
+          const diffTime = now.getTime() - trialStartDate.getTime();
+          const diffDays = diffTime / (1000 * 60 * 60 * 24);
+          const trialDuration = 10;
+          const daysRemaining = trialDuration - diffDays;
+
+          if (daysRemaining <= 0) {
+            console.log("Trial expired. Downgrading plan to 'gratuito'.");
+            await User.updateMyUserData({ current_plan: 'gratuito' });
+            userData = { ...userData, current_plan: 'gratuito' };
+            setUser(userData);
+            setTrialNotification({ show: false, days: 0 });
+          } else if (daysRemaining > 0 && daysRemaining <= 3) {
+            setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
+          } else {
+            setTrialNotification({ show: false, days: 0 });
+          }
+        } else {
+          setTrialNotification({ show: false, days: 0 });
+        }
+
         const userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
@@ -299,76 +299,76 @@ export default function Layout({ children, currentPageName }) {
           navigate(createPageUrl('Subscription'));
           return;
         }
-        
+
         if (userData.email) {
-            const userAnswers = await UserAnswer.filter({ created_by: userData.email });
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const todayAnswers = userAnswers.filter(a => {
-                const answerDate = new Date(a.created_date);
-                answerDate.setHours(0, 0, 0, 0);
-                return answerDate.getTime() === today.getTime();
-            });
-            
-            const totalCorrect = userAnswers.filter(a => a.is_correct).length;
-            const accuracyRate = userAnswers.length > 0 ? Math.round((totalCorrect / userAnswers.length) * 100) : 0;
-            
-            const uniqueAnswerDatesMs = [...new Set(userAnswers.map(a => {
-                const date = new Date(a.created_date);
-                date.setHours(0, 0, 0, 0);
-                return date.getTime();
-            }))].sort((a, b) => a - b);
+          const userAnswers = await UserAnswer.filter({ created_by: userData.email });
 
-            let streak = 0;
-            if (uniqueAnswerDatesMs.length > 0) {
-                const todayNormalized = new Date();
-                todayNormalized.setHours(0, 0, 0, 0);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const todayAnswers = userAnswers.filter((a) => {
+            const answerDate = new Date(a.created_date);
+            answerDate.setHours(0, 0, 0, 0);
+            return answerDate.getTime() === today.getTime();
+          });
 
-                const yesterdayNormalized = new Date(todayNormalized);
-                yesterdayNormalized.setDate(todayNormalized.getDate() - 1);
-                yesterdayNormalized.setHours(0, 0, 0, 0);
+          const totalCorrect = userAnswers.filter((a) => a.is_correct).length;
+          const accuracyRate = userAnswers.length > 0 ? Math.round(totalCorrect / userAnswers.length * 100) : 0;
 
-                let currentReferenceDate = todayNormalized;
-                
-                const lastAnswerDateMs = uniqueAnswerDatesMs[uniqueAnswerDatesMs.length - 1];
-                const lastAnswerDateObj = new Date(lastAnswerDateMs);
-                lastAnswerDateObj.setHours(0,0,0,0);
+          const uniqueAnswerDatesMs = [...new Set(userAnswers.map((a) => {
+            const date = new Date(a.created_date);
+            date.setHours(0, 0, 0, 0);
+            return date.getTime();
+          }))].sort((a, b) => a - b);
 
-                if (lastAnswerDateObj.getTime() === todayNormalized.getTime()) {
-                    currentReferenceDate = todayNormalized;
-                } else if (lastAnswerDateObj.getTime() === yesterdayNormalized.getTime()) {
-                    currentReferenceDate = yesterdayNormalized;
-                } else {
-                    currentReferenceDate = new Date(0);
-                }
+          let streak = 0;
+          if (uniqueAnswerDatesMs.length > 0) {
+            const todayNormalized = new Date();
+            todayNormalized.setHours(0, 0, 0, 0);
 
-                for (let i = uniqueAnswerDatesMs.length - 1; i >= 0; i--) {
-                    const answeredDate = new Date(uniqueAnswerDatesMs[i]);
-                    answeredDate.setHours(0, 0, 0, 0);
+            const yesterdayNormalized = new Date(todayNormalized);
+            yesterdayNormalized.setDate(todayNormalized.getDate() - 1);
+            yesterdayNormalized.setHours(0, 0, 0, 0);
 
-                    if (answeredDate.getTime() === currentReferenceDate.getTime()) {
-                        streak++;
-                        currentReferenceDate.setDate(currentReferenceDate.getDate() - 1);
-                    } else if (answeredDate.getTime() < currentReferenceDate.getTime()) {
-                        break;
-                    }
-                }
-                
-                if (currentReferenceDate.getTime() === new Date(0).getTime() && streak === 0) {
-                    streak = 0;
-                } else if (currentReferenceDate.getTime() === new Date(0).getTime() && streak > 0) {
-                    streak = 0;
-                }
+            let currentReferenceDate = todayNormalized;
+
+            const lastAnswerDateMs = uniqueAnswerDatesMs[uniqueAnswerDatesMs.length - 1];
+            const lastAnswerDateObj = new Date(lastAnswerDateMs);
+            lastAnswerDateObj.setHours(0, 0, 0, 0);
+
+            if (lastAnswerDateObj.getTime() === todayNormalized.getTime()) {
+              currentReferenceDate = todayNormalized;
+            } else if (lastAnswerDateObj.getTime() === yesterdayNormalized.getTime()) {
+              currentReferenceDate = yesterdayNormalized;
+            } else {
+              currentReferenceDate = new Date(0);
             }
 
-            setSidebarStats({
-              streak: streak,
-              todayQuestions: todayAnswers.length,
-              accuracy: accuracyRate
-            });
+            for (let i = uniqueAnswerDatesMs.length - 1; i >= 0; i--) {
+              const answeredDate = new Date(uniqueAnswerDatesMs[i]);
+              answeredDate.setHours(0, 0, 0, 0);
+
+              if (answeredDate.getTime() === currentReferenceDate.getTime()) {
+                streak++;
+                currentReferenceDate.setDate(currentReferenceDate.getDate() - 1);
+              } else if (answeredDate.getTime() < currentReferenceDate.getTime()) {
+                break;
+              }
+            }
+
+            if (currentReferenceDate.getTime() === new Date(0).getTime() && streak === 0) {
+              streak = 0;
+            } else if (currentReferenceDate.getTime() === new Date(0).getTime() && streak > 0) {
+              streak = 0;
+            }
+          }
+
+          setSidebarStats({
+            streak: streak,
+            todayQuestions: todayAnswers.length,
+            accuracy: accuracyRate
+          });
         } else {
-            console.warn("User email not available, cannot fetch user answers for stats.");
+          console.warn("User email not available, cannot fetch user answers for stats.");
         }
 
         if (!userData.onboarding_complete) {
@@ -388,7 +388,7 @@ export default function Layout({ children, currentPageName }) {
     await User.logout();
     window.location.reload();
   };
-  
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -418,8 +418,8 @@ export default function Layout({ children, currentPageName }) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+      </div>);
+
   }
 
   if (location.pathname === createPageUrl('Welcome')) {
@@ -429,24 +429,24 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#1c2c34' }}>
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
+        {isMobileMenuOpen &&
+        <>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 z-50 md:hidden"
-            />
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 z-50 md:hidden" />
+
             <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed top-0 left-0 h-full w-80 text-white z-50 shadow-2xl md:hidden flex flex-col overflow-hidden"
-              style={{ backgroundColor: 'var(--primary-color)', maxWidth: '85vw' }}
-            >
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed top-0 left-0 h-full w-80 text-white z-50 shadow-2xl md:hidden flex flex-col overflow-hidden"
+            style={{ backgroundColor: 'var(--primary-color)', maxWidth: '85vw' }}>
+
               <div className="flex items-center justify-between p-4 border-b border-black border-opacity-20 flex-shrink-0">
                 <h2 className="font-bold text-lg">Menu Principal</h2>
                 <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white active:scale-90 transition-transform" onClick={() => setIsMobileMenuOpen(false)}>
@@ -464,158 +464,157 @@ export default function Layout({ children, currentPageName }) {
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-sm truncate">{user.full_name || 'Usuário'}</p>
-                    {user.job_title && (
-                      <p className="text-xs text-gray-200 truncate">{user.job_title}</p>
-                    )}
+                    {user.job_title &&
+                  <p className="text-xs text-gray-200 truncate">{user.job_title}</p>
+                  }
                     <div className={`mt-1 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
                       <PlanInfo.icon className="w-3 h-3" />
                       <span className="truncate">{PlanInfo.label}</span>
                     </div>
                   </div>
                 </div>
-                <Button 
-                  onClick={handleLogout} 
-                  size="sm"
-                  variant="ghost"
-                  className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0 flex flex-col items-center gap-1 h-auto py-2"
-                >
+                <Button
+                onClick={handleLogout}
+                size="sm"
+                variant="ghost"
+                className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0">
+
                   <LogOut className="w-5 h-5" />
-                  <span className="text-xs">Sair</span>
                 </Button>
               </div>
 
               <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain">
                 {[...navigationItems, ...moreMenuItems].map((item) => {
-                  const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                  const isCurrentPage = location.pathname === item.url;
-                  return (
-                    <Link
-                      key={item.title}
-                      to={hasAccess ? item.url : createPageUrl("Subscription")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
-                        isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'
-                      }`}
-                      style={isCurrentPage ? {} : {}}
-                      onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
-                      onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}
-                    >
+                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                const isCurrentPage = location.pathname === item.url;
+                return (
+                  <Link
+                    key={item.title}
+                    to={hasAccess ? item.url : createPageUrl("Subscription")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
+                    isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
+                    }
+                    style={isCurrentPage ? {} : {}}
+                    onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
+                    onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
+
                       <div className="flex items-center gap-3 min-w-0">
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         <span className="truncate text-sm font-medium">{item.title}</span>
                       </div>
                       {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
-                    </Link>
-                  );
-                })}
-                {isAdmin && (
-                  <>
+                    </Link>);
+
+              })}
+                {isAdmin &&
+              <>
                   <Link
-                    to={createPageUrl("Admin")}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
+                  to={createPageUrl("Admin")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+
                     <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                     <span>Admin Geral</span>
                   </Link>
                   <Link
-                    to={createPageUrl("SDAdmin")}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  >
+                  to={createPageUrl("SDAdmin")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+
                     <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                     <span>Admin Simulados Digital</span>
                   </Link>
                   </>
-                )}
+              }
               </nav>
             </motion.div>
           </>
-        )}
+        }
       </AnimatePresence>
 
       <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
         <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
             <div
-              className="relative w-8 h-8 rounded-lg flex items-center justify-center shadow-lg"
-              style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
-            >
+            className="relative w-8 h-8 rounded-lg flex items-center justify-center shadow-lg"
+            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+
               <BookOpen className="w-4 h-4 text-white" />
               <Pencil className="w-3 h-3 text-yellow-300 absolute bottom-0 right-0" />
             </div>
             <div>
                 <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
-                <h2 className="font-bold text-white text-sm leading-tight">Concursos Públicos SE</h2>
-                <div className="text-xs leading-tight" style={{ color: '#FFD700' }}>
-                  ⭐⭐⭐⭐⭐
-                </div>
+                <h2 className="text-white text-sm font-bold text-left leading-tight">Conectado em Concursos Públicos SE</h2>
+                <div className="text-white text-sm font-bold text-center leading-tight" style={{ color: '#FFD700' }}>👇 Comece a estudar agora
+
+            </div>
             </div>
         </Link>
 
         <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl">
             {navigationItems.map((item) => {
-                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                const isCurrentPage = location.pathname === item.url;
-                return (
-                    <Link
-                        key={item.title}
-                        to={hasAccess ? item.url : createPageUrl("Subscription")}
-                        className={`relative flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium transition-colors min-w-0 ${
-                            isCurrentPage ? 'text-white' : 'text-gray-300 hover:text-white'
-                        }`}
-                        style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
-                        onMouseEnter={(e) => {
-                            if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                    >
+            const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+            const isCurrentPage = location.pathname === item.url;
+            return (
+              <Link
+                key={item.title}
+                to={hasAccess ? item.url : createPageUrl("Subscription")}
+                className={`relative flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium transition-colors min-w-0 ${
+                isCurrentPage ? 'text-white' : 'text-gray-300 hover:text-white'}`
+                }
+                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
+                onMouseEnter={(e) => {
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
+                }}>
+
                         <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
                         <span className="truncate text-center leading-tight">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
-                    </Link>
-                );
-            })}
+                    </Link>);
+
+          })}
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
-                        variant="ghost"
-                        className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
+                variant="ghost"
+                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+
                         <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
                         <span>Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
                     {moreMenuItems.map((item) => {
-                         const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                         const isCurrentPage = location.pathname === item.url;
-                         return (
-                            <DropdownMenuItem key={item.title} asChild>
-                                <Link 
-                                    to={hasAccess ? item.url : createPageUrl("Subscription")} 
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm`}
-                                    style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
-                                >
+                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                const isCurrentPage = location.pathname === item.url;
+                return (
+                  <DropdownMenuItem key={item.title} asChild>
+                                <Link
+                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                      className={`flex items-center justify-between w-full cursor-pointer text-sm`}
+                      style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}>
+
                                     <div className="flex items-center gap-2">
                                         <item.icon style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
                                         <span>{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
                                 </Link>
-                            </DropdownMenuItem>
-                         );
-                    })}
-                    {isAdmin && (
-                        <>
+                            </DropdownMenuItem>);
+
+              })}
+                    {isAdmin &&
+              <>
                         <DropdownMenuItem asChild>
                              <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm">
                                 <div className="flex items-center gap-2">
@@ -633,7 +632,7 @@ export default function Layout({ children, currentPageName }) {
                             </Link>
                         </DropdownMenuItem>
                         </>
-                    )}
+              }
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>
@@ -643,8 +642,8 @@ export default function Layout({ children, currentPageName }) {
             onClick={() => setShowProvaUploader(true)}
             size="sm"
             className="text-xs px-3 py-2 text-white hover:text-white"
-            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
-          >
+            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+
             <Upload className="w-3 h-3 mr-1" />
             <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
@@ -660,14 +659,14 @@ export default function Layout({ children, currentPageName }) {
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
                   <AvatarFallback className="bg-white text-xs">
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain"/>
+                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden xl:block">
                   <p className="font-medium text-xs truncate max-w-28">{user.full_name || 'Usuário'}</p>
-                  {user.job_title && (
-                    <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
-                  )}
+                  {user.job_title &&
+                  <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
+                  }
                   <div className={`mt-0.5 inline-flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
                     <PlanInfo.icon className="w-3 h-3" />
                     {PlanInfo.label}
@@ -676,12 +675,12 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
-              {user.job_title && (
-                <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
+              {user.job_title &&
+              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
                   <BookOpen className="w-4 h-4" />
                   {user.job_title}
                 </DropdownMenuItem>
-              )}
+              }
               <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
@@ -696,14 +695,14 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       <AnimatePresence>
-        {showTrialBanner && trialNotification.show && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="bg-gradient-to-r from-amber-50 to-yellow-50 border-t-4 border-amber-400 shadow-md relative z-30 print-hide"
-          >
+        {showTrialBanner && trialNotification.show &&
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="bg-gradient-to-r from-amber-50 to-yellow-50 border-t-4 border-amber-400 shadow-md relative z-30 print-hide">
+
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 mt-1">
@@ -723,26 +722,26 @@ export default function Layout({ children, currentPageName }) {
                     Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
                   </p>
                   <Link to={createPageUrl('Subscription')}>
-                    <Button 
-                      size="sm" 
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
-                    >
+                    <Button
+                    size="sm"
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold">
+
                       Assinar Agora
                     </Button>
                   </Link>
                 </div>
 
-                <button 
-                  onClick={() => setShowTrialBanner(false)}
-                  className="flex-shrink-0 p-1 rounded-lg text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
-                  aria-label="Fechar aviso"
-                >
+                <button
+                onClick={() => setShowTrialBanner(false)}
+                className="flex-shrink-0 p-1 rounded-lg text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
+                aria-label="Fechar aviso">
+
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
           </motion.div>
-        )}
+        }
       </AnimatePresence>
 
       <main className="flex-1 flex flex-col min-w-0">
@@ -753,9 +752,9 @@ export default function Layout({ children, currentPageName }) {
                   <Menu className="w-6 h-6" />
                 </Button>
                 <div
-                  className="relative w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: 'var(--primary-color)' }}
-                >
+                className="relative w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--primary-color)' }}>
+
                   <BookOpen className="w-5 h-5 text-white" />
                   <Pencil className="w-3 h-3 text-white absolute bottom-0 right-0 opacity-90" />
                 </div>
@@ -768,11 +767,11 @@ export default function Layout({ children, currentPageName }) {
               <div className="flex items-center gap-2">
                 <Link to={createPageUrl("Subscription")}>
                   <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    style={{ backgroundColor: 'var(--primary-color)' }}
-                  >
+                  variant="default"
+                  size="sm"
+                  className="text-white"
+                  style={{ backgroundColor: 'var(--primary-color)' }}>
+
                     <CreditCard className="w-4 h-4 mr-1" />
                     Assinar
                   </Button>
@@ -791,8 +790,8 @@ export default function Layout({ children, currentPageName }) {
 
         <div
           className="flex-1 overflow-auto pb-20 md:pb-0"
-          style={{ backgroundColor: '#1c2c34' }}
-        >
+          style={{ backgroundColor: '#1c2c34' }}>
+
           {children}
         </div>
       </main>
@@ -802,25 +801,25 @@ export default function Layout({ children, currentPageName }) {
       <ProvaUploader isOpen={showProvaUploader} onOpenChange={setShowProvaUploader} />
 
       <AnimatePresence>
-        {showScrollTop && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed bottom-24 md:bottom-6 right-6 z-50"
-          >
+        {showScrollTop &&
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="fixed bottom-24 md:bottom-6 right-6 z-50">
+
             <Button
-              size="icon"
-              className="rounded-full h-12 w-12 text-white shadow-lg"
-              style={{ backgroundColor: 'var(--primary-color)' }}
-              onClick={scrollToTop}
-              aria-label="Voltar ao topo"
-            >
+            size="icon"
+            className="rounded-full h-12 w-12 text-white shadow-lg"
+            style={{ backgroundColor: 'var(--primary-color)' }}
+            onClick={scrollToTop}
+            aria-label="Voltar ao topo">
+
               <ArrowUp className="h-6 w-6" />
             </Button>
           </motion.div>
-        )}
+        }
       </AnimatePresence>
-    </div>
-  );
+    </div>);
+
 }
