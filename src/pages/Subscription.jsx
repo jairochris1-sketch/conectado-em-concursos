@@ -120,6 +120,11 @@ export default function SubscriptionPage() {
   };
 
   const handleSelectPlan = async (planId) => {
+    console.log("=== INICIANDO PROCESSO DE ASSINATURA ===");
+    console.log("Plano selecionado:", planId);
+    console.log("Ciclo selecionado:", selectedCycle);
+    console.log("Usuário:", user);
+    
     if (!user) {
       toast.error("Você precisa estar logado");
       return;
@@ -132,27 +137,40 @@ export default function SubscriptionPage() {
 
     setProcessingPlan(planId);
     try {
+      console.log("Chamando função createAsaasSubscription...");
       const response = await base44.functions.invoke("createAsaasSubscription", {
         plan: planId,
         cycle: selectedCycle
       });
 
+      console.log("Resposta recebida:", response);
+      console.log("response.data:", response.data);
+
       if (response.data?.success) {
+        console.log("Sucesso! payment_link:", response.data?.payment_link);
         toast.success("Assinatura criada! Redirecionando...");
         setTimeout(() => {
           if (response.data?.payment_link) {
+            console.log("Redirecionando para:", response.data.payment_link);
             window.location.href = response.data.payment_link;
           } else {
+            console.log("Sem payment_link, recarregando dados do usuário");
             loadUserData();
           }
         }, 2000);
       } else {
+        console.error("Falha na criação:", response.data);
         toast.error(response.data?.message || "Erro ao criar assinatura");
       }
     } catch (error) {
-      console.error("Erro ao processar assinatura:", error);
+      console.error("=== ERRO NO PROCESSO ===");
+      console.error("Tipo:", error.constructor.name);
+      console.error("Mensagem:", error.message);
+      console.error("Stack:", error.stack);
+      console.error("Error completo:", error);
       toast.error("Erro ao processar sua assinatura");
     } finally {
+      console.log("=== FINALIZANDO PROCESSO ===");
       setProcessingPlan(null);
     }
   };
