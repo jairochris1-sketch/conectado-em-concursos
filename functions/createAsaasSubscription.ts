@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
@@ -6,15 +6,47 @@ Deno.serve(async (req) => {
         const user = await base44.auth.me();
 
         if (!user) {
-            return Response.json({ error: 'Usuário não autenticado' }, { status: 401 });
+            return Response.json({ 
+                data: {
+                    success: false,
+                    error: 'Usuário não autenticado' 
+                }
+            }, { status: 401 });
         }
 
-        const { plan, cycle = 'monthly', customerData } = await req.json();
+        let requestData;
+        try {
+            requestData = await req.json();
+        } catch (parseError) {
+            console.error('Erro ao parsear JSON:', parseError);
+            return Response.json({ 
+                data: {
+                    success: false,
+                    error: 'Dados inválidos. Verifique os dados enviados.' 
+                }
+            }, { status: 400 });
+        }
+
+        const { plan, cycle = 'monthly', customerData } = requestData;
         const asaasApiKey = Deno.env.get("ASAAS_API_KEY");
 
         if (!asaasApiKey) {
             console.error('ASAAS_API_KEY não encontrada');
-            return Response.json({ error: 'Configuração do sistema incompleta' }, { status: 500 });
+            return Response.json({ 
+                data: {
+                    success: false,
+                    error: 'Configuração do sistema incompleta' 
+                }
+            }, { status: 500 });
+        }
+
+        if (!plan) {
+            return Response.json({ 
+                data: {
+                    success: false,
+                    error: 'Plano não foi especificado' 
+                }
+            }, { status: 400 });
         }
 
         // Remover assinaturas pendentes antigas para evitar duplicatas
@@ -118,7 +150,12 @@ Deno.serve(async (req) => {
             }
         } catch (customerError) {
             console.error('Erro no processamento do cliente:', customerError);
-            return Response.json({ error: 'Erro ao processar dados do cliente' }, { status: 400 });
+            return Response.json({ 
+                data: {
+                    success: false,
+                    error: 'Erro ao processar dados do cliente. CPF ou telefone podem estar inválidos.' 
+                }
+            }, { status: 400 });
         }
 
         // 2. Criar assinatura recorrente
