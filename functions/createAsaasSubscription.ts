@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
@@ -191,7 +191,6 @@ Deno.serve(async (req) => {
 
             return Response.json({
                 success: true,
-                subscription_id: subscription.id,
                 payment_url: firstPayment.invoiceUrl
             });
 
