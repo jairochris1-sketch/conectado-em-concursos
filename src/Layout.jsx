@@ -275,9 +275,9 @@ export default function Layout({ children, currentPageName }) {
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
         if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
-          console.log("Iniciando período de teste para usuário 'gratuito'.");
+          console.log("Iniciando período de teste de 5 dias no plano Padrão.");
           await User.updateMyUserData({
-            current_plan: 'avancado',
+            current_plan: 'padrao',
             trial_start_date: new Date().toISOString(),
             trial_used: true
           });
@@ -285,12 +285,12 @@ export default function Layout({ children, currentPageName }) {
           setUser(userData);
         }
 
-        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
+        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'padrao') {
           const trialStartDate = new Date(userData.trial_start_date);
           const now = new Date();
           const diffTime = now.getTime() - trialStartDate.getTime();
           const diffDays = diffTime / (1000 * 60 * 60 * 24);
-          const trialDuration = 10;
+          const trialDuration = 5;
           const daysRemaining = trialDuration - diffDays;
 
           if (daysRemaining <= 0) {
@@ -299,7 +299,7 @@ export default function Layout({ children, currentPageName }) {
             userData = { ...userData, current_plan: 'gratuito' };
             setUser(userData);
             setTrialNotification({ show: false, days: 0 });
-          } else if (daysRemaining > 0 && daysRemaining <= 3) {
+          } else if (daysRemaining > 0 && daysRemaining <= 2) {
             setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
           } else {
             setTrialNotification({ show: false, days: 0 });
@@ -731,7 +731,7 @@ export default function Layout({ children, currentPageName }) {
                     🎯 Período de Teste Ativo!
                   </h3>
                   <p className="text-xs md:text-sm text-amber-800 mb-2">
-                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Avançado</strong>.
+                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Padrão</strong>.
                   </p>
                   <p className="text-xs text-amber-700 mb-3">
                     Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
