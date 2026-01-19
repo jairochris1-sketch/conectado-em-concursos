@@ -108,10 +108,12 @@ Deno.serve(async (req) => {
                 });
 
                 if (!customerResponse.ok) {
-                    const errorData = await customerResponse.json();
-                    console.error('Erro ao criar cliente:', errorData);
-                    throw new Error('Falha ao registrar dados do cliente');
-                }
+                     const errorData = await customerResponse.json();
+                     console.error('Erro ao criar cliente no Asaas:', JSON.stringify(errorData));
+                     console.error('Status:', customerResponse.status);
+                     console.error('Dados enviados:', JSON.stringify(newCustomerData));
+                     throw new Error('Falha ao registrar dados do cliente: ' + JSON.stringify(errorData));
+                 }
 
                 customer = await customerResponse.json();
                 console.log('Novo cliente criado:', customer.id);
