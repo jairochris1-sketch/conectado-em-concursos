@@ -65,14 +65,14 @@ Deno.serve(async (req) => {
         // Definir valores dos planos - CORRIGIDO
         const planPrices = {
             padrao: {
-                monthly: 39.90,
-                semiannual: 199.00,
-                annual: 399.00
+                monthly: 49.90,
+                semiannual: 249.50,
+                annual: 479.00
             },
             avancado: {
-                monthly: 79.80,
-                semiannual: 399.00,
-                annual: 798.00
+                monthly: 99.90,
+                semiannual: 499.50,
+                annual: 999.00
             }
         };
 
