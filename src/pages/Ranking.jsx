@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { UserRanking, UserAnswer } from "@/entities/all";
 import { User } from "@/entities/User";
-import { Trophy } from "lucide-react"; // Only Trophy is used from lucide-react
+import { Trophy } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const calculatePoints = (correct, total) => {
   const accuracy = total > 0 ? correct / total : 0;
@@ -88,6 +89,7 @@ export default function RankingPage() {
         // Criar novo registro de ranking
         userRank = await UserRanking.create({
           user_name: user.full_name || "Usuário",
+          profile_photo_url: user.profile_photo_url,
           total_points: totalPoints,
           questions_answered: totalQuestions,
           correct_answers: correctAnswers,
@@ -100,6 +102,7 @@ export default function RankingPage() {
         userRank = userRank[0];
         await UserRanking.update(userRank.id, {
           user_name: user.full_name || "Usuário",
+          profile_photo_url: user.profile_photo_url,
           total_points: totalPoints,
           questions_answered: totalQuestions,
           correct_answers: correctAnswers,
@@ -112,6 +115,7 @@ export default function RankingPage() {
         userRank = {
           ...userRank,
           user_name: user.full_name || "Usuário",
+          profile_photo_url: user.profile_photo_url,
           total_points: totalPoints,
           questions_answered: totalQuestions,
           correct_answers: correctAnswers,
@@ -180,6 +184,12 @@ export default function RankingPage() {
                 <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center text-xl font-bold">
                   {displayUserPosition}º
                 </div>
+                <Avatar className="w-12 h-12 border-2 border-white/30">
+                  <AvatarImage src={userRanking.profile_photo_url} alt={userRanking.user_name} />
+                  <AvatarFallback className="bg-white/20 text-white font-bold">
+                    {userRanking.user_name?.charAt(0)?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <div className="text-lg font-bold">Sua Posição</div>
                   <div className="text-sm opacity-90">
@@ -226,6 +236,12 @@ export default function RankingPage() {
                   <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold">
                     {idx + 1}
                   </div>
+                  <Avatar className="w-10 h-10 border-2 border-white/20">
+                    <AvatarImage src={r.profile_photo_url} alt={r.user_name} />
+                    <AvatarFallback className="bg-white/20 text-white font-bold">
+                      {r.user_name?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <div className="text-lg md:text-xl font-bold">{r.user_name}</div>
                     <div className="flex items-center gap-4 text-sm">
@@ -262,6 +278,12 @@ export default function RankingPage() {
                   <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center font-bold">
                     {position}
                   </div>
+                  <Avatar className="w-8 h-8 border border-white/20">
+                    <AvatarImage src={r.profile_photo_url} alt={r.user_name} />
+                    <AvatarFallback className="bg-white/10 text-white font-semibold text-sm">
+                      {r.user_name?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <div className="font-semibold">{r.user_name}</div>
                     <div className="flex items-center gap-3 text-xs text-white/80">
