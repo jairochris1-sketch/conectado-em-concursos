@@ -1,187 +1,352 @@
-import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { User } from "@/entities/User";
+import { Subscription } from "@/entities/Subscription";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle, X, AlertCircle, Loader2, CreditCard } from "lucide-react";
+import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
+
+const plans = [
+  {
+    id: "gratuito",
+    name: "Plano Gratuito",
+    price: "R$ 0",
+    period: "Para sempre",
+    description: "Acesso básico ao platform",
+    features: [
+      "Acesso a questões públicas",
+      "Criar simulados básicos",
+      "Anotações pessoais",
+      "Fórum da comunidade",
+      "10 questões por dia"
+    ],
+    excluded: [
+      "Resumos avançados",
+      "Cronograma inteligente",
+      "ChatGPT integrado",
+      "Análise detalhada de performance"
+    ],
+    color: "bg-gray-100 dark:bg-gray-800",
+    textColor: "text-gray-900 dark:text-white"
+  },
+  {
+    id: "padrao",
+    name: "Plano Padrão",
+    price: "R$ 49,90",
+    period: "mês",
+    description: "Para quem quer estudar sério",
+    features: [
+      "Acesso ilimitado a questões",
+      "Criar simulados avançados",
+      "Cronograma de estudos personalizado",
+      "Resumos de todas as disciplinas",
+      "Análise detalhada de performance",
+      "Suporte por email"
+    ],
+    excluded: [
+      "ChatGPT integrado",
+      "Prioridade no suporte"
+    ],
+    color: "bg-blue-50 dark:bg-blue-900/20",
+    textColor: "text-blue-900 dark:text-blue-100",
+    highlight: true
+  },
+  {
+    id: "avancado",
+    name: "Plano Avançado",
+    price: "R$ 99,90",
+    period: "mês",
+    description: "Máximo de recursos e suporte",
+    features: [
+      "Tudo do Plano Padrão",
+      "ChatGPT integrado para dúvidas",
+      "Análise de vídeos educacionais",
+      "Lousa digital colaborativa",
+      "Prioridade no suporte",
+      "Acesso a conteúdo exclusivo",
+      "Certificados de desempenho"
+    ],
+    excluded: [],
+    color: "bg-yellow-50 dark:bg-yellow-900/20",
+    textColor: "text-yellow-900 dark:text-yellow-100",
+    highlight: true
+  }
+];
 
 export default function SubscriptionPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [keys, setKeys] = useState({
-    asaas_api_key: '',
-    asaas_webhook_secret: '',
-  });
-  const [savedStatus, setSavedStatus] = useState(null);
+  const [user, setUser] = useState(null);
+  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [processingPlan, setProcessingPlan] = useState(null);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setKeys(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const userData = await User.me();
+      setUser(userData);
+
+      const userSubscriptions = await Subscription.filter({
+        user_email: userData.email,
+        status: "active"
+      });
+
+      if (userSubscriptions.length > 0) {
+        setCurrentSubscription(userSubscriptions[0]);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados do usuário:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveKeys = async () => {
-    if (!keys.asaas_api_key || !keys.asaas_webhook_secret) {
-      toast.error('Preencha todas as chaves');
+  const handleSelectPlan = async (planId) => {
+    if (!user) {
+      toast.error("Você precisa estar logado");
       return;
     }
 
-    setIsLoading(true);
+    if (planId === "gratuito") {
+      toast.info("Plano Gratuito - Sem necessidade de pagamento");
+      return;
+    }
+
+    setProcessingPlan(planId);
     try {
-      // Aqui você pode salvar as chaves via API ou backend function
-      // Por enquanto, apenas mostramos uma simulação
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setSavedStatus('success');
-      toast.success('Chaves salvas com sucesso!');
-      
-      setTimeout(() => setSavedStatus(null), 5000);
+      const response = await base44.functions.invoke("createAsaasSubscription", {
+        plan: planId,
+        cycle: "monthly"
+      });
+
+      if (response.data.success) {
+        toast.success("Assinatura criada! Redirecionando...");
+        setTimeout(() => {
+          if (response.data.payment_link) {
+            window.location.href = response.data.payment_link;
+          } else {
+            loadUserData();
+          }
+        }, 2000);
+      } else {
+        toast.error(response.data.message || "Erro ao criar assinatura");
+      }
     } catch (error) {
-      setSavedStatus('error');
-      toast.error('Erro ao salvar chaves');
+      console.error("Erro ao processar assinatura:", error);
+      toast.error("Erro ao processar sua assinatura");
     } finally {
-      setIsLoading(false);
+      setProcessingPlan(null);
     }
   };
 
-  const handleClearKeys = () => {
-    setKeys({
-      asaas_api_key: '',
-      asaas_webhook_secret: '',
-    });
-    setSavedStatus(null);
+  const handleCancelSubscription = async () => {
+    if (!currentSubscription) return;
+
+    if (!window.confirm("Tem certeza que deseja cancelar sua assinatura?")) {
+      return;
+    }
+
+    try {
+      await base44.functions.invoke("cancelAsaasSubscription", {
+        subscription_id: currentSubscription.id
+      });
+
+      toast.success("Assinatura cancelada");
+      loadUserData();
+    } catch (error) {
+      console.error("Erro ao cancelar assinatura:", error);
+      toast.error("Erro ao cancelar assinatura");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      </div>
+    );
+  }
+
+  const currentPlan = plans.find(p => p.id === (user?.current_plan || "gratuito"));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Configuração de Integração
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Escolha seu Plano
           </h1>
-          <p className="text-slate-300">
-            Configure suas chaves da API Asaas para ativar o sistema de assinaturas
+          <p className="text-xl text-slate-300">
+            Desbloqueie todo o poder do Conectado em Concursos Públicos SE
           </p>
         </div>
 
-        {/* Status Alert */}
-        {savedStatus === 'success' && (
-          <Alert className="mb-6 bg-green-900/20 border-green-800">
-            <CheckCircle className="h-4 w-4 text-green-400" />
-            <AlertDescription className="text-green-300 ml-2">
-              Chaves salvas com sucesso! O sistema de assinaturas está ativo.
+        {/* Current Plan Alert */}
+        {currentSubscription && (
+          <Alert className="mb-8 bg-green-900/20 border-green-800">
+            <CheckCircle className="h-5 w-5 text-green-400" />
+            <AlertDescription className="text-green-300 ml-3">
+              Você está usando o <strong>{currentPlan?.name}</strong>. 
+              Próximo pagamento: {new Date(currentSubscription.next_payment_date).toLocaleDateString("pt-BR")}
             </AlertDescription>
           </Alert>
         )}
 
-        {savedStatus === 'error' && (
-          <Alert className="mb-6 bg-red-900/20 border-red-800">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <AlertDescription className="text-red-300 ml-2">
-              Erro ao salvar as chaves. Tente novamente.
-            </AlertDescription>
-          </Alert>
-        )}
+        {/* Plans Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+          {plans.map((plan) => {
+            const isCurrentPlan = user?.current_plan === plan.id;
+            const isProcessing = processingPlan === plan.id;
 
-        {/* Main Card */}
+            return (
+              <Card
+                key={plan.id}
+                className={`relative border-2 transition-all duration-300 ${
+                  plan.highlight
+                    ? "border-blue-500 shadow-2xl md:scale-105"
+                    : "border-slate-700"
+                } ${plan.color}`}
+              >
+                {plan.highlight && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-blue-600 text-white">POPULAR</Badge>
+                  </div>
+                )}
+
+                {isCurrentPlan && (
+                  <div className="absolute -top-4 right-6">
+                    <Badge className="bg-green-600 text-white">PLANO ATUAL</Badge>
+                  </div>
+                )}
+
+                <CardHeader>
+                  <CardTitle className={plan.textColor}>{plan.name}</CardTitle>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                    {plan.description}
+                  </p>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="mb-6">
+                    <div className="flex items-baseline">
+                      <span className={`text-4xl font-bold ${plan.textColor}`}>
+                        {plan.price}
+                      </span>
+                      {plan.period !== "Para sempre" && (
+                        <span className="text-slate-500 dark:text-slate-400 ml-2">
+                          /{plan.period}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="space-y-3 mb-8">
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-slate-700 dark:text-slate-300 text-sm">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+
+                    {plan.excluded.map((feature, idx) => (
+                      <div key={`excluded-${idx}`} className="flex items-start gap-3">
+                        <X className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-slate-500 dark:text-slate-500 text-sm line-through">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Button */}
+                  {isCurrentPlan ? (
+                    <Button
+                      disabled
+                      className="w-full bg-green-600 text-white"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Plano Atual
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleSelectPlan(plan.id)}
+                      disabled={isProcessing}
+                      className={`w-full ${
+                        plan.highlight
+                          ? "bg-blue-600 hover:bg-blue-700"
+                          : "bg-slate-700 hover:bg-slate-600"
+                      } text-white`}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Processando...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          {plan.id === "gratuito" ? "Usar Plano Gratuito" : "Contratar Agora"}
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  {isCurrentPlan && currentSubscription && (
+                    <Button
+                      onClick={handleCancelSubscription}
+                      variant="outline"
+                      className="w-full mt-2 text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      Cancelar Assinatura
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* FAQ */}
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-white">Chaves API Asaas</CardTitle>
+            <CardTitle className="text-white">Perguntas Frequentes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {/* API Key Input */}
               <div>
-                <Label htmlFor="asaas_api_key" className="text-slate-200 mb-2 block">
-                  Chave API Asaas
-                </Label>
-                <Input
-                  id="asaas_api_key"
-                  name="asaas_api_key"
-                  type="password"
-                  placeholder="cole sua chave API aqui"
-                  value={keys.asaas_api_key}
-                  onChange={handleInputChange}
-                  className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
-                />
-                <p className="text-xs text-slate-400 mt-1">
-                  Obtenha em: https://www.asaas.com/api
+                <h4 className="font-semibold text-white mb-2">
+                  Posso mudar de plano depois?
+                </h4>
+                <p className="text-slate-300 text-sm">
+                  Sim! Você pode atualizar ou fazer downgrade de seu plano a qualquer momento.
                 </p>
               </div>
-
-              {/* Webhook Secret Input */}
               <div>
-                <Label htmlFor="asaas_webhook_secret" className="text-slate-200 mb-2 block">
-                  Webhook Secret Asaas
-                </Label>
-                <Input
-                  id="asaas_webhook_secret"
-                  name="asaas_webhook_secret"
-                  type="password"
-                  placeholder="cole seu webhook secret aqui"
-                  value={keys.asaas_webhook_secret}
-                  onChange={handleInputChange}
-                  className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
-                />
-                <p className="text-xs text-slate-400 mt-1">
-                  Gere em: https://www.asaas.com/webhooks
+                <h4 className="font-semibold text-white mb-2">
+                  Há período de teste?
+                </h4>
+                <p className="text-slate-300 text-sm">
+                  Sim! Usuários novos do plano gratuito têm 10 dias de acesso ao plano avançado como teste.
                 </p>
               </div>
-
-              {/* Info Box */}
-              <div className="p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
-                <p className="text-sm text-blue-300">
-                  <strong>ℹ️ Informação:</strong> As chaves serão armazenadas com segurança no sistema.
-                  Não compartilhe suas chaves com terceiros.
+              <div>
+                <h4 className="font-semibold text-white mb-2">
+                  Como faço para cancelar?
+                </h4>
+                <p className="text-slate-300 text-sm">
+                  Você pode cancelar sua assinatura a qualquer momento na página de perfil ou aqui mesmo clicando em "Cancelar Assinatura".
                 </p>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3 pt-4">
-                <Button
-                  onClick={handleSaveKeys}
-                  disabled={isLoading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Salvando...
-                    </>
-                  ) : (
-                    'Salvar Chaves'
-                  )}
-                </Button>
-                <Button
-                  onClick={handleClearKeys}
-                  variant="outline"
-                  className="text-slate-300 border-slate-600 hover:bg-slate-700"
-                >
-                  Limpar
-                </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Documentation */}
-        <Card className="mt-8 bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white">Como configurar</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ol className="space-y-3 text-slate-300 text-sm list-decimal list-inside">
-              <li>Acesse sua conta Asaas em https://www.asaas.com</li>
-              <li>Vá para Configurações → Chaves de API</li>
-              <li>Copie sua chave API e cole no campo acima</li>
-              <li>Vá para Webhooks e crie um novo webhook</li>
-              <li>Copie o token do webhook e cole no campo de secret</li>
-              <li>Clique em "Salvar Chaves"</li>
-            </ol>
           </CardContent>
         </Card>
       </div>

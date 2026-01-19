@@ -1,6 +1,8 @@
 import ActivityFeed from './pages/ActivityFeed';
+import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import ChatGPT from './pages/ChatGPT';
+import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
@@ -10,31 +12,31 @@ import FavoriteQuestions from './pages/FavoriteQuestions';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
+import PaymentHistory from './pages/PaymentHistory';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
 import Questions from './pages/Questions';
+import Ranking from './pages/Ranking';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
 import Schedule from './pages/Schedule';
 import SimuladosDigital from './pages/SimuladosDigital';
 import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
+import Subscription from './pages/Subscription';
 import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Admin from './pages/Admin';
-import Subscription from './pages/Subscription';
-import Community from './pages/Community';
-import Ranking from './pages/Ranking';
-import PaymentHistory from './pages/PaymentHistory';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ActivityFeed": ActivityFeed,
+    "Admin": Admin,
     "AssistirAula": AssistirAula,
     "ChatGPT": ChatGPT,
+    "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
@@ -44,24 +46,22 @@ export const PAGES = {
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
     "Notes": Notes,
+    "PaymentHistory": PaymentHistory,
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
     "Questions": Questions,
+    "Ranking": Ranking,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
     "Schedule": Schedule,
     "SimuladosDigital": SimuladosDigital,
     "Statistics": Statistics,
     "Studies": Studies,
+    "Subscription": Subscription,
     "Welcome": Welcome,
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Admin": Admin,
-    "Subscription": Subscription,
-    "Community": Community,
-    "Ranking": Ranking,
-    "PaymentHistory": PaymentHistory,
 }
 
 export const pagesConfig = {

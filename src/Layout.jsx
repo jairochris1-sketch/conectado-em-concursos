@@ -176,14 +176,14 @@ const pageNameTranslations = {
 
 const featureAccess = {
   'Área de Estudos': ['gratuito', 'padrao', 'avancado'],
-  'Cronograma de Estudos': ['gratuito', 'padrao', 'avancado'],
-  'ChatGPT': ['gratuito', 'padrao', 'avancado'],
+  'Cronograma de Estudos': ['padrao', 'avancado'],
+  'ChatGPT': ['avancado'],
   'Criar Simulado': ['gratuito', 'padrao', 'avancado'],
   'Concursos Abertos': ['gratuito', 'padrao', 'avancado'],
-  'Lousa Digital': ['gratuito', 'padrao', 'avancado'],
+  'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['gratuito', 'padrao', 'avancado'],
-  'Simulados Digital': ['gratuito', 'padrao', 'avancado'],
-  'Resumos': ['gratuito', 'padrao', 'avancado']
+  'Simulados Digital': ['padrao', 'avancado'],
+  'Resumos': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
