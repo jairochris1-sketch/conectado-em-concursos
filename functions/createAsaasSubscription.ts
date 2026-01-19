@@ -24,10 +24,10 @@ Deno.serve(async (req) => {
         }
 
         const { plan, cycle = 'monthly', customerData } = requestData;
-        const asaasApiKey = Deno.env.get("ASSAS_API_KEY");
+        const asaasApiKey = Deno.env.get("ASAAS_API_KEY");
 
         if (!asaasApiKey) {
-            console.error('ASSAS_API_KEY não encontrada');
+            console.error('ASAAS_API_KEY não encontrada');
             return Response.json({ 
                 success: false,
                 message: 'Configuração do sistema incompleta'
