@@ -1155,6 +1155,7 @@ ${videoNotes}
                 </div>
               </>
             )}
+            )}
           </TabsContent>
 
           <TabsContent value="videos" className="mt-6">
