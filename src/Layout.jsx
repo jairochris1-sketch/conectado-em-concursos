@@ -25,7 +25,9 @@ import {
   Award,
   Pencil,
   ClipboardList,
-  BookOpen as BookOpenIcon, // Added for the new item
+  BookOpen as BookOpenIcon,
+  MessageSquare,
+  Activity,
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -79,6 +81,16 @@ const navigationItems = [
 ];
 
 const moreMenuItems = [
+  {
+    title: "Fórum da Comunidade",
+    url: createPageUrl("Community"),
+    icon: MessageSquare,
+  },
+  {
+    title: "Feed de Atividades",
+    url: createPageUrl("ActivityFeed"),
+    icon: Activity,
+  },
   {
     title: "Favoritas",
     url: createPageUrl("FavoriteQuestions"),
@@ -154,6 +166,8 @@ const pageNameTranslations = {
   SDAdmin: "Admin Simulados Digital",
   ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
+  Community: "Fórum da Comunidade",
+  ActivityFeed: "Feed de Atividades",
 };
 
 const featureAccess = {
@@ -167,6 +181,9 @@ const featureAccess = {
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
   'Resumos': ['avancado'],
+  'Ranking de Usuários': ['padrao', 'avancado'],
+  'Fórum da Comunidade': ['padrao', 'avancado'],
+  'Feed de Atividades': ['padrao', 'avancado'],
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
