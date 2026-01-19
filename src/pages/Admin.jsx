@@ -165,6 +165,7 @@ export default function AdminPage() {
           loadQuestions();
           loadWelcomeContent();
           loadFAQs();
+          loadInstitutions();
         } else {
           navigate(createPageUrl('Dashboard'));
         }
