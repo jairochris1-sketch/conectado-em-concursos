@@ -53,9 +53,9 @@ const plans = [
       'Fórum da Comunidade',
       'Ranking de Usuários',
       'Resumos de Disciplinas',
-      'Área de Estudos (PDFs e Materiais)',
     ],
     unavailableFeatures: [
+      'Área de Estudos',
       'Provas Completas',
       'Lousa Digital',
       'Questões inéditas',
