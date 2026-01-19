@@ -7,7 +7,8 @@ import {
   AlertTriangle,
   FileText,
   Plus,
-  Minus
+  Minus,
+  Clock
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -326,6 +327,13 @@ export default function Questions() {
                 A <Plus className="w-4 h-4 ml-1" />
               </Button>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <Clock className="w-5 h-5" />
+            </Button>
             <ThemeToggle />
           </div>
         </motion.div>
