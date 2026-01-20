@@ -76,7 +76,9 @@ Deno.serve(async (req) => {
             });
 
             if (!existingCustomerResponse.ok) {
-                throw new Error(`Erro ao buscar cliente: ${existingCustomerResponse.status}`);
+                const errorText = await existingCustomerResponse.text();
+                console.error(`Erro ao buscar cliente (${existingCustomerResponse.status}):`, errorText);
+                throw new Error(`Erro ao buscar cliente: ${existingCustomerResponse.status} - ${errorText}`);
             }
 
             const existingCustomerData = await existingCustomerResponse.json();
@@ -98,6 +100,8 @@ Deno.serve(async (req) => {
                     newCustomerData.phone = customerData.phone.replace(/\D/g, '');
                 }
 
+                console.log('Criando novo cliente:', JSON.stringify(newCustomerData, null, 2));
+
                 const customerResponse = await fetch('https://www.asaas.com/api/v3/customers', {
                     method: 'POST',
                     headers: {
@@ -108,17 +112,32 @@ Deno.serve(async (req) => {
                 });
 
                 if (!customerResponse.ok) {
-                    const errorData = await customerResponse.json();
-                    console.error('Erro ao criar cliente:', errorData);
-                    throw new Error('Falha ao registrar dados do cliente');
+                    const errorText = await customerResponse.text();
+                    console.error(`Erro ao criar cliente (${customerResponse.status}):`, errorText);
+                    
+                    let errorMessage = `Erro ao criar cliente (${customerResponse.status})`;
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        if (errorData.errors && errorData.errors.length > 0) {
+                            errorMessage += ': ' + errorData.errors.map(e => e.description || e.message || JSON.stringify(e)).join(', ');
+                        } else {
+                            errorMessage += ': ' + errorText;
+                        }
+                    } catch (jsonError) {
+                        errorMessage += ': ' + errorText;
+                    }
+                    
+                    throw new Error(errorMessage);
                 }
 
                 customer = await customerResponse.json();
                 console.log('Novo cliente criado:', customer.id);
             }
         } catch (customerError) {
-            console.error('Erro no processamento do cliente:', customerError);
-            return Response.json({ error: 'Erro ao processar dados do cliente' }, { status: 400 });
+            console.error('Erro no processamento do cliente:', customerError.message);
+            return Response.json({ 
+                error: customerError.message || 'Erro ao processar dados do cliente' 
+            }, { status: 400 });
         }
 
         // 2. Criar assinatura recorrente
@@ -209,7 +228,7 @@ Deno.serve(async (req) => {
             });
 
         } catch (subscriptionError) {
-            console.error('Erro na criação da assinatura:', subscriptionError);
+            console.error('Erro na criação da assinatura:', subscriptionError.message);
             return Response.json({ 
                 error: subscriptionError.message || 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
             }, { status: 400 });
