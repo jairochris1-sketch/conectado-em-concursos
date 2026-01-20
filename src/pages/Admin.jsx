@@ -26,6 +26,7 @@ import ArticleManager from '../components/admin/ArticleManager';
 import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
+import InstitutionManager from '../components/admin/InstitutionManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -102,6 +103,7 @@ const institutionNames = {
   objetiva: "Objetiva",
   iades: "IADES",
   itame: "ITAME",
+  consep: "CONSEP",
   outras: "Outras"
 };
 
@@ -122,7 +124,7 @@ const STATIC_SUBJECTS = [
 const STATIC_INSTITUTIONS = [
   'fcc', 'cespe', 'vunesp', 'fgv', 'cesgranrio', 'esaf', 'fundatec', 'consulplan',
   'idecan', 'aocp', 'quadrix', 'instituto_aocp', 'planejar', 'ibptec', 'amiga_publica',
-  'ibade', 'ibfc', 'objetiva', 'iades', 'itame', 'outras'
+  'ibade', 'ibfc', 'objetiva', 'iades', 'itame', 'consep', 'outras'
 ];
 
 export default function AdminPage() {
@@ -360,6 +362,10 @@ export default function AdminPage() {
               <Upload className="w-4 h-4 mr-2" />
               Importar
             </TabsTrigger>
+            <TabsTrigger value="bancas">
+              <Shield className="w-4 h-4 mr-2" />
+              Bancas
+            </TabsTrigger>
             <TabsTrigger value="provas">
               <Upload className="w-4 h-4 mr-2" />
               Provas
@@ -424,6 +430,10 @@ export default function AdminPage() {
 
           <TabsContent value="import">
             <QuestionImporter />
+          </TabsContent>
+
+          <TabsContent value="bancas">
+            <InstitutionManager />
           </TabsContent>
 
           <TabsContent value="provas">
