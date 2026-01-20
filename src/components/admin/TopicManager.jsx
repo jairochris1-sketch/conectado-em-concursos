@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { Topic } from '@/entities/Topic';
 import { Subject } from '@/entities/Subject';
 import { Cargo } from '@/entities/Cargo';
-import { Institution } from '@/entities/Institution';
 import { Question } from '@/entities/Question';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Trash2, Edit, PlusCircle, BookOpen, FileText, Briefcase, Building } from 'lucide-react';
+import { Trash2, Edit, PlusCircle, BookOpen, FileText, Briefcase } from 'lucide-react';
 
 const slugify = (text) =>
   text
@@ -29,23 +28,19 @@ export default function TopicManager() {
   const [subjects, setSubjects] = useState([]);
   const [customSubjects, setCustomSubjects] = useState([]);
   const [cargos, setCargos] = useState([]);
-  const [institutions, setInstitutions] = useState([]);
   const [editingTopic, setEditingTopic] = useState(null);
   const [editingSubject, setEditingSubject] = useState(null);
   const [editingCargo, setEditingCargo] = useState(null);
-  const [editingInstitution, setEditingInstitution] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('topics');
 
   const { register: registerTopic, handleSubmit: handleSubmitTopic, reset: resetTopic, setValue: setValueTopic, watch: watchTopic } = useForm();
   const { register: registerSubject, handleSubmit: handleSubmitSubject, reset: resetSubject, setValue: setValueSubject, watch: watchSubject } = useForm();
   const { register: registerCargo, handleSubmit: handleSubmitCargo, reset: resetCargo, setValue: setValueCargo, watch: watchCargo } = useForm();
-  const { register: registerInstitution, handleSubmit: handleSubmitInstitution, reset: resetInstitution, setValue: setValueInstitution, watch: watchInstitution } = useForm();
   
   const watchedTopicLabel = watchTopic('label');
   const watchedSubjectLabel = watchSubject('label');
   const watchedCargoLabel = watchCargo('label');
-  const watchedInstitutionLabel = watchInstitution('label');
 
   useEffect(() => {
     if (watchedTopicLabel && !editingTopic) {
@@ -66,23 +61,16 @@ export default function TopicManager() {
   }, [watchedCargoLabel, setValueCargo, editingCargo]);
 
   useEffect(() => {
-    if (watchedInstitutionLabel && !editingInstitution) {
-      setValueInstitution('value', slugify(watchedInstitutionLabel));
-    }
-  }, [watchedInstitutionLabel, setValueInstitution, editingInstitution]);
-
-  useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [topicsData, customSubjectsData, cargosData, institutionsData] = await Promise.all([
+      const [topicsData, customSubjectsData, cargosData] = await Promise.all([
         Topic.list(),
         Subject.list('order'),
-        Cargo.list('order'),
-        Institution.list('order')
+        Cargo.list('order')
       ]);
       
       // Remover duplicatas de topics
@@ -103,7 +91,6 @@ export default function TopicManager() {
       setTopics(uniqueTopicsArray);
       setCustomSubjects(customSubjectsData || []);
       setCargos(cargosData || []);
-      setInstitutions(institutionsData || []);
     } catch (error) {
       toast.error('Falha ao carregar dados.');
       console.error(error);
@@ -202,37 +189,6 @@ export default function TopicManager() {
     }
   };
 
-  const onSubmitInstitution = async (data) => {
-    try {
-      const existingInstitution = institutions.find(i => 
-        i.value === data.value && 
-        (!editingInstitution || i.id !== editingInstitution.id)
-      );
-      
-      if (existingInstitution) {
-        toast.error('Já existe uma banca com este valor.');
-        return;
-      }
-
-      if (editingInstitution) {
-        await Institution.update(editingInstitution.id, data);
-        toast.success('Banca atualizada com sucesso!');
-      } else {
-        await Institution.create({
-          ...data,
-          order: institutions.length
-        });
-        toast.success('Banca criada com sucesso!');
-      }
-      resetInstitution();
-      setEditingInstitution(null);
-      fetchData();
-    } catch (error) {
-      toast.error('Ocorreu um erro.');
-      console.error(error);
-    }
-  };
-
   const handleEditTopic = (topic) => {
     setEditingTopic(topic);
     setValueTopic('label', topic.label);
@@ -293,26 +249,6 @@ export default function TopicManager() {
     }
   };
 
-  const handleEditInstitution = (institution) => {
-    setEditingInstitution(institution);
-    setValueInstitution('label', institution.label);
-    setValueInstitution('value', institution.value);
-    setValueInstitution('order', institution.order || 0);
-  };
-
-  const handleDeleteInstitution = async (institutionId) => {
-    if (window.confirm('Tem certeza que deseja excluir esta banca? Isso não afetará as questões já cadastradas.')) {
-      try {
-        await Institution.delete(institutionId);
-        toast.success('Banca excluída.');
-        fetchData();
-      } catch (error) {
-        toast.error('Falha ao excluir a banca.');
-        console.error(error);
-      }
-    }
-  };
-
   const cancelEditTopic = () => {
     setEditingTopic(null);
     resetTopic();
@@ -328,11 +264,6 @@ export default function TopicManager() {
     resetCargo();
   };
 
-  const cancelEditInstitution = () => {
-    setEditingInstitution(null);
-    resetInstitution();
-  };
-
   const topicsBySubject = topics.reduce((acc, topic) => {
     (acc[topic.subject] = acc[topic.subject] || []).push(topic);
     return acc;
@@ -343,7 +274,7 @@ export default function TopicManager() {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-4 mb-6">
+      <TabsList className="grid w-full grid-cols-3 mb-6">
         <TabsTrigger value="topics">
           <FileText className="w-4 h-4 mr-2" />
           Assuntos
@@ -355,10 +286,6 @@ export default function TopicManager() {
         <TabsTrigger value="cargos">
           <Briefcase className="w-4 h-4 mr-2" />
           Cargos
-        </TabsTrigger>
-        <TabsTrigger value="institutions">
-          <Building className="w-4 h-4 mr-2" />
-          Bancas
         </TabsTrigger>
       </TabsList>
 
@@ -609,97 +536,6 @@ export default function TopicManager() {
                                 size="icon" 
                                 className="text-red-500 hover:text-red-600" 
                                 onClick={() => handleDeleteCargo(cargo.id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="institutions">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <PlusCircle className="w-5 h-5" />
-                  {editingInstitution ? 'Editar Banca' : 'Nova Banca'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmitInstitution(onSubmitInstitution)} className="space-y-4">
-                  <div>
-                    <Label htmlFor="institution-label">Nome da Banca</Label>
-                    <Input 
-                      id="institution-label" 
-                      {...registerInstitution('label', { required: true })} 
-                      placeholder="Ex: CESPE/CEBRASPE" 
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="institution-value">Valor (Automático)</Label>
-                    <Input 
-                      id="institution-value" 
-                      {...registerInstitution('value', { required: true })} 
-                      readOnly 
-                      placeholder="ex: cespe" 
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="institution-order">Ordem de Exibição</Label>
-                    <Input 
-                      id="institution-order" 
-                      type="number" 
-                      {...registerInstitution('order')} 
-                      placeholder="0" 
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit">{editingInstitution ? 'Salvar' : 'Criar'}</Button>
-                    {editingInstitution && <Button type="button" variant="outline" onClick={cancelEditInstitution}>Cancelar</Button>}
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="md:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bancas Cadastradas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? <p>Carregando...</p> : (
-                  <div className="space-y-2 max-h-[600px] overflow-y-auto">
-                    {institutions.length === 0 ? (
-                      <p className="text-gray-500 text-center py-8">Nenhuma banca cadastrada ainda.</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {institutions.map(institution => (
-                          <li key={institution.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                            <div className="flex-1">
-                              <p className="font-medium text-gray-800 dark:text-gray-200">{institution.label}</p>
-                              <p className="text-xs text-gray-500">{institution.value}</p>
-                              <p className="text-xs text-gray-400">Ordem: {institution.order || 0}</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button variant="ghost" size="icon" onClick={() => handleEditInstitution(institution)}>
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="text-red-500 hover:text-red-600" 
-                                onClick={() => handleDeleteInstitution(institution.id)}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
