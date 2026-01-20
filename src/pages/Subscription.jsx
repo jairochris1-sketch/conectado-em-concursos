@@ -66,13 +66,13 @@ const plans = [
       features: [
         'Questões ilimitadas',
         'Resumos de disciplinas',
+        'Área de Estudos (PDFs e Materiais)',
+        'Provas completas',
         'Estatísticas detalhadas',
         'Criação de Flashcards ilimitados',
         'Comentários da comunidade',
       ],
       unavailableFeatures: [
-        'Área de Estudos',
-        'Provas',
         'Questões inéditas',
       ],
     },
@@ -715,20 +715,22 @@ export default function SubscriptionPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-center justify-center">
-          {plans.map((plan) => (
-            <PlanCard
-              key={plan.name}
-              plan={plan}
-              currentPlan={currentSubscription}
-              onSubscribe={handleSubscribe}
-              isLoading={isSubmitting}
-              loadingPlan={loadingPlan}
-              onCancel={handleCancelSubscription}
-              isCancelling={isCancelling}
-              billingCycle={billingCycle}
-              cancelError={cancelError}
-            />
-          ))}
+          {plans
+            .filter(plan => !(plan.key === 'padrao' && billingCycle === 'annual'))
+            .map((plan) => (
+              <PlanCard
+                key={plan.name}
+                plan={plan}
+                currentPlan={currentSubscription}
+                onSubscribe={handleSubscribe}
+                isLoading={isSubmitting}
+                loadingPlan={loadingPlan}
+                onCancel={handleCancelSubscription}
+                isCancelling={isCancelling}
+                billingCycle={billingCycle}
+                cancelError={cancelError}
+              />
+            ))}
         </div>
 
         <motion.div
