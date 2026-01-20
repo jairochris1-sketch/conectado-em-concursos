@@ -312,6 +312,56 @@ export default function SubscriptionPage() {
   const [showPendingBanner, setShowPendingBanner] = useState(true);
   const [loading, setLoading] = useState(true);
   const [trialInfo, setTrialInfo] = useState(null);
+  const [cpfError, setCpfError] = useState('');
+
+  const validateCPF = (cpf) => {
+    const cleanCpf = cpf.replace(/\D/g, '');
+    
+    if (cleanCpf.length !== 11) return false;
+    if (/^(\d)\1+$/.test(cleanCpf)) return false;
+    
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cleanCpf.charAt(i)) * (10 - i);
+    }
+    let digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cleanCpf.charAt(9))) return false;
+    
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cleanCpf.charAt(i)) * (11 - i);
+    }
+    digit = 11 - (sum % 11);
+    if (digit >= 10) digit = 0;
+    if (digit !== parseInt(cleanCpf.charAt(10))) return false;
+    
+    return true;
+  };
+
+  const formatCPF = (value) => {
+    const cleanValue = value.replace(/\D/g, '');
+    if (cleanValue.length <= 3) return cleanValue;
+    if (cleanValue.length <= 6) return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3)}`;
+    if (cleanValue.length <= 9) return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3, 6)}.${cleanValue.slice(6)}`;
+    return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3, 6)}.${cleanValue.slice(6, 9)}-${cleanValue.slice(9, 11)}`;
+  };
+
+  const handleCPFChange = (value) => {
+    const formatted = formatCPF(value);
+    setMissingData(prev => ({ ...prev, cpf: formatted }));
+    
+    const cleanCpf = value.replace(/\D/g, '');
+    if (cleanCpf.length === 11) {
+      if (!validateCPF(cleanCpf)) {
+        setCpfError('CPF inválido. Verifique os números digitados.');
+      } else {
+        setCpfError('');
+      }
+    } else if (cleanCpf.length > 0) {
+      setCpfError('');
+    }
+  };
 
   useEffect(() => {
     const loadUserData = async () => {
