@@ -731,7 +731,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </header>
 
-      {user && <PlanAdvantagesBlock userPlan={user.current_plan} />}
+      <PlanAdvantagesBlock />
 
       <AnimatePresence>
         {showTrialBanner && trialNotification.show &&
