@@ -41,22 +41,60 @@ const plans = [
   {
     name: 'Padrão',
     key: 'padrao',
-    monthly: { price: '39,90', cycle: 'MONTHLY' },
-    semiannual: { price: '199,00', cycle: 'SEMIANNUALLY', originalPrice: '239,40', savings: '40,40', installments: '6x R$ 33,17' },
-    annual: { price: '399,00', cycle: 'YEARLY', originalPrice: '478,80', savings: '79,80' },
+    monthly: { 
+      price: '39,90', 
+      cycle: 'MONTHLY',
+      features: [
+        'Questões ilimitadas',
+        'Estatísticas detalhadas',
+        'Criação de Flashcards ilimitados',
+        'Comentários da comunidade',
+      ],
+      unavailableFeatures: [
+        'Resumos',
+        'Área de Estudos',
+        'Provas',
+        'Questões inéditas',
+      ],
+    },
+    semiannual: { 
+      price: '199,00', 
+      cycle: 'SEMIANNUALLY', 
+      originalPrice: '239,40', 
+      savings: '40,40', 
+      installments: '6x R$ 33,17',
+      features: [
+        'Questões ilimitadas',
+        'Resumos de disciplinas',
+        'Estatísticas detalhadas',
+        'Criação de Flashcards ilimitados',
+        'Comentários da comunidade',
+      ],
+      unavailableFeatures: [
+        'Área de Estudos',
+        'Provas',
+        'Questões inéditas',
+      ],
+    },
+    annual: { 
+      price: '399,00', 
+      cycle: 'YEARLY', 
+      originalPrice: '478,80', 
+      savings: '79,80',
+      features: [
+        'Questões ilimitadas',
+        'Resumos de disciplinas',
+        'Provas completas',
+        'Estatísticas detalhadas',
+        'Criação de Flashcards ilimitados',
+        'Comentários da comunidade',
+      ],
+      unavailableFeatures: [
+        'Área de Estudos',
+        'Questões inéditas',
+      ],
+    },
     buttonText: 'Assinar',
-    features: [
-      'Questões ilimitadas',
-      'Estatísticas detalhadas',
-      'Flashcards ilimitados',
-      'Comentários da comunidade',
-    ],
-    unavailableFeatures: [
-      'Resumos',
-      'Área de Estudos',
-      'Provas',
-      'Questões inéditas',
-    ],
     color: 'teal',
     highlight: false,
   },
@@ -73,7 +111,7 @@ const plans = [
       'Área de Estudos (PDFs e Materiais)',
       'Provas completas',
       'Estatísticas avançadas',
-      'Flashcards ilimitados',
+      'Criação de Flashcards ilimitados',
       'Questões inéditas',
       'Simulados personalizados',
       'Lousa Digital',
@@ -98,6 +136,20 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
   };
 
   const currentPricing = getCurrentPricing();
+  
+  const getFeatures = () => {
+    if (plan.key === 'padrao') {
+      return currentPricing.features || plan.features;
+    }
+    return plan.features;
+  };
+  
+  const getUnavailableFeatures = () => {
+    if (plan.key === 'padrao') {
+      return currentPricing.unavailableFeatures || plan.unavailableFeatures;
+    }
+    return plan.unavailableFeatures;
+  };
   const getPriceDetail = () => {
     switch(billingCycle) {
       case 'semiannual': return '/ semestre';
@@ -182,13 +234,13 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
             )}
           </div>
           <ul className="space-y-4">
-            {plan.features.map((feature, index) => (
+            {getFeatures().map((feature, index) => (
               <li key={index} className="flex items-center gap-3">
                 <Check className="w-5 h-5 text-teal-400" />
                 <span className="text-base">{feature}</span>
               </li>
             ))}
-            {plan.unavailableFeatures && plan.unavailableFeatures.map((feature, index) => (
+            {getUnavailableFeatures() && getUnavailableFeatures().map((feature, index) => (
               <li key={index} className="flex items-center gap-3 opacity-50">
                 <X className="w-5 h-5 text-gray-400" />
                 <span className="text-base line-through">{feature}</span>
