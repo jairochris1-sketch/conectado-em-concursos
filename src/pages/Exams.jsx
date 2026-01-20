@@ -15,8 +15,8 @@ import {
   Briefcase,
   Grid3x3,
   List,
-  LayoutGrid
-} from "lucide-react";
+  LayoutGrid } from
+"lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
@@ -81,15 +81,15 @@ export default function Exams() {
       setIsLoading(true);
       try {
         const questionsData = await Question.list("-created_date", 5000);
-        
-        const groupedExams = _.groupBy(questionsData, q => 
-          `${q.institution}|${q.year}|${q.exam_name}|${q.cargo || 'N/A'}`
+
+        const groupedExams = _.groupBy(questionsData, (q) =>
+        `${q.institution}|${q.year}|${q.exam_name}|${q.cargo || 'N/A'}`
         );
 
-        const examsList = Object.values(groupedExams).map(examQuestions => {
+        const examsList = Object.values(groupedExams).map((examQuestions) => {
           const firstQuestion = examQuestions[0];
-          const subjects = [...new Set(examQuestions.map(q => q.subject))];
-          
+          const subjects = [...new Set(examQuestions.map((q) => q.subject))];
+
           return {
             id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
             institution: firstQuestion.institution,
@@ -97,7 +97,7 @@ export default function Exams() {
             exam_name: firstQuestion.exam_name,
             cargo: firstQuestion.cargo || 'Cargo não especificado',
             subjects: subjects,
-            question_count: examQuestions.length,
+            question_count: examQuestions.length
           };
         }).sort((a, b) => b.year - a.year || a.exam_name.localeCompare(b.exam_name));
 
@@ -117,31 +117,31 @@ export default function Exams() {
 
     if (searchTerm) {
       const lowercasedTerm = searchTerm.toLowerCase();
-      filtered = filtered.filter(exam => 
-        exam.exam_name.toLowerCase().includes(lowercasedTerm) ||
-        exam.cargo.toLowerCase().includes(lowercasedTerm)
+      filtered = filtered.filter((exam) =>
+      exam.exam_name.toLowerCase().includes(lowercasedTerm) ||
+      exam.cargo.toLowerCase().includes(lowercasedTerm)
       );
     }
 
     if (filters.institution !== "all") {
-      filtered = filtered.filter(exam => exam.institution === filters.institution);
+      filtered = filtered.filter((exam) => exam.institution === filters.institution);
     }
 
     if (filters.year !== "all") {
-      filtered = filtered.filter(exam => exam.year.toString() === filters.year);
+      filtered = filtered.filter((exam) => exam.year.toString() === filters.year);
     }
 
     if (filters.subject !== "all") {
-      filtered = filtered.filter(exam => exam.subjects.includes(filters.subject));
+      filtered = filtered.filter((exam) => exam.subjects.includes(filters.subject));
     }
 
     setFilteredExams(filtered);
   }, [exams, searchTerm, filters]);
 
   const uniqueValues = useMemo(() => {
-    const institutions = [...new Set(exams.map(e => e.institution))].filter(Boolean).sort();
-    const years = [...new Set(exams.map(e => e.year))].filter(Boolean).sort((a, b) => b - a);
-    const subjects = [...new Set(exams.flatMap(e => e.subjects))].filter(Boolean).sort();
+    const institutions = [...new Set(exams.map((e) => e.institution))].filter(Boolean).sort();
+    const years = [...new Set(exams.map((e) => e.year))].filter(Boolean).sort((a, b) => b - a);
+    const subjects = [...new Set(exams.flatMap((e) => e.subjects))].filter(Boolean).sort();
     return { institutions, years, subjects };
   }, [exams]);
 
@@ -152,8 +152,8 @@ export default function Exams() {
           <BookCopy className="w-12 h-12 animate-bounce text-blue-600 mx-auto mb-4" />
           <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando provas...</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -162,8 +162,8 @@ export default function Exams() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
+          className="mb-8">
+
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Provas de Concursos Públicos
           </h1>
@@ -187,8 +187,8 @@ export default function Exams() {
                   size="sm"
                   onClick={() => setViewMode('grid')}
                   className={viewMode === 'grid' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                  title="Grade"
-                >
+                  title="Grade">
+
                   <Grid3x3 className="w-4 h-4" />
                 </Button>
                 <Button
@@ -196,8 +196,8 @@ export default function Exams() {
                   size="sm"
                   onClick={() => setViewMode('list')}
                   className={viewMode === 'list' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                  title="Lista"
-                >
+                  title="Lista">
+
                   <List className="w-4 h-4" />
                 </Button>
                 <Button
@@ -205,8 +205,8 @@ export default function Exams() {
                   size="sm"
                   onClick={() => setViewMode('compact')}
                   className={viewMode === 'compact' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-                  title="Compacto"
-                >
+                  title="Compacto">
+
                   <LayoutGrid className="w-4 h-4" />
                 </Button>
               </div>
@@ -220,49 +220,49 @@ export default function Exams() {
                   placeholder="Buscar prova ou cargo..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+                  className="pl-10" />
+
               </div>
               
-              <Select value={filters.institution} onValueChange={(value) => setFilters(prev => ({...prev, institution: value}))}>
+              <Select value={filters.institution} onValueChange={(value) => setFilters((prev) => ({ ...prev, institution: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todas as Bancas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as Bancas</SelectItem>
-                  {uniqueValues.institutions.map(inst => (
-                    <SelectItem key={inst} value={inst}>
+                  {uniqueValues.institutions.map((inst) =>
+                  <SelectItem key={inst} value={inst}>
                       {institutionNames[inst] || inst.toUpperCase()}
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
 
-              <Select value={filters.year} onValueChange={(value) => setFilters(prev => ({...prev, year: value}))}>
+              <Select value={filters.year} onValueChange={(value) => setFilters((prev) => ({ ...prev, year: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todos os Anos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Anos</SelectItem>
-                  {uniqueValues.years.map(year => (
-                    <SelectItem key={year} value={year.toString()}>
+                  {uniqueValues.years.map((year) =>
+                  <SelectItem key={year} value={year.toString()}>
                       {year}
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
 
-              <Select value={filters.subject} onValueChange={(value) => setFilters(prev => ({...prev, subject: value}))}>
+              <Select value={filters.subject} onValueChange={(value) => setFilters((prev) => ({ ...prev, subject: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todas as Disciplinas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as Disciplinas</SelectItem>
-                  {uniqueValues.subjects.map(subject => (
-                    <SelectItem key={subject} value={subject}>
-                      {subjectNames[subject] || subject.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                  {uniqueValues.subjects.map((subject) =>
+                  <SelectItem key={subject} value={subject}>
+                      {subjectNames[subject] || subject.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -271,13 +271,13 @@ export default function Exams() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {filteredExams.length} {filteredExams.length === 1 ? 'prova encontrada' : 'provas encontradas'}
               </p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setSearchTerm("");
                   setFilters({ institution: "all", year: "all", subject: "all" });
-                }}
-              >
+                }}>
+
                 Limpar Filtros
               </Button>
             </div>
@@ -286,22 +286,22 @@ export default function Exams() {
 
         {/* Lista de Provas */}
         <div className={
-          viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
-          viewMode === 'list' ? 'space-y-4' :
-          'grid grid-cols-1 md:grid-cols-2 gap-3'
+        viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
+        viewMode === 'list' ? 'space-y-4' :
+        'grid grid-cols-1 md:grid-cols-2 gap-3'
         }>
-          {filteredExams.map((exam, index) => (
-            <motion.div
-              key={exam.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-            >
-              <Link 
-                to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
-              >
-                {viewMode === 'grid' ? (
-                  <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
+          {filteredExams.map((exam, index) =>
+          <motion.div
+            key={exam.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.03 }}>
+
+              <Link
+              to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}>
+
+                {viewMode === 'grid' ?
+              <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
                         {exam.exam_name}
@@ -327,12 +327,12 @@ export default function Exams() {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
-                ) : viewMode === 'list' ? (
-                  <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
+                  </Card> :
+              viewMode === 'list' ?
+              <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="text-lg font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
+                        <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
                           {exam.exam_name}
                         </p>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -356,9 +356,9 @@ export default function Exams() {
                       </div>
                       <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
                     </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
+                  </Card> :
+
+              <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-3">
                       <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 mb-2">
                         {exam.exam_name}
@@ -375,14 +375,14 @@ export default function Exams() {
                       </div>
                     </CardContent>
                   </Card>
-                )}
+              }
               </Link>
             </motion.div>
-          ))}
+          )}
         </div>
 
-        {filteredExams.length === 0 && !isLoading && (
-          <div className="text-center py-16">
+        {filteredExams.length === 0 && !isLoading &&
+        <div className="text-center py-16">
             <BookCopy className="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Nenhuma prova encontrada
@@ -391,8 +391,8 @@ export default function Exams() {
               Tente ajustar os filtros para encontrar o que procura.
             </p>
           </div>
-        )}
+        }
       </div>
-    </div>
-  );
+    </div>);
+
 }
