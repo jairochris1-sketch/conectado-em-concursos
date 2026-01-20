@@ -5,16 +5,17 @@ import { X, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function PlanAdvantagesBlock({ userPlan }) {
+export default function PlanAdvantagesBlock({ userPlan, hasActiveSubscription }) {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
-  // Só mostra se o usuário estiver no plano gratuito
-  if (userPlan !== 'gratuito') return null;
-  if (!isVisible) return null;
+  // Só mostra se o usuário estiver no plano gratuito e não tiver assinatura ativa
+  const shouldShow = userPlan === 'gratuito' || (!hasActiveSubscription && userPlan !== 'avancado' && userPlan !== 'padrao');
+  
+  if (!shouldShow || !isVisible) return null;
 
   return (
     <AnimatePresence>
