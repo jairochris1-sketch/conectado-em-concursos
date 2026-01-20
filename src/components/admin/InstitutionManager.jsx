@@ -85,6 +85,9 @@ export default function InstitutionManager() {
     
     setNewInstitution({ key: '', name: '' });
     loadInstitutions();
+    
+    // Disparar evento para atualizar outras partes do sistema
+    window.dispatchEvent(new Event('institutionsUpdated'));
   };
 
   const handleDeleteInstitution = (key) => {
@@ -102,6 +105,9 @@ export default function InstitutionManager() {
       
       toast.success('Banca removida com sucesso!');
       loadInstitutions();
+      
+      // Disparar evento para atualizar outras partes do sistema
+      window.dispatchEvent(new Event('institutionsUpdated'));
     }
   };
 

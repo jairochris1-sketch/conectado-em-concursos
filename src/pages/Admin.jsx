@@ -155,10 +155,19 @@ export default function AdminPage() {
   });
   
   const [allInstitutions, setAllInstitutions] = useState(() => {
-    const institutions = STATIC_INSTITUTIONS.map(key => ({
+    // Carregar instituições personalizadas do localStorage
+    const savedInstitutions = localStorage.getItem('custom_institutions');
+    const customInstitutions = savedInstitutions ? JSON.parse(savedInstitutions) : {};
+    
+    // Combinar instituições padrão com personalizadas
+    const allInstitutionNames = { ...institutionNames, ...customInstitutions };
+    
+    // Mapear todas as instituições
+    const institutions = Object.keys(allInstitutionNames).map(key => ({
       id: key,
-      name: institutionNames[key] || key.toUpperCase()
+      name: allInstitutionNames[key] || key.toUpperCase()
     }));
+    
     institutions.sort((a, b) => a.name.localeCompare(b.name));
     return institutions;
   });
@@ -170,6 +179,7 @@ export default function AdminPage() {
         const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
         if (adminEmails.includes(user.email)) {
           setIsAdmin(true);
+          loadInstitutions();
           loadQuestions();
           loadWelcomeContent();
           loadFAQs();
@@ -182,7 +192,32 @@ export default function AdminPage() {
       setIsLoading(false);
     };
     checkAdmin();
+    
+    // Adicionar listener para atualizar instituições quando houver mudanças
+    const handleInstitutionsUpdate = () => {
+      loadInstitutions();
+    };
+    window.addEventListener('institutionsUpdated', handleInstitutionsUpdate);
+    
+    return () => {
+      window.removeEventListener('institutionsUpdated', handleInstitutionsUpdate);
+    };
   }, [navigate]);
+
+  const loadInstitutions = () => {
+    const savedInstitutions = localStorage.getItem('custom_institutions');
+    const customInstitutions = savedInstitutions ? JSON.parse(savedInstitutions) : {};
+    
+    const allInstitutionNames = { ...institutionNames, ...customInstitutions };
+    
+    const institutions = Object.keys(allInstitutionNames).map(key => ({
+      id: key,
+      name: allInstitutionNames[key] || key.toUpperCase()
+    }));
+    
+    institutions.sort((a, b) => a.name.localeCompare(b.name));
+    setAllInstitutions(institutions);
+  };
 
   const loadQuestions = async () => {
     setIsDataLoading(true);
