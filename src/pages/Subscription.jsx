@@ -564,10 +564,14 @@ export default function SubscriptionPage() {
                       type="text"
                       placeholder="000.000.000-00"
                       value={missingData.cpf}
-                      onChange={(e) => setMissingData(prev => ({ ...prev, cpf: e.target.value }))}
+                      onChange={(e) => handleCPFChange(e.target.value)}
+                      maxLength={14}
                       required
-                      className="bg-gray-600 border-gray-500 text-white placeholder-gray-400 mt-1"
+                      className={`bg-gray-600 border-gray-500 text-white placeholder-gray-400 mt-1 ${cpfError ? 'border-red-500' : ''}`}
                     />
+                    {cpfError && (
+                      <p className="text-red-400 text-sm mt-1">{cpfError}</p>
+                    )}
                   </div>
                 )}
                 
