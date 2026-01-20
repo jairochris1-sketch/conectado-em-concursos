@@ -788,12 +788,10 @@ export default function QuestionList({
                     {question.explanation && (
                       <button 
                         onClick={() => toggleExplanation(question.id)}
-                        className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm relative`}
+                        className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm font-medium`}
                       >
                         <Lightbulb className="w-4 h-4" />
-                        <span className="hidden sm:inline">Gabarito Comentado</span>
-                        <span className="sm:hidden">Gabarito</span>
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span>Gabarito Comentado</span>
                       </button>
                     )}
 
