@@ -47,6 +47,7 @@ import NotificationDropdown from './components/notifications/NotificationDropdow
 import { ThemeToggle } from './components/ui/theme-toggle';
 import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
+import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 
 const navigationItems = [
 {
@@ -729,6 +730,8 @@ export default function Layout({ children, currentPageName }) {
           </DropdownMenu>
         </div>
       </header>
+
+      <PlanAdvantagesBlock />
 
       <AnimatePresence>
         {showTrialBanner && trialNotification.show &&

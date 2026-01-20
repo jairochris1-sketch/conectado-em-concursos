@@ -1,4 +1,5 @@
 import ActivityFeed from './pages/ActivityFeed';
+import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import ChatGPT from './pages/ChatGPT';
 import Community from './pages/Community';
@@ -26,12 +27,12 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Admin from './pages/Admin';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ActivityFeed": ActivityFeed,
+    "Admin": Admin,
     "AssistirAula": AssistirAula,
     "ChatGPT": ChatGPT,
     "Community": Community,
@@ -59,7 +60,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Admin": Admin,
 }
 
 export const pagesConfig = {
