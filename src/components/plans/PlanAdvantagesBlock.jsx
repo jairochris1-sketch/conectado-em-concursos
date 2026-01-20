@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { X, Star, Zap, TrendingUp } from 'lucide-react';
+import { X, BookOpen, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -44,8 +44,8 @@ export default function PlanAdvantagesBlock() {
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div className="hidden md:flex flex-shrink-0 items-center justify-center w-20 h-20 bg-white/20 rounded-lg backdrop-blur-sm">
                   <div className="relative">
-                    <Star className="w-10 h-10 text-yellow-300" fill="currentColor" />
-                    <Zap className="w-5 h-5 text-yellow-400 absolute -bottom-1 -right-1" />
+                    <BookOpen className="w-10 h-10 text-white" />
+                    <Pencil className="w-5 h-5 text-yellow-300 absolute -bottom-1 -right-1" />
                   </div>
                 </div>
 
