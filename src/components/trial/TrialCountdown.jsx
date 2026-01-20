@@ -1,24 +1,28 @@
-import React from 'react';
-import { Clock, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { Clock, Sparkles, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TrialCountdown({ daysRemaining, totalDays }) {
-  if (!daysRemaining || daysRemaining <= 0) return null;
+  const [isVisible, setIsVisible] = useState(true);
+  
+  if (!daysRemaining || daysRemaining <= 0 || !isVisible) return null;
 
   const progressPercentage = ((totalDays - daysRemaining) / totalDays) * 100;
   const isLastDay = daysRemaining === 1;
   const isUrgent = daysRemaining <= 3;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 ${
-        isUrgent ? 'animate-pulse' : ''
-      }`}
-    >
-      <div
-        className={`rounded-2xl shadow-2xl p-4 min-w-[280px] border-2 ${
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className={`fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 ${
+          isUrgent ? 'animate-pulse' : ''
+        }`}
+      >
+        <div
+          className={`rounded-xl shadow-xl p-3 w-[240px] border-2 ${
           isLastDay
             ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-300'
             : isUrgent
@@ -26,9 +30,9 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
             : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300'
         }`}
       >
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2">
           <div
-            className={`p-2 rounded-full ${
+            className={`p-1.5 rounded-full ${
               isLastDay
                 ? 'bg-red-100'
                 : isUrgent
@@ -38,17 +42,17 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
           >
             {isUrgent ? (
               <Clock
-                className={`w-5 h-5 ${
+                className={`w-4 h-4 ${
                   isLastDay ? 'text-red-600' : 'text-amber-600'
                 }`}
               />
             ) : (
-              <Sparkles className="w-5 h-5 text-blue-600" />
+              <Sparkles className="w-4 h-4 text-blue-600" />
             )}
           </div>
           <div className="flex-1">
             <h3
-              className={`text-sm font-bold mb-1 ${
+              className={`text-xs font-bold mb-0.5 ${
                 isLastDay
                   ? 'text-red-800'
                   : isUrgent
@@ -57,11 +61,11 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
               }`}
             >
               {isLastDay
-                ? '⚠️ Último dia de teste!'
-                : '🎯 Teste Gratuito Ativo'}
+                ? 'Teste Gratuito Ativo'
+                : 'Teste Gratuito Ativo'}
             </h3>
             <p
-              className={`text-xs mb-2 ${
+              className={`text-xs mb-1.5 ${
                 isLastDay
                   ? 'text-red-700'
                   : isUrgent
@@ -69,14 +73,14 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
                   : 'text-blue-700'
               }`}
             >
-              <strong className="text-base">
+              <strong className="text-sm">
                 {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'}
               </strong>{' '}
               restante{daysRemaining !== 1 && 's'}
             </p>
-            <div className="w-full bg-white/50 rounded-full h-2 mb-2">
+            <div className="w-full bg-white/50 rounded-full h-1.5 mb-1.5">
               <div
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 ${
                   isLastDay
                     ? 'bg-gradient-to-r from-red-500 to-orange-500'
                     : isUrgent
@@ -98,8 +102,22 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
               Plano Avançado
             </p>
           </div>
+          <button
+            onClick={() => setIsVisible(false)}
+            className={`p-1 rounded-full hover:bg-white/50 transition-colors ${
+              isLastDay
+                ? 'text-red-600'
+                : isUrgent
+                ? 'text-amber-600'
+                : 'text-blue-600'
+            }`}
+            aria-label="Fechar"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </motion.div>
+    </AnimatePresence>
   );
 }
