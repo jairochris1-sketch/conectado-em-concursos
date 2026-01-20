@@ -229,6 +229,7 @@ export default function Layout({ children, currentPageName }) {
     todayQuestions: 0,
     accuracy: 0
   });
+  const [trialInfo, setTrialInfo] = useState(null);
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
@@ -298,13 +299,32 @@ export default function Layout({ children, currentPageName }) {
             userData = { ...userData, current_plan: 'gratuito' };
             setUser(userData);
             setTrialNotification({ show: false, days: 0 });
+            setTrialInfo(null);
           } else if (daysRemaining > 0 && daysRemaining <= 3) {
             setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
+            setTrialInfo({
+              daysRemaining: Math.ceil(daysRemaining),
+              totalDays: trialDuration
+            });
+            
+            // Mostrar modal no último dia (apenas uma vez por sessão)
+            if (Math.ceil(daysRemaining) === 1) {
+              const hasSeenModal = sessionStorage.getItem('lastDayModalSeen');
+              if (!hasSeenModal) {
+                setShowLastDayModal(true);
+                sessionStorage.setItem('lastDayModalSeen', 'true');
+              }
+            }
           } else {
             setTrialNotification({ show: false, days: 0 });
+            setTrialInfo({
+              daysRemaining: Math.ceil(daysRemaining),
+              totalDays: trialDuration
+            });
           }
         } else {
           setTrialNotification({ show: false, days: 0 });
+          setTrialInfo(null);
         }
 
         const userPlan = userData.current_plan || 'gratuito';
