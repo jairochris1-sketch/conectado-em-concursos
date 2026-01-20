@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
             console.warn('Aviso: Erro ao limpar assinaturas pendentes:', cleanupError);
         }
 
-        // Definir valores dos planos - CORRIGIDO
+        // Definir valores dos planos
         const planPrices = {
             padrao: {
                 monthly: 39.90,
@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
 
         const price = planPrices[plan][cycle];
         
-        // Mapear ciclos corretamente - CORRIGIDO
+        // Mapear ciclos corretamente
         let asaasCycle;
         switch(cycle) {
             case 'annual': 
@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
                 description: `Conectado em Concursos - ${plan.charAt(0).toUpperCase() + plan.slice(1)} ${cycle === 'annual' ? 'Anual' : cycle === 'semiannual' ? 'Semestral' : 'Mensal'}`
             };
 
-            console.log('Dados da assinatura para Asaas:', subscriptionData);
+            console.log('Dados da assinatura para Asaas:', JSON.stringify(subscriptionData, null, 2));
 
             const subscriptionResponse = await fetch('https://www.asaas.com/api/v3/subscriptions', {
                 method: 'POST',
@@ -144,9 +144,22 @@ Deno.serve(async (req) => {
             });
 
             if (!subscriptionResponse.ok) {
-                const errorData = await subscriptionResponse.json();
-                console.error('Erro detalhado do Asaas:', errorData);
-                throw new Error(`Erro HTTP ${subscriptionResponse.status}: ${JSON.stringify(errorData)}`);
+                const errorText = await subscriptionResponse.text();
+                console.error('Erro detalhado do Asaas (status ' + subscriptionResponse.status + '):', errorText);
+                
+                let errorMessage = `Erro HTTP ${subscriptionResponse.status}`;
+                try {
+                    const errorData = JSON.parse(errorText);
+                    if (errorData.errors && errorData.errors.length > 0) {
+                        errorMessage += ': ' + errorData.errors.map(e => e.description || e.message || JSON.stringify(e)).join(', ');
+                    } else {
+                        errorMessage += ': ' + errorText;
+                    }
+                } catch (jsonError) {
+                    errorMessage += ': ' + errorText;
+                }
+                
+                throw new Error(errorMessage);
             }
 
             const subscription = await subscriptionResponse.json();
@@ -198,14 +211,14 @@ Deno.serve(async (req) => {
         } catch (subscriptionError) {
             console.error('Erro na criação da assinatura:', subscriptionError);
             return Response.json({ 
-                error: 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
+                error: subscriptionError.message || 'Falha ao processar assinatura. Verifique seus dados e tente novamente.' 
             }, { status: 400 });
         }
 
     } catch (error) {
         console.error("Erro geral:", error);
         return Response.json({ 
-            error: 'Erro interno do servidor. Tente novamente em alguns minutos.' 
+            error: error.message || 'Erro interno do servidor. Tente novamente em alguns minutos.' 
         }, { status: 500 });
     }
 });

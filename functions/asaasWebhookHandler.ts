@@ -6,12 +6,12 @@ Deno.serve(async (req) => {
         
         const webhookData = await req.json();
         
-        // Validação do webhook token (Asaas envia no corpo da requisição)
+        // Validação do webhook token (Asaas envia no header "Asaas-Access-Token")
         const asaasWebhookSecret = Deno.env.get("ASAAS_WEBHOOK_SECRET");
-        const receivedToken = webhookData.token || req.headers.get("asaas-access-token");
+        const receivedToken = req.headers.get("Asaas-Access-Token") || req.headers.get("asaas-access-token");
 
         if (asaasWebhookSecret && receivedToken !== asaasWebhookSecret) {
-            console.error("Token de webhook inválido");
+            console.error("Token de webhook inválido. Recebido:", receivedToken ? "***" : "null");
             return Response.json({ error: "Acesso não autorizado" }, { status: 401 });
         }
         console.log("Webhook recebido:", JSON.stringify(webhookData, null, 2));
