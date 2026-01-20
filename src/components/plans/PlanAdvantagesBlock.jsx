@@ -1,29 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { X, Star, Zap, TrendingUp } from 'lucide-react';
+import { X, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function PlanAdvantagesBlock() {
+export default function PlanAdvantagesBlock({ userPlan }) {
   const [isVisible, setIsVisible] = useState(true);
-  const [isDismissed, setIsDismissed] = useState(false);
-
-  useEffect(() => {
-    const dismissed = localStorage.getItem('planAdvantagesDismissed');
-    if (dismissed) {
-      setIsVisible(false);
-      setIsDismissed(true);
-    }
-  }, []);
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem('planAdvantagesDismissed', 'true');
-    setIsDismissed(true);
   };
 
-  if (isDismissed) return null;
+  // Só mostra se o usuário estiver no plano gratuito
+  if (userPlan !== 'gratuito') return null;
+  if (!isVisible) return null;
 
   return (
     <AnimatePresence>
