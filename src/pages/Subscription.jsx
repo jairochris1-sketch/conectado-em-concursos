@@ -461,15 +461,14 @@ export default function SubscriptionPage() {
       });
 
       if (response.data.success) {
-        window.open(response.data.payment_url, '_blank');
-        setShowPendingBanner(true);
-        loadUserData();
+        // Redirecionar para a página de pagamento do Asaas
+        window.location.href = response.data.payment_url;
       } else {
         throw new Error(response.data.error || 'Erro ao processar assinatura');
       }
     } catch (error) {
       console.error('Erro ao criar assinatura:', error);
-      alert('Erro ao processar assinatura. Tente novamente.');
+      alert(`Erro ao processar assinatura: ${error.message || 'Tente novamente.'}`);
     }
 
     setIsSubmitting(false);
