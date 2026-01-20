@@ -45,6 +45,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import NotificationDropdown from './components/notifications/NotificationDropdown';
 import { ThemeToggle } from './components/ui/theme-toggle';
+import TrialCountdown from './components/trial/TrialCountdown';
+import LastDayModal from './components/trial/LastDayModal';
 
 const navigationItems = [
 {
@@ -220,6 +222,7 @@ export default function Layout({ children, currentPageName }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [trialNotification, setTrialNotification] = useState({ show: false, days: 0 });
   const [showTrialBanner, setShowTrialBanner] = useState(true);
+  const [showLastDayModal, setShowLastDayModal] = useState(false);
 
   const [sidebarStats, setSidebarStats] = React.useState({
     streak: 0,
@@ -833,6 +836,19 @@ export default function Layout({ children, currentPageName }) {
           </motion.div>
         }
       </AnimatePresence>
+
+      {trialInfo && trialInfo.daysRemaining > 0 && (
+        <TrialCountdown 
+          daysRemaining={trialInfo.daysRemaining}
+          totalDays={trialInfo.totalDays}
+        />
+      )}
+
+      <LastDayModal 
+        isOpen={showLastDayModal}
+        onClose={() => setShowLastDayModal(false)}
+        daysRemaining={trialInfo?.daysRemaining || 0}
+      />
     </div>);
 
 }

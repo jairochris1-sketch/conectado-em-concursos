@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/entities/User';
 import { UserAnswer } from '@/entities/UserAnswer';
+import { Subscription } from '@/entities/Subscription';
 
 export function useQuestionLimit() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [questionsAnsweredToday, setQuestionsAnsweredToday] = useState(0);
   const [userPlan, setUserPlan] = useState('gratuito');
   const [loading, setLoading] = useState(true);
+  const [isInTrial, setIsInTrial] = useState(false);
 
-  const DAILY_LIMIT = 10;
+  const DAILY_LIMIT_FREE = 10;
+  const DAILY_LIMIT_TRIAL = 5;
 
   useEffect(() => {
     const checkLimit = async () => {
@@ -24,8 +27,19 @@ export function useQuestionLimit() {
           return;
         }
 
-        // Apenas planos gratuitos têm limite
-        if (plan !== 'gratuito') {
+        // Verificar se está em teste gratuito (plano avançado sem assinatura ativa)
+        let inTrial = false;
+        if (plan === 'avancado' && user.trial_start_date) {
+          const activeSubscriptions = await Subscription.filter({ 
+            user_email: user.email, 
+            status: 'active' 
+          });
+          inTrial = activeSubscriptions.length === 0;
+        }
+        setIsInTrial(inTrial);
+
+        // Planos pagos (não teste) não têm limite
+        if ((plan === 'padrao' || plan === 'avancado') && !inTrial) {
           setIsBlocked(false);
           setLoading(false);
           return;
@@ -46,7 +60,10 @@ export function useQuestionLimit() {
 
         const count = todayAnswers.length;
         setQuestionsAnsweredToday(count);
-        setIsBlocked(count >= DAILY_LIMIT);
+        
+        // Aplicar limite baseado no tipo de plano
+        const limit = inTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
+        setIsBlocked(count >= limit);
         setLoading(false);
       } catch (error) {
         console.error('Erro ao verificar limite de questões:', error);
@@ -60,18 +77,25 @@ export function useQuestionLimit() {
   const incrementCount = () => {
     const newCount = questionsAnsweredToday + 1;
     setQuestionsAnsweredToday(newCount);
-    if (userPlan === 'gratuito' && newCount >= DAILY_LIMIT) {
+    
+    const limit = isInTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
+    if ((userPlan === 'gratuito' || isInTrial) && newCount >= limit) {
       setIsBlocked(true);
     }
+  };
+
+  const getDailyLimit = () => {
+    return isInTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
   };
 
   return {
     isBlocked,
     questionsAnsweredToday,
-    dailyLimit: DAILY_LIMIT,
+    dailyLimit: getDailyLimit(),
     userPlan,
     loading,
     incrementCount,
-    remainingQuestions: Math.max(0, DAILY_LIMIT - questionsAnsweredToday)
+    isInTrial,
+    remainingQuestions: Math.max(0, getDailyLimit() - questionsAnsweredToday)
   };
 }
