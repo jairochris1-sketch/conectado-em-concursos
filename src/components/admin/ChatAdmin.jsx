@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Trash2, Check, MessageSquare, Bell, Send, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { NotificationManager } from '@/components/NotificationManager';
 
 export default function ChatAdmin() {
   const [messages, setMessages] = useState([]);
@@ -121,6 +122,8 @@ export default function ChatAdmin() {
 
     setIsSendingReply(true);
     try {
+      const visitorMessage = messages.find(m => m.id === messageId);
+      
       await base44.entities.ChatReply.create({
         message_id: messageId,
         reply_text: replyText,
@@ -128,6 +131,12 @@ export default function ChatAdmin() {
       });
       setReplyText('');
       toast.success('Resposta enviada!');
+
+      // Notificar o visitante via web push (simulado para browsers que suportam)
+      // A notificação real será acionada pelo subscription do ChatReply no ChatWidget
+      if (visitorMessage) {
+        console.log(`Notificação enviada para ${visitorMessage.visitor_name}`);
+      }
     } catch (error) {
       console.error('Erro ao enviar resposta:', error);
       toast.error('Erro ao enviar resposta');
