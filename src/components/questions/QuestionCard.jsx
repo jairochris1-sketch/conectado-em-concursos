@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
@@ -170,27 +171,27 @@ export default function QuestionCard({
               <div
                 key={index}
                 className={cn(
-                  "flex items-start space-x-3 p-4 md:p-3 rounded-lg border-2 transition-all duration-200 min-h-[56px] active:scale-[0.98]",
+                  "flex items-start space-x-3 p-4 rounded-lg border-2 transition-all duration-200",
                   "bg-white dark:bg-gray-800",
                   userAnswer === option.letter && !isSubmitted && "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20",
                   isSubmitted && option.letter === question.correct_answer && "border-green-500 bg-green-50 dark:bg-green-900/20",
                   isSubmitted && option.letter === userAnswer && option.letter !== question.correct_answer && "border-red-500 bg-red-50 dark:bg-red-900/20",
-                  !userAnswer && !isSubmitted && "border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  !userAnswer && !isSubmitted && "border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                 )}
               >
-                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} className="mt-1" />
+                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} />
                 <Label
                   htmlFor={`q${question.id}-${option.letter}`}
-                  className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200 text-base leading-relaxed py-1"
+                  className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200"
                 >
                   <span className="font-semibold mr-2">{option.letter})</span>
                   {option.text}
                 </Label>
                 {isSubmitted && option.letter === question.correct_answer && (
-                  <CheckCircle className="w-6 h-6 md:w-5 md:h-5 text-green-600 flex-shrink-0 mt-1" />
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                 )}
                 {isSubmitted && option.letter === userAnswer && option.letter !== question.correct_answer && (
-                  <XCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0 mt-1" />
+                  <XCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
                 )}
               </div>
             ))}
@@ -201,7 +202,7 @@ export default function QuestionCard({
             <Button
               onClick={handleSubmit}
               disabled={!userAnswer}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 md:py-3 mt-6 text-base md:text-sm min-h-[48px] active:scale-[0.98] transition-transform"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 mt-6"
             >
               Confirmar Resposta
             </Button>
@@ -262,9 +263,9 @@ export default function QuestionCard({
               <Button
                 variant="outline"
                 onClick={() => setShowComments(!showComments)}
-                className="mb-4 bg-white dark:bg-gray-700 dark:text-white min-h-[44px] py-3 md:py-2 text-base md:text-sm active:scale-[0.98] transition-transform"
+                className="mb-4 bg-white dark:bg-gray-700 dark:text-white"
               >
-                <MessageSquare className="w-5 h-5 md:w-4 md:h-4 mr-2" />
+                <MessageSquare className="w-4 h-4 mr-2" />
                 {showComments ? 'Ocultar' : 'Ver'} Comentários
               </Button>
               
