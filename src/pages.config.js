@@ -33,6 +33,7 @@ import subscription from './pages/subscription';
 import Profile from './pages/Profile';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import StudyPlans from './pages/StudyPlans';
+import ViewStudyPlan from './pages/ViewStudyPlan';
 import __Layout from './Layout.jsx';
 
 
@@ -72,6 +73,7 @@ export const PAGES = {
     "Profile": Profile,
     "CreateStudyPlan": CreateStudyPlan,
     "StudyPlans": StudyPlans,
+    "ViewStudyPlan": ViewStudyPlan,
 }
 
 export const pagesConfig = {
