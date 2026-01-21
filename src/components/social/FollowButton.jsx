@@ -86,7 +86,11 @@ export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, 
       variant={variant}
       onClick={handleFollow}
       disabled={isLoading}
-      className={isFollowing ? "bg-gray-200 hover:bg-gray-300" : ""}
+      className={
+        isFollowing 
+          ? "bg-gray-700 hover:bg-gray-600 text-white border-gray-600" 
+          : "bg-white hover:bg-gray-100 text-gray-900 border-gray-300 shadow-sm"
+      }
     >
       {isFollowing ? (
         <>
