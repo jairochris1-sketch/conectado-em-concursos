@@ -43,6 +43,7 @@ import FlashcardCreator from '../components/flashcards/FlashcardCreator';
 import FlashcardReviewer from '../components/flashcards/FlashcardReviewer';
 import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
+import EnglishCourse from '../components/english/EnglishCourse';
 
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
@@ -254,6 +255,13 @@ export default function StudiesPage() {
 
   useEffect(() => {
     loadAllData();
+    
+    // Check URL parameters for tab
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'english') {
+      // Tab will be handled by Tabs component defaultValue
+    }
   }, []);
 
   useEffect(() => {
@@ -580,7 +588,7 @@ ${videoNotes}
         </motion.div>
 
         <Tabs defaultValue="materials" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="materials" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Materiais
@@ -596,6 +604,10 @@ ${videoNotes}
             <TabsTrigger value="flashcards" className="flex items-center gap-2">
               <Brain className="w-4 h-4" />
               Flashcards
+            </TabsTrigger>
+            <TabsTrigger value="english" className="flex items-center gap-2">
+              🇬🇧
+              Inglês
             </TabsTrigger>
           </TabsList>
 
@@ -616,21 +628,19 @@ ${videoNotes}
 
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
-              <CardHeader className="p-4">
+              <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                    <Filter className="w-4 h-4 md:w-5 md:h-5" />
-                    <span className="hidden sm:inline">Filtros de Busca de Materiais</span>
-                    <span className="sm:hidden">Filtros</span>
+                  <CardTitle className="flex items-center gap-2">
+                    <Filter className="w-5 h-5" />
+                    Filtros de Busca de Materiais
                   </CardTitle>
                   <div className="flex items-center gap-1">
-                    <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mr-1 hidden md:inline">Visualização:</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
                     <Button
                       variant={materialViewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('grid')}
-                      className={`h-7 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                      title="Grade">
+                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
 
                       <Grid3x3 className="w-3 h-3" />
                     </Button>
@@ -638,8 +648,7 @@ ${videoNotes}
                       variant={materialViewMode === 'list' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('list')}
-                      className={`h-7 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                      title="Lista">
+                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
 
                       <List className="w-3 h-3" />
                     </Button>
@@ -647,8 +656,7 @@ ${videoNotes}
                       variant={materialViewMode === 'compact' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('compact')}
-                      className={`h-7 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                      title="Compacto">
+                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
 
                       <LayoutGrid className="w-3 h-3" />
                     </Button>
@@ -713,7 +721,7 @@ ${videoNotes}
               <div className={
               materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
               materialViewMode === 'list' ? 'space-y-4' :
-              'grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5 md:gap-4'
+              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
               }>
                   {filteredMaterials.map((material, index) =>
                 <motion.div
@@ -776,37 +784,37 @@ ${videoNotes}
                           </CardContent>
                         </Card> :
 
-                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
                   onClick={() => handleMaterialClick(material)}>
-                          <CardHeader className={materialViewMode === 'compact' ? 'p-1.5' : 'flex-grow p-4'}>
-                            <div className="flex justify-between items-start gap-1">
-                              <div className="flex-1 min-w-0">
-                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-[11px] leading-tight' : 'text-lg'}`} style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
+                            <div className="flex justify-between items-start gap-1 min-w-0">
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 break-words ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
                                 {materialViewMode === 'grid' && material.description &&
-                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm" style={{ wordBreak: 'break-word' }}>
+                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
                                     {material.description}
                                   </p>
                           }
                               </div>
-                              <div className="flex-shrink-0 ml-1">
+                              <div className="flex-shrink-0">
                                 {material.file_type === 'pdf' ?
-                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-3.5 h-3.5' : 'w-8 h-8'}`} /> :
+                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
 
-                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-3.5 h-3.5' : 'w-8 h-8'}`} />
+                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
                           }
                               </div>
                             </div>
                           </CardHeader>
-                          <CardContent className={`flex flex-col justify-end ${materialViewMode === 'compact' ? 'p-1.5 pt-0' : 'p-4 pt-0'}`}>
-                            <div className={materialViewMode === 'compact' ? 'space-y-0.5' : 'space-y-1'}>
-                              <div className="flex flex-wrap gap-0.5">
-                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[9px] px-1 py-0 leading-tight' : 'text-xs'} truncate`} style={{ maxWidth: '100%' }}>
+                          <CardContent className={`flex flex-col justify-end min-w-0 ${materialViewMode === 'compact' ? 'p-2 pt-0' : 'p-4 pt-0'}`}>
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex flex-wrap gap-1 min-w-0">
+                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[10px] px-1 py-0' : 'text-xs'} truncate max-w-full`}>
                                   {typeNames[material.type]}
                                 </Badge>
                                 {materialViewMode !== 'compact' &&
-                                <Badge variant="outline" className="text-xs truncate" style={{ maxWidth: '100%' }}>
+                                <Badge variant="outline" className="text-xs truncate max-w-full">
                                   {subjectNames[material.subject]}
                                 </Badge>
                                 }
@@ -818,13 +826,13 @@ ${videoNotes}
                                   </span>
                                 </div>
                         }
-                              <div className={`flex items-center ${materialViewMode === 'compact' ? 'justify-center pt-0' : 'justify-between pt-1'}`}>
+                              <div className={`flex items-center pt-1 min-w-0 ${materialViewMode === 'compact' ? 'justify-center' : 'justify-between'}`}>
                                 {materialViewMode !== 'compact' &&
-                          <span className="text-xs text-gray-400 truncate flex-1 mr-2" style={{ minWidth: 0 }}>
+                          <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
                                     {material.file_name}
                                   </span>
                           }
-                                <div className="flex items-center gap-0.5 flex-shrink-0">
+                                <div className={`flex items-center gap-1 flex-shrink-0 ${materialViewMode === 'compact' ? 'w-full justify-center' : ''}`}>
                                   {isAdmin && materialViewMode !== 'compact' &&
                             <Button
                               variant="ghost"
@@ -836,13 +844,13 @@ ${videoNotes}
                             }
                                   <Button
                               size="sm"
-                              className={`bg-indigo-600 hover:bg-indigo-700 text-white flex-shrink-0 ${materialViewMode === 'compact' ? 'text-[9px] h-5 px-1.5' : ''}`}
+                              className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleMaterialClick(material);
                               }}>
 
-                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3 mr-1'}`} />
+                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'}`} />
                                     {materialViewMode !== 'compact' && 'Ver'}
                                   </Button>
                                 </div>
@@ -1467,6 +1475,10 @@ ${videoNotes}
 
               </TabsContent>
             </Tabs>
+          </TabsContent>
+
+          <TabsContent value="english" className="mt-6">
+            <EnglishCourse />
           </TabsContent>
         </Tabs>
         

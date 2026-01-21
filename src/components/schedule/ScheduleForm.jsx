@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,9 +83,9 @@ export default function ScheduleForm({ schedule, onSubmit, onCancel }) {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+    <Card className="bg-white/90 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-white">
+        <CardTitle className="text-gray-900">
           {schedule ? 'Editar Cronograma' : 'Novo Cronograma'}
         </CardTitle>
       </CardHeader>
@@ -143,7 +144,7 @@ export default function ScheduleForm({ schedule, onSubmit, onCancel }) {
 
             <div className="space-y-4">
               {formData.schedule_items.map((item, index) => (
-                <div key={index} className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900">
+                <div key={index} className="p-4 border rounded-lg bg-gray-50">
                   <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div>
                       <Label>Dia da Semana</Label>

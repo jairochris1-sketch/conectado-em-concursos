@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
@@ -150,20 +151,19 @@ export default function SchedulePage() {
   );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <Calendar className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Cronograma de Estudos
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Organize seus estudos com horários personalizados e alcance seus objetivos
+            <p className="text-gray-600">
+              Organize seus estudos com horários personalizados
             </p>
           </div>
           <Button
@@ -177,16 +177,13 @@ export default function SchedulePage() {
 
         {/* Search Input for filtering schedules */}
         <div className="mb-6">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Pesquisar cronogramas por título ou descrição..."
-              className="w-full p-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <BookOpen className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-          </div>
+          <input
+            type="text"
+            placeholder="Pesquisar cronogramas por título ou descrição..."
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         {showForm && (
@@ -208,21 +205,21 @@ export default function SchedulePage() {
 
         <div className="grid gap-6">
           {filteredSchedules.length === 0 ? (
-            <Card className="text-center py-16 border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50">
+            <Card className="text-center py-12">
               <CardContent className="space-y-4">
-                <Calendar className="w-20 h-20 mx-auto text-indigo-400 dark:text-indigo-500" />
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <Calendar className="w-16 h-16 mx-auto text-gray-400" />
+                <h3 className="text-xl font-semibold text-gray-900">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Nenhum cronograma criado"
                     : "Nenhum cronograma encontrado"}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Crie seu primeiro cronograma personalizado de estudos"
                     : "Ajuste os termos de busca para encontrar cronogramas."}
                 </p>
-                {schedules.length === 0 && searchTerm === "" && (
-                  <Button onClick={() => setShowForm(true)} className="bg-indigo-600 hover:bg-indigo-700">
+                {schedules.length === 0 && searchTerm === "" && ( // Only show "Criar Cronograma" button if truly no schedules and no search term
+                  <Button onClick={() => setShowForm(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Cronograma
                   </Button>
@@ -236,34 +233,32 @@ export default function SchedulePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <Card className="shadow-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                      <div className="flex-1">
-                        <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center gap-2">
-                          <Calendar className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-xl text-gray-900">
                           {schedule.title}
                         </CardTitle>
                         {schedule.description && (
-                          <p className="text-gray-600 dark:text-gray-300 mt-2">{schedule.description}</p>
+                          <p className="text-gray-600 mt-2">{schedule.description}</p>
                         )}
-                        <div className="flex flex-wrap items-center gap-3 mt-3">
-                          <span className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 px-3 py-1 rounded-full">
-                            <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
                             {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
                           </span>
-                          <span className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 px-3 py-1 rounded-full">
-                            <BookOpen className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                          <span className="flex items-center gap-1">
+                            <BookOpen className="w-4 h-4" />
                             {schedule.schedule_items.length} atividades
                           </span>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handlePrint(schedule)}
-                          className="bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
                         >
                           <Printer className="w-4 h-4 mr-2" />
                           Imprimir
@@ -272,7 +267,6 @@ export default function SchedulePage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(schedule)}
-                          className="bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
                         >
                           Editar
                         </Button>
@@ -286,7 +280,7 @@ export default function SchedulePage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-6">
+                  <CardContent>
                     <ScheduleView schedule={schedule} />
                   </CardContent>
                 </Card>
