@@ -14,8 +14,15 @@ export default function ChatWidget() {
   const [currentMessage, setCurrentMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUserInfo, setHasUserInfo] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  React.useEffect(() => {
+    if (isOpen && !hasUserInfo && visitorName) {
+      setHasUserInfo(true);
+    }
+  }, [isOpen, visitorName, hasUserInfo]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
