@@ -99,6 +99,9 @@ export default function AdminContentForm({ content, onSave }) {
                   <SelectItem value="sans-serif">Sans-serif</SelectItem>
                   <SelectItem value="serif">Serif</SelectItem>
                   <SelectItem value="monospace">Monospace</SelectItem>
+                  <SelectItem value="arial">Arial</SelectItem>
+                  <SelectItem value="verdana">Verdana</SelectItem>
+                  <SelectItem value="lato">Lato</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -119,6 +122,9 @@ export default function AdminContentForm({ content, onSave }) {
                   <SelectItem value="sans-serif">Sans-serif</SelectItem>
                   <SelectItem value="serif">Serif</SelectItem>
                   <SelectItem value="monospace">Monospace</SelectItem>
+                  <SelectItem value="arial">Arial</SelectItem>
+                  <SelectItem value="verdana">Verdana</SelectItem>
+                  <SelectItem value="lato">Lato</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -139,6 +145,9 @@ export default function AdminContentForm({ content, onSave }) {
                   <SelectItem value="sans-serif">Sans-serif</SelectItem>
                   <SelectItem value="serif">Serif</SelectItem>
                   <SelectItem value="monospace">Monospace</SelectItem>
+                  <SelectItem value="arial">Arial</SelectItem>
+                  <SelectItem value="verdana">Verdana</SelectItem>
+                  <SelectItem value="lato">Lato</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -159,6 +168,9 @@ export default function AdminContentForm({ content, onSave }) {
                   <SelectItem value="sans-serif">Sans-serif</SelectItem>
                   <SelectItem value="serif">Serif</SelectItem>
                   <SelectItem value="monospace">Monospace</SelectItem>
+                  <SelectItem value="arial">Arial</SelectItem>
+                  <SelectItem value="verdana">Verdana</SelectItem>
+                  <SelectItem value="lato">Lato</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -60,13 +60,16 @@ export default function WelcomePage() {
       } 
     : {};
 
-  const getFontFamily = (fontType) => {
+  const getFontStyle = (fontType) => {
     const fonts = {
-      'sans-serif': 'font-sans',
-      'serif': 'font-serif',
-      'monospace': 'font-mono'
+      'sans-serif': 'sans-serif',
+      'serif': 'serif',
+      'monospace': 'monospace',
+      'arial': 'Arial, sans-serif',
+      'verdana': 'Verdana, sans-serif',
+      'lato': 'Lato, sans-serif'
     };
-    return fonts[fontType] || 'font-sans';
+    return fonts[fontType] || 'sans-serif';
   };
 
   return (
@@ -87,14 +90,14 @@ export default function WelcomePage() {
                alt="Logo Conectado em Concursos"
                className="w-16 h-16 mx-auto mb-4 object-contain"
              />
-             <h1 className={`text-3xl font-extrabold ${getFontFamily(content.title_font)}`}>{content.title}</h1>
-             <p className={`mt-2 opacity-90 ${getFontFamily(content.subtitle_font)}`}>{content.subtitle}</p>
+             <h1 className="text-3xl font-extrabold" style={{ fontFamily: getFontStyle(content.title_font) }}>{content.title}</h1>
+             <p className="mt-2 opacity-90" style={{ fontFamily: getFontStyle(content.subtitle_font) }}>{content.subtitle}</p>
            </div>
            <CardContent className="p-8 text-center pt-0">
-             <p className={`text-lg leading-relaxed ${getFontFamily(content.main_text_font)}`}>
+             <p className="text-lg leading-relaxed" style={{ fontFamily: getFontStyle(content.main_text_font) }}>
                {content.main_text}
              </p>
-             <p className={`mt-4 ${getFontFamily(content.secondary_text_font)}`}>
+             <p className="mt-4" style={{ fontFamily: getFontStyle(content.secondary_text_font) }}>
                {content.secondary_text}
              </p>
            </CardContent>
