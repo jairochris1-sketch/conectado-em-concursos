@@ -784,54 +784,56 @@ ${videoNotes}
                           </CardContent>
                         </Card> :
 
-                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col"
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
                   onClick={() => handleMaterialClick(material)}>
-                          <CardHeader className={materialViewMode === 'compact' ? 'p-3' : 'flex-grow'}>
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-sm' : 'text-lg'}`}>
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
+                            <div className="flex justify-between items-start gap-1 min-w-0">
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 break-words ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`}>
                                   {material.title}
                                 </CardTitle>
-                                {(materialViewMode === 'grid' || materialViewMode === 'compact') && material.description &&
-                          <p className={`text-gray-600 dark:text-gray-400 mt-2 line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs' : 'text-sm line-clamp-3'}`}>
+                                {materialViewMode === 'grid' && material.description &&
+                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
                                     {material.description}
                                   </p>
                           }
                               </div>
-                              <div className="ml-2">
+                              <div className="flex-shrink-0">
                                 {material.file_type === 'pdf' ?
-                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} /> :
+                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
 
-                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-6 h-6' : 'w-8 h-8'}`} />
+                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
                           }
                               </div>
                             </div>
                           </CardHeader>
-                          <CardContent className={`flex flex-col justify-end ${materialViewMode === 'compact' ? 'p-3 pt-0' : ''}`}>
-                            <div className="space-y-2">
-                              <div className="flex flex-wrap gap-1">
-                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-xs' : ''}`}>
+                          <CardContent className={`flex flex-col justify-end min-w-0 ${materialViewMode === 'compact' ? 'p-2 pt-0' : 'p-4 pt-0'}`}>
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex flex-wrap gap-1 min-w-0">
+                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[10px] px-1 py-0' : 'text-xs'} truncate max-w-full`}>
                                   {typeNames[material.type]}
                                 </Badge>
-                                <Badge variant="outline" className={materialViewMode === 'compact' ? 'text-xs' : ''}>
+                                {materialViewMode !== 'compact' &&
+                                <Badge variant="outline" className="text-xs truncate max-w-full">
                                   {subjectNames[material.subject]}
                                 </Badge>
+                                }
                               </div>
                               {materialViewMode !== 'compact' &&
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                   <span className="font-medium">
                                     {cargoOptions.find((c) => c.value === material.cargo)?.label}
                                   </span>
                                 </div>
                         }
-                              <div className="flex justify-between items-center pt-1">
+                              <div className={`flex items-center pt-1 min-w-0 ${materialViewMode === 'compact' ? 'justify-center' : 'justify-between'}`}>
                                 {materialViewMode !== 'compact' &&
-                          <span className="text-xs text-gray-400 truncate w-2/5">
+                          <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
                                     {material.file_name}
                                   </span>
                           }
-                                <div className={`flex items-center gap-1 ${materialViewMode === 'compact' ? 'w-full justify-end' : ''}`}>
-                                  {isAdmin &&
+                                <div className={`flex items-center gap-1 flex-shrink-0 ${materialViewMode === 'compact' ? 'w-full justify-center' : ''}`}>
+                                  {isAdmin && materialViewMode !== 'compact' &&
                             <Button
                               variant="ghost"
                               size="sm"
@@ -842,13 +844,13 @@ ${videoNotes}
                             }
                                   <Button
                               size="sm"
-                              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                              className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleMaterialClick(material);
                               }}>
 
-                                    <Eye className="w-3 h-3 mr-1" />
+                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'}`} />
                                     {materialViewMode !== 'compact' && 'Ver'}
                                   </Button>
                                 </div>
