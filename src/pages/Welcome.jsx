@@ -60,6 +60,15 @@ export default function WelcomePage() {
       } 
     : {};
 
+  const getFontFamily = (fontType) => {
+    const fonts = {
+      'sans-serif': 'font-sans',
+      'serif': 'font-serif',
+      'monospace': 'font-mono'
+    };
+    return fonts[fontType] || 'font-sans';
+  };
+
   return (
     <div 
       className={`min-h-screen flex items-center justify-center p-4 ${!content.background_image_url ? 'bg-gradient-to-br from-blue-50 via-white to-indigo-50' : ''}`}
