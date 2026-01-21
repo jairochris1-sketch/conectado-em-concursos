@@ -285,62 +285,62 @@ export default function ProfilePage() {
                         Clique no ícone da câmera para alterar sua foto
                       </p>
                       <div className="flex gap-4 mt-3">
-                        <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Users className="w-4 h-4 mr-1" />
-                              {followers.length} Seguidores
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Seguidores</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-2 max-h-96 overflow-y-auto">
-                              {followers.map(follower => (
-                                <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                                  <Avatar className="w-10 h-10">
-                                    <AvatarImage src={follower.following_photo_url} />
-                                    <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
-                                  </Avatar>
-                                  <span className="font-medium">{follower.following_name}</span>
-                                </div>
-                              ))}
-                              {followers.length === 0 && (
-                                <p className="text-center text-gray-500 py-8">Você ainda não tem seguidores</p>
-                              )}
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+                         <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
+                           <DialogTrigger asChild>
+                             <Button variant="outline" size="sm" className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                               <Users className="w-4 h-4 mr-1" />
+                               {followers.length} Seguidores
+                             </Button>
+                           </DialogTrigger>
+                           <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
+                             <DialogHeader>
+                               <DialogTitle className="dark:text-white">Seguidores</DialogTitle>
+                             </DialogHeader>
+                             <div className="space-y-2 max-h-96 overflow-y-auto">
+                               {followers.map(follower => (
+                                 <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                   <Avatar className="w-10 h-10">
+                                     <AvatarImage src={follower.following_photo_url} />
+                                     <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
+                                   </Avatar>
+                                   <span className="font-medium dark:text-gray-300">{follower.following_name}</span>
+                                 </div>
+                               ))}
+                               {followers.length === 0 && (
+                                 <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não tem seguidores</p>
+                               )}
+                             </div>
+                           </DialogContent>
+                         </Dialog>
 
-                        <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Users className="w-4 h-4 mr-1" />
-                              {following.length} Seguindo
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Seguindo</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-2 max-h-96 overflow-y-auto">
-                              {following.map(follow => (
-                                <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                                  <Avatar className="w-10 h-10">
-                                    <AvatarImage src={follow.following_photo_url} />
-                                    <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
-                                  </Avatar>
-                                  <span className="font-medium">{follow.following_name}</span>
-                                </div>
-                              ))}
-                              {following.length === 0 && (
-                                <p className="text-center text-gray-500 py-8">Você ainda não segue ninguém</p>
-                              )}
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
+                         <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
+                           <DialogTrigger asChild>
+                             <Button variant="outline" size="sm" className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                               <Users className="w-4 h-4 mr-1" />
+                               {following.length} Seguindo
+                             </Button>
+                           </DialogTrigger>
+                           <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
+                             <DialogHeader>
+                               <DialogTitle className="dark:text-white">Seguindo</DialogTitle>
+                             </DialogHeader>
+                             <div className="space-y-2 max-h-96 overflow-y-auto">
+                               {following.map(follow => (
+                                 <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                                   <Avatar className="w-10 h-10">
+                                     <AvatarImage src={follow.following_photo_url} />
+                                     <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
+                                   </Avatar>
+                                   <span className="font-medium dark:text-gray-300">{follow.following_name}</span>
+                                 </div>
+                               ))}
+                               {following.length === 0 && (
+                                 <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não segue ninguém</p>
+                               )}
+                             </div>
+                           </DialogContent>
+                         </Dialog>
+                       </div>
                     </div>
                   </div>
                 </CardContent>
