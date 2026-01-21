@@ -87,17 +87,17 @@ export default function WelcomePage() {
                alt="Logo Conectado em Concursos"
                className="w-16 h-16 mx-auto mb-4 object-contain"
              />
-             <h1 className="text-3xl font-extrabold">{content.title}</h1>
-             <p className="mt-2 opacity-90">{content.subtitle}</p>
+             <h1 className={`text-3xl font-extrabold ${getFontFamily(content.title_font)}`}>{content.title}</h1>
+             <p className={`mt-2 opacity-90 ${getFontFamily(content.subtitle_font)}`}>{content.subtitle}</p>
            </div>
-          <CardContent className="p-8 text-center pt-0">
-            <p className="text-lg leading-relaxed">
-              {content.main_text}
-            </p>
-            <p className="mt-4">
-              {content.secondary_text}
-            </p>
-          </CardContent>
+           <CardContent className="p-8 text-center pt-0">
+             <p className={`text-lg leading-relaxed ${getFontFamily(content.main_text_font)}`}>
+               {content.main_text}
+             </p>
+             <p className={`mt-4 ${getFontFamily(content.secondary_text_font)}`}>
+               {content.secondary_text}
+             </p>
+           </CardContent>
           <CardFooter className="p-6 flex justify-center">
             <Button
               size="lg"
