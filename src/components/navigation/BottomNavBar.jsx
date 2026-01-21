@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, FileText, User, BookCopy, BookOpen, Lock } from "lucide-react";
+import { Home, FileText, User, BookCopy, BookOpen, Lock, Trophy, MessageSquare, BarChart3, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -8,7 +8,11 @@ const navItems = [
   { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
   { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
   { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
-  { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos' }
+  { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos' },
+  { name: 'Ranking', url: createPageUrl('Ranking'), icon: Trophy, feature: 'Ranking de Usuários' },
+  { name: 'Fórum', url: createPageUrl('Community'), icon: MessageSquare, feature: null },
+  { name: 'Relatórios', url: createPageUrl('PerformanceReports'), icon: BarChart3, feature: null },
+  { name: 'Planos', url: createPageUrl('Subscription'), icon: CreditCard, feature: null }
 ];
 
 export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className }) {
