@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, Sparkles, X } from 'lucide-react';
+import { Clock, Sparkles, X, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TrialCountdown({ daysRemaining, totalDays }) {
