@@ -33,19 +33,9 @@ export default function EnglishCourse() {
   const [streak, setStreak] = useState(0);
   const [startTime, setStartTime] = useState(null);
 
-  const correctSoundRef = useRef(null);
-  const wrongSoundRef = useRef(null);
-
   useEffect(() => {
     loadLessons();
     loadProgress();
-    
-    // Criar sons de feedback
-    correctSoundRef.current = new Audio();
-    correctSoundRef.current.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGi58OWcTgwOUKXh8LRkGwU6kdXzzn0pBSd5yO/ekkAKElyy6OyrVRQJR5/e8r5uHwUshc/z2oo2Bxhnt+/mmlAMDU6j4fC2ZRsFPJLU88p+JAUZ';
-    
-    wrongSoundRef.current = new Audio();
-    wrongSoundRef.current.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm16IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACA9+jkzr3DyN7q8PP8/wD///////3y8O/q5ePj5ujr7/Hz+P4C/v/++/j19PHv7ezs7O3u8PP1+P0AAv/+/fv4+Pf4+Pj5+vv8/v4A/v7+/f39/f3+/v7///8A//7+/v39/f3+/v4A//8AAAAAAAAAAADgCAAFBQcICQoKCgoJBwYGBQMCAQAAAP/+/f38+/r6+vn5+fn5+vr7/P3+/wAAAgIDAwQFBgYHBwgICAgICAgHBwYGBQQEBAMDAgICAgEBAQABAgICAgMDBAQFBgYG';
   }, []);
 
   const loadLessons = async () => {
@@ -105,11 +95,30 @@ export default function EnglishCourse() {
 
   const playSound = (isCorrectAnswer) => {
     try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
       if (isCorrectAnswer) {
-        correctSoundRef.current?.play();
+        // Som de acerto: notas ascendentes
+        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
       } else {
-        wrongSoundRef.current?.play();
+        // Som de erro: nota descendente
+        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
       }
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
     } catch (error) {
       console.error("Erro ao reproduzir som:", error);
     }
