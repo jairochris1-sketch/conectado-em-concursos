@@ -60,13 +60,13 @@ export default function ChatWidget() {
 
     setIsLoading(true);
     try {
-      let imageUrl = selectedImage;
-
+      localStorage.setItem('chatVisitorName', visitorName);
+      
       await base44.entities.ChatMessage.create({
         visitor_name: visitorName,
         visitor_email: visitorEmail || 'not-provided@example.com',
         message: currentMessage,
-        image_url: imageUrl,
+        image_url: selectedImage,
         page_url: window.location.href
       });
 
@@ -75,7 +75,7 @@ export default function ChatWidget() {
         {
           visitor_name: visitorName,
           message: currentMessage,
-          image_url: imageUrl,
+          image_url: selectedImage,
           created_date: new Date().toISOString()
         }
       ]);
