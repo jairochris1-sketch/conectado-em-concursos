@@ -197,18 +197,18 @@ export default function ComoEstudarPrimeiroLugar() {
             )}
           </div>
         )}
-        <h1 className="text-2xl md:text-3xl font-extrabold mb-2">{content.title}</h1>
-        <p className="text-sm md:text-base text-gray-600 mb-6">{content.subtitle}</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">{content.title}</h1>
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
 
         {!loading && articles.some(a => a.is_featured) && (
           <section className="mb-8">
-            <h2 className="text-xl font-bold mb-3">Recomendados</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Recomendados</h2>
             <div className="space-y-4">
               {articles.filter(a => a.is_featured).map((a) => (
-                <Card key={a.id}>
+                <Card key={a.id} className="dark:bg-gray-700 dark:border-gray-600">
                   <CardContent className="p-4">
-                    <a href={`#art-${a.id}`} className="text-blue-700 font-semibold hover:underline">{a.title}</a>
-                    {a.summary && <p className="text-sm text-gray-600 mt-1">{a.summary}</p>}
+                    <a href={`#art-${a.id}`} className="text-blue-700 dark:text-blue-400 font-semibold hover:underline">{a.title}</a>
+                    {a.summary && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{a.summary}</p>}
                   </CardContent>
                 </Card>
               ))}
@@ -216,7 +216,7 @@ export default function ComoEstudarPrimeiroLugar() {
           </section>
         )}
 
-        {loading && <div className="text-gray-700">Carregando conteúdo...</div>}
+        {loading && <div className="text-gray-700 dark:text-gray-300">Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
           <section className="mb-8">
