@@ -30,10 +30,10 @@ import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
 import ViewStudyPlan from './pages/ViewStudyPlan';
+import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Welcome from './pages/Welcome';
 import __Layout from './Layout.jsx';
 
 
@@ -70,10 +70,10 @@ export const PAGES = {
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
     "ViewStudyPlan": ViewStudyPlan,
+    "Welcome": Welcome,
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Welcome": Welcome,
 }
 
 export const pagesConfig = {

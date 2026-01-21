@@ -71,7 +71,7 @@ export default function ActivityFeedPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center" role="status" aria-live="polite" aria-label="Carregando feed de atividades">
         <p>Carregando feed...</p>
       </div>
     );
@@ -106,6 +106,9 @@ export default function ActivityFeedPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-3 md:p-6">
+      <a href="#main-feed" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-blue-600 focus:text-white focus:rounded">
+        Pular para conteúdo principal
+      </a>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <div className="min-w-0">
@@ -116,13 +119,13 @@ export default function ActivityFeedPage() {
           </div>
         </div>
 
-        <div className="space-y-3 md:space-y-4">
-          {activities.map((activity, index) => (
-            <Card key={index}>
+        <div className="space-y-3 md:space-y-4" id="main-feed" role="main">
+           {activities.map((activity, index) => (
+             <Card key={index} role="article" aria-label={`Atividade de ${activity.user?.following_name}`}>
               <CardContent className="p-3 md:p-4">
                 <div className="flex items-start gap-2 md:gap-3">
-                  <Avatar className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
-                    <AvatarImage src={activity.user?.following_photo_url} />
+                  <Avatar className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" aria-label={`Avatar de ${activity.user?.following_name}`}>
+                    <AvatarImage src={activity.user?.following_photo_url} alt={`Foto de perfil de ${activity.user?.following_name}`} />
                     <AvatarFallback>{activity.user?.following_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
@@ -132,7 +135,7 @@ export default function ActivityFeedPage() {
                       </span>
                       {activity.type === "post" && (
                         <>
-                          <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-blue-600 flex-shrink-0" />
+                          <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-blue-600 flex-shrink-0" aria-hidden="true" />
                           <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                             criou uma discussão
                           </span>
@@ -140,7 +143,7 @@ export default function ActivityFeedPage() {
                       )}
                       {activity.type === "reply" && (
                         <>
-                          <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-green-600 flex-shrink-0" />
+                          <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-green-600 flex-shrink-0" aria-hidden="true" />
                           <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                             respondeu
                           </span>
@@ -148,9 +151,9 @@ export default function ActivityFeedPage() {
                       )}
                       {activity.type === "answer" && (
                         <>
-                          <Trophy className="w-3 h-3 md:w-4 md:h-4 text-yellow-600 flex-shrink-0" />
+                          <Trophy className="w-3 h-3 md:w-4 md:h-4 text-yellow-600 flex-shrink-0" aria-hidden="true" />
                           <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
-                            respondeu {activity.data.is_correct ? "✓" : "✗"}
+                            respondeu <span aria-label={activity.data.is_correct ? "resposta correta" : "resposta incorreta"}>{activity.data.is_correct ? "✓" : "✗"}</span>
                           </span>
                         </>
                       )}
@@ -201,9 +204,9 @@ export default function ActivityFeedPage() {
           ))}
 
           {activities.length === 0 && (
-            <Card>
+            <Card role="status" aria-label="Nenhuma atividade encontrada">
               <CardContent className="p-8 md:p-12 text-center">
-                <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-gray-400 mx-auto mb-3 md:mb-4" />
+                <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-gray-400 mx-auto mb-3 md:mb-4" aria-hidden="true" />
                 <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
                   Nenhuma atividade recente dos usuários que você segue
                 </p>

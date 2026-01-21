@@ -436,6 +436,9 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#1c2c34' }}>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-blue-600 focus:text-white focus:rounded">
+        Pular para conteúdo principal
+      </a>
       <AnimatePresence>
         {isMobileMenuOpen &&
         <>
@@ -457,8 +460,8 @@ export default function Layout({ children, currentPageName }) {
 
               <div className="flex items-center justify-between p-4 border-b border-black border-opacity-20 flex-shrink-0">
                 <h2 className="font-bold text-lg">Menu Principal</h2>
-                <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white active:scale-90 transition-transform" onClick={() => setIsMobileMenuOpen(false)}>
-                  <X className="w-6 h-6" />
+                <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white active:scale-90 transition-transform" onClick={() => setIsMobileMenuOpen(false)} aria-label="Fechar menu">
+                  <X className="w-6 h-6" aria-hidden="true" />
                 </Button>
               </div>
 
@@ -484,14 +487,15 @@ export default function Layout({ children, currentPageName }) {
                 <Button
                 onClick={handleLogout}
                 size="sm"
-                className="bg-red-600 hover:bg-red-700 text-white active:scale-90 transition-transform flex-shrink-0 px-3">
+                className="bg-red-600 hover:bg-red-700 text-white active:scale-90 transition-transform flex-shrink-0 px-3"
+                aria-label="Sair da conta">
 
-                  <LogOut className="w-4 h-4 mr-1" />
+                  <LogOut className="w-4 h-4 mr-1" aria-hidden="true" />
                   Sair
                 </Button>
               </div>
 
-              <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain">
+              <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain" aria-label="Navegação do menu">
                 {[...navigationItems, ...moreMenuItems].map((item) => {
                 const hasAccess = checkAccess(item.title, userPlan, isAdmin);
                 const isCurrentPage = location.pathname === item.url;
@@ -545,7 +549,7 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
+      <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
         <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
@@ -561,7 +565,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl">
+        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
@@ -752,13 +756,13 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0" id="main-content">
         <header className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-40 print-hide">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" className="-ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsMobileMenuOpen(true)}>
-                  <Menu className="w-6 h-6" />
-                </Button>
+                <Button variant="ghost" size="icon" className="-ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsMobileMenuOpen(true)} aria-label="Abrir menu de navegação" aria-expanded={isMobileMenuOpen}>
+                   <Menu className="w-6 h-6" aria-hidden="true" />
+                 </Button>
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
                   alt="Logo Conectado em Concursos"
@@ -796,7 +800,8 @@ export default function Layout({ children, currentPageName }) {
 
         <div
           className="flex-1 overflow-auto pb-20 md:pb-0"
-          style={{ backgroundColor: '#1c2c34' }}>
+          style={{ backgroundColor: '#1c2c34' }}
+          role="main">
 
           {children}
         </div>
@@ -816,12 +821,12 @@ export default function Layout({ children, currentPageName }) {
 
             <Button
             size="icon"
-            className="rounded-full h-12 w-12 text-white shadow-lg"
+            className="rounded-full h-12 w-12 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             style={{ backgroundColor: 'var(--primary-color)' }}
             onClick={scrollToTop}
             aria-label="Voltar ao topo">
 
-              <ArrowUp className="h-6 w-6" />
+              <ArrowUp className="h-6 w-6" aria-hidden="true" />
             </Button>
           </motion.div>
         }
