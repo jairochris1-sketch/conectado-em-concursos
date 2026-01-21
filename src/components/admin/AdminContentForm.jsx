@@ -5,9 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loader2, FileText, ImageIcon, Eye } from 'lucide-react';
-import { UploadFile } from '@/integrations/Core'; // Assuming this path and function signature
+import { UploadFile } from '@/integrations/Core';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createPageUrl } from '@/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminContentForm({ content, onSave }) {
   const [formData, setFormData] = useState(content);
