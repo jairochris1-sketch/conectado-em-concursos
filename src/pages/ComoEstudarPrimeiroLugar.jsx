@@ -220,7 +220,7 @@ export default function ComoEstudarPrimeiroLugar() {
 
         {!loading && videos.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-xl font-bold mb-3">Vídeos</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Vídeos</h2>
             <div className="space-y-6">
               {videos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
