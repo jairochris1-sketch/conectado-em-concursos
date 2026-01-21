@@ -84,21 +84,128 @@ export default function AdminContentForm({ content, onSave }) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="title">Título</Label>
-            <Input id="title" value={formData.title || ''} onChange={e => handleInputChange('title', e.target.value)} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Título</Label>
+              <Input id="title" value={formData.title || ''} onChange={e => handleInputChange('title', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="title_font">Fonte do Título</Label>
+              <Select value={formData.title_font || 'sans-serif'} onValueChange={value => handleInputChange('title_font', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sans-serif">Sans-serif</SelectItem>
+                  <SelectItem value="serif">Serif</SelectItem>
+                  <SelectItem value="monospace">Monospace</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="subtitle">Subtítulo</Label>
-            <Input id="subtitle" value={formData.subtitle || ''} onChange={e => handleInputChange('subtitle', e.target.value)} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="subtitle">Subtítulo</Label>
+              <Input id="subtitle" value={formData.subtitle || ''} onChange={e => handleInputChange('subtitle', e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="subtitle_font">Fonte do Subtítulo</Label>
+              <Select value={formData.subtitle_font || 'sans-serif'} onValueChange={value => handleInputChange('subtitle_font', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sans-serif">Sans-serif</SelectItem>
+                  <SelectItem value="serif">Serif</SelectItem>
+                  <SelectItem value="monospace">Monospace</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="main_text">Texto Principal</Label>
-            <Textarea id="main_text" value={formData.main_text || ''} onChange={e => handleInputChange('main_text', e.target.value)} rows={4} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="main_text">Texto Principal</Label>
+              <Textarea id="main_text" value={formData.main_text || ''} onChange={e => handleInputChange('main_text', e.target.value)} rows={4} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="main_text_font">Fonte do Texto Principal</Label>
+              <Select value={formData.main_text_font || 'sans-serif'} onValueChange={value => handleInputChange('main_text_font', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sans-serif">Sans-serif</SelectItem>
+                  <SelectItem value="serif">Serif</SelectItem>
+                  <SelectItem value="monospace">Monospace</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="secondary_text">Texto Secundário</Label>
-            <Textarea id="secondary_text" value={formData.secondary_text || ''} onChange={e => handleInputChange('secondary_text', e.target.value)} rows={3} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="secondary_text">Texto Secundário</Label>
+              <Textarea id="secondary_text" value={formData.secondary_text || ''} onChange={e => handleInputChange('secondary_text', e.target.value)} rows={3} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="secondary_text_font">Fonte do Texto Secundário</Label>
+              <Select value={formData.secondary_text_font || 'sans-serif'} onValueChange={value => handleInputChange('secondary_text_font', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sans-serif">Sans-serif</SelectItem>
+                  <SelectItem value="serif">Serif</SelectItem>
+                  <SelectItem value="monospace">Monospace</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
+            <h3 className="font-semibold text-sm">Configurações do Botão</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="button_color">Cor do Botão</Label>
+                <div className="flex items-center gap-2">
+                  <Input 
+                    id="button_color" 
+                    type="color" 
+                    value={formData.button_color || '#ffffff'} 
+                    onChange={e => handleInputChange('button_color', e.target.value)}
+                    className="h-12 w-20"
+                  />
+                  <Input 
+                    type="text" 
+                    value={formData.button_color || '#ffffff'} 
+                    onChange={e => handleInputChange('button_color', e.target.value)}
+                    placeholder="#ffffff"
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="button_text_color">Cor do Texto do Botão</Label>
+                <div className="flex items-center gap-2">
+                  <Input 
+                    id="button_text_color" 
+                    type="color" 
+                    value={formData.button_text_color || '#2563eb'} 
+                    onChange={e => handleInputChange('button_text_color', e.target.value)}
+                    className="h-12 w-20"
+                  />
+                  <Input 
+                    type="text" 
+                    value={formData.button_text_color || '#2563eb'} 
+                    onChange={e => handleInputChange('button_text_color', e.target.value)}
+                    placeholder="#2563eb"
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
