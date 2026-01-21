@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
@@ -66,10 +65,18 @@ export default function QuestionCard({
   onAnswerChange, 
   onSubmitAnswer,
   questionNumber, // Changed from index
-  fontSize // Added fontSize prop
+  fontSize, // Added fontSize prop
+  onQuestionMount // Added to notify parent when question is mounted
 }) {
   const [showComments, setShowComments] = useState(false);
   // showExplanation state and its related logic have been removed
+
+  // Notify parent when this question is mounted/visible
+  useState(() => {
+    if (onQuestionMount) {
+      onQuestionMount(question.id);
+    }
+  }, [question.id]);
 
   const handleAnswerSelect = (value) => { // Renamed and adjusted for RadioGroup
     if (submittedAnswer) return;
@@ -89,11 +96,14 @@ export default function QuestionCard({
       animate={{ opacity: 1, y: 0 }}
       className="mb-4"
     >
-      <Card className={cn(
-        "shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden",
-        "bg-white dark:bg-gray-800",
-        fontSize && `text-[${fontSize}rem]`
-      )}>
+      <Card 
+        className={cn(
+          "shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden",
+          "bg-white dark:bg-gray-800",
+          fontSize && `text-[${fontSize}rem]`
+        )}
+        data-question-id={question.id}
+      >
         <CardHeader className="space-y-3 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800">
           <div className="flex justify-between items-start gap-4">
             <div className="flex-1">
