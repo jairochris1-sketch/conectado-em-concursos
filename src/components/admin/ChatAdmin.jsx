@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, Check, MessageSquare, Bell, Send, X, Archive, Filter } from 'lucide-react';
+import { Trash2, Check, MessageSquare, Bell, Send, X, Archive, Filter, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { NotificationManager } from '@/components/NotificationManager';
@@ -15,6 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 
 export default function ChatAdmin() {
   const [messages, setMessages] = useState([]);
@@ -27,6 +33,7 @@ export default function ChatAdmin() {
   const [currentUser, setCurrentUser] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [activityFilter, setActivityFilter] = useState('all');
+  const [quickResponses, setQuickResponses] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -76,10 +83,20 @@ export default function ChatAdmin() {
       setCurrentUser(user);
       await loadMessages();
       await loadReplies();
+      await loadQuickResponses();
       setLoading(false);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       setLoading(false);
+    }
+  };
+
+  const loadQuickResponses = async () => {
+    try {
+      const data = await base44.entities.QuickResponse.list('-usage_count', 20);
+      setQuickResponses(data);
+    } catch (error) {
+      console.error('Erro ao carregar respostas rápidas:', error);
     }
   };
 
@@ -168,8 +185,9 @@ export default function ChatAdmin() {
     });
   };
 
-  const handleSendReply = async (messageId) => {
-    if (!replyText.trim()) return;
+  const handleSendReply = async (messageId, customText = null) => {
+    const text = customText || replyText;
+    if (!text.trim()) return;
 
     setIsSendingReply(true);
     try {
@@ -177,14 +195,24 @@ export default function ChatAdmin() {
       
       await base44.entities.ChatReply.create({
         message_id: messageId,
-        reply_text: replyText,
+        reply_text: text,
         admin_email: currentUser.email
       });
+
+      // Atualizar contador de uso se foi resposta rápida
+      if (customText) {
+        const response = quickResponses.find(r => r.content === customText);
+        if (response) {
+          await base44.entities.QuickResponse.update(response.id, {
+            usage_count: (response.usage_count || 0) + 1
+          });
+          loadQuickResponses();
+        }
+      }
+
       setReplyText('');
       toast.success('Resposta enviada!');
 
-      // Notificar o visitante via web push (simulado para browsers que suportam)
-      // A notificação real será acionada pelo subscription do ChatReply no ChatWidget
       if (visitorMessage) {
         console.log(`Notificação enviada para ${visitorMessage.visitor_name}`);
       }
@@ -420,6 +448,30 @@ export default function ChatAdmin() {
                         className="text-sm"
                         rows={3}
                       />
+
+                      {/* Respostas Rápidas */}
+                      {quickResponses.length > 0 && (
+                        <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                          <p className="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1">
+                            <Zap className="w-3 h-3" />
+                            Respostas Rápidas
+                          </p>
+                          <div className="grid grid-cols-1 gap-2">
+                            {quickResponses.slice(0, 5).map((response) => (
+                              <Button
+                                key={response.id}
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleSendReply(message.id, response.content)}
+                                className="text-left justify-start h-auto py-2"
+                                title={response.content}>
+                                <span className="text-xs truncate">{response.title}</span>
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex gap-2">
                         <Button
                           size="sm"
