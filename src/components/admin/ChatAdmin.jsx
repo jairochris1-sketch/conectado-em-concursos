@@ -4,10 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Trash2, Check, MessageSquare, Bell, Send, X } from 'lucide-react';
+import { Trash2, Check, MessageSquare, Bell, Send, X, Archive, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { NotificationManager } from '@/components/NotificationManager';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function ChatAdmin() {
   const [messages, setMessages] = useState([]);
@@ -18,6 +25,8 @@ export default function ChatAdmin() {
   const [replyText, setReplyText] = useState('');
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [activityFilter, setActivityFilter] = useState('all');
 
   useEffect(() => {
     loadData();
@@ -117,6 +126,48 @@ export default function ChatAdmin() {
     }
   };
 
+  const archiveConversation = async (messageId) => {
+    try {
+      await base44.entities.ChatMessage.update(messageId, { is_archived: true });
+      toast.success('Conversa arquivada');
+    } catch (error) {
+      console.error('Erro ao arquivar conversa:', error);
+      toast.error('Erro ao arquivar conversa');
+    }
+  };
+
+  const filterMessages = () => {
+    let filtered = messages.filter(m => !m.is_archived);
+
+    // Filtrar por status
+    if (statusFilter === 'online') {
+      filtered = filtered.filter(m => m.visitor_status === 'online');
+    } else if (statusFilter === 'offline') {
+      filtered = filtered.filter(m => m.visitor_status === 'offline');
+    }
+
+    // Filtrar por atividade
+    if (activityFilter !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter(m => {
+        const lastActivity = new Date(m.last_activity || m.created_date);
+        const hoursDiff = (now - lastActivity) / (1000 * 60 * 60);
+
+        if (activityFilter === '1h') return hoursDiff <= 1;
+        if (activityFilter === '24h') return hoursDiff <= 24;
+        if (activityFilter === '7d') return hoursDiff <= 168;
+        return true;
+      });
+    }
+
+    // Ordenar por última atividade (mais recente primeiro)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.last_activity || a.created_date);
+      const dateB = new Date(b.last_activity || b.created_date);
+      return dateB - dateA;
+    });
+  };
+
   const handleSendReply = async (messageId) => {
     if (!replyText.trim()) return;
 
@@ -145,7 +196,8 @@ export default function ChatAdmin() {
     }
   };
 
-  const unreadCount = messages.filter((m) => !m.is_read).length;
+  const unreadCount = messages.filter((m) => !m.is_read && !m.is_archived).length;
+  const filteredMessages = filterMessages();
 
   if (loading) {
     return (
@@ -175,25 +227,66 @@ export default function ChatAdmin() {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <MessageSquare className="w-6 h-6" />
-          Chat de Suporte
-        </h2>
-        <div className="flex items-center gap-2">
-          <Badge className={`${unreadCount > 0 ? 'bg-red-600 animate-pulse' : 'bg-blue-600'} text-white`}>
-            {unreadCount} não lidas
-          </Badge>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <MessageSquare className="w-6 h-6" />
+            Chat de Suporte
+          </h2>
+          <div className="flex items-center gap-2">
+            <Badge className={`${unreadCount > 0 ? 'bg-red-600 animate-pulse' : 'bg-blue-600'} text-white`}>
+              {unreadCount} não lidas
+            </Badge>
+          </div>
         </div>
+
+        {/* Filtros */}
+        <Card className="p-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-600" />
+              <span className="text-sm font-medium">Filtros:</span>
+            </div>
+            
+            <div className="flex-1 min-w-48">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Status do visitante" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os status</SelectItem>
+                  <SelectItem value="online">🟢 Online</SelectItem>
+                  <SelectItem value="offline">⚫ Offline</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex-1 min-w-48">
+              <Select value={activityFilter} onValueChange={setActivityFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Última atividade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Qualquer data</SelectItem>
+                  <SelectItem value="1h">Últimas 1 hora</SelectItem>
+                  <SelectItem value="24h">Últimas 24 horas</SelectItem>
+                  <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </Card>
       </div>
 
-      {messages.length === 0 ? (
+      {filteredMessages.length === 0 ? (
         <Card className="text-center p-8">
-          <p className="text-gray-500">Nenhuma mensagem ainda</p>
+          <p className="text-gray-500">
+            {messages.length === 0 ? 'Nenhuma mensagem ainda' : 'Nenhuma conversa corresponde aos filtros'}
+          </p>
         </Card>
       ) : (
         <div className="grid gap-4">
-          {messages.map((message) => (
+          {filteredMessages.map((message) => (
             <motion.div
               key={message.id}
               initial={{ opacity: 0, y: 20 }}
@@ -209,21 +302,34 @@ export default function ChatAdmin() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">{message.visitor_name}</CardTitle>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {message.visitor_name}
+                        <span className={`w-2 h-2 rounded-full ${message.visitor_status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} title={message.visitor_status} />
+                      </CardTitle>
                       <p className="text-sm text-gray-500">{message.visitor_email}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {!message.is_read && (
                         <Badge className="bg-yellow-100 text-yellow-800">Nova</Badge>
                       )}
-                      <span className="text-xs text-gray-400">
-                        {new Date(message.created_date).toLocaleDateString('pt-BR', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-xs text-gray-400 block">
+                          {new Date(message.created_date).toLocaleDateString('pt-BR', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                        {message.last_activity && (
+                          <span className="text-xs text-gray-500 block">
+                            Última: {new Date(message.last_activity).toLocaleTimeString('pt-BR', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
@@ -258,6 +364,17 @@ export default function ChatAdmin() {
                           Marcar lida
                         </Button>
                       )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          archiveConversation(message.id);
+                        }}
+                        className="text-xs">
+                        <Archive className="w-4 h-4 mr-1" />
+                        Arquivar
+                      </Button>
                       <Button
                         size="sm"
                         variant="destructive"
