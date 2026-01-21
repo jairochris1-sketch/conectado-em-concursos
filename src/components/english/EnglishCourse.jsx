@@ -32,10 +32,24 @@ export default function EnglishCourse() {
   const [view, setView] = useState("lessons"); // lessons, lesson, exercise
   const [streak, setStreak] = useState(0);
   const [startTime, setStartTime] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [dailyGoal, setDailyGoal] = useState(3);
+  const [exercisesToday, setExercisesToday] = useState(0);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     loadLessons();
     loadProgress();
+    loadDailyProgress();
+    
+    // Inicializar reconhecimento de voz
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.lang = 'en-US';
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+    }
   }, []);
 
   const loadLessons = async () => {
@@ -75,6 +89,25 @@ export default function EnglishCourse() {
       setStreak(currentStreak);
     } catch (error) {
       console.error("Erro ao carregar progresso:", error);
+    }
+  };
+
+  const loadDailyProgress = async () => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const data = await base44.entities.EnglishProgress.list("-created_date");
+      const todayProgress = data.filter(p => {
+        const date = new Date(p.created_date);
+        date.setHours(0, 0, 0, 0);
+        return date.getTime() === today.getTime();
+      });
+      
+      const totalExercises = todayProgress.reduce((sum, p) => sum + (p.total_questions || 0), 0);
+      setExercisesToday(totalExercises);
+    } catch (error) {
+      console.error("Erro ao carregar progresso diário:", error);
     }
   };
 
@@ -135,6 +168,45 @@ export default function EnglishCourse() {
     if (correct) {
       setScore(score + 1);
     }
+  };
+
+  const startPronunciationCheck = (targetPhrase) => {
+    if (!recognitionRef.current) {
+      toast.error("Reconhecimento de voz não disponível neste navegador");
+      return;
+    }
+
+    setIsListening(true);
+    
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      setUserAnswer(transcript);
+      setIsListening(false);
+      
+      // Comparar com a frase esperada
+      const similarity = calculateSimilarity(transcript, targetPhrase.toLowerCase());
+      setIsCorrect(similarity > 0.7);
+      setShowResult(true);
+      playSound(similarity > 0.7);
+      
+      if (similarity > 0.7) {
+        setScore(score + 1);
+      }
+    };
+    
+    recognitionRef.current.onerror = () => {
+      setIsListening(false);
+      toast.error("Erro ao reconhecer a fala. Tente novamente.");
+    };
+    
+    recognitionRef.current.start();
+  };
+
+  const calculateSimilarity = (str1, str2) => {
+    const words1 = str1.split(' ');
+    const words2 = str2.split(' ');
+    const matches = words1.filter(word => words2.includes(word)).length;
+    return matches / Math.max(words1.length, words2.length);
   };
 
   const nextExercise = async () => {
@@ -369,6 +441,87 @@ export default function EnglishCourse() {
                     }}
                   />
                 )}
+
+                {exercise.type === "fill_blank" && (
+                  <div className="space-y-4">
+                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                      {exercise.sentence?.split('___').map((part, idx, arr) => (
+                        <span key={idx}>
+                          {part}
+                          {idx < arr.length - 1 && (
+                            <input
+                              type="text"
+                              value={userAnswer}
+                              onChange={(e) => setUserAnswer(e.target.value)}
+                              disabled={showResult}
+                              className="inline-block w-32 mx-2 px-3 py-1 border-b-2 border-blue-500 bg-transparent text-center focus:outline-none focus:border-blue-600"
+                              placeholder="..."
+                            />
+                          )}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
+                )}
+
+                {exercise.type === "grammar" && (
+                  <div className="space-y-3">
+                    {exercise.options?.map((option, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setUserAnswer(option)}
+                        disabled={showResult}
+                        className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                          userAnswer === option
+                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                            : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
+                        } ${
+                          showResult && option === exercise.correct_answer
+                            ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+                            : ""
+                        } ${
+                          showResult && userAnswer === option && !isCorrect
+                            ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                            : ""
+                        }`}
+                      >
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {option}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {exercise.type === "pronunciation" && (
+                  <div className="space-y-4">
+                    <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+                      <p className="text-center text-xl font-semibold text-blue-900 dark:text-blue-300 mb-2">
+                        "{exercise.sentence}"
+                      </p>
+                      <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                        Clique no botão e repita a frase em voz alta
+                      </p>
+                    </div>
+                    
+                    {!showResult ? (
+                      <Button
+                        onClick={() => startPronunciationCheck(exercise.sentence)}
+                        disabled={isListening}
+                        className="w-full"
+                        size="lg"
+                      >
+                        <Volume2 className={`w-5 h-5 mr-2 ${isListening ? 'animate-pulse' : ''}`} />
+                        {isListening ? "Ouvindo..." : "Começar Gravação"}
+                      </Button>
+                    ) : userAnswer && (
+                      <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Você disse:</p>
+                        <p className="text-lg font-medium text-gray-900 dark:text-white">"{userAnswer}"</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -406,6 +559,13 @@ export default function EnglishCourse() {
                         </>
                       )}
                     </div>
+                    {exercise.explanation && (
+                      <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          💡 {exercise.explanation}
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -413,14 +573,16 @@ export default function EnglishCourse() {
 
             <div className="flex justify-center">
               {!showResult ? (
-                <Button
-                  size="lg"
-                  onClick={checkAnswer}
-                  disabled={!userAnswer.trim()}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Verificar Resposta
-                </Button>
+                exercise.type === "pronunciation" ? null : (
+                  <Button
+                    size="lg"
+                    onClick={checkAnswer}
+                    disabled={!userAnswer.trim()}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Verificar Resposta
+                  </Button>
+                )
               ) : (
                 <Button
                   size="lg"
@@ -447,6 +609,27 @@ export default function EnglishCourse() {
         <p className="text-gray-600 dark:text-gray-400">
           Aprenda inglês de forma divertida e interativa todos os dias!
         </p>
+        
+        <Card className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <span className="font-semibold text-gray-900 dark:text-white">Meta Diária</span>
+              </div>
+              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                {exercisesToday} / {dailyGoal} exercícios
+              </span>
+            </div>
+            <Progress value={(exercisesToday / dailyGoal) * 100} className="h-2" />
+            {exercisesToday >= dailyGoal && (
+              <p className="text-sm text-green-600 dark:text-green-400 mt-2 flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4" />
+                Meta diária concluída! 🎉
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
