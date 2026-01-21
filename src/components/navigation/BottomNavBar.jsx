@@ -19,7 +19,7 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
       "md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg z-50",
       className
     )}>
-      <div className="flex justify-around items-center h-16">
+      <div className="flex items-center h-16 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {navItems.map((item) => {
           const hasAccess = isAdmin || (item.feature ? checkAccess(item.feature, userPlan) : true);
           const isCurrentPage = location.pathname === item.url;
@@ -28,7 +28,7 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
             <Link
               key={item.name}
               to={hasAccess ? item.url : createPageUrl("Subscription")}
-              className={`flex flex-col items-center justify-center w-full transition-colors duration-200 relative ${
+              className={`flex flex-col items-center justify-center min-w-[70px] px-2 transition-colors duration-200 relative ${
                 isCurrentPage
                   ? 'dark:text-blue-400' 
                   : 'text-gray-500 dark:text-gray-400'
