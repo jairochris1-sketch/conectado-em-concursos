@@ -27,7 +27,8 @@ import {
   ClipboardList,
   BookOpen as BookOpenIcon,
   MessageSquare,
-  Brain
+  Brain,
+  Target
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
