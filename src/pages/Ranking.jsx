@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { UserRanking, UserAnswer } from "@/entities/all";
+import { UserRanking } from "@/entities/all";
 import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { Trophy } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FollowButton from "@/components/social/FollowButton";
@@ -74,59 +75,15 @@ export default function RankingPage() {
       const user = await User.me();
       setCurrentUser(user);
 
-      // Buscar respostas do usuário
-      const userAnswers = await UserAnswer.filter({ created_by: user.email });
-      const totalQuestions = userAnswers.length;
-      const correctAnswers = userAnswers.filter(a => a.is_correct).length;
-      const totalPoints = calculatePoints(correctAnswers, totalQuestions);
-      const streakDays = calculateStreak(userAnswers);
-      const level = Math.floor(totalPoints / 1000) + 1;
-      const badges = getBadges(totalPoints, correctAnswers, totalQuestions);
+      // Atualizar estatísticas do usuário via backend
+      await base44.functions.invoke('updateUserStats', { user_email: user.email });
 
-      // Buscar ou criar ranking do usuário
-      let userRank = await UserRanking.filter({ created_by: user.email });
+      // Buscar ranking do usuário atualizado
+      const userRank = await UserRanking.filter({ created_by: user.email });
       
-      if (userRank.length === 0) {
-        // Criar novo registro de ranking
-        userRank = await UserRanking.create({
-          user_name: user.full_name || "Usuário",
-          profile_photo_url: user.profile_photo_url,
-          total_points: totalPoints,
-          questions_answered: totalQuestions,
-          correct_answers: correctAnswers,
-          streak_days: streakDays,
-          level: level,
-          badges: badges
-        });
-      } else {
-        // Atualizar registro existente
-        userRank = userRank[0];
-        await UserRanking.update(userRank.id, {
-          user_name: user.full_name || "Usuário",
-          profile_photo_url: user.profile_photo_url,
-          total_points: totalPoints,
-          questions_answered: totalQuestions,
-          correct_answers: correctAnswers,
-          streak_days: streakDays,
-          level: level,
-          badges: badges
-        });
-        
-        // Recarregar dados atualizados
-        userRank = {
-          ...userRank,
-          user_name: user.full_name || "Usuário",
-          profile_photo_url: user.profile_photo_url,
-          total_points: totalPoints,
-          questions_answered: totalQuestions,
-          correct_answers: correctAnswers,
-          streak_days: streakDays,
-          level: level,
-          badges: badges
-        };
+      if (userRank.length > 0) {
+        setUserRanking(userRank[0]);
       }
-
-      setUserRanking(userRank);
 
       // Buscar todos os rankings
       const allRankings = await UserRanking.list("-total_points", 100);

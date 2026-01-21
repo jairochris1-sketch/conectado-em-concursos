@@ -32,6 +32,7 @@ import {
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
+import { UserStats } from "@/entities/UserStats";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavBar from "./components/navigation/BottomNavBar";
@@ -254,6 +255,7 @@ export default function Layout({ children, currentPageName }) {
     todayQuestions: 0,
     accuracy: 0
   });
+  const [userStats, setUserStats] = React.useState(null);
   const [trialInfo, setTrialInfo] = useState(null);
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
@@ -353,74 +355,17 @@ export default function Layout({ children, currentPageName }) {
         }
 
         if (userData.email) {
-          const userAnswers = await UserAnswer.filter({ created_by: userData.email });
+          // Buscar estatísticas pré-calculadas
+          const stats = await UserStats.filter({ user_email: userData.email });
 
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const todayAnswers = userAnswers.filter((a) => {
-            const answerDate = new Date(a.created_date);
-            answerDate.setHours(0, 0, 0, 0);
-            return answerDate.getTime() === today.getTime();
-          });
-
-          const totalCorrect = userAnswers.filter((a) => a.is_correct).length;
-          const accuracyRate = userAnswers.length > 0 ? Math.round(totalCorrect / userAnswers.length * 100) : 0;
-
-          const uniqueAnswerDatesMs = [...new Set(userAnswers.map((a) => {
-            const date = new Date(a.created_date);
-            date.setHours(0, 0, 0, 0);
-            return date.getTime();
-          }))].sort((a, b) => a - b);
-
-          let streak = 0;
-          if (uniqueAnswerDatesMs.length > 0) {
-            const todayNormalized = new Date();
-            todayNormalized.setHours(0, 0, 0, 0);
-
-            const yesterdayNormalized = new Date(todayNormalized);
-            yesterdayNormalized.setDate(todayNormalized.getDate() - 1);
-            yesterdayNormalized.setHours(0, 0, 0, 0);
-
-            let currentReferenceDate = todayNormalized;
-
-            const lastAnswerDateMs = uniqueAnswerDatesMs[uniqueAnswerDatesMs.length - 1];
-            const lastAnswerDateObj = new Date(lastAnswerDateMs);
-            lastAnswerDateObj.setHours(0, 0, 0, 0);
-
-            if (lastAnswerDateObj.getTime() === todayNormalized.getTime()) {
-              currentReferenceDate = todayNormalized;
-            } else if (lastAnswerDateObj.getTime() === yesterdayNormalized.getTime()) {
-              currentReferenceDate = yesterdayNormalized;
-            } else {
-              currentReferenceDate = new Date(0);
-            }
-
-            for (let i = uniqueAnswerDatesMs.length - 1; i >= 0; i--) {
-              const answeredDate = new Date(uniqueAnswerDatesMs[i]);
-              answeredDate.setHours(0, 0, 0, 0);
-
-              if (answeredDate.getTime() === currentReferenceDate.getTime()) {
-                streak++;
-                currentReferenceDate.setDate(currentReferenceDate.getDate() - 1);
-              } else if (answeredDate.getTime() < currentReferenceDate.getTime()) {
-                break;
-              }
-            }
-
-            if (currentReferenceDate.getTime() === new Date(0).getTime() && streak === 0) {
-              streak = 0;
-            } else if (currentReferenceDate.getTime() === new Date(0).getTime() && streak > 0) {
-              streak = 0;
-            }
+          if (stats.length > 0) {
+            setUserStats(stats[0]);
+            setSidebarStats({
+              streak: stats[0].streak_days || 0,
+              todayQuestions: stats[0].today_questions || 0,
+              accuracy: stats[0].accuracy_rate || 0
+            });
           }
-
-          setSidebarStats({
-            streak: streak,
-            todayQuestions: todayAnswers.length,
-            accuracy: accuracyRate
-          });
-        } else {
-          console.warn("User email not available, cannot fetch user answers for stats.");
         }
 
         if (!userData.onboarding_complete) {
