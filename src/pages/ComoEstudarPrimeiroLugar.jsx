@@ -111,7 +111,7 @@ export default function ComoEstudarPrimeiroLugar() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-4 md:py-8 px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-4 md:py-8 px-4">
           <div className="mx-auto max-w-7xl">
             <div className="md:hidden mb-4 overflow-x-auto -mx-4 px-4">
               <div className="flex gap-2 pb-2">
@@ -122,7 +122,7 @@ export default function ComoEstudarPrimeiroLugar() {
                     className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors flex-shrink-0 ${
                       selectedGuide === g.page_key
                         ? 'bg-indigo-600 text-white'
-                        : 'bg-white text-gray-700 border border-gray-300'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
                     }`}
                   >
                     {(g.title || g.page_key).replaceAll('_', ' ')}
@@ -133,17 +133,17 @@ export default function ComoEstudarPrimeiroLugar() {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
-            <div className="bg-white shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
-              <h2 className="text-sm font-semibold mb-3 text-gray-700">Guias</h2>
+            <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto">
+              <h2 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Guias</h2>
               <div className="space-y-2">
                 {guides.map((g) => (
-                  <div key={g.id} className={`rounded border p-2 ${g.page_key === 'guia_aprovacao' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
+                  <div key={g.id} className={`rounded border p-2 ${g.page_key === 'guia_aprovacao' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30' : 'border-gray-200 dark:border-gray-700'}`}>
                     {g.page_key === 'guia_aprovacao' ? (
-                      <div className="text-left w-full font-medium text-sm">
+                      <div className="text-left w-full font-medium text-sm text-gray-900 dark:text-gray-100">
                         {(g.title || g.page_key).replaceAll('_', ' ')}
                       </div>
                     ) : (
-                      <a className="block text-left w-full font-medium text-sm hover:text-indigo-700" href={createPageUrl(`GuiaEstudos?slug=${g.page_key}`)}>
+                      <a className="block text-left w-full font-medium text-sm text-gray-900 dark:text-gray-100 hover:text-indigo-700 dark:hover:text-indigo-400" href={createPageUrl(`GuiaEstudos?slug=${g.page_key}`)}>
                         {(g.title || g.page_key).replaceAll('_', ' ')}
                       </a>
                     )}
@@ -152,9 +152,9 @@ export default function ComoEstudarPrimeiroLugar() {
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
                             {g.page_key === 'guia_aprovacao' ? (
-                              <a href={`#art-${a.id}`} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
+                              <a href={`#art-${a.id}`} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
                             ) : (
-                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 hover:text-indigo-600">{a.title}</a>
+                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
                             )}
                           </li>
                         ))}
@@ -163,13 +163,13 @@ export default function ComoEstudarPrimeiroLugar() {
                   </div>
                 ))}
                 {guides.length === 0 && (
-                  <p className="text-sm text-gray-500">Nenhum guia criado ainda.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Nenhum guia criado ainda.</p>
                 )}
               </div>
             </div>
           </aside>
           <section className="md:col-span-8 lg:col-span-9">
-            <div className="bg-white shadow-xl rounded-md p-4 md:p-8">
+            <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 md:p-8">
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
