@@ -432,22 +432,22 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle>Preferências de Estudo</CardTitle>
+                  <CardTitle className="dark:text-white">Preferências de Estudo</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
                     <div>
-                      <Label htmlFor="target_position">Cargo Pretendido</Label>
+                      <Label htmlFor="target_position" className="dark:text-gray-300">Cargo Pretendido</Label>
                       <Select
                         value={formData.target_position}
                         onValueChange={(value) => handleInputChange('target_position', value)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
                           <SelectValue placeholder="Selecione o cargo pretendido" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="dark:bg-gray-700 dark:text-white">
                           {cargoOptions.map(cargo => (
                             <SelectItem key={cargo.value} value={cargo.value}>
                               {cargo.label}
@@ -458,7 +458,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="study_hours">Horas de Estudo por Dia</Label>
+                      <Label htmlFor="study_hours" className="dark:text-gray-300">Horas de Estudo por Dia</Label>
                       <Input
                         id="study_hours"
                         type="number"
@@ -466,19 +466,20 @@ export default function ProfilePage() {
                         max="24"
                         value={formData.study_hours_per_day}
                         onChange={(e) => handleInputChange('study_hours_per_day', parseInt(e.target.value) || 0)}
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label>Disciplinas Preferidas</Label>
+                      <Label className="dark:text-gray-300">Disciplinas Preferidas</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                         {subjectOptions.map(subject => (
                           <label
                             key={subject.value}
                             className={`flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                               formData.preferred_subjects.includes(subject.value)
-                                ? 'bg-blue-50 border-blue-300'
-                                : 'border-gray-200 hover:bg-gray-50'
+                                ? 'bg-blue-50 dark:bg-blue-900 border-blue-300 dark:border-blue-700'
+                                : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                             }`}
                           >
                             <input
@@ -487,7 +488,7 @@ export default function ProfilePage() {
                               onChange={() => handleSubjectToggle(subject.value)}
                               className="rounded text-blue-600"
                             />
-                            <span className="text-sm">{subject.label}</span>
+                            <span className="text-sm dark:text-gray-300">{subject.label}</span>
                           </label>
                         ))}
                       </div>
