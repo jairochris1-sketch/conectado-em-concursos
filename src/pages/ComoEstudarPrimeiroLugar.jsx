@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import EnhancedArticleReader from "../components/reading/EnhancedArticleReader";
+import { BookOpen } from "lucide-react";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -20,6 +22,7 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState(null);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   // Determinar guia a partir da URL, localStorage ou primeiro guia disponível
   useEffect(() => {
@@ -256,15 +259,28 @@ export default function ComoEstudarPrimeiroLugar() {
           <section className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
             {articles.map((a) => (
-              <article key={a.id} id={`art-${a.id}`} className="prose dark:prose-invert max-w-none">
-                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">{a.title}</h3>
-                <div className="flex items-center gap-2 mb-3">
-                  {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
-                  {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">{a.reading_time} min</Badge>}
-                </div>
-                <div className="text-gray-900 dark:text-gray-100" dangerouslySetInnerHTML={{ __html: a.content }} />
-                <hr className="my-6 dark:border-gray-700" />
-              </article>
+              <Card key={a.id} id={`art-${a.id}`} className="dark:bg-gray-700 dark:border-gray-600 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedArticle(a)}>
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        {a.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
+                        {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-600 dark:text-gray-300">{a.reading_time} min</Badge>}
+                      </div>
+                      {a.summary && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{a.summary}</p>
+                      )}
+                    </div>
+                    <Button size="sm" variant="outline" className="flex-shrink-0">
+                      <BookOpen className="w-4 h-4 mr-1" />
+                      Ler
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </section>
         )}
@@ -279,6 +295,13 @@ export default function ComoEstudarPrimeiroLugar() {
           </section>
         </div>
       </div>
+
+      {/* Enhanced Article Reader */}
+      <EnhancedArticleReader
+        article={selectedArticle}
+        isOpen={!!selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+      />
     </div>
   );
 }
