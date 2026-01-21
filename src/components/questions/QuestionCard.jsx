@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
@@ -91,7 +90,7 @@ export default function QuestionCard({
     >
       <Card className={cn(
         "shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden",
-        "bg-white dark:bg-gray-800",
+        "bg-white dark:bg-gray-900 dark:border-gray-700",
         fontSize && `text-[${fontSize}rem]`
       )}>
         <CardHeader className="space-y-3 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800">
