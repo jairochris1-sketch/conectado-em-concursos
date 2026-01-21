@@ -73,10 +73,14 @@ export default function WelcomePage() {
       >
         <Card className="max-w-lg w-full shadow-2xl border-0 rounded-2xl overflow-hidden bg-transparent text-white">
           <div className="p-8 text-center">
-            <Sparkles className="w-16 h-16 mx-auto mb-4 opacity-80" />
-            <h1 className="text-3xl font-extrabold">{content.title}</h1>
-            <p className="mt-2 opacity-90">{content.subtitle}</p>
-          </div>
+             <img 
+               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/c4db9e5bf_logopng.png"
+               alt="Logo Conectado em Concursos"
+               className="w-16 h-16 mx-auto mb-4 object-contain"
+             />
+             <h1 className="text-3xl font-extrabold">{content.title}</h1>
+             <p className="mt-2 opacity-90">{content.subtitle}</p>
+           </div>
           <CardContent className="p-8 text-center pt-0">
             <p className="text-lg leading-relaxed">
               {content.main_text}
