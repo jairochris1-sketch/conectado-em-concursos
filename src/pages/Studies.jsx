@@ -255,6 +255,13 @@ export default function StudiesPage() {
 
   useEffect(() => {
     loadAllData();
+    
+    // Check URL parameters for tab
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'english') {
+      // Tab will be handled by Tabs component defaultValue
+    }
   }, []);
 
   useEffect(() => {

@@ -84,6 +84,11 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
+  title: "Mini Curso de Inglês",
+  url: createPageUrl("Studies") + "?tab=english",
+  icon: BookOpen
+},
+{
   title: "Fórum",
   url: createPageUrl("Community"),
   icon: MessageSquare
