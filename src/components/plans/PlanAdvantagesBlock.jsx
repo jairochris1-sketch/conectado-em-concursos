@@ -53,7 +53,7 @@ export default function PlanAdvantagesBlock() {
                     onClick={handleClose}
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto flex-shrink-0"
+                    className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto flex-shrink-0 relative z-50 cursor-pointer"
                   >
                     Fechar
                   </Button>
@@ -116,7 +116,7 @@ export default function PlanAdvantagesBlock() {
                     onClick={handleClose}
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-white/20"
+                    className="text-white hover:bg-white/20 relative z-50 cursor-pointer"
                   >
                     Fechar
                   </Button>
