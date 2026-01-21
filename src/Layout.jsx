@@ -204,6 +204,7 @@ const pageNameTranslations = {
 const featureAccess = {
   'Área de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
+  'Planos de Estudo': ['padrao', 'avancado'],
   'ChatGPT': ['padrao', 'avancado'],
   'Criar Simulado': ['avancado'],
   'Concursos Abertos': ['padrao', 'avancado'],
