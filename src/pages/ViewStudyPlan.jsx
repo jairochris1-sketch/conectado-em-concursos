@@ -431,6 +431,26 @@ export default function ViewStudyPlanPage() {
                           </div>
                         </div>
                       )}
+
+                      {/* Botões de Edição */}
+                      {editingWeek === week.week && (
+                        <div className="flex gap-2 pt-2 border-t border-gray-300 dark:border-gray-600">
+                          <button
+                            onClick={saveWeekEdit}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors text-sm"
+                          >
+                            <Save className="w-4 h-4" />
+                            Salvar
+                          </button>
+                          <button
+                            onClick={() => setEditingWeek(null)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors text-sm"
+                          >
+                            <X className="w-4 h-4" />
+                            Cancelar
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
