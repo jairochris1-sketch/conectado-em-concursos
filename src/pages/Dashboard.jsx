@@ -163,8 +163,8 @@ export default function Dashboard() {
         >
           {/* Título + mensagens */}
           <div>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-              {currentUser?.full_name || 'Meu Painel'}
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white capitalize">
+              {getCurrentDateTime()}
             </h1>
             <div className="mt-2 space-y-1 text-gray-700 dark:text-gray-300 text-sm md:text-base">
               <p>👋 {getGreeting()}, {currentUser?.full_name || 'user'}!</p>
