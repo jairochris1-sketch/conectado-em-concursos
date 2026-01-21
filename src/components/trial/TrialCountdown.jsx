@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function TrialCountdown({ daysRemaining, totalDays }) {
   const [isVisible, setIsVisible] = useState(true);
   
-  if (!daysRemaining || daysRemaining <= 0 || !isVisible) return null;
+  if (!daysRemaining || daysRemaining <= 0) return null;
 
   const progressPercentage = ((totalDays - daysRemaining) / totalDays) * 100;
   const isLastDay = daysRemaining === 1;
@@ -13,7 +13,8 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
 
   return (
     <AnimatePresence>
-      <motion.div
+      {isVisible && (
+        <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -117,7 +118,8 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
           </button>
         </div>
       </div>
-    </motion.div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 }
