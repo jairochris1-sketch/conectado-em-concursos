@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +34,8 @@ export default function StatisticsPage() {
   const loadAnswers = async () => {
     setIsLoading(true);
     try {
-      const answersData = await UserAnswer.list("-created_date", 1000);
+      const user = await User.me();
+      const answersData = await UserAnswer.filter({ created_by: user.email }, "-created_date", 1000);
       setAnswers(answersData);
     } catch (error) {
       console.error("Erro ao carregar respostas:", error);
