@@ -115,7 +115,7 @@ export default function StudyTimer() {
                     onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 0)}
                     className="mt-1"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Escolha entre 1 e 180 minutos
                   </p>
                 </div>
@@ -144,7 +144,7 @@ export default function StudyTimer() {
                         stroke="currentColor"
                         strokeWidth="8"
                         fill="none"
-                        className="text-gray-200"
+                        className="text-gray-200 dark:text-gray-700"
                       />
                       <circle
                         cx="96"
@@ -161,10 +161,10 @@ export default function StudyTimer() {
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <div className="text-5xl font-bold text-gray-900">
+                        <div className="text-5xl font-bold text-gray-900 dark:text-white">
                           {formatTime(timeLeft)}
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           {isRunning ? "Estudando..." : timeLeft === 0 ? "Finalizado!" : "Pausado"}
                         </div>
                       </div>
@@ -208,7 +208,7 @@ export default function StudyTimer() {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-900">
+                <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 text-sm text-blue-900 dark:text-blue-100">
                   <p className="font-medium mb-1">💡 Dica de Estudo</p>
                   <p>
                     Estudos mostram que pausas regulares melhoram a retenção de conteúdo.
