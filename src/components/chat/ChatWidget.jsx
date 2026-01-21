@@ -81,6 +81,7 @@ export default function ChatWidget() {
 
       setCurrentMessage('');
       setSelectedImage(null);
+      setHasUserInfo(true);
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
       alert('Erro ao enviar mensagem');
