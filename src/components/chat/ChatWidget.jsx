@@ -129,6 +129,32 @@ export default function ChatWidget() {
     };
   }, [visitorName, notificationsEnabled]);
 
+  // Enviar heartbeat de atividade do visitante
+  React.useEffect(() => {
+    if (!hasUserInfo || !isOpen) return;
+
+    const updateActivity = async () => {
+      try {
+        // Atualizar última atividade das últimas mensagens do visitante
+        const latestMessage = messages[messages.length - 1];
+        if (latestMessage) {
+          await base44.entities.ChatMessage.update(latestMessage.id, {
+            last_activity: new Date().toISOString(),
+            visitor_status: 'online'
+          });
+        }
+      } catch (error) {
+        console.log('Erro ao atualizar atividade:', error.message);
+      }
+    };
+
+    // Atualizar atividade a cada 30 segundos
+    const interval = setInterval(updateActivity, 30000);
+    updateActivity(); // Atualizar imediatamente
+
+    return () => clearInterval(interval);
+  }, [hasUserInfo, isOpen, messages]);
+
   const handleImageSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
