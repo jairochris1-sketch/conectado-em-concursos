@@ -243,9 +243,9 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 dark:text-white">
                     <UserIcon className="w-5 h-5" />
                     Foto de Perfil
                   </CardTitle>
@@ -279,9 +279,9 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{formData.full_name || 'Usuário'}</h3>
-                      <p className="text-sm text-gray-600">{formData.email}</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <h3 className="font-medium text-gray-900 dark:text-white">{formData.full_name || 'Usuário'}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{formData.email}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
                       <div className="flex gap-4 mt-3">
