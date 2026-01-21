@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
@@ -151,7 +150,7 @@ export default function SchedulePage() {
   );
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -159,10 +158,10 @@ export default function SchedulePage() {
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Cronograma de Estudos
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Organize seus estudos com horários personalizados
             </p>
           </div>
@@ -180,7 +179,7 @@ export default function SchedulePage() {
           <input
             type="text"
             placeholder="Pesquisar cronogramas por título ou descrição..."
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -205,15 +204,15 @@ export default function SchedulePage() {
 
         <div className="grid gap-6">
           {filteredSchedules.length === 0 ? (
-            <Card className="text-center py-12">
+            <Card className="text-center py-12 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardContent className="space-y-4">
-                <Calendar className="w-16 h-16 mx-auto text-gray-400" />
-                <h3 className="text-xl font-semibold text-gray-900">
+                <Calendar className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500" />
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Nenhum cronograma criado"
                     : "Nenhum cronograma encontrado"}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Crie seu primeiro cronograma personalizado de estudos"
                     : "Ajuste os termos de busca para encontrar cronogramas."}
@@ -233,17 +232,17 @@ export default function SchedulePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+                <Card className="shadow-lg border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                   <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl text-gray-900">
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                      <div className="flex-1">
+                        <CardTitle className="text-xl text-gray-900 dark:text-white">
                           {schedule.title}
                         </CardTitle>
                         {schedule.description && (
-                          <p className="text-gray-600 mt-2">{schedule.description}</p>
+                          <p className="text-gray-600 dark:text-gray-400 mt-2">{schedule.description}</p>
                         )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                        <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
@@ -254,11 +253,12 @@ export default function SchedulePage() {
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handlePrint(schedule)}
+                          className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <Printer className="w-4 h-4 mr-2" />
                           Imprimir
@@ -267,6 +267,7 @@ export default function SchedulePage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(schedule)}
+                          className="border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           Editar
                         </Button>
