@@ -161,13 +161,10 @@ export default function ChatWidget() {
 
     setIsLoading(true);
     try {
-      const result = await optimizeImageFile(file, {
-        maxWidth: 800,
-        quality: 75
-      });
+      const result = await base44.integrations.Core.UploadFile({ file });
       setSelectedImage(result.file_url);
     } catch (error) {
-      console.error('Erro ao otimizar imagem:', error);
+      console.error('Erro ao fazer upload de imagem:', error);
       alert('Erro ao processar imagem');
     } finally {
       setIsLoading(false);
