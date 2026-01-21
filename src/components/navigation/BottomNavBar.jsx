@@ -8,7 +8,7 @@ const navItems = [
   { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
   { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
   { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
-  { name: 'Perfil', url: createPageUrl('Profile'), icon: User, feature: null }
+  { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos' }
 ];
 
 export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className }) {
