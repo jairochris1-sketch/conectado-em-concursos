@@ -536,13 +536,11 @@ export default function Layout({ children, currentPageName }) {
 
       <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
         <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
-            <div
-            className="relative w-8 h-8 rounded-lg flex items-center justify-center shadow-lg"
-            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
-
-              <BookOpen className="w-4 h-4 text-white" />
-              <Pencil className="w-3 h-3 text-yellow-300 absolute bottom-0 right-0" />
-            </div>
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+              alt="Logo Conectado em Concursos"
+              className="w-10 h-10 object-contain shadow-lg"
+            />
             <div>
                 <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
                 <h2 className="font-bold text-white text-sm leading-tight">Concursos Públicos SE</h2>
