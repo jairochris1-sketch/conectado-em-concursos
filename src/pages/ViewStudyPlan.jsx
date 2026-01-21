@@ -360,29 +360,55 @@ export default function ViewStudyPlanPage() {
 
                     {/* Metas e Progresso */}
                     <div className="ml-9 space-y-3">
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Questões</p>
-                          <p className="text-lg font-bold text-gray-900 dark:text-white">
-                            {progress.questions}/{progress.targetQuestions}
-                          </p>
-                          <Progress
-                            value={Math.min((progress.questions / progress.targetQuestions) * 100, 100)}
-                            className="h-1.5 mt-1"
-                          />
+                      {editingWeek === week.week ? (
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                          <div>
+                            <label className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">Questões</label>
+                            <Input
+                              type="number"
+                              min="1"
+                              value={editData.target_questions}
+                              onChange={(e) => setEditData({ ...editData, target_questions: parseInt(e.target.value) || 0 })}
+                              className="text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">Horas</label>
+                            <Input
+                              type="number"
+                              min="0.5"
+                              step="0.5"
+                              value={editData.target_hours}
+                              onChange={(e) => setEditData({ ...editData, target_hours: parseFloat(e.target.value) || 0 })}
+                              className="text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500"
+                            />
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taxa de Acerto</p>
-                          <p className="text-lg font-bold text-gray-900 dark:text-white">
-                            {progress.accuracy}%
-                          </p>
-                          {progress.accuracy > 0 && (
-                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                              {progress.correct}/{progress.questions} acertos
+                      ) : (
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                          <div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Questões</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">
+                              {progress.questions}/{progress.targetQuestions}
                             </p>
-                          )}
+                            <Progress
+                              value={Math.min((progress.questions / progress.targetQuestions) * 100, 100)}
+                              className="h-1.5 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taxa de Acerto</p>
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">
+                              {progress.accuracy}%
+                            </p>
+                            {progress.accuracy > 0 && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                {progress.correct}/{progress.questions} acertos
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Disciplinas da Semana */}
                       {week.subjects_focus && week.subjects_focus.length > 0 && (
