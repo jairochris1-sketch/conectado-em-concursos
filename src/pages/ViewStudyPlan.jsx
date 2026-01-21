@@ -29,6 +29,8 @@ export default function ViewStudyPlanPage() {
   const [loading, setLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState([]);
   const [weeklyProgress, setWeeklyProgress] = useState({});
+  const [editingWeek, setEditingWeek] = useState(null);
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
