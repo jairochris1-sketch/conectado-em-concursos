@@ -69,13 +69,20 @@ export default function ChatWidget() {
   };
 
   const handleEnableNotifications = async () => {
-    const granted = await NotificationManager.requestPermission();
-    if (granted) {
-      setNotificationsEnabled(true);
-      NotificationManager.send('Notificações ativadas!', {
-        body: 'Você receberá notificações de novas mensagens no chat'
-      });
-      setShowNotificationPrompt(false);
+    try {
+      const granted = await NotificationManager.requestPermission();
+      if (granted) {
+        setNotificationsEnabled(true);
+        setShowNotificationPrompt(false);
+        // Enviar notificação após um pequeno delay
+        setTimeout(() => {
+          NotificationManager.send('Notificações ativadas!', {
+            body: 'Você receberá notificações de novas mensagens no chat'
+          });
+        }, 500);
+      }
+    } catch (error) {
+      console.error('Erro ao ativar notificações:', error);
     }
   };
 
@@ -303,14 +310,14 @@ export default function ChatWidget() {
                     placeholder="Seu nome"
                     value={visitorName}
                     onChange={(e) => setVisitorName(e.target.value)}
-                    className="text-sm"
+                    className="text-sm bg-white text-gray-900 border-gray-300 placeholder-gray-500"
                   />
                   <Input
                     placeholder="Seu email (opcional)"
                     type="email"
                     value={visitorEmail}
                     onChange={(e) => setVisitorEmail(e.target.value)}
-                    className="text-sm"
+                    className="text-sm bg-white text-gray-900 border-gray-300 placeholder-gray-500"
                   />
                 </>
               )}
@@ -341,7 +348,7 @@ export default function ChatWidget() {
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className="text-sm flex-1"
+                  className="text-sm flex-1 bg-white text-gray-900 border-gray-300 placeholder-gray-500"
                   disabled={isLoading}
                 />
                 <input
