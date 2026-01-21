@@ -9,6 +9,7 @@ import { UploadFile } from '@/integrations/Core';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createPageUrl } from '@/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { optimizeImageFile, getImageStats } from '@/utils/imageOptimizer';
 
 export default function AdminContentForm({ content, onSave }) {
   const [formData, setFormData] = useState(content);
