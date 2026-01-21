@@ -20,24 +20,32 @@ export default function ChatWidget() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (isOpen && visitorName) {
-      loadAdminReplies();
+    if (isOpen && visitorName && hasUserInfo) {
+      loadHistoryAndReplies();
     }
-  }, [isOpen, visitorName]);
+  }, [isOpen, visitorName, hasUserInfo]);
 
-  const loadAdminReplies = async () => {
+  const loadHistoryAndReplies = async () => {
     try {
-      const replies = await base44.entities.ChatReply.list('-created_date', 100);
+      // Carregar todas as mensagens do visitante
+      const visitorMessages = await base44.entities.ChatMessage.filter({
+        visitor_name: visitorName
+      }, '-created_date', 100);
+
+      // Carregar todas as respostas do admin
+      const allReplies = await base44.entities.ChatReply.list('-created_date', 500);
       const repliesByMessage = {};
-      replies.forEach((reply) => {
+      allReplies.forEach((reply) => {
         if (!repliesByMessage[reply.message_id]) {
           repliesByMessage[reply.message_id] = [];
         }
         repliesByMessage[reply.message_id].push(reply);
       });
+
       setAdminReplies(repliesByMessage);
+      setMessages(visitorMessages.reverse()); // Ordenar cronologicamente (mais antigo primeiro)
     } catch (error) {
-      console.error('Erro ao carregar respostas:', error);
+      console.error('Erro ao carregar histórico:', error);
     }
   };
 
@@ -132,16 +140,20 @@ export default function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
-              {hasUserInfo && (
-                <div className="text-center text-blue-600 text-sm font-semibold mt-4 mb-4">
-                  👋 Olá, Sr(a) {visitorName}!
-                </div>
-              )}
-              {messages.length === 0 ? (
-                <div className="text-center text-gray-500 text-sm mt-4">
-                  Bem-vindo! Deixe sua mensagem.
-                </div>
-              ) : (
+                        {hasUserInfo && (
+                          <div className="text-center text-blue-600 text-sm font-semibold mt-4 mb-4">
+                            👋 Olá, Sr(a) {visitorName}!
+                          </div>
+                        )}
+                        {!hasUserInfo && messages.length === 0 ? (
+                          <div className="text-center text-gray-500 text-sm mt-4">
+                            Bem-vindo! Digite seu nome para começar.
+                          </div>
+                        ) : messages.length === 0 && hasUserInfo ? (
+                          <div className="text-center text-gray-500 text-sm mt-4">
+                            Nenhuma mensagem anterior. Deixe sua primeira mensagem!
+                          </div>
+                        ) : (
                 messages.map((msg, idx) => (
                   <div key={idx} className="space-y-2">
                     {msg.image_url && (
