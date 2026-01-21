@@ -17,6 +17,16 @@ export default function PlanAdvantagesBlock() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isVisible || isDismissed) return;
+    
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 3 * 60 * 1000); // 3 minutos
+
+    return () => clearTimeout(timer);
+  }, [isVisible, isDismissed]);
+
   const handleClose = () => {
     setIsVisible(false);
     localStorage.setItem('planAdvantagesDismissed', 'true');
