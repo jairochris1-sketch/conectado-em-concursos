@@ -182,7 +182,7 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['avancado'],
+  'Resumos': ['padrao', 'avancado'],
   'Provas': ['padrao', 'avancado'],
   'Ranking de Usuários': ['padrao', 'avancado']
 };
