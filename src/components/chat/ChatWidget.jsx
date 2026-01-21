@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Loader2, ImageIcon } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, ImageIcon, Bell, BellOff } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
+import { NotificationManager } from '@/components/NotificationManager';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +17,8 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasUserInfo, setHasUserInfo] = useState(false);
   const [adminReplies, setAdminReplies] = useState({});
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -24,6 +27,22 @@ export default function ChatWidget() {
       loadHistoryAndReplies();
     }
   }, [isOpen, visitorName, hasUserInfo]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Inicializar notificações
+      NotificationManager.init();
+      
+      // Verificar se notificações estão habilitadas
+      const isEnabled = NotificationManager.isEnabled();
+      setNotificationsEnabled(isEnabled);
+
+      // Mostrar prompt se não foi pedido ainda
+      if (!isEnabled && Notification.permission === 'default') {
+        setShowNotificationPrompt(true);
+      }
+    }
+  }, [isOpen]);
 
   const loadHistoryAndReplies = async () => {
     try {
@@ -46,6 +65,17 @@ export default function ChatWidget() {
       setMessages(visitorMessages.reverse()); // Ordenar cronologicamente (mais antigo primeiro)
     } catch (error) {
       console.error('Erro ao carregar histórico:', error);
+    }
+  };
+
+  const handleEnableNotifications = async () => {
+    const granted = await NotificationManager.requestPermission();
+    if (granted) {
+      setNotificationsEnabled(true);
+      NotificationManager.send('Notificações ativadas!', {
+        body: 'Você receberá notificações de novas mensagens no chat'
+      });
+      setShowNotificationPrompt(false);
     }
   };
 
@@ -107,12 +137,20 @@ export default function ChatWidget() {
       setCurrentMessage('');
       setSelectedImage(null);
       setHasUserInfo(true);
-    } catch (error) {
+
+      // Enviar notificação de confirmação
+      if (notificationsEnabled) {
+        NotificationManager.send('Mensagem enviada', {
+          body: 'Sua mensagem foi enviada com sucesso',
+          tag: 'chat-sent'
+        });
+      }
+      } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
       alert('Erro ao enviar mensagem');
-    } finally {
+      } finally {
       setIsLoading(false);
-    }
+      }
   };
 
   return (
@@ -129,14 +167,52 @@ export default function ChatWidget() {
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex justify-between items-center">
               <h3 className="font-bold text-lg">Suporte</h3>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-blue-600"
-                onClick={() => setIsOpen(false)}>
-                <X className="w-5 h-5" />
-              </Button>
+              <div className="flex gap-1">
+                {notificationsEnabled && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-blue-600"
+                    title="Notificações ativadas">
+                    <Bell className="w-5 h-5" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-blue-600"
+                  onClick={() => setIsOpen(false)}>
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
+
+            {/* Notification Prompt */}
+            <AnimatePresence>
+              {showNotificationPrompt && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-blue-50 border-b border-blue-200 p-3 text-sm">
+                  <p className="text-blue-800 mb-2">Ativar notificações para não perder respostas?</p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={handleEnableNotifications}
+                      className="bg-blue-600 hover:bg-blue-700 text-white">
+                      Ativar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowNotificationPrompt(false)}>
+                      Agora não
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
