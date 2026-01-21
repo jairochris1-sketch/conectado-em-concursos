@@ -56,7 +56,7 @@ export function ThemeToggle() {
       ) : (
         <>
           <Moon className="h-3 w-3 mr-1" />
-          <span className="hidden md:inline">Escuro</span>
+          <span className="hidden md:inline">Dark</span>
         </>
       )}
     </Button>
