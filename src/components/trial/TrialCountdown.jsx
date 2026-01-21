@@ -21,102 +21,76 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
           isUrgent ? 'animate-pulse' : ''
         }`}
       >
-        <div
-          className={`rounded-xl shadow-xl p-3 w-[240px] border-2 ${
-          isLastDay
-            ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-300'
-            : isUrgent
-            ? 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300'
-            : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300'
-        }`}
-      >
-        <div className="flex items-start gap-2">
+        <div className="relative">
           <div
-            className={`p-1.5 rounded-full ${
+            className={`absolute inset-0 rounded-2xl blur-lg opacity-50 ${
               isLastDay
-                ? 'bg-red-100'
+                ? 'bg-gradient-to-br from-red-500 to-orange-500'
                 : isUrgent
-                ? 'bg-amber-100'
-                : 'bg-blue-100'
+                ? 'bg-gradient-to-br from-amber-500 to-yellow-500'
+                : 'bg-gradient-to-br from-blue-500 to-indigo-500'
+            }`}
+          />
+          <div
+            className={`relative rounded-2xl shadow-2xl p-4 w-[260px] border backdrop-blur-sm ${
+              isLastDay
+                ? 'bg-gradient-to-br from-red-500 via-orange-500 to-red-600 border-red-300/50'
+                : isUrgent
+                ? 'bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 border-amber-300/50'
+                : 'bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 border-blue-300/50'
             }`}
           >
-            {isUrgent ? (
-              <Clock
-                className={`w-4 h-4 ${
-                  isLastDay ? 'text-red-600' : 'text-amber-600'
-                }`}
-              />
-            ) : (
-              <Sparkles className="w-4 h-4 text-blue-600" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h3
-              className={`text-xs font-bold mb-0.5 ${
-                isLastDay
-                  ? 'text-red-800'
-                  : isUrgent
-                  ? 'text-amber-800'
-                  : 'text-blue-800'
-              }`}
-            >
-              {isLastDay
-                ? 'Teste Gratuito Ativo'
-                : 'Teste Gratuito Ativo'}
-            </h3>
-            <p
-              className={`text-xs mb-1.5 ${
-                isLastDay
-                  ? 'text-red-700'
-                  : isUrgent
-                  ? 'text-amber-700'
-                  : 'text-blue-700'
-              }`}
-            >
-              <strong className="text-sm">
-                {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'}
-              </strong>{' '}
-              restante{daysRemaining !== 1 && 's'}
-            </p>
-            <div className="w-full bg-white/50 rounded-full h-1.5 mb-1.5">
+            <div className="flex items-start gap-3">
               <div
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`p-2 rounded-xl shadow-lg ${
                   isLastDay
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500'
+                    ? 'bg-white/20 backdrop-blur-md'
                     : isUrgent
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500'
-                    : 'bg-gradient-to-r from-blue-500 to-indigo-500'
+                    ? 'bg-white/20 backdrop-blur-md'
+                    : 'bg-white/20 backdrop-blur-md'
                 }`}
-                style={{ width: `${progressPercentage}%` }}
-              />
+              >
+                {isUrgent ? (
+                  <Clock className="w-5 h-5 text-white" />
+                ) : (
+                  <Sparkles className="w-5 h-5 text-white" />
+                )}
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-bold mb-1 text-white drop-shadow-md">
+                  Teste Gratuito Ativo
+                </h3>
+                <p className="text-xs mb-2 text-white/90">
+                  <strong className="text-lg font-extrabold text-white">
+                    {daysRemaining}
+                  </strong>{' '}
+                  <span className="font-semibold">
+                    {daysRemaining === 1 ? 'dia' : 'dias'} restante{daysRemaining !== 1 && 's'}
+                  </span>
+                </p>
+                <div className="w-full bg-white/30 rounded-full h-2 mb-2 overflow-hidden">
+                  <div
+                    className="h-2 rounded-full bg-white shadow-inner transition-all duration-300"
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-white/90">
+                    Plano Avançado
+                  </p>
+                  <Shield className="w-4 h-4 text-white/80" />
+                </div>
+              </div>
+              <button
+                onClick={() => setIsVisible(false)}
+                className="p-1.5 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm"
+                aria-label="Fechar"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
             </div>
-            <p
-              className={`text-xs ${
-                isLastDay
-                  ? 'text-red-600'
-                  : isUrgent
-                  ? 'text-amber-600'
-                  : 'text-blue-600'
-              }`}
-            >
-              Plano Avançado
-            </p>
           </div>
-          <button
-            onClick={() => setIsVisible(false)}
-            className={`p-1 rounded-full hover:bg-white/50 transition-colors ${
-              isLastDay
-                ? 'text-red-600'
-                : isUrgent
-                ? 'text-amber-600'
-                : 'text-blue-600'
-            }`}
-            aria-label="Fechar"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
-      </div>
     </motion.div>
     </AnimatePresence>
   );
