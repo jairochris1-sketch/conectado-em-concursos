@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, ImageIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,31 @@ export default function ChatWidget() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasUserInfo, setHasUserInfo] = useState(false);
+  const [adminReplies, setAdminReplies] = useState({});
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && visitorName) {
+      loadAdminReplies();
+    }
+  }, [isOpen, visitorName]);
+
+  const loadAdminReplies = async () => {
+    try {
+      const replies = await base44.entities.ChatReply.list('-created_date', 100);
+      const repliesByMessage = {};
+      replies.forEach((reply) => {
+        if (!repliesByMessage[reply.message_id]) {
+          repliesByMessage[reply.message_id] = [];
+        }
+        repliesByMessage[reply.message_id].push(reply);
+      });
+      setAdminReplies(repliesByMessage);
+    } catch (error) {
+      console.error('Erro ao carregar respostas:', error);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -131,6 +154,16 @@ export default function ChatWidget() {
                     {msg.message && (
                       <div className="bg-blue-100 text-gray-800 p-3 rounded-lg text-sm">
                         {msg.message}
+                      </div>
+                    )}
+                    {adminReplies[msg.id] && adminReplies[msg.id].length > 0 && (
+                      <div className="space-y-1">
+                        {adminReplies[msg.id].map((reply) => (
+                          <div key={reply.id} className="bg-green-50 text-green-900 p-3 rounded-lg text-sm border-l-4 border-green-600">
+                            <p className="font-semibold text-xs text-green-700 mb-1">📧 Resposta do Suporte:</p>
+                            <p>{reply.reply_text}</p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
