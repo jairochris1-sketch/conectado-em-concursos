@@ -1,10 +1,8 @@
 import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
-import Calendar from './pages/Calendar';
 import ChatGPT from './pages/ChatGPT';
 import Community from './pages/Community';
-import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import EnglishCourse from './pages/EnglishCourse';
@@ -17,6 +15,7 @@ import LogicCourse from './pages/LogicCourse';
 import MathCourse from './pages/MathCourse';
 import Notes from './pages/Notes';
 import PerformanceReports from './pages/PerformanceReports';
+import Profile from './pages/Profile';
 import Questions from './pages/Questions';
 import Ranking from './pages/Ranking';
 import SDAdmin from './pages/SDAdmin';
@@ -30,7 +29,8 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Profile from './pages/Profile';
+import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
+import Calendar from './pages/Calendar';
 import __Layout from './Layout.jsx';
 
 
@@ -38,10 +38,8 @@ export const PAGES = {
     "ActivityFeed": ActivityFeed,
     "Admin": Admin,
     "AssistirAula": AssistirAula,
-    "Calendar": Calendar,
     "ChatGPT": ChatGPT,
     "Community": Community,
-    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
     "EnglishCourse": EnglishCourse,
@@ -54,6 +52,7 @@ export const PAGES = {
     "MathCourse": MathCourse,
     "Notes": Notes,
     "PerformanceReports": PerformanceReports,
+    "Profile": Profile,
     "Questions": Questions,
     "Ranking": Ranking,
     "SDAdmin": SDAdmin,
@@ -67,7 +66,8 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Profile": Profile,
+    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
+    "Calendar": Calendar,
 }
 
 export const pagesConfig = {

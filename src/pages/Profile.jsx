@@ -221,17 +221,17 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8">
+    <div className="min-h-screen bg-white p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Meu Perfil
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600">
             Gerencie suas informações pessoais e preferências de estudo
           </p>
         </motion.div>
@@ -243,9 +243,9 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 dark:text-white">
+                  <CardTitle className="flex items-center gap-2">
                     <UserIcon className="w-5 h-5" />
                     Foto de Perfil
                   </CardTitle>
@@ -279,68 +279,68 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 dark:text-white">{formData.full_name || 'Usuário'}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{formData.email}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                      <h3 className="font-medium text-gray-900">{formData.full_name || 'Usuário'}</h3>
+                      <p className="text-sm text-gray-600">{formData.email}</p>
+                      <p className="text-xs text-gray-500 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
                       <div className="flex gap-4 mt-3">
-                         <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
-                           <DialogTrigger asChild>
-                             <Button variant="outline" size="sm" className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                               <Users className="w-4 h-4 mr-1" />
-                               {followers.length} Seguidores
-                             </Button>
-                           </DialogTrigger>
-                           <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
-                             <DialogHeader>
-                               <DialogTitle className="dark:text-white">Seguidores</DialogTitle>
-                             </DialogHeader>
-                             <div className="space-y-2 max-h-96 overflow-y-auto">
-                               {followers.map(follower => (
-                                 <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                   <Avatar className="w-10 h-10">
-                                     <AvatarImage src={follower.following_photo_url} />
-                                     <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
-                                   </Avatar>
-                                   <span className="font-medium dark:text-gray-300">{follower.following_name}</span>
-                                 </div>
-                               ))}
-                               {followers.length === 0 && (
-                                 <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não tem seguidores</p>
-                               )}
-                             </div>
-                           </DialogContent>
-                         </Dialog>
+                        <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Users className="w-4 h-4 mr-1" />
+                              {followers.length} Seguidores
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Seguidores</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                              {followers.map(follower => (
+                                <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                  <Avatar className="w-10 h-10">
+                                    <AvatarImage src={follower.following_photo_url} />
+                                    <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
+                                  </Avatar>
+                                  <span className="font-medium">{follower.following_name}</span>
+                                </div>
+                              ))}
+                              {followers.length === 0 && (
+                                <p className="text-center text-gray-500 py-8">Você ainda não tem seguidores</p>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
 
-                         <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
-                           <DialogTrigger asChild>
-                             <Button variant="outline" size="sm" className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                               <Users className="w-4 h-4 mr-1" />
-                               {following.length} Seguindo
-                             </Button>
-                           </DialogTrigger>
-                           <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
-                             <DialogHeader>
-                               <DialogTitle className="dark:text-white">Seguindo</DialogTitle>
-                             </DialogHeader>
-                             <div className="space-y-2 max-h-96 overflow-y-auto">
-                               {following.map(follow => (
-                                 <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                                   <Avatar className="w-10 h-10">
-                                     <AvatarImage src={follow.following_photo_url} />
-                                     <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
-                                   </Avatar>
-                                   <span className="font-medium dark:text-gray-300">{follow.following_name}</span>
-                                 </div>
-                               ))}
-                               {following.length === 0 && (
-                                 <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não segue ninguém</p>
-                               )}
-                             </div>
-                           </DialogContent>
-                         </Dialog>
-                       </div>
+                        <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Users className="w-4 h-4 mr-1" />
+                              {following.length} Seguindo
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Seguindo</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                              {following.map(follow => (
+                                <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                  <Avatar className="w-10 h-10">
+                                    <AvatarImage src={follow.following_photo_url} />
+                                    <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
+                                  </Avatar>
+                                  <span className="font-medium">{follow.following_name}</span>
+                                </div>
+                              ))}
+                              {following.length === 0 && (
+                                <p className="text-center text-gray-500 py-8">Você ainda não segue ninguém</p>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -353,55 +353,52 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="dark:text-white">Informações Pessoais</CardTitle>
+                  <CardTitle>Informações Pessoais</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="full_name" className="dark:text-gray-300">Nome Completo</Label>
+                      <Label htmlFor="full_name">Nome Completo</Label>
                       <Input
                         id="full_name"
                         value={formData.full_name}
                         onChange={(e) => handleInputChange('full_name', e.target.value)}
                         placeholder="Digite seu nome completo"
-                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="phone" className="dark:text-gray-300">Telefone</Label>
+                      <Label htmlFor="phone">Telefone</Label>
                       <Input
                         id="phone"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         placeholder="(00) 00000-0000"
-                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="profession" className="dark:text-gray-300">Profissão</Label>
+                      <Label htmlFor="profession">Profissão</Label>
                       <Input
                         id="profession"
                         value={formData.profession}
                         onChange={(e) => handleInputChange('profession', e.target.value)}
                         placeholder="Ex: Professor, Advogado, Estudante..."
-                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="state" className="dark:text-gray-300">Estado</Label>
+                      <Label htmlFor="state">Estado</Label>
                       <Select
                         value={formData.state}
                         onValueChange={(value) => handleInputChange('state', value)}
                       >
-                        <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione seu estado" />
                         </SelectTrigger>
-                        <SelectContent className="dark:bg-gray-700 dark:text-white">
+                        <SelectContent>
                           {brazilianStates.map(state => (
                             <SelectItem key={state.value} value={state.value}>
                               {state.label}
@@ -412,13 +409,12 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="city" className="dark:text-gray-300">Cidade</Label>
+                      <Label htmlFor="city">Cidade</Label>
                       <Input
                         id="city"
                         value={formData.city}
                         onChange={(e) => handleInputChange('city', e.target.value)}
                         placeholder="Digite sua cidade"
-                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
                   </div>
@@ -432,22 +428,22 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="dark:bg-gray-800 dark:border-gray-700">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="dark:text-white">Preferências de Estudo</CardTitle>
+                  <CardTitle>Preferências de Estudo</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
                     <div>
-                      <Label htmlFor="target_position" className="dark:text-gray-300">Cargo Pretendido</Label>
+                      <Label htmlFor="target_position">Cargo Pretendido</Label>
                       <Select
                         value={formData.target_position}
                         onValueChange={(value) => handleInputChange('target_position', value)}
                       >
-                        <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione o cargo pretendido" />
                         </SelectTrigger>
-                        <SelectContent className="dark:bg-gray-700 dark:text-white">
+                        <SelectContent>
                           {cargoOptions.map(cargo => (
                             <SelectItem key={cargo.value} value={cargo.value}>
                               {cargo.label}
@@ -458,7 +454,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="study_hours" className="dark:text-gray-300">Horas de Estudo por Dia</Label>
+                      <Label htmlFor="study_hours">Horas de Estudo por Dia</Label>
                       <Input
                         id="study_hours"
                         type="number"
@@ -466,20 +462,19 @@ export default function ProfilePage() {
                         max="24"
                         value={formData.study_hours_per_day}
                         onChange={(e) => handleInputChange('study_hours_per_day', parseInt(e.target.value) || 0)}
-                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label className="dark:text-gray-300">Disciplinas Preferidas</Label>
+                      <Label>Disciplinas Preferidas</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
                         {subjectOptions.map(subject => (
                           <label
                             key={subject.value}
                             className={`flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                               formData.preferred_subjects.includes(subject.value)
-                                ? 'bg-blue-50 dark:bg-blue-900 border-blue-300 dark:border-blue-700'
-                                : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                ? 'bg-blue-50 border-blue-300'
+                                : 'border-gray-200 hover:bg-gray-50'
                             }`}
                           >
                             <input
@@ -488,7 +483,7 @@ export default function ProfilePage() {
                               onChange={() => handleSubjectToggle(subject.value)}
                               className="rounded text-blue-600"
                             />
-                            <span className="text-sm dark:text-gray-300">{subject.label}</span>
+                            <span className="text-sm">{subject.label}</span>
                           </label>
                         ))}
                       </div>
