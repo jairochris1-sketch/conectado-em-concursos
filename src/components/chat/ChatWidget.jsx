@@ -1,13 +1,14 @@
-import React, { useState, useRef } from 'react';
-import { MessageCircle, X, Send, Loader2, ImageIcon } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MessageCircle, X, Send, Loader2, ImageIcon, Home, MessageSquare, HelpCircle, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
-import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
+import { optimizeImageFile } from '@/components/imageOptimizer';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('inicio');
   const [messages, setMessages] = useState([]);
   const [visitorName, setVisitorName] = useState('');
   const [visitorEmail, setVisitorEmail] = useState('');
@@ -16,6 +17,13 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const savedName = localStorage.getItem('chatVisitorName');
+    if (savedName) {
+      setVisitorName(savedName);
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
