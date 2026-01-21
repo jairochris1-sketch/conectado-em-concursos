@@ -721,8 +721,8 @@ ${videoNotes}
               <div className={
               materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
               materialViewMode === 'list' ? 'space-y-4' :
-              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
-              }>
+              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4 w-full'
+              } style={{ maxWidth: '100%', overflowX: 'hidden' }}>
                   {filteredMaterials.map((material, index) =>
                 <motion.div
                   key={material.id}
@@ -784,12 +784,12 @@ ${videoNotes}
                           </CardContent>
                         </Card> :
 
-                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
-                  onClick={() => handleMaterialClick(material)}>
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden w-full"
+                  onClick={() => handleMaterialClick(material)} style={{ maxWidth: '100%' }}>
                           <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
-                            <div className="flex justify-between items-start gap-1 min-w-0">
-                              <div className="flex-1 min-w-0 overflow-hidden">
-                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 break-words ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`}>
+                            <div className="flex justify-between items-start gap-1 min-w-0 w-full">
+                              <div className="flex-1 min-w-0 overflow-hidden" style={{ maxWidth: 'calc(100% - 20px)' }}>
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`} style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                                   {material.title}
                                 </CardTitle>
                                 {materialViewMode === 'grid' && material.description &&
