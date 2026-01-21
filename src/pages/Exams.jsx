@@ -354,9 +354,7 @@ export default function Exams() {
                           </div>
                         </div>
                       </div>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors whitespace-nowrap">
-                        Abrir
-                      </span>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
                     </CardContent>
                   </Card> :
 

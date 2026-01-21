@@ -26,8 +26,8 @@ import {
   Pencil,
   ClipboardList,
   BookOpen as BookOpenIcon,
-  MessageSquare } from
-"lucide-react";
+  MessageSquare
+} from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
@@ -309,7 +309,7 @@ export default function Layout({ children, currentPageName }) {
               daysRemaining: Math.ceil(daysRemaining),
               totalDays: trialDuration
             });
-
+            
             // Mostrar modal no último dia (apenas uma vez por sessão)
             if (Math.ceil(daysRemaining) === 1) {
               const hasSeenModal = sessionStorage.getItem('lastDayModalSeen');
@@ -786,7 +786,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       <main className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white text-black px-4 py-3 md:hidden dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 print-hide">
+        <header className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-40 print-hide">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" className="-ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsMobileMenuOpen(true)}>
@@ -862,18 +862,18 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      {trialInfo && trialInfo.daysRemaining > 0 &&
-      <TrialCountdown
-        daysRemaining={trialInfo.daysRemaining}
-        totalDays={trialInfo.totalDays} />
+      {trialInfo && trialInfo.daysRemaining > 0 && (
+        <TrialCountdown 
+          daysRemaining={trialInfo.daysRemaining}
+          totalDays={trialInfo.totalDays}
+        />
+      )}
 
-      }
-
-      <LastDayModal
+      <LastDayModal 
         isOpen={showLastDayModal}
         onClose={() => setShowLastDayModal(false)}
-        daysRemaining={trialInfo?.daysRemaining || 0} />
-
+        daysRemaining={trialInfo?.daysRemaining || 0}
+      />
     </div>);
 
 }
