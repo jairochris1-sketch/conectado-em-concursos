@@ -628,19 +628,21 @@ ${videoNotes}
 
             {/* Filtros e Controles de Visualização */}
             <Card className="mb-8">
-              <CardHeader>
+              <CardHeader className="p-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <CardTitle className="flex items-center gap-2">
-                    <Filter className="w-5 h-5" />
-                    Filtros de Busca de Materiais
+                  <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                    <Filter className="w-4 h-4 md:w-5 md:h-5" />
+                    <span className="hidden sm:inline">Filtros de Busca de Materiais</span>
+                    <span className="sm:hidden">Filtros</span>
                   </CardTitle>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
+                    <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mr-1 hidden md:inline">Visualização:</span>
                     <Button
                       variant={materialViewMode === 'grid' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('grid')}
-                      className={`h-8 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+                      className={`h-7 px-2 ${materialViewMode === 'grid' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
+                      title="Grade">
 
                       <Grid3x3 className="w-3 h-3" />
                     </Button>
@@ -648,7 +650,8 @@ ${videoNotes}
                       variant={materialViewMode === 'list' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('list')}
-                      className={`h-8 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+                      className={`h-7 px-2 ${materialViewMode === 'list' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
+                      title="Lista">
 
                       <List className="w-3 h-3" />
                     </Button>
@@ -656,7 +659,8 @@ ${videoNotes}
                       variant={materialViewMode === 'compact' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setMaterialViewMode('compact')}
-                      className={`h-8 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}>
+                      className={`h-7 px-2 ${materialViewMode === 'compact' ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
+                      title="Compacto">
 
                       <LayoutGrid className="w-3 h-3" />
                     </Button>
