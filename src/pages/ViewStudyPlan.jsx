@@ -98,6 +98,34 @@ export default function ViewStudyPlanPage() {
     }
   };
 
+  const startEditingWeek = (week) => {
+    setEditingWeek(week.week);
+    setEditData({
+      start_date: week.start_date,
+      end_date: week.end_date,
+      target_questions: week.target_questions,
+      target_hours: week.target_hours
+    });
+  };
+
+  const saveWeekEdit = async () => {
+    try {
+      const updatedSchedule = plan.schedule.map(w =>
+        w.week === editingWeek
+          ? { ...w, ...editData }
+          : w
+      );
+
+      await StudyPlan.update(plan.id, { schedule: updatedSchedule });
+      setPlan({ ...plan, schedule: updatedSchedule });
+      setEditingWeek(null);
+      alert('Semana atualizada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao atualizar semana:', error);
+      alert('Erro ao salvar alterações');
+    }
+  };
+
   const calculateOverallProgress = () => {
     if (!plan || !plan.schedule) return 0;
     return Math.round(((plan.progress?.current_week || 1) / plan.schedule.length) * 100);
