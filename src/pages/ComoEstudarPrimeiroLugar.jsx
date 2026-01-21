@@ -254,25 +254,25 @@ export default function ComoEstudarPrimeiroLugar() {
 
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
-            <h2 className="text-xl font-bold">Artigos</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
             {articles.map((a) => (
-              <article key={a.id} id={`art-${a.id}`} className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-1">{a.title}</h3>
+              <article key={a.id} id={`art-${a.id}`} className="prose dark:prose-invert max-w-none">
+                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">{a.title}</h3>
                 <div className="flex items-center gap-2 mb-3">
-                  {a.author && <Badge variant="outline">{a.author}</Badge>}
-                  {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
+                  {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
+                  {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">{a.reading_time} min</Badge>}
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: a.content }} />
-                <hr className="my-6" />
+                <div className="text-gray-900 dark:text-gray-100" dangerouslySetInnerHTML={{ __html: a.content }} />
+                <hr className="my-6 dark:border-gray-700" />
               </article>
             ))}
           </section>
         )}
 
         {!loading && videos.length === 0 && articles.length === 0 && (
-          <div className="text-gray-600">
+          <div className="text-gray-600 dark:text-gray-400">
             Nenhum conteúdo marcado para este guia ainda.
-            Marque artigos com a tag <b>guia_aprovacao</b> e vídeos com o tópico <b>guia_aprovacao</b>.
+            Marque artigos com a tag <b className="text-gray-900 dark:text-white">guia_aprovacao</b> e vídeos com o tópico <b className="text-gray-900 dark:text-white">guia_aprovacao</b>.
           </div>
         )}
             </div>
