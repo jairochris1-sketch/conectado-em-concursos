@@ -87,6 +87,41 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
+  React.useEffect(() => {
+    // Subscribe to real-time updates
+    const unsubscribe = base44.entities.ChatMessage.subscribe((event) => {
+      if (event.type === 'create') {
+        // Atualizar mensagens se for do mesmo visitante
+        if (event.data.visitor_name === visitorName) {
+          setMessages((prev) => [...prev, event.data]);
+        }
+      }
+    });
+
+    // Subscribe to replies
+    const unsubscribeReplies = base44.entities.ChatReply.subscribe((event) => {
+      if (event.type === 'create') {
+        setAdminReplies((prev) => ({
+          ...prev,
+          [event.data.message_id]: [...(prev[event.data.message_id] || []), event.data]
+        }));
+
+        // Enviar notificação se notificações estão habilitadas
+        if (notificationsEnabled) {
+          NotificationManager.send('Resposta recebida!', {
+            body: 'Sua mensagem recebeu uma resposta do suporte',
+            tag: `chat-reply-${event.data.message_id}`
+          });
+        }
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeReplies();
+    };
+  }, [visitorName, notificationsEnabled]);
+
   const handleImageSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
