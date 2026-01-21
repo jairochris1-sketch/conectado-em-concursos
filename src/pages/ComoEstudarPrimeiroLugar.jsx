@@ -21,7 +21,6 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guides, setGuides] = useState([]);
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState(null);
-  const [selectedArticle, setSelectedArticle] = useState(null);
 
   // Determinar guia a partir da URL, localStorage ou primeiro guia disponível
   useEffect(() => {
