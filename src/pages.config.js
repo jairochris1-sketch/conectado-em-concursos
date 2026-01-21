@@ -32,6 +32,7 @@ import studies from './pages/studies';
 import subscription from './pages/subscription';
 import Profile from './pages/Profile';
 import CreateStudyPlan from './pages/CreateStudyPlan';
+import StudyPlans from './pages/StudyPlans';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +71,7 @@ export const PAGES = {
     "subscription": subscription,
     "Profile": Profile,
     "CreateStudyPlan": CreateStudyPlan,
+    "StudyPlans": StudyPlans,
 }
 
 export const pagesConfig = {
