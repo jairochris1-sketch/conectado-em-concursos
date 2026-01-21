@@ -114,8 +114,13 @@ export default function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
+              {hasUserInfo && (
+                <div className="text-center text-blue-600 text-sm font-semibold mt-4 mb-4">
+                  👋 Olá, Sr(a) {visitorName}!
+                </div>
+              )}
               {messages.length === 0 ? (
-                <div className="text-center text-gray-500 text-sm mt-8">
+                <div className="text-center text-gray-500 text-sm mt-4">
                   Bem-vindo! Deixe sua mensagem.
                 </div>
               ) : (
