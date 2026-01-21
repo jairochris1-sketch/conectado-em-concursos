@@ -307,26 +307,55 @@ export default function ViewStudyPlanPage() {
                         : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700'
                     }`}
                   >
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="mt-1">
-                        {isCompleted ? (
-                          <CheckCircle className="w-6 h-6 text-green-600" />
-                        ) : isCurrentWeek ? (
-                          <Circle className="w-6 h-6 text-indigo-600 fill-indigo-600" />
-                        ) : (
-                          <Circle className="w-6 h-6 text-gray-400" />
-                        )}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className="mt-1">
+                          {isCompleted ? (
+                            <CheckCircle className="w-6 h-6 text-green-600" />
+                          ) : isCurrentWeek ? (
+                            <Circle className="w-6 h-6 text-indigo-600 fill-indigo-600" />
+                          ) : (
+                            <Circle className="w-6 h-6 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className={`font-semibold text-lg ${isCurrentWeek ? 'text-indigo-900 dark:text-indigo-200' : 'text-gray-900 dark:text-white'}`}>
+                            Semana {week.week}
+                            {isCurrentWeek && <span className="ml-2 text-sm">(Atual)</span>}
+                            {isCompleted && <span className="ml-2 text-sm">(Completo)</span>}
+                          </h4>
+                          {editingWeek === week.week ? (
+                            <div className="space-y-2 mt-2">
+                              <div className="grid grid-cols-2 gap-2">
+                                <Input
+                                  type="date"
+                                  value={editData.start_date}
+                                  onChange={(e) => setEditData({ ...editData, start_date: e.target.value })}
+                                  className="text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500"
+                                />
+                                <Input
+                                  type="date"
+                                  value={editData.end_date}
+                                  onChange={(e) => setEditData({ ...editData, end_date: e.target.value })}
+                                  className="text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500"
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                              {new Date(week.start_date).toLocaleDateString('pt-BR')} - {new Date(week.end_date).toLocaleDateString('pt-BR')}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className={`font-semibold text-lg ${isCurrentWeek ? 'text-indigo-900 dark:text-indigo-200' : 'text-gray-900 dark:text-white'}`}>
-                          Semana {week.week}
-                          {isCurrentWeek && <span className="ml-2 text-sm">(Atual)</span>}
-                          {isCompleted && <span className="ml-2 text-sm">(Completo)</span>}
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                          {new Date(week.start_date).toLocaleDateString('pt-BR')} - {new Date(week.end_date).toLocaleDateString('pt-BR')}
-                        </p>
-                      </div>
+                      {editingWeek !== week.week && (
+                        <button
+                          onClick={() => startEditingWeek(week)}
+                          className="p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        >
+                          <Edit2 className="w-5 h-5" />
+                        </button>
+                      )}
                     </div>
 
                     {/* Metas e Progresso */}
