@@ -386,7 +386,7 @@ export default function Layout({ children, currentPageName }) {
         }
       } catch (error) {
         console.warn("User not authenticated, redirecting to login:", error);
-        await User.login();
+        await base44.auth.redirectToLogin();
       }
     };
     checkAuthAndLoad();
