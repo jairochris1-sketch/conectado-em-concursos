@@ -148,6 +148,37 @@ export default function StatisticsPage() {
     );
   }
 
+  if (answers.length === 0) {
+    return (
+      <div className="min-h-screen bg-white p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Estatísticas Detalhadas
+            </h1>
+            <p className="text-gray-600">
+              Análise completa do seu desempenho nos estudos
+            </p>
+          </motion.div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+            <TrendingUp className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <p className="text-lg font-medium text-gray-700 mb-2">Nenhum dado disponível</p>
+            <p className="text-gray-600 mb-6">Você ainda não resolveu nenhuma questão. Comece a estudar para ver suas estatísticas!</p>
+            <Link to={createPageUrl("Questions")}>
+              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                Resolver Questões
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
