@@ -750,13 +750,11 @@ export default function Layout({ children, currentPageName }) {
                 <Button variant="ghost" size="icon" className="-ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setIsMobileMenuOpen(true)}>
                   <Menu className="w-6 h-6" />
                 </Button>
-                <div
-                className="relative w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'var(--primary-color)' }}>
-
-                  <BookOpen className="w-5 h-5 text-white" />
-                  <Pencil className="w-3 h-3 text-white absolute bottom-0 right-0 opacity-90" />
-                </div>
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+                  alt="Logo Conectado em Concursos"
+                  className="w-8 h-8 object-contain"
+                />
                 <div>
                   <h1 className="text-lg font-bold text-gray-900 dark:text-white">Conectado SE</h1>
                   <p className="text-xs dark:text-blue-400" style={{ color: 'var(--primary-color)' }}>Rumo à aprovação</p>
