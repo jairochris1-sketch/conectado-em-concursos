@@ -1,6 +1,5 @@
-
 // Update SDK version and keep logic
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
@@ -18,10 +17,16 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'API Key não configurada' }, { status: 500 });
         }
 
-        const subscription = await base44.entities.Subscription.get(subscriptionId);
-
-        if (!subscription || subscription.created_by !== user.email) {
-            return Response.json({ error: 'Assinatura não encontrada ou não pertence a este usuário' }, { status: 404 });
+        const subscriptions = await base44.entities.Subscription.filter({ id: subscriptionId });
+        
+        if (subscriptions.length === 0) {
+            return Response.json({ error: 'Assinatura não encontrada' }, { status: 404 });
+        }
+        
+        const subscription = subscriptions[0];
+        
+        if (subscription.user_email !== user.email) {
+            return Response.json({ error: 'Assinatura não pertence a este usuário' }, { status: 403 });
         }
 
         if (!subscription.asaas_subscription_id) {
@@ -48,6 +53,11 @@ Deno.serve(async (req) => {
         }
 
         await base44.entities.Subscription.update(subscriptionId, { status: 'cancelled' });
+        
+        // Atualizar plano do usuário para gratuito
+        await base44.entities.User.update(user.id, {
+            current_plan: 'gratuito'
+        });
 
         return Response.json({ success: true, message: 'Assinatura cancelada com sucesso.' });
 
