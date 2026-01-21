@@ -26,7 +26,8 @@ import {
   Pencil,
   ClipboardList,
   BookOpen as BookOpenIcon,
-  MessageSquare
+  MessageSquare,
+  Brain
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -84,14 +85,19 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
-  title: "Mini Curso de Inglês",
-  url: createPageUrl("Studies") + "?tab=english",
+  title: "Curso de Inglês",
+  url: createPageUrl("EnglishCourse"),
   icon: BookOpen
 },
 {
   title: "Curso de Matemática",
   url: createPageUrl("MathCourse"),
   icon: BookOpen
+},
+{
+  title: "Raciocínio Lógico",
+  url: createPageUrl("LogicCourse"),
+  icon: Brain
 },
 {
   title: "Fórum",
@@ -180,7 +186,9 @@ const pageNameTranslations = {
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
-  MathCourse: "Curso de Matemática Básica"
+  MathCourse: "Curso de Matemática Básica",
+  EnglishCourse: "Curso de Inglês",
+  LogicCourse: "Raciocínio Lógico para Concursos"
 };
 
 const featureAccess = {
@@ -195,7 +203,10 @@ const featureAccess = {
   'Simulados Digital': ['padrao', 'avancado'],
   'Resumos': ['padrao', 'avancado'],
   'Provas': ['padrao', 'avancado'],
-  'Ranking de Usuários': ['padrao', 'avancado']
+  'Ranking de Usuários': ['padrao', 'avancado'],
+  'Curso de Inglês': ['padrao', 'avancado'],
+  'Curso de Matemática': ['padrao', 'avancado'],
+  'Raciocínio Lógico': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {

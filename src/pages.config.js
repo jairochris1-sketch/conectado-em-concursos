@@ -28,6 +28,8 @@ import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import MathCourse from './pages/MathCourse';
+import LogicCourse from './pages/LogicCourse';
+import EnglishCourse from './pages/EnglishCourse';
 import __Layout from './Layout.jsx';
 
 
@@ -62,6 +64,8 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "MathCourse": MathCourse,
+    "LogicCourse": LogicCourse,
+    "EnglishCourse": EnglishCourse,
 }
 
 export const pagesConfig = {
