@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Usuário não autenticado' }, { status: 401 });
         }
 
-        const { plan, cycle = 'monthly', customerData } = await req.json();
+        const { plan, cycle = 'monthly', customerData, billingType = 'UNDEFINED' } = await req.json();
         const asaasApiKey = Deno.env.get("ASAAS_API_KEY");
 
         if (!asaasApiKey) {
@@ -142,11 +142,14 @@ Deno.serve(async (req) => {
 
         // 2. Criar assinatura recorrente
         try {
+            const nextDueDate = new Date();
+            nextDueDate.setDate(nextDueDate.getDate() + 1);
+            
             const subscriptionData = {
                 customer: customer.id,
-                billingType: 'UNDEFINED',
+                billingType: billingType,
                 value: price,
-                nextDueDate: new Date().toISOString().split('T')[0],
+                nextDueDate: nextDueDate.toISOString().split('T')[0],
                 cycle: asaasCycle,
                 description: `Conectado em Concursos - ${plan.charAt(0).toUpperCase() + plan.slice(1)} ${cycle === 'annual' ? 'Anual' : cycle === 'semiannual' ? 'Semestral' : 'Mensal'}`
             };

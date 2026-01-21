@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Check, Loader2, ArrowLeft, X, Shield, Clock } from 'lucide-react';
+import { Check, Loader2, ArrowLeft, X, Shield, Clock, CreditCard, QrCode, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
@@ -304,7 +304,9 @@ export default function SubscriptionPage() {
   const [cancelError, setCancelError] = useState('');
   const [billingCycle, setBillingCycle] = useState('semiannual');
   const [showQuickForm, setShowQuickForm] = useState(false);
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [missingData, setMissingData] = useState({
     cpf: '',
     phone: ''
@@ -430,7 +432,7 @@ export default function SubscriptionPage() {
     }
 
     const missing = checkMissingData(user);
-    
+
     if (Object.keys(missing).length > 0) {
       setMissingData({
         cpf: user?.cpf || '',
@@ -441,17 +443,26 @@ export default function SubscriptionPage() {
       return;
     }
 
-    await processSubscription(planKey, cycle);
+    // Mostrar tela de seleção de método de pagamento
+    setSelectedPlan({ key: planKey, cycle });
+    setShowPaymentMethod(true);
   };
 
-  const processSubscription = async (planKey, cycle) => {
+  const processSubscription = async (planKey, cycle, paymentMethod) => {
     setIsSubmitting(true);
     setLoadingPlan(`${planKey}-${cycle}`);
 
     try {
+      const billingTypeMap = {
+        'PIX': 'PIX',
+        'BOLETO': 'BOLETO',
+        'CREDIT_CARD': 'CREDIT_CARD'
+      };
+
       const response = await createAsaasSubscription({
         plan: planKey,
         cycle: cycle,
+        billingType: billingTypeMap[paymentMethod] || 'UNDEFINED',
         customerData: {
           name: user?.full_name || '',
           email: user?.email || '',
@@ -461,8 +472,12 @@ export default function SubscriptionPage() {
       });
 
       if (response.data.success) {
-        // Redirecionar para a página de pagamento do Asaas
-        window.location.href = response.data.payment_url;
+        // Redirecionar para a página de pagamento do Asaas em nova aba
+        window.open(response.data.payment_url, '_blank');
+        // Recarregar a página atual após alguns segundos
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         throw new Error(response.data.error || 'Erro ao processar assinatura');
       }
@@ -474,6 +489,7 @@ export default function SubscriptionPage() {
     setIsSubmitting(false);
     setLoadingPlan(null);
     setShowQuickForm(false);
+    setShowPaymentMethod(false);
   };
 
   const handleQuickFormSubmit = async (e) => {
@@ -489,7 +505,9 @@ export default function SubscriptionPage() {
         setUser(prev => ({ ...prev, ...updateData }));
       }
       
-      await processSubscription(selectedPlan.key, selectedPlan.cycle);
+      // Após salvar dados, ir para seleção de método de pagamento
+      setShowQuickForm(false);
+      setShowPaymentMethod(true);
     } catch (error) {
       console.error('Erro ao salvar dados:', error);
       alert('Erro ao salvar dados. Tente novamente.');
@@ -540,7 +558,10 @@ export default function SubscriptionPage() {
           <div className="text-center mb-6">
             <Button 
               variant="ghost" 
-              onClick={() => setShowQuickForm(false)}
+              onClick={() => {
+                setShowQuickForm(false);
+                setSelectedPlan(null);
+              }}
               className="text-gray-300 mb-4 flex items-center mx-auto"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -633,9 +654,140 @@ export default function SubscriptionPage() {
         </div>
       </div>
     );
-  }
+    }
 
-  return (
+    // Tela de seleção de método de pagamento
+    if (showPaymentMethod && selectedPlan && user) {
+    const plan = plans.find(p => p.key === selectedPlan.key);
+
+    const getCurrentPricingPayment = () => {
+      switch(selectedPlan.cycle) {
+        case 'semiannual': return plan.semiannual;
+        case 'annual': return plan.annual;
+        default: return plan.monthly;
+      }
+    };
+    const pricing = getCurrentPricingPayment();
+
+    const paymentMethods = [
+      {
+        id: 'PIX',
+        name: 'Pix',
+        icon: QrCode,
+        description: 'Pagamento instantâneo',
+        color: 'from-teal-500 to-cyan-500'
+      },
+      {
+        id: 'CREDIT_CARD',
+        name: 'Cartão de Crédito',
+        icon: CreditCard,
+        description: 'Parcelamento disponível',
+        color: 'from-blue-500 to-indigo-500'
+      },
+      {
+        id: 'BOLETO',
+        name: 'Boleto Bancário',
+        icon: FileText,
+        description: 'Vencimento em 3 dias',
+        color: 'from-orange-500 to-red-500'
+      }
+    ];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-8">
+        <div className="max-w-2xl mx-auto">
+          <Button 
+            variant="ghost" 
+            onClick={() => {
+              setShowPaymentMethod(false);
+              setSelectedPlan(null);
+              setSelectedPaymentMethod('');
+            }}
+            className="mb-6 text-gray-700 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Voltar aos Planos
+          </Button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Escolha a forma de pagamento
+            </h1>
+            <p className="text-gray-600">
+              Assinatura do Plano <strong>{plan.name}</strong> - R$ {pricing.price} 
+              {selectedPlan.cycle === 'annual' ? '/ano' : selectedPlan.cycle === 'semiannual' ? '/semestre' : '/mês'}
+            </p>
+            {pricing.savings && (
+              <p className="text-green-600 font-semibold mt-1">
+                Economize R$ {pricing.savings}!
+              </p>
+            )}
+          </motion.div>
+
+          <div className="grid gap-4 mb-6">
+            {paymentMethods.map((method, index) => (
+              <motion.div
+                key={method.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card 
+                  className={`cursor-pointer transition-all duration-300 ${
+                    selectedPaymentMethod === method.id 
+                      ? 'ring-4 ring-blue-500 shadow-xl' 
+                      : 'hover:shadow-lg hover:scale-105'
+                  }`}
+                  onClick={() => setSelectedPaymentMethod(method.id)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${method.color} flex items-center justify-center flex-shrink-0`}>
+                        <method.icon className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900">{method.name}</h3>
+                        <p className="text-gray-600">{method.description}</p>
+                      </div>
+                      {selectedPaymentMethod === method.id && (
+                        <Check className="w-8 h-8 text-blue-600" />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <Button
+            onClick={() => processSubscription(selectedPlan.key, selectedPlan.cycle, selectedPaymentMethod)}
+            disabled={!selectedPaymentMethod || isSubmitting}
+            size="lg"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              'Continuar para Pagamento'
+            )}
+          </Button>
+
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Você será redirecionado para uma página segura do Asaas para finalizar o pagamento
+          </p>
+        </div>
+      </div>
+    );
+    }
+
+    return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {currentSubscription?.status === 'pending' && showPendingBanner && (

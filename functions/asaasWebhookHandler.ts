@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
         switch (event) {
             case "PAYMENT_CONFIRMED":
             case "PAYMENT_RECEIVED":
-                console.log("Pagamento confirmado/recebido");
+            case "PAYMENT_APPROVED":
+                console.log("Pagamento confirmado/recebido/aprovado");
                 newStatus = "active";
                 updateData = {
                     status: newStatus,
@@ -89,8 +90,8 @@ Deno.serve(async (req) => {
                 return Response.json({ message: `Evento ${event} ignorado` });
         }
 
-        // Atualizar assinatura se o status mudou
-        if (Object.keys(updateData).length > 0 && internalSubscription.status !== newStatus) {
+        // Atualizar assinatura se houver mudanças
+        if (Object.keys(updateData).length > 0) {
             console.log(`Atualizando assinatura de ${internalSubscription.status} para ${newStatus}`);
             
             await base44.asServiceRole.entities.Subscription.update(
@@ -98,20 +99,22 @@ Deno.serve(async (req) => {
                 updateData
             );
 
-            // Atualizar plano do usuário
-            const users = await base44.asServiceRole.entities.User.filter({ 
-                email: internalSubscription.user_email 
-            });
-
-            if (users.length > 0) {
-                const userToUpdate = users[0];
-                const newPlan = newStatus === 'active' ? internalSubscription.plan : 'gratuito';
-                
-                console.log(`Atualizando plano do usuário ${userToUpdate.email} para ${newPlan}`);
-                
-                await base44.asServiceRole.entities.User.update(userToUpdate.id, {
-                    current_plan: newPlan
+            // Atualizar plano do usuário se o status mudou
+            if (internalSubscription.status !== newStatus) {
+                const users = await base44.asServiceRole.entities.User.filter({ 
+                    email: internalSubscription.user_email 
                 });
+
+                if (users.length > 0) {
+                    const userToUpdate = users[0];
+                    const newPlan = newStatus === 'active' ? internalSubscription.plan : 'gratuito';
+                    
+                    console.log(`Atualizando plano do usuário ${userToUpdate.email} para ${newPlan}`);
+                    
+                    await base44.asServiceRole.entities.User.update(userToUpdate.id, {
+                        current_plan: newPlan
+                    });
+                }
             }
         }
 
