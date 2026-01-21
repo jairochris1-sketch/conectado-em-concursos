@@ -30,6 +30,7 @@ import InstitutionManager from '../components/admin/InstitutionManager';
 import ChatAdmin from '../components/admin/ChatAdmin';
 import QuickResponseManager from '../components/admin/QuickResponseManager';
 import AutoResponseManager from '../components/admin/AutoResponseManager';
+import SpecialUserManager from '../components/admin/SpecialUserManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -384,6 +385,10 @@ export default function AdminPage() {
               <Users className="w-4 h-4 mr-2" />
               Usuários
             </TabsTrigger>
+            <TabsTrigger value="special-users">
+              <Shield className="w-4 h-4 mr-2" />
+              Usuários Especiais
+            </TabsTrigger>
             <TabsTrigger value="feedbacks">
               <Zap className="w-4 h-4 mr-2" />
               Feedbacks
@@ -452,6 +457,10 @@ export default function AdminPage() {
 
           <TabsContent value="users">
             <UserManager />
+          </TabsContent>
+
+          <TabsContent value="special-users">
+            <SpecialUserManager />
           </TabsContent>
 
           <TabsContent value="questions">
