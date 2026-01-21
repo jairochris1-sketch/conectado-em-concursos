@@ -3,13 +3,15 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Check, MessageSquare } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Trash2, Check, MessageSquare, Bell } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function ChatAdmin() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [newMessageNotification, setNewMessageNotification] = useState(null);
 
   useEffect(() => {
     loadMessages();
@@ -18,6 +20,16 @@ export default function ChatAdmin() {
     const unsubscribe = base44.entities.ChatMessage.subscribe((event) => {
       if (event.type === 'create') {
         setMessages((prev) => [event.data, ...prev]);
+        
+        // Mostrar notificação de nova mensagem
+        setNewMessageNotification(event.data);
+        toast.success(`Nova mensagem de ${event.data.visitor_name}`, {
+          description: event.data.message.substring(0, 50) + '...',
+          icon: <Bell className="w-4 h-4" />
+        });
+        
+        // Remover notificação após 5 segundos
+        setTimeout(() => setNewMessageNotification(null), 5000);
       } else if (event.type === 'update') {
         setMessages((prev) =>
           prev.map((msg) => (msg.id === event.id ? event.data : msg))
@@ -69,14 +81,34 @@ export default function ChatAdmin() {
 
   return (
     <div className="space-y-4">
+      <AnimatePresence>
+        {newMessageNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-20 right-4 z-50 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-xl p-4 max-w-sm">
+            <div className="flex items-start gap-3">
+              <Bell className="w-5 h-5 flex-shrink-0 mt-0.5 animate-bounce" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm">{newMessageNotification.visitor_name}</p>
+                <p className="text-xs text-blue-100 line-clamp-2">{newMessageNotification.message}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <MessageSquare className="w-6 h-6" />
           Chat de Suporte
         </h2>
-        <Badge className="bg-blue-600 text-white">
-          {unreadCount} não lidas
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge className={`${unreadCount > 0 ? 'bg-red-600 animate-pulse' : 'bg-blue-600'} text-white`}>
+            {unreadCount} não lidas
+          </Badge>
+        </div>
       </div>
 
       {messages.length === 0 ? (
