@@ -101,7 +101,17 @@ export default function WelcomePage() {
           <CardFooter className="p-6 flex justify-center">
             <Button
               size="lg"
-              className="w-full max-w-xs bg-white text-blue-600 hover:bg-gray-200 text-lg font-semibold shadow-lg"
+              className="w-full max-w-xs text-lg font-semibold shadow-lg"
+              style={{
+                backgroundColor: content.button_color || '#ffffff',
+                color: content.button_text_color || '#2563eb'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.opacity = '1';
+              }}
               onClick={handleContinue}
               disabled={isLoading}
             >
