@@ -528,10 +528,10 @@ export default function Layout({ children, currentPageName }) {
                 <Button
                 onClick={handleLogout}
                 size="sm"
-                variant="ghost"
-                className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0">
+                className="bg-red-600 hover:bg-red-700 text-white active:scale-90 transition-transform flex-shrink-0 px-3">
 
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Sair
                 </Button>
               </div>
 
