@@ -725,8 +725,8 @@ ${videoNotes}
               <div className={
               materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
               materialViewMode === 'list' ? 'space-y-4' :
-              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4 w-full'
-              } style={{ maxWidth: '100%', overflowX: 'hidden' }}>
+              'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3'
+              } style={{ width: '100%', maxWidth: '100%' }}>
                   {filteredMaterials.map((material, index) =>
                 <motion.div
                   key={material.id}
@@ -788,76 +788,53 @@ ${videoNotes}
                           </CardContent>
                         </Card> :
 
-                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden w-full"
-                  onClick={() => handleMaterialClick(material)} style={{ maxWidth: '100%' }}>
-                          <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
-                            <div className="flex justify-between items-start gap-1 min-w-0 w-full">
-                              <div className="flex-1 min-w-0 overflow-hidden" style={{ maxWidth: 'calc(100% - 20px)' }}>
-                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`} style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col w-full"
+                  onClick={() => handleMaterialClick(material)} style={{ maxWidth: '100%', overflow: 'hidden' }}>
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-1.5' : 'flex-grow p-3 md:p-4'}>
+                            <div className="flex items-start gap-1 w-full" style={{ maxWidth: '100%' }}>
+                              <div className="flex-1 min-w-0" style={{ maxWidth: 'calc(100% - 24px)' }}>
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 ${materialViewMode === 'compact' ? 'text-[10px] leading-tight' : 'text-base md:text-lg'}`} style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: '100%' }}>
                                   {material.title}
                                 </CardTitle>
                                 {materialViewMode === 'grid' && material.description &&
-                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
+                          <p className="text-gray-600 dark:text-gray-400 mt-1.5 line-clamp-2 text-xs md:text-sm" style={{ wordBreak: 'break-word' }}>
                                     {material.description}
                                   </p>
                           }
                               </div>
-                              <div className="flex-shrink-0">
+                              <div className="flex-shrink-0 ml-1">
                                 {material.file_type === 'pdf' ?
-                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
+                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-3 h-3' : 'w-6 h-6 md:w-7 md:h-7'}`} /> :
 
-                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
+                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-3 h-3' : 'w-6 h-6 md:w-7 md:h-7'}`} />
                           }
                               </div>
                             </div>
                           </CardHeader>
-                          <CardContent className={`flex flex-col justify-end min-w-0 ${materialViewMode === 'compact' ? 'p-2 pt-0' : 'p-4 pt-0'}`}>
-                            <div className="space-y-1 min-w-0">
-                              <div className="flex flex-wrap gap-1 min-w-0">
-                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[10px] px-1 py-0' : 'text-xs'} truncate max-w-full`}>
+                          <CardContent className={`w-full ${materialViewMode === 'compact' ? 'p-1.5 pt-0' : 'p-3 md:p-4 pt-0'}`} style={{ maxWidth: '100%' }}>
+                            <div className="space-y-1 w-full" style={{ maxWidth: '100%' }}>
+                              <div className="flex flex-wrap gap-1 w-full" style={{ maxWidth: '100%' }}>
+                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[9px] px-1 py-0 leading-tight' : 'text-xs'} flex-shrink-0`} style={{ maxWidth: '100%' }}>
                                   {typeNames[material.type]}
                                 </Badge>
-                                {materialViewMode !== 'compact' &&
-                                <Badge variant="outline" className="text-xs truncate max-w-full">
-                                  {subjectNames[material.subject]}
-                                </Badge>
-                                }
                               </div>
                               {materialViewMode !== 'compact' &&
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                  <span className="font-medium">
-                                    {cargoOptions.find((c) => c.value === material.cargo)?.label}
-                                  </span>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate w-full">
+                                  {cargoOptions.find((c) => c.value === material.cargo)?.label}
                                 </div>
                         }
-                              <div className={`flex items-center pt-1 min-w-0 ${materialViewMode === 'compact' ? 'justify-center' : 'justify-between'}`}>
-                                {materialViewMode !== 'compact' &&
-                          <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
-                                    {material.file_name}
-                                  </span>
-                          }
-                                <div className={`flex items-center gap-1 flex-shrink-0 ${materialViewMode === 'compact' ? 'w-full justify-center' : ''}`}>
-                                  {isAdmin && materialViewMode !== 'compact' &&
-                            <Button
-                              variant="ghost"
+                              <div className="flex items-center justify-center pt-1 w-full">
+                                <Button
                               size="sm"
-                              onClick={(e) => handleDeleteMaterial(e, material.id)}>
-
-                                      <Trash2 className="w-3 h-3 text-red-500" />
-                                    </Button>
-                            }
-                                  <Button
-                              size="sm"
-                              className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
+                              className={`bg-indigo-600 hover:bg-indigo-700 text-white flex-shrink-0 ${materialViewMode === 'compact' ? 'text-[9px] h-5 px-1.5 py-0' : 'text-xs h-7 px-2'}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleMaterialClick(material);
                               }}>
 
-                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'}`} />
-                                    {materialViewMode !== 'compact' && 'Ver'}
+                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'}`} />
+                                    {materialViewMode !== 'compact' && <span className="ml-1">Ver</span>}
                                   </Button>
-                                </div>
                               </div>
                             </div>
                           </CardContent>
