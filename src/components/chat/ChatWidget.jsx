@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
+import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,14 +25,22 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const handleImageSelect = (e) => {
+  const handleImageSelect = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setIsLoading(true);
+    try {
+      const result = await optimizeImageFile(file, {
+        maxWidth: 800,
+        quality: 75
+      });
+      setSelectedImage(result.file_url);
+    } catch (error) {
+      console.error('Erro ao otimizar imagem:', error);
+      alert('Erro ao processar imagem');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -43,14 +52,7 @@ export default function ChatWidget() {
 
     setIsLoading(true);
     try {
-      let imageUrl = null;
-
-      if (selectedImage) {
-        const response = await base44.integrations.Core.UploadFile({
-          file: selectedImage.split(',')[1]
-        });
-        imageUrl = response.file_url;
-      }
+      let imageUrl = selectedImage;
 
       await base44.entities.ChatMessage.create({
         visitor_name: visitorName,
@@ -155,6 +157,7 @@ export default function ChatWidget() {
                   <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
                   <button
                     onClick={() => setSelectedImage(null)}
+                    disabled={isLoading}
                     className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <X className="w-4 h-4 text-white" />
                   </button>

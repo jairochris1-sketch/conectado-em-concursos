@@ -9,12 +9,13 @@ import { UploadFile } from '@/integrations/Core';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createPageUrl } from '@/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { optimizeImageFile, getImageStats } from '@/utils/imageOptimizer';
+import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
 
 export default function AdminContentForm({ content, onSave }) {
   const [formData, setFormData] = useState(content);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingBg, setIsUploadingBg] = useState(false);
+  const [optimizationStatus, setOptimizationStatus] = useState('');
 
   useEffect(() => {
     setFormData(content);
@@ -29,13 +30,22 @@ export default function AdminContentForm({ content, onSave }) {
     if (!file) return;
 
     setIsUploadingBg(true);
+    setOptimizationStatus('Otimizando imagem...');
     try {
-      // Ensure UploadFile returns an object with file_url
-      const { file_url } = await UploadFile({ file });
-      handleInputChange('background_image_url', file_url);
+      const result = await optimizeImageFile(file, {
+        maxWidth: 1920,
+        quality: 85,
+        onProgress: setOptimizationStatus
+      });
+
+      handleInputChange('background_image_url', result.file_url);
+      const stats = getImageStats(result.original_size, result.optimized_size);
+      setOptimizationStatus(`✓ Otimizada: ${stats.percentage} de redução`);
+      
+      setTimeout(() => setOptimizationStatus(''), 3000);
     } catch (error) {
       console.error("Erro ao fazer upload da imagem:", error);
-      alert("Erro ao fazer upload da imagem. Tente novamente.");
+      setOptimizationStatus(`Erro: ${error.message}`);
     }
     setIsUploadingBg(false);
   };
@@ -69,7 +79,7 @@ export default function AdminContentForm({ content, onSave }) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4 p-4 border rounded-lg">
-            <Label className="flex items-center gap-2 font-semibold"><ImageIcon /> Imagem de Fundo</Label>
+            <Label className="flex items-center gap-2 font-semibold"><ImageIcon /> Imagem de Fundo (otimizada automaticamente)</Label>
             <div className="flex items-center gap-4">
               <Avatar className="w-20 h-20 rounded-md">
                 <AvatarImage src={formData.background_image_url} />
@@ -79,7 +89,12 @@ export default function AdminContentForm({ content, onSave }) {
               </Avatar>
               <div className="flex-1">
                  <Input id="background-upload" type="file" accept="image/*" onChange={handleBackgroundUpload} disabled={isUploadingBg} />
-                 <p className="text-xs text-gray-500 mt-2">Escolha uma imagem para o fundo da tela de boas-vindas. Recomendamos imagens com boa resolução.</p>
+                 <p className="text-xs text-gray-500 mt-2">Escolha uma imagem para o fundo. Será otimizada automaticamente.</p>
+                 {optimizationStatus && (
+                   <div className="text-xs p-2 mt-2 bg-blue-100 text-blue-700 rounded">
+                     {optimizationStatus}
+                   </div>
+                 )}
               </div>
                {isUploadingBg && <Loader2 className="w-5 h-5 animate-spin" />}
             </div>
