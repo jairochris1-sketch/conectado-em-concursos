@@ -353,52 +353,55 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle>Informações Pessoais</CardTitle>
+                  <CardTitle className="dark:text-white">Informações Pessoais</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="full_name">Nome Completo</Label>
+                      <Label htmlFor="full_name" className="dark:text-gray-300">Nome Completo</Label>
                       <Input
                         id="full_name"
                         value={formData.full_name}
                         onChange={(e) => handleInputChange('full_name', e.target.value)}
                         placeholder="Digite seu nome completo"
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="phone">Telefone</Label>
+                      <Label htmlFor="phone" className="dark:text-gray-300">Telefone</Label>
                       <Input
                         id="phone"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         placeholder="(00) 00000-0000"
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="profession">Profissão</Label>
+                      <Label htmlFor="profession" className="dark:text-gray-300">Profissão</Label>
                       <Input
                         id="profession"
                         value={formData.profession}
                         onChange={(e) => handleInputChange('profession', e.target.value)}
                         placeholder="Ex: Professor, Advogado, Estudante..."
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="state">Estado</Label>
+                      <Label htmlFor="state" className="dark:text-gray-300">Estado</Label>
                       <Select
                         value={formData.state}
                         onValueChange={(value) => handleInputChange('state', value)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="dark:bg-gray-700 dark:text-white dark:border-gray-600">
                           <SelectValue placeholder="Selecione seu estado" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="dark:bg-gray-700 dark:text-white">
                           {brazilianStates.map(state => (
                             <SelectItem key={state.value} value={state.value}>
                               {state.label}
@@ -409,12 +412,13 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="city">Cidade</Label>
+                      <Label htmlFor="city" className="dark:text-gray-300">Cidade</Label>
                       <Input
                         id="city"
                         value={formData.city}
                         onChange={(e) => handleInputChange('city', e.target.value)}
                         placeholder="Digite sua cidade"
+                        className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                       />
                     </div>
                   </div>
