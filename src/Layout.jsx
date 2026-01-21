@@ -82,7 +82,8 @@ const navigationItems = [
 {
   title: "Planos",
   url: createPageUrl("Subscription"),
-  icon: CreditCard
+  icon: null,
+  customIcon: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/e391436e7_fgfgfgfgfgfg.png"
 }];
 
 
@@ -512,13 +513,17 @@ export default function Layout({ children, currentPageName }) {
                     onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                       <div className="flex items-center gap-3 min-w-0">
-                        <item.icon className="w-5 h-5 flex-shrink-0" />
-                        <span className="truncate text-sm font-medium">{item.title}</span>
-                      </div>
-                      {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
-                    </Link>);
+                         {item.customIcon ? (
+                           <img src={item.customIcon} alt={item.title} className="w-5 h-5 flex-shrink-0" style={{ objectFit: 'contain' }} />
+                         ) : (
+                           <item.icon className="w-5 h-5 flex-shrink-0" />
+                         )}
+                         <span className="truncate text-sm font-medium">{item.title}</span>
+                       </div>
+                       {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
+                     </Link>);
 
-              })}
+               })}
                 {isAdmin &&
               <>
                   <Link
@@ -584,7 +589,11 @@ export default function Layout({ children, currentPageName }) {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
 
-                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        {item.customIcon ? (
+                          <img src={item.customIcon} alt={item.title} className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)', objectFit: 'contain' }} />
+                        ) : (
+                          <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        )}
                         <span className="truncate text-center leading-tight">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
                     </Link>);
@@ -615,7 +624,11 @@ export default function Layout({ children, currentPageName }) {
                       style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}>
 
                                     <div className="flex items-center gap-2">
-                                        <item.icon style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                                        {item.customIcon ? (
+                                          <img src={item.customIcon} alt={item.title} style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)', objectFit: 'contain' }} />
+                                        ) : (
+                                          <item.icon style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                                        )}
                                         <span>{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
