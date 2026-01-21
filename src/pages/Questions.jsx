@@ -21,7 +21,6 @@ import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
 import DailyLimitBanner from "@/components/limits/DailyLimitBanner";
 import StudyTimer from "../components/questions/StudyTimer";
 import ExamCalendar from "../components/questions/ExamCalendar";
-import AnnotationTool from "../components/questions/AnnotationTool";
 
 const shuffleArray = (array) => {
   let currentIndex = array.length,  randomIndex;
@@ -44,7 +43,6 @@ export default function Questions() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [stats, setStats] = useState({ submitted: 0, correct: 0, accuracy: 0 });
-  const [currentQuestionForAnnotation, setCurrentQuestionForAnnotation] = useState(null);
   // const [viewMode, setViewMode] = useState("questions"); // Removed as Tabs component is removed
   const [layoutMode, setLayoutMode] = useState(() => {
     return localStorage.getItem('questions-layout') || 'classic';
@@ -333,7 +331,6 @@ export default function Questions() {
             </div>
             <StudyTimer />
             <ExamCalendar />
-            <AnnotationTool questionId={currentQuestionForAnnotation} />
             <ThemeToggle />
           </div>
         </motion.div>
@@ -366,7 +363,6 @@ export default function Questions() {
                   layoutMode={layoutMode}
                   fontSize={fontSize}
                   isBlocked={isBlocked}
-                  onQuestionMount={setCurrentQuestionForAnnotation}
                 />
                 {totalPages > 1 && (
                   <Pagination
