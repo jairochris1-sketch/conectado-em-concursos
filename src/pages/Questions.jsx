@@ -366,6 +366,7 @@ export default function Questions() {
                   layoutMode={layoutMode}
                   fontSize={fontSize}
                   isBlocked={isBlocked}
+                  onQuestionMount={setCurrentQuestionForAnnotation}
                 />
                 {totalPages > 1 && (
                   <Pagination

@@ -99,7 +99,8 @@ export default function QuestionList({
   questionsPerPage,
   layoutMode = 'compact',
   fontSize = 1,
-  isBlocked = false
+  isBlocked = false,
+  onQuestionMount
 }) {
   const [commentsVisible, setCommentsVisible] = useState({});
   const [favorites, setFavorites] = useState({});
@@ -435,6 +436,8 @@ export default function QuestionList({
                 fontFamily: 'Arial, sans-serif',
                 willChange: 'transform, opacity'
               }}
+              data-question-id={question.id}
+              onViewportEnter={() => onQuestionMount && onQuestionMount(question.id)}
             >
               <div className={`${textStyles.headerBg} px-6 py-3 ${textStyles.border} border-b print-hide`}>
                 <div className="flex items-center justify-between">
