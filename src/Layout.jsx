@@ -51,6 +51,7 @@ import { ThemeToggle } from './components/ui/theme-toggle';
 import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
 import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
+import ChatWidget from './components/chat/ChatWidget';
 
 const navigationItems = [
 {
@@ -838,6 +839,8 @@ export default function Layout({ children, currentPageName }) {
         onClose={() => setShowLastDayModal(false)}
         daysRemaining={trialInfo?.daysRemaining || 0}
       />
-    </div>);
 
-}
+      <ChatWidget />
+      </div>);
+
+      }
