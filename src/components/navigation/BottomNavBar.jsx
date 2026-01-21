@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { LayoutDashboard, Zap, FileCheck, BookMarked, User, Lock } from "lucide-react";
+import { Home, FileText, User, BookCopy, BookOpen, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: 'Painel', url: createPageUrl('Dashboard'), icon: LayoutDashboard, feature: null },
-  { name: 'Questões', url: createPageUrl('Questions'), icon: Zap, feature: null },
-  { name: 'Provas', url: createPageUrl('Exams'), icon: FileCheck, feature: null },
-  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookMarked, feature: 'Resumos' },
+  { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null },
+  { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
+  { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
+  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
   { name: 'Perfil', url: createPageUrl('Profile'), icon: User, feature: null }
 ];
 
