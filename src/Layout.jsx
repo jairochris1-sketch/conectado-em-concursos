@@ -525,14 +525,22 @@ export default function Layout({ children, currentPageName }) {
                     </div>
                   </div>
                 </div>
-                <Button
-                onClick={handleLogout}
-                size="sm"
-                variant="ghost"
-                className="text-white hover:bg-black/20 active:scale-90 transition-transform flex-shrink-0">
-
-                  <LogOut className="w-5 h-5" />
-                </Button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    onClick={handleLogout}
+                    size="sm"
+                    variant="ghost"
+                    className="text-white hover:bg-black/20 active:scale-90 transition-transform">
+                    Sair
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
+                    size="sm"
+                    variant="ghost"
+                    className="text-white hover:bg-black/20 active:scale-90 transition-transform">
+                    <LogOut className="w-5 h-5" />
+                  </Button>
+                </div>
               </div>
 
               <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain">
