@@ -266,7 +266,7 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
               getButtonText()
             )}
           </Button>
-          {isCurrentPlan && plan.key !== 'gratuito' && (
+          {isCurrentPlan && plan.key !== 'gratuito' && currentPlan?.billing_type === 'CREDIT_CARD' && (
             <>
               <Button
                 size="sm"

@@ -221,6 +221,7 @@ Deno.serve(async (req) => {
                 user_email: user.email,
                 plan: plan,
                 status: 'pending',
+                billing_type: billingType,
                 asaas_customer_id: customer.id,
                 asaas_subscription_id: subscription.id,
                 price: price,
