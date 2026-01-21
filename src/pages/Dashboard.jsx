@@ -130,6 +130,18 @@ export default function Dashboard() {
     }
   };
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    return now.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const stats = calculateStats();
 
   if (isLoading) {
