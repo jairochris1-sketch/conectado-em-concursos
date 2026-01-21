@@ -530,14 +530,14 @@ export default function Layout({ children, currentPageName }) {
                     onClick={handleLogout}
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-black/20 active:scale-90 transition-transform">
+                    className="text-red-400 hover:bg-red-500/20 hover:text-red-300 active:scale-90 transition-transform font-semibold">
                     Sair
                   </Button>
                   <Button
                     onClick={handleLogout}
                     size="sm"
                     variant="ghost"
-                    className="text-white hover:bg-black/20 active:scale-90 transition-transform">
+                    className="text-red-400 hover:bg-red-500/20 hover:text-red-300 active:scale-90 transition-transform">
                     <LogOut className="w-5 h-5" />
                   </Button>
                 </div>
