@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { UserAnswer, User } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import { TrendingUp, Target, BookOpen, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, subDays, eachDayOfInterval } from "date-fns";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 const subjectNames = {
   portugues: "Português",
