@@ -89,6 +89,11 @@ const moreMenuItems = [
   icon: BookOpen
 },
 {
+  title: "Curso de Matemática",
+  url: createPageUrl("MathCourse"),
+  icon: BookOpen
+},
+{
   title: "Fórum",
   url: createPageUrl("Community"),
   icon: MessageSquare
@@ -174,7 +179,8 @@ const pageNameTranslations = {
   ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
-  ActivityFeed: "Feed de Atividades"
+  ActivityFeed: "Feed de Atividades",
+  MathCourse: "Curso de Matemática Básica"
 };
 
 const featureAccess = {
