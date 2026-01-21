@@ -100,12 +100,21 @@ export default function AdminContentForm({ content, onSave }) {
             <Textarea id="secondary_text" value={formData.secondary_text || ''} onChange={e => handleInputChange('secondary_text', e.target.value)} rows={3} />
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Salvar Conteúdo
-          </Button>
-        </CardFooter>
+        <CardFooter className="flex justify-end gap-2">
+           <Button
+             type="button"
+             variant="outline"
+             onClick={() => window.open(createPageUrl('Welcome'), '_blank')}
+             className="gap-2"
+           >
+             <Eye className="w-4 h-4" />
+             Testar/Visualizar
+           </Button>
+           <Button type="submit" disabled={isSaving}>
+             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+             Salvar Conteúdo
+           </Button>
+         </CardFooter>
       </form>
     </Card>
   );
