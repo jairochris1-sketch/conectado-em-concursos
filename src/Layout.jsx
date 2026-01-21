@@ -34,6 +34,7 @@ import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
 import { UserStats } from "@/entities/UserStats";
+import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavBar from "./components/navigation/BottomNavBar";
