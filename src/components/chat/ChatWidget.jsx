@@ -83,7 +83,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-20 right-6 z-40">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -206,8 +206,8 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-14 h-14 flex items-center justify-center">
-        <MessageCircle className="w-6 h-6" />
+        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-12 h-12 flex items-center justify-center">
+        <MessageCircle className="w-5 h-5" />
       </motion.button>
     </div>
   );
