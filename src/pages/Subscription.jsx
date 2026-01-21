@@ -821,36 +821,49 @@ export default function SubscriptionPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <Card className="border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 to-amber-50">
-              <CardContent className="p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-400 p-[2px] shadow-2xl">
+              <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 rounded-2xl p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-yellow-600" />
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <Clock className="w-7 h-7 text-white" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+                      <span className="text-white text-xs font-bold">✓</span>
+                    </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-yellow-800 mb-2">
-                      🎉 Período de Teste Ativo!
-                    </h3>
-                    <p className="text-yellow-700 mb-3">
-                      Você tem <strong>{trialInfo.daysRemaining} dias restantes</strong> de acesso gratuito 
-                      a todas as funcionalidades do <strong>Plano Avançado</strong>!
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-orange-700">
+                        Período de Teste Ativo!
+                      </h3>
+                      <span className="text-2xl">🎉</span>
+                    </div>
+                    <p className="text-amber-900 mb-4 text-base leading-relaxed">
+                      Você tem <span className="font-bold text-orange-600 text-lg">{trialInfo.daysRemaining} {trialInfo.daysRemaining === 1 ? 'dia restante' : 'dias restantes'}</span> de acesso gratuito 
+                      a todas as funcionalidades do <span className="font-bold text-amber-800">Plano Avançado</span>!
                     </p>
-                    <div className="w-full bg-yellow-200 rounded-full h-2 mb-3">
-                      <div 
-                        className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${((trialInfo.totalDays - trialInfo.daysRemaining) / trialInfo.totalDays) * 100}%` 
-                        }}
+                    <div className="relative w-full bg-amber-200/50 rounded-full h-3 mb-4 overflow-hidden shadow-inner">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${((trialInfo.totalDays - trialInfo.daysRemaining) / trialInfo.totalDays) * 100}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-3 rounded-full shadow-md"
                       />
                     </div>
-                    <p className="text-sm text-yellow-600">
-                      <strong>Dica:</strong> Aproveite para explorar todos os recursos! 
-                      Você pode assinar a qualquer momento, mas recomendamos aguardar o fim do teste gratuito.
-                    </p>
+                    <div className="flex items-start gap-2 bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-amber-200">
+                      <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-white text-xs font-bold">!</span>
+                      </div>
+                      <p className="text-sm text-amber-800 leading-relaxed">
+                        <strong className="text-amber-900">Dica:</strong> Aproveite para explorar todos os recursos! 
+                        Você pode assinar a qualquer momento, mas recomendamos aguardar o fim do teste gratuito.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </motion.div>
         )}
 
