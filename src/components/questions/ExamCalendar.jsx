@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Calendar as CalendarIcon, Plus, Trash2, Edit2, X } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, Trash2, Edit2, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,6 +8,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
@@ -133,22 +138,86 @@ export default function ExamCalendar() {
 
   const upcomingExams = exams.filter((exam) => getDaysUntil(exam.exam_date) >= 0);
   const pastExams = exams.filter((exam) => getDaysUntil(exam.exam_date) < 0);
+  const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsOpen(true)}
-        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950 relative"
-      >
-        <CalendarIcon className="w-5 h-5" />
-        {upcomingExams.length > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 bg-blue-500 rounded-full text-white text-xs flex items-center justify-center">
-            {upcomingExams.length}
-          </span>
-        )}
-      </Button>
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsOpen(true)}
+            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950 relative"
+          >
+            <CalendarIcon className="w-5 h-5" />
+            {upcomingExams.length > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 bg-blue-500 rounded-full text-white text-xs flex items-center justify-center">
+                {upcomingExams.length}
+              </span>
+            )}
+          </Button>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80" align="end">
+          {nextExam ? (
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className={`w-3 h-3 rounded-full ${getColorClass(nextExam.color)} mt-1.5 flex-shrink-0`} />
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Próxima Prova
+                  </h4>
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    {nextExam.exam_name}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <CalendarIcon className="w-4 h-4" />
+                    {format(new Date(nextExam.exam_date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </div>
+                  {nextExam.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                      {nextExam.description}
+                    </p>
+                  )}
+                  <div className="mt-3">
+                    {getDaysUntil(nextExam.exam_date) === 0 ? (
+                      <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold">
+                        <Clock className="w-4 h-4" />
+                        Prova é HOJE!
+                      </div>
+                    ) : getDaysUntil(nextExam.exam_date) === 1 ? (
+                      <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold">
+                        <Clock className="w-4 h-4" />
+                        Falta 1 dia
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold">
+                        <Clock className="w-4 h-4" />
+                        Faltam {getDaysUntil(nextExam.exam_date)} dias
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {upcomingExams.length > 1 && (
+                <p className="text-xs text-gray-500 dark:text-gray-500 pt-2 border-t border-gray-200 dark:border-gray-700">
+                  + {upcomingExams.length - 1} prova{upcomingExams.length - 1 > 1 ? 's' : ''} agendada{upcomingExams.length - 1 > 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <CalendarIcon className="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Nenhuma prova agendada
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                Clique para adicionar
+              </p>
+            </div>
+          )}
+        </HoverCardContent>
+      </HoverCard>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
