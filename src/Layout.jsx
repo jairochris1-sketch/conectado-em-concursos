@@ -132,6 +132,11 @@ const moreMenuItems = [
   icon: Calendar
 },
 {
+  title: "Planos de Estudo",
+  url: createPageUrl("StudyPlans"),
+  icon: Target
+},
+{
   title: "Ranking de Usuários",
   url: createPageUrl("Ranking"),
   icon: Trophy
