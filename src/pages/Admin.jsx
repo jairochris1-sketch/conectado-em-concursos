@@ -28,6 +28,8 @@ import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
 import InstitutionManager from '../components/admin/InstitutionManager';
 import ChatAdmin from '../components/admin/ChatAdmin';
+import QuickResponseManager from '../components/admin/QuickResponseManager';
+import AutoResponseManager from '../components/admin/AutoResponseManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
