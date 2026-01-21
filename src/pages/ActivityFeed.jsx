@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Trophy, BookOpen, UserPlus, Users, LogOut } from "lucide-react";
+import { MessageSquare, Trophy, BookOpen, UserPlus, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -114,17 +114,6 @@ export default function ActivityFeedPage() {
               Acompanhe as atividades de quem você segue ({following.length} pessoas)
             </p>
           </div>
-          <Button 
-            variant="destructive"
-            onClick={async () => {
-              await User.logout();
-              window.location.reload();
-            }}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
         </div>
 
         <div className="space-y-4">
