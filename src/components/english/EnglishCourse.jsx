@@ -602,42 +602,41 @@ export default function EnglishCourse() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-    <motion.div 
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mb-8"
-    >
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-xl">
-        <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
-          🇬🇧 Mini Curso de Inglês
-        </h1>
-        <p className="text-blue-100 text-lg">
-          Aprenda inglês de forma divertida e interativa todos os dias!
-        </p>
-      </div>
-    </motion.div>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
+            🇬🇧 Mini Curso de Inglês
+          </h1>
+          <p className="text-blue-100 text-lg">
+            Aprenda inglês de forma divertida e interativa todos os dias!
+          </p>
+        </div>
+      </motion.div>
         
-        <Card className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <span className="font-semibold text-gray-900 dark:text-white">Meta Diária</span>
-              </div>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                {exercisesToday} / {dailyGoal} exercícios
-              </span>
+      <Card className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 mb-8">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span className="font-semibold text-gray-900 dark:text-white">Meta Diária</span>
             </div>
-            <Progress value={(exercisesToday / dailyGoal) * 100} className="h-2" />
-            {exercisesToday >= dailyGoal && (
-              <p className="text-sm text-green-600 dark:text-green-400 mt-2 flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4" />
-                Meta diária concluída! 🎉
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+              {exercisesToday} / {dailyGoal} exercícios
+            </span>
+          </div>
+          <Progress value={(exercisesToday / dailyGoal) * 100} className="h-2" />
+          {exercisesToday >= dailyGoal && (
+            <p className="text-sm text-green-600 dark:text-green-400 mt-2 flex items-center gap-1">
+              <CheckCircle2 className="w-4 h-4" />
+              Meta diária concluída! 🎉
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
