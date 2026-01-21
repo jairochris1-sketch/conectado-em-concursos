@@ -382,7 +382,7 @@ export default function SubscriptionPage() {
             const now = new Date();
             const diffTime = now.getTime() - trialStartDate.getTime();
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const trialDuration = 10;
+            const trialDuration = 5;
             const daysRemaining = Math.ceil(trialDuration - diffDays);
             
             if (daysRemaining > 0) {
