@@ -184,62 +184,35 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
             <div className={`border-b ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
               <div className="max-w-5xl mx-auto px-4 md:px-6 py-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {/* Tamanho da fonte */}
-                    <Select value={fontSize} onValueChange={setFontSize}>
-                      <SelectTrigger className="w-[100px] h-8">
-                        <Type className="w-3 h-3 mr-1" />
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="small">Pequena</SelectItem>
-                        <SelectItem value="medium">Média</SelectItem>
-                        <SelectItem value="large">Grande</SelectItem>
-                        <SelectItem value="xlarge">Muito Grande</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Tamanho da fonte */}
+                      <Select value={fontSize} onValueChange={setFontSize}>
+                        <SelectTrigger className="w-[100px] h-8">
+                          <Type className="w-3 h-3 mr-1" />
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="small">Pequena</SelectItem>
+                          <SelectItem value="medium">Média</SelectItem>
+                          <SelectItem value="large">Grande</SelectItem>
+                          <SelectItem value="xlarge">Muito Grande</SelectItem>
+                        </SelectContent>
+                      </Select>
 
-                    {/* Espaçamento entre linhas */}
-                    <Select value={lineSpacing} onValueChange={setLineSpacing}>
-                      <SelectTrigger className="w-[110px] h-8">
-                        <AlignJustify className="w-3 h-3 mr-1" />
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="compact">Compacto</SelectItem>
-                        <SelectItem value="normal">Normal</SelectItem>
-                        <SelectItem value="relaxed">Relaxado</SelectItem>
-                        <SelectItem value="loose">Amplo</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {/* Cor do destaque */}
-                    <div className="flex items-center gap-1 border rounded-lg px-2 h-8">
-                      {highlightColors.map(({ color }) => (
-                        <button
-                          key={color}
-                          onClick={() => setSelectedColor(color)}
-                          className={`w-5 h-5 rounded-full border-2 transition-all ${
-                            selectedColor === color ? 'border-gray-900 dark:border-white scale-110' : 'border-gray-300'
-                          }`}
-                          style={{ backgroundColor: color }}
-                          title="Cor do destaque"
-                        />
-                      ))}
+                      {/* Espaçamento entre linhas */}
+                      <Select value={lineSpacing} onValueChange={setLineSpacing}>
+                        <SelectTrigger className="w-[110px] h-8">
+                          <AlignJustify className="w-3 h-3 mr-1" />
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="compact">Compacto</SelectItem>
+                          <SelectItem value="normal">Normal</SelectItem>
+                          <SelectItem value="relaxed">Relaxado</SelectItem>
+                          <SelectItem value="loose">Amplo</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-
-                    {/* Destacar texto */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleHighlight}
-                      className="h-8"
-                      title="Destacar texto selecionado"
-                    >
-                      <Highlighter className="w-3 h-3 mr-1" />
-                      Destacar
-                    </Button>
-                  </div>
 
                   <div className="flex items-center gap-2">
                     {/* Modo escuro */}
