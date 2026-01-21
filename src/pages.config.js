@@ -6,11 +6,14 @@ import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
+import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
 import FavoriteQuestions from './pages/FavoriteQuestions';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
+import LogicCourse from './pages/LogicCourse';
+import MathCourse from './pages/MathCourse';
 import Notes from './pages/Notes';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
@@ -27,9 +30,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import MathCourse from './pages/MathCourse';
-import LogicCourse from './pages/LogicCourse';
-import EnglishCourse from './pages/EnglishCourse';
 import __Layout from './Layout.jsx';
 
 
@@ -42,11 +42,14 @@ export const PAGES = {
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
+    "EnglishCourse": EnglishCourse,
     "ExamView": ExamView,
     "Exams": Exams,
     "FavoriteQuestions": FavoriteQuestions,
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
+    "LogicCourse": LogicCourse,
+    "MathCourse": MathCourse,
     "Notes": Notes,
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
@@ -63,9 +66,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "MathCourse": MathCourse,
-    "LogicCourse": LogicCourse,
-    "EnglishCourse": EnglishCourse,
 }
 
 export const pagesConfig = {

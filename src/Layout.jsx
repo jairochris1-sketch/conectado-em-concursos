@@ -299,16 +299,7 @@ export default function Layout({ children, currentPageName }) {
 
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
-        if (userData.current_plan === 'gratuito' && !userData.trial_used && activeSubscriptions.length === 0) {
-          console.log("Iniciando período de teste para usuário 'gratuito'.");
-          await User.updateMyUserData({
-            current_plan: 'avancado',
-            trial_start_date: new Date().toISOString(),
-            trial_used: true
-          });
-          userData = await User.me();
-          setUser(userData);
-        }
+        // NÃO ativa teste automaticamente - usuário deve escolher manualmente
 
         if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
           const trialStartDate = new Date(userData.trial_start_date);

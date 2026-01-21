@@ -472,12 +472,23 @@ export default function SubscriptionPage() {
       });
 
       if (response.data.success) {
-        // Redirecionar para a página de pagamento do Asaas em nova aba
-        window.open(response.data.payment_url, '_blank');
-        // Recarregar a página atual após alguns segundos
+        // Verificar se tem URL de pagamento
+        const paymentUrl = response.data.payment_url || 
+                          response.data.boleto_url || 
+                          (response.data.pix_code ? response.data.payment_url : null);
+        
+        if (paymentUrl) {
+          // Redirecionar para a página de pagamento do Asaas em nova aba
+          window.open(paymentUrl, '_blank');
+          alert('Uma nova aba foi aberta com os detalhes do pagamento. Se não abriu, verifique se o bloqueador de pop-ups está ativo.');
+        } else {
+          alert('Assinatura criada! Aguarde a confirmação do pagamento.');
+        }
+        
+        // Recarregar a página após alguns segundos
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 3000);
       } else {
         throw new Error(response.data.error || 'Erro ao processar assinatura');
       }

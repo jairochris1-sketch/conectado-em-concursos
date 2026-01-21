@@ -147,12 +147,14 @@ Deno.serve(async (req) => {
             
             const subscriptionData = {
                 customer: customer.id,
-                billingType: billingType,
+                billingType: billingType === 'PIX' || billingType === 'BOLETO' ? billingType : 'UNDEFINED',
                 value: price,
                 nextDueDate: nextDueDate.toISOString().split('T')[0],
                 cycle: asaasCycle,
                 description: `Conectado em Concursos - ${plan.charAt(0).toUpperCase() + plan.slice(1)} ${cycle === 'annual' ? 'Anual' : cycle === 'semiannual' ? 'Semestral' : 'Mensal'}`
             };
+            
+            console.log('Método de pagamento selecionado:', billingType);
 
             console.log('Dados da assinatura para Asaas:', JSON.stringify(subscriptionData, null, 2));
 
@@ -207,6 +209,12 @@ Deno.serve(async (req) => {
             
             const firstPayment = paymentsData.data[0];
             console.log('Cobrança inicial encontrada:', firstPayment.id);
+            console.log('Dados do pagamento:', {
+                invoiceUrl: firstPayment.invoiceUrl,
+                bankSlipUrl: firstPayment.bankSlipUrl,
+                pixCopiaECola: firstPayment.pixCopiaECola,
+                billingType: firstPayment.billingType
+            });
 
             // 4. Salvar assinatura no banco de dados
             const subscriptionRecord = {
@@ -224,11 +232,25 @@ Deno.serve(async (req) => {
             await base44.entities.Subscription.create(subscriptionRecord);
             console.log('Assinatura salva no banco de dados');
 
-            return Response.json({
+            // Montar resposta com URLs corretas dependendo do método de pagamento
+            const paymentResponse = {
                 success: true,
                 subscription_id: subscription.id,
-                payment_url: firstPayment.invoiceUrl
-            });
+                payment_url: firstPayment.invoiceUrl,
+                billing_type: firstPayment.billingType
+            };
+            
+            // Adicionar informações específicas do método de pagamento
+            if (billingType === 'PIX' && firstPayment.pixCopiaECola) {
+                paymentResponse.pix_code = firstPayment.pixCopiaECola;
+                paymentResponse.pix_qr_code = firstPayment.pixQrCodeBase64;
+            }
+            
+            if (billingType === 'BOLETO' && firstPayment.bankSlipUrl) {
+                paymentResponse.boleto_url = firstPayment.bankSlipUrl;
+            }
+
+            return Response.json(paymentResponse);
 
         } catch (subscriptionError) {
             console.error('Erro na criação da assinatura:', subscriptionError.message);
