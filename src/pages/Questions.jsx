@@ -20,6 +20,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
 import DailyLimitBanner from "@/components/limits/DailyLimitBanner";
 import StudyTimer from "../components/questions/StudyTimer";
+import ExamCalendar from "../components/questions/ExamCalendar";
 
 const shuffleArray = (array) => {
   let currentIndex = array.length,  randomIndex;
@@ -329,6 +330,7 @@ export default function Questions() {
               </Button>
             </div>
             <StudyTimer />
+            <ExamCalendar />
             <ThemeToggle />
           </div>
         </motion.div>
