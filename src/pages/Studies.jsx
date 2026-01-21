@@ -43,6 +43,7 @@ import FlashcardCreator from '../components/flashcards/FlashcardCreator';
 import FlashcardReviewer from '../components/flashcards/FlashcardReviewer';
 import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
+import EnglishCourse from '../components/english/EnglishCourse';
 
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
@@ -580,7 +581,7 @@ ${videoNotes}
         </motion.div>
 
         <Tabs defaultValue="materials" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="materials" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Materiais
@@ -596,6 +597,10 @@ ${videoNotes}
             <TabsTrigger value="flashcards" className="flex items-center gap-2">
               <Brain className="w-4 h-4" />
               Flashcards
+            </TabsTrigger>
+            <TabsTrigger value="english" className="flex items-center gap-2">
+              🇬🇧
+              Inglês
             </TabsTrigger>
           </TabsList>
 
@@ -1460,6 +1465,10 @@ ${videoNotes}
 
               </TabsContent>
             </Tabs>
+          </TabsContent>
+
+          <TabsContent value="english" className="mt-6">
+            <EnglishCourse />
           </TabsContent>
         </Tabs>
         
