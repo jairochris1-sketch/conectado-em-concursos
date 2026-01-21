@@ -370,7 +370,7 @@ export default function Layout({ children, currentPageName }) {
           setTrialInfo(null);
         }
 
-        const userPlan = userData.current_plan || 'gratuito';
+        userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
         const currentTitle = pageNameTranslations[currentPageName] || currentPageName;
