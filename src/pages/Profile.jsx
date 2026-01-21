@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User as UserIcon, Loader2, Users } from "lucide-react";
+import { Camera, Save, User as UserIcon, Loader2, Users, Palette } from "lucide-react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import AppearanceSettings from "@/components/dashboard/AppearanceSettings";
 // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
 // createPageUrl is no longer used, can be removed if not used elsewhere.
 
@@ -422,16 +423,25 @@ export default function ProfilePage() {
               </Card>
             </motion.div>
 
+            {/* Personalização */}
+             <motion.div
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.2 }}
+             >
+               <AppearanceSettings />
+             </motion.div>
+
             {/* Informações de estudo */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preferências de Estudo</CardTitle>
-                </CardHeader>
+             <motion.div
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.3 }}
+             >
+               <Card>
+                 <CardHeader>
+                   <CardTitle>Preferências de Estudo</CardTitle>
+                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
                     <div>
@@ -494,10 +504,10 @@ export default function ProfilePage() {
             </motion.div>
 
             {/* Botão de salvar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+             <motion.div
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.4 }}
               className="flex justify-end"
             >
               <Button
