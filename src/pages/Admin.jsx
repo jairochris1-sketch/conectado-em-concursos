@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -27,6 +27,7 @@ import GuideManager from '../components/admin/GuideManager';
 import UserManager from '../components/admin/UserManager';
 import FeedbackManager from '../components/admin/FeedbackManager';
 import InstitutionManager from '../components/admin/InstitutionManager';
+import ChatAdmin from '../components/admin/ChatAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -429,6 +430,10 @@ export default function AdminPage() {
               <Bookmark className="w-4 h-4 mr-2" />
               Guias
             </TabsTrigger>
+            <TabsTrigger value="chat">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              💬 Chat
+            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
@@ -506,6 +511,10 @@ export default function AdminPage() {
 
           <TabsContent value="guias" className="mt-6">
             <GuideManager />
+          </TabsContent>
+
+          <TabsContent value="chat" className="mt-6">
+            <ChatAdmin />
           </TabsContent>
 
           <TabsContent value="exportar" className="mt-6">
