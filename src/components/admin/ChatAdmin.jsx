@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Check, MessageSquare, Bell } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Trash2, Check, MessageSquare, Bell, Send, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -12,9 +13,13 @@ export default function ChatAdmin() {
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [newMessageNotification, setNewMessageNotification] = useState(null);
+  const [replies, setReplies] = useState({});
+  const [replyText, setReplyText] = useState('');
+  const [isSendingReply, setIsSendingReply] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    loadMessages();
+    loadData();
 
     // Subscribe to real-time updates
     const unsubscribe = base44.entities.ChatMessage.subscribe((event) => {
@@ -39,8 +44,50 @@ export default function ChatAdmin() {
       }
     });
 
-    return unsubscribe;
+    // Subscribe to replies
+    const unsubscribeReplies = base44.entities.ChatReply.subscribe((event) => {
+      if (event.type === 'create') {
+        setReplies((prev) => ({
+          ...prev,
+          [event.data.message_id]: [...(prev[event.data.message_id] || []), event.data]
+        }));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeReplies();
+    };
   }, []);
+
+  const loadData = async () => {
+    try {
+      const user = await base44.auth.me();
+      setCurrentUser(user);
+      await loadMessages();
+      await loadReplies();
+      setLoading(false);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      setLoading(false);
+    }
+  };
+
+  const loadReplies = async () => {
+    try {
+      const allReplies = await base44.entities.ChatReply.list('-created_date', 500);
+      const repliesByMessage = {};
+      allReplies.forEach((reply) => {
+        if (!repliesByMessage[reply.message_id]) {
+          repliesByMessage[reply.message_id] = [];
+        }
+        repliesByMessage[reply.message_id].push(reply);
+      });
+      setReplies(repliesByMessage);
+    } catch (error) {
+      console.error('Erro ao carregar respostas:', error);
+    }
+  };
 
   const loadMessages = async () => {
     try {
@@ -66,6 +113,26 @@ export default function ChatAdmin() {
       await base44.entities.ChatMessage.delete(messageId);
     } catch (error) {
       console.error('Erro ao deletar mensagem:', error);
+    }
+  };
+
+  const handleSendReply = async (messageId) => {
+    if (!replyText.trim()) return;
+
+    setIsSendingReply(true);
+    try {
+      await base44.entities.ChatReply.create({
+        message_id: messageId,
+        reply_text: replyText,
+        admin_email: currentUser.email
+      });
+      setReplyText('');
+      toast.success('Resposta enviada!');
+    } catch (error) {
+      console.error('Erro ao enviar resposta:', error);
+      toast.error('Erro ao enviar resposta');
+    } finally {
+      setIsSendingReply(false);
     }
   };
 
@@ -195,6 +262,60 @@ export default function ChatAdmin() {
                       </Button>
                     </div>
                   </div>
+
+                  {/* Replies Section */}
+                  {replies[message.id] && replies[message.id].length > 0 && (
+                    <div className="mt-4 space-y-2 bg-gray-50 p-3 rounded-lg border-l-4 border-green-600">
+                      <p className="text-xs font-semibold text-gray-600 uppercase">Respostas do Admin</p>
+                      {replies[message.id].map((reply) => (
+                        <div key={reply.id} className="bg-white p-2 rounded text-sm text-gray-700 border-l-2 border-green-500 pl-3">
+                          <p className="font-medium text-green-700">{reply.admin_email}</p>
+                          <p className="text-gray-600">{reply.reply_text}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(reply.created_date).toLocaleDateString('pt-BR', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Reply Input */}
+                  {selectedMessage?.id === message.id && (
+                    <div className="mt-4 space-y-2">
+                      <Textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Escreva sua resposta..."
+                        className="text-sm"
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSendReply(message.id)}
+                          disabled={isSendingReply || !replyText.trim()}
+                          className="bg-green-600 hover:bg-green-700">
+                          <Send className="w-4 h-4 mr-1" />
+                          Responder
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedMessage(null);
+                            setReplyText('');
+                          }}>
+                          <X className="w-4 h-4 mr-1" />
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
