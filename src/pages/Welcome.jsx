@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '@/entities/User';
@@ -5,7 +6,7 @@ import { SiteContent } from '@/entities/SiteContent';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Rocket, Loader2 } from 'lucide-react';
+import { Rocket, Sparkles, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function WelcomePage() {
@@ -73,14 +74,10 @@ export default function WelcomePage() {
       >
         <Card className="max-w-lg w-full shadow-2xl border-0 rounded-2xl overflow-hidden bg-transparent text-white">
           <div className="p-8 text-center">
-             <img 
-               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
-               alt="Logo Conectado em Concursos"
-               className="w-20 h-20 mx-auto mb-4 object-contain"
-             />
-             <h1 className="text-3xl font-extrabold">{content.title}</h1>
-             <p className="mt-2 opacity-90">{content.subtitle}</p>
-           </div>
+            <Sparkles className="w-16 h-16 mx-auto mb-4 opacity-80" />
+            <h1 className="text-3xl font-extrabold">{content.title}</h1>
+            <p className="mt-2 opacity-90">{content.subtitle}</p>
+          </div>
           <CardContent className="p-8 text-center pt-0">
             <p className="text-lg leading-relaxed">
               {content.main_text}
