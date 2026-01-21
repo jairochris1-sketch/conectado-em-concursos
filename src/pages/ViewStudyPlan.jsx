@@ -3,10 +3,11 @@ import { StudyPlan, UserAnswer } from '@/entities/all';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Trash2, CheckCircle, Circle } from 'lucide-react';
+import { ArrowLeft, Trash2, CheckCircle, Circle, Edit2, Save, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 
 const SUBJECT_LABELS = {
   portugues: 'Português',
