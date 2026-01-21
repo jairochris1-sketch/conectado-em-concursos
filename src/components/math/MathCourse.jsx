@@ -382,65 +382,77 @@ export default function MathCourse() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Curso de Matemática Básica 📐
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Aprenda matemática do zero de forma simples e prática!
-        </p>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
+            📐 Curso de Matemática Básica
+          </h1>
+          <p className="text-purple-100 text-lg">
+            Aprenda matemática do zero de forma simples e prática!
+          </p>
+        </div>
+      </motion.div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                <Flame className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-white/20 backdrop-blur rounded-xl">
+                  <Flame className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-orange-100">Sequência de Estudos</p>
+                  <p className="text-3xl font-bold">
+                    {streak} {streak === 1 ? "dia" : "dias"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Sequência</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {streak} {streak === 1 ? "dia" : "dias"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-white/20 backdrop-blur rounded-xl">
+                  <Target className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-purple-100">Lições Completas</p>
+                  <p className="text-3xl font-bold">
+                    {progress.filter(p => p.completed).length}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Lições Completas</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {progress.filter(p => p.completed).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <Trophy className="w-6 h-6 text-green-600 dark:text-green-400" />
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-white/20 backdrop-blur rounded-xl">
+                  <Trophy className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-green-100">Média de Acertos</p>
+                  <p className="text-3xl font-bold">
+                    {progress.length > 0
+                      ? Math.round(progress.reduce((sum, p) => sum + p.score, 0) / progress.length)
+                      : 0}%
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Média de Acertos</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {progress.length > 0
-                    ? Math.round(progress.reduce((sum, p) => sum + p.score, 0) / progress.length)
-                    : 0}%
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -453,48 +465,55 @@ export default function MathCourse() {
               key={lesson.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
             >
-              <Card className="cursor-pointer hover:shadow-lg transition-all h-full flex flex-col">
+              <Card className="cursor-pointer hover:shadow-2xl transition-all h-full flex flex-col border-2 border-transparent hover:border-purple-400 overflow-hidden">
+                <div className={`h-2 ${isCompleted ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-purple-400 to-pink-500'}`} />
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline">Aula {lesson.day}</Badge>
+                    <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200">
+                      Aula {lesson.day}
+                    </Badge>
                     {isCompleted && (
-                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Concluído</span>
+                      </div>
                     )}
                   </div>
-                  <CardTitle className="text-lg">{lesson.title}</CardTitle>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <CardTitle className="text-xl text-gray-900 dark:text-white">{lesson.title}</CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
                     {lesson.topic}
                   </p>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col justify-end">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                      <Calculator className="w-4 h-4" />
-                      <span>{lesson.exercises?.length || 0} exercícios</span>
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
+                      <Calculator className="w-4 h-4 text-purple-500" />
+                      <span className="font-medium">{lesson.exercises?.length || 0} exercícios</span>
                     </div>
                     
                     {lessonProgress && (
-                      <div className="pt-2">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="pt-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                             Melhor pontuação
                           </span>
-                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                          <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
                             {lessonProgress.score}%
                           </span>
                         </div>
-                        <Progress value={lessonProgress.score} className="h-1" />
+                        <Progress value={lessonProgress.score} className="h-2" />
                       </div>
                     )}
 
                     <Button
                       onClick={() => startLesson(lesson)}
-                      className="w-full mt-2"
-                      variant={isCompleted ? "outline" : "default"}
+                      className={`w-full mt-2 font-semibold ${isCompleted ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'}`}
+                      size="lg"
                     >
-                      {isCompleted ? "Revisar" : "Começar"}
+                      {isCompleted ? "🔄 Revisar" : "🚀 Começar"}
                     </Button>
                   </div>
                 </CardContent>
