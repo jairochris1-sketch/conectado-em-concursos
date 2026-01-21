@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
@@ -91,21 +90,21 @@ export default function QuestionCard({
     >
       <Card className={cn(
         "shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden",
-        "bg-white dark:bg-gray-800",
+        "bg-white dark:bg-gray-800 dark:border-gray-700",
         fontSize && `text-[${fontSize}rem]`
       )}>
-        <CardHeader className="space-y-3 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800">
+        <CardHeader className="space-y-3 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-700 dark:to-gray-800 dark:border-b dark:border-gray-700">
           <div className="flex justify-between items-start gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <Badge className="bg-indigo-600 text-white">
                   Questão {questionNumber}
                 </Badge>
-                <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">
-                  {subjectNames[question.subject] || question.subject}
-                </Badge>
+                <Badge variant="outline" className="dark:border-gray-500 dark:text-gray-200 dark:bg-gray-700">
+                   {subjectNames[question.subject] || question.subject}
+                 </Badge>
                 {question.topic && (
-                  <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">
+                  <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-200">
                     {question.topic}
                   </Badge>
                 )}
@@ -138,8 +137,8 @@ export default function QuestionCard({
 
         <CardContent className="p-6 space-y-6">
           {question.associated_text && (
-            <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-              <AlertDescription className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+            <Alert className="bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700">
+              <AlertDescription className="text-gray-900 dark:text-gray-100 whitespace-pre-wrap leading-relaxed">
                 {question.associated_text}
               </AlertDescription>
             </Alert>
@@ -147,7 +146,7 @@ export default function QuestionCard({
 
           {question.statement && (
             <div>
-              <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
                 {question.statement}
               </p>
             </div>
@@ -155,7 +154,7 @@ export default function QuestionCard({
 
           {question.command && (
             <div>
-              <p className="font-semibold text-indigo-700 dark:text-indigo-400 mb-4">
+              <p className="font-semibold text-indigo-600 dark:text-indigo-300 mb-4">
                 {question.command}
               </p>
             </div>
@@ -181,9 +180,9 @@ export default function QuestionCard({
               >
                 <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} />
                 <Label
-                  htmlFor={`q${question.id}-${option.letter}`}
-                  className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200"
-                >
+                   htmlFor={`q${question.id}-${option.letter}`}
+                   className="flex-1 cursor-pointer text-gray-800 dark:text-gray-100"
+                 >
                   <span className="font-semibold mr-2">{option.letter})</span>
                   {option.text}
                 </Label>
@@ -214,7 +213,7 @@ export default function QuestionCard({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               transition={{ duration: 0.3 }}
-              className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4"
+              className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-l-4 dark:border-gray-600"
               style={{ borderLeftColor: isCorrect ? '#10b981' : '#ef4444' }}
             >
               <div className="flex items-center gap-2 mb-3">
@@ -223,13 +222,13 @@ export default function QuestionCard({
                 ) : (
                   <XCircle className="w-5 h-5 text-red-600" />
                 )}
-                <span className="font-semibold text-gray-900 dark:text-gray-100">
-                  {isCorrect ? 'Parabéns! Resposta correta!' : 'Ops! Resposta incorreta'}
-                </span>
+                <span className="font-semibold text-gray-900 dark:text-white">
+                   {isCorrect ? 'Parabéns! Resposta correta!' : 'Ops! Resposta incorreta'}
+                 </span>
               </div>
               
               <div className="text-sm space-y-2">
-                <p className="text-gray-900 dark:text-gray-100">
+                <p className="text-gray-900 dark:text-gray-200">
                   <span className="font-medium">Sua resposta:</span> {userAnswer}
                   {!isCorrect && (
                     <>
@@ -244,11 +243,11 @@ export default function QuestionCard({
                     <div className="flex items-start gap-2">
                       <MessageSquare className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="font-medium mb-2 text-gray-900 dark:text-white">Gabarito Comentado:</p>
-                        <div 
-                          className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-900 dark:text-gray-100"
-                          dangerouslySetInnerHTML={{ __html: question.explanation }}
-                        />
+                           <p className="font-medium mb-2 text-gray-900 dark:text-white">Gabarito Comentado:</p>
+                           <div 
+                             className="text-sm leading-relaxed prose prose-sm prose-invert max-w-none text-gray-900 dark:text-gray-200"
+                             dangerouslySetInnerHTML={{ __html: question.explanation }}
+                           />
                       </div>
                     </div>
                   </div>
@@ -263,7 +262,7 @@ export default function QuestionCard({
               <Button
                 variant="outline"
                 onClick={() => setShowComments(!showComments)}
-                className="mb-4 bg-white dark:bg-gray-700 dark:text-white"
+                className="mb-4 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
                 {showComments ? 'Ocultar' : 'Ver'} Comentários
