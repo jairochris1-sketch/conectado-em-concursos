@@ -146,22 +146,30 @@ export default function ChatWidget() {
 
             {/* Input Area */}
             <div className="border-t p-4 bg-white rounded-b-lg space-y-3">
-              {!visitorName && (
-                <Input
-                  placeholder="Seu nome"
-                  value={visitorName}
-                  onChange={(e) => setVisitorName(e.target.value)}
-                  className="text-sm"
-                />
+              {!hasUserInfo && (
+                <>
+                  <Input
+                    placeholder="Seu nome"
+                    value={visitorName}
+                    onChange={(e) => setVisitorName(e.target.value)}
+                    className="text-sm"
+                  />
+                  <Input
+                    placeholder="Seu email (opcional)"
+                    type="email"
+                    value={visitorEmail}
+                    onChange={(e) => setVisitorEmail(e.target.value)}
+                    className="text-sm"
+                  />
+                </>
               )}
-              {!visitorName && (
-                <Input
-                  placeholder="Seu email (opcional)"
-                  type="email"
-                  value={visitorEmail}
-                  onChange={(e) => setVisitorEmail(e.target.value)}
-                  className="text-sm"
-                />
+              {hasUserInfo && (
+                <div className="text-xs text-gray-500 p-2 bg-gray-50 rounded">
+                  <p className="font-medium text-gray-700">{visitorName}</p>
+                  {visitorEmail && visitorEmail !== 'not-provided@example.com' && (
+                    <p className="text-gray-600">{visitorEmail}</p>
+                  )}
+                </div>
               )}
 
               {selectedImage && (
