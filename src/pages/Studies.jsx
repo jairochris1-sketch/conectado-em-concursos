@@ -719,16 +719,17 @@ ${videoNotes}
                 </Card> :
 
               <div className={
-              materialViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' :
+              materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
               materialViewMode === 'list' ? 'space-y-4' :
-              'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
+              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
               }>
                   {filteredMaterials.map((material, index) =>
                 <motion.div
                   key={material.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}>
+                  transition={{ delay: index * 0.05 }}
+                  className="min-w-0 overflow-hidden">
 
                       {materialViewMode === 'list' ?
                   <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
