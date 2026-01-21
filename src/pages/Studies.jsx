@@ -43,6 +43,7 @@ import FlashcardCreator from '../components/flashcards/FlashcardCreator';
 import FlashcardReviewer from '../components/flashcards/FlashcardReviewer';
 import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
+import EnhancedArticleReader from '../components/reading/EnhancedArticleReader';
 
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
@@ -1672,63 +1673,12 @@ ${videoNotes}
           </div>
         }
 
-        {/* Modal do Artigo com Modo Escuro */}
-        {selectedArticle &&
-        <div className="bg-gray-950 p-4 fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto">
-            <div className={`rounded-lg shadow-xl max-w-4xl w-full my-8 ${articleDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-              <div className={`flex justify-between items-start p-6 border-b ${articleDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                <div className="flex-1">
-                  <h2 className={`text-2xl font-bold mb-2 ${articleDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedArticle.title}
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-purple-100 text-purple-800">
-                      {subjectNames[selectedArticle.subject] || selectedArticle.subject}
-                    </Badge>
-                    {selectedArticle.topic &&
-                  <Badge variant="outline">
-                        {selectedArticle.topic}
-                      </Badge>
-                  }
-                    {selectedArticle.author &&
-                  <span className={`text-sm ${articleDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Por: {selectedArticle.author}
-                      </span>
-                  }
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                  onClick={() => setArticleDarkMode(!articleDarkMode)}
-                  size="icon"
-                  variant="ghost"
-                  className={articleDarkMode ? 'text-white hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}
-                  title={articleDarkMode ? 'Modo Claro' : 'Modo Escuro'}>
-
-                    {articleDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  </Button>
-                  <button
-                  onClick={() => setSelectedArticle(null)}
-                  className={`p-2 ${articleDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}>
-
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-6 max-h-[70vh] overflow-y-auto">
-                <div
-                className={`prose prose-lg max-w-none ${articleDarkMode ? 'prose-invert dark:prose-invert' : ''}`}
-                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                style={articleDarkMode ? {
-                  color: '#e5e7eb'
-                } : {
-                  color: '#111827'
-                }} />
-
-              </div>
-            </div>
-          </div>
-        }
+        {/* Enhanced Article Reader */}
+        <EnhancedArticleReader
+          article={selectedArticle}
+          isOpen={!!selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+        />
       </div>
     </div>);
 
