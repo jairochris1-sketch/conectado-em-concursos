@@ -1,13 +1,13 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Loader2, FileText, ImageIcon } from 'lucide-react';
+import { Loader2, FileText, ImageIcon, Eye } from 'lucide-react';
 import { UploadFile } from '@/integrations/Core'; // Assuming this path and function signature
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { createPageUrl } from '@/utils';
 
 export default function AdminContentForm({ content, onSave }) {
   const [formData, setFormData] = useState(content);
