@@ -49,13 +49,14 @@ export default function PlanAdvantagesBlock() {
                       Planos
                     </span>
                   </div>
-                  <button
+                  <Button
                     onClick={handleClose}
-                    className="p-1 rounded-full hover:bg-white/20 transition-colors flex-shrink-0"
-                    aria-label="Fechar"
+                    size="sm"
+                    variant="ghost"
+                    className="text-white hover:bg-white/20 text-xs px-2 py-1 h-auto flex-shrink-0"
                   >
-                    <X className="w-4 h-4" />
-                  </button>
+                    Fechar
+                  </Button>
                 </div>
                 
                 <h3 className="text-base font-bold mb-1.5 leading-tight">
@@ -111,13 +112,14 @@ export default function PlanAdvantagesBlock() {
                     </Button>
                   </Link>
 
-                  <button
+                  <Button
                     onClick={handleClose}
-                    className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
-                    aria-label="Fechar"
+                    size="sm"
+                    variant="ghost"
+                    className="text-white hover:bg-white/20"
                   >
-                    <X className="w-5 h-5" />
-                  </button>
+                    Fechar
+                  </Button>
                 </div>
               </div>
             </div>
