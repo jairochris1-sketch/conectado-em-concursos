@@ -1,14 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Loader2, ImageIcon, Home, MessageSquare, HelpCircle, Search } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { MessageCircle, X, Send, Loader2, ImageIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
-import { optimizeImageFile } from '@/components/imageOptimizer';
+import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('inicio');
   const [messages, setMessages] = useState([]);
   const [visitorName, setVisitorName] = useState('');
   const [visitorEmail, setVisitorEmail] = useState('');
@@ -17,13 +16,6 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    const savedName = localStorage.getItem('chatVisitorName');
-    if (savedName) {
-      setVisitorName(savedName);
-    }
-  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -60,13 +52,13 @@ export default function ChatWidget() {
 
     setIsLoading(true);
     try {
-      localStorage.setItem('chatVisitorName', visitorName);
-      
+      let imageUrl = selectedImage;
+
       await base44.entities.ChatMessage.create({
         visitor_name: visitorName,
         visitor_email: visitorEmail || 'not-provided@example.com',
         message: currentMessage,
-        image_url: selectedImage,
+        image_url: imageUrl,
         page_url: window.location.href
       });
 
@@ -75,7 +67,7 @@ export default function ChatWidget() {
         {
           visitor_name: visitorName,
           message: currentMessage,
-          image_url: selectedImage,
+          image_url: imageUrl,
           created_date: new Date().toISOString()
         }
       ]);
@@ -99,131 +91,122 @@ export default function ChatWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-20 right-0 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl flex flex-col h-[600px] overflow-hidden">
+            className="absolute bottom-20 right-0 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-2xl flex flex-col h-[500px] border border-gray-200">
 
-            {/* Header - Orange Gradient */}
-            <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute w-40 h-40 bg-white rounded-full -top-10 -right-10"></div>
-                <div className="absolute w-32 h-32 bg-white rounded-full -bottom-10 -left-10"></div>
-              </div>
-              <div className="relative z-10 flex justify-between items-start">
-                <div>
-                  <h2 className="text-2xl font-bold mb-1">Olá {visitorName || 'José'} 👋</h2>
-                  <p className="text-orange-100 text-sm">Como podemos ajudar?</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white hover:bg-orange-500"
-                  onClick={() => setIsOpen(false)}>
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex justify-between items-center">
+              <h3 className="font-bold text-lg">Suporte</h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-blue-600"
+                onClick={() => setIsOpen(false)}>
+                <X className="w-5 h-5" />
+              </Button>
             </div>
 
-            {/* Content Area */}
-            {activeTab === 'inicio' ? (
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {!visitorName && (
-                  <div className="space-y-3">
-                    <Input
-                      placeholder="Seu nome"
-                      value={visitorName}
-                      onChange={(e) => setVisitorName(e.target.value)}
-                      className="text-sm rounded-full border-gray-300"
-                    />
-                    <Input
-                      placeholder="Seu email (opcional)"
-                      type="email"
-                      value={visitorEmail}
-                      onChange={(e) => setVisitorEmail(e.target.value)}
-                      className="text-sm rounded-full border-gray-300"
-                    />
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
+              {messages.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  Bem-vindo! Deixe sua mensagem.
+                </div>
+              ) : (
+                messages.map((msg, idx) => (
+                  <div key={idx} className="space-y-2">
+                    {msg.image_url && (
+                      <img
+                        src={msg.image_url}
+                        alt="Imagem enviada"
+                        className="max-w-full h-32 rounded-lg object-cover"
+                      />
+                    )}
+                    {msg.message && (
+                      <div className="bg-blue-100 text-gray-800 p-3 rounded-lg text-sm">
+                        {msg.message}
+                      </div>
+                    )}
                   </div>
-                )}
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-                {/* Search Box */}
-                <div className="relative mt-6">
-                  <Search className="w-4 h-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500" />
-                  <Input
-                    placeholder="Qual é a sua dúvida?"
-                    value={currentMessage}
-                    onChange={(e) => setCurrentMessage(e.target.value)}
-                    className="pl-10 rounded-full border-2 border-orange-100 focus:border-orange-500 text-sm"
-                  />
+            {/* Input Area */}
+            <div className="border-t p-4 bg-white rounded-b-lg space-y-3">
+              {!visitorName && (
+                <Input
+                  placeholder="Seu nome"
+                  value={visitorName}
+                  onChange={(e) => setVisitorName(e.target.value)}
+                  className="text-sm"
+                />
+              )}
+              {!visitorName && (
+                <Input
+                  placeholder="Seu email (opcional)"
+                  type="email"
+                  value={visitorEmail}
+                  onChange={(e) => setVisitorEmail(e.target.value)}
+                  className="text-sm"
+                />
+              )}
+
+              {selectedImage && (
+                <div className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                  <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    disabled={isLoading}
+                    className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <X className="w-4 h-4 text-white" />
+                  </button>
                 </div>
+              )}
 
-                {/* Message Button */}
-                <button
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Sua mensagem..."
+                  value={currentMessage}
+                  onChange={(e) => setCurrentMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  className="text-sm flex-1"
+                  disabled={isLoading}
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isLoading}
+                  className="w-10 h-10">
+                  <ImageIcon className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="icon"
                   onClick={handleSendMessage}
-                  disabled={isLoading || !currentMessage.trim()}
-                  className="w-full bg-white border-2 border-orange-100 hover:bg-orange-50 rounded-2xl p-4 flex items-center justify-between transition-all disabled:opacity-50"
-                >
-                  <span className="text-gray-800 font-medium">Envie uma mensagem</span>
-                  <Send className="w-5 h-5 text-orange-500" />
-                </button>
-
-                {/* Messages List */}
-                <div className="mt-6 space-y-3">
-                  {messages.map((msg, idx) => (
-                    <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-orange-50 p-3 rounded-lg text-sm text-gray-800">
-                      {msg.message}
-                    </motion.div>
-                  ))}
-                </div>
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10">
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                </Button>
               </div>
-            ) : activeTab === 'mensagens' ? (
-              <div className="flex-1 overflow-y-auto p-6">
-                <div className="text-center text-gray-500 text-sm">
-                  {messages.length === 0 ? 'Nenhuma mensagem ainda' : `${messages.length} mensagem(ns)`}
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto p-6">
-                <div className="text-center text-gray-600 text-sm">
-                  Precisa de ajuda? Entre em contato com nosso suporte.
-                </div>
-              </div>
-            )}
-
-            {/* Bottom Tabs */}
-            <div className="border-t flex items-center justify-around bg-white">
-              <button
-                onClick={() => setActiveTab('inicio')}
-                className={`flex-1 flex flex-col items-center justify-center py-4 gap-1 transition-all ${
-                  activeTab === 'inicio' ? 'text-orange-500 border-t-2 border-orange-500' : 'text-gray-500'
-                }`}>
-                <Home className="w-5 h-5" />
-                <span className="text-xs font-medium">Início</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('mensagens')}
-                className={`flex-1 flex flex-col items-center justify-center py-4 gap-1 transition-all ${
-                  activeTab === 'mensagens' ? 'text-orange-500 border-t-2 border-orange-500' : 'text-gray-500'
-                }`}>
-                <MessageSquare className="w-5 h-5" />
-                <span className="text-xs font-medium">Mensagens</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('ajuda')}
-                className={`flex-1 flex flex-col items-center justify-center py-4 gap-1 transition-all ${
-                  activeTab === 'ajuda' ? 'text-orange-500 border-t-2 border-orange-500' : 'text-gray-500'
-                }`}>
-                <HelpCircle className="w-5 h-5" />
-                <span className="text-xs font-medium">Ajuda</span>
-              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Float Button - Orange */}
+      {/* Float Button */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-12 h-12 flex items-center justify-center">
+        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-12 h-12 flex items-center justify-center">
         <MessageCircle className="w-5 h-5" />
       </motion.button>
     </div>
