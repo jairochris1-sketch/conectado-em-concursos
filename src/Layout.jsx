@@ -312,6 +312,20 @@ export default function Layout({ children, currentPageName }) {
 
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
+        // Verificar se é um usuário especial
+        const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
+        let userPlan = userData.current_plan || 'gratuito';
+
+        if (specialUsers.length > 0) {
+          const specialUser = specialUsers[0];
+          // Verificar se ainda está válido
+          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+            userPlan = specialUser.plan;
+            userData = { ...userData, current_plan: userPlan };
+            setUser(userData);
+          }
+        }
+
         // NÃO ativa teste automaticamente - usuário deve escolher manualmente
 
         if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
