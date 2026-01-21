@@ -436,6 +436,14 @@ export default function AdminPage() {
               <MessageSquare className="w-4 h-4 mr-2" />
               💬 Chat
             </TabsTrigger>
+            <TabsTrigger value="quick-responses">
+              <Zap className="w-4 h-4 mr-2" />
+              Respostas Rápidas
+            </TabsTrigger>
+            <TabsTrigger value="auto-responses">
+              <Zap className="w-4 h-4 mr-2" />
+              Automáticas
+            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
@@ -517,6 +525,14 @@ export default function AdminPage() {
 
           <TabsContent value="chat" className="mt-6">
             <ChatAdmin />
+          </TabsContent>
+
+          <TabsContent value="quick-responses" className="mt-6">
+            <QuickResponseManager />
+          </TabsContent>
+
+          <TabsContent value="auto-responses" className="mt-6">
+            <AutoResponseManager />
           </TabsContent>
 
           <TabsContent value="exportar" className="mt-6">
