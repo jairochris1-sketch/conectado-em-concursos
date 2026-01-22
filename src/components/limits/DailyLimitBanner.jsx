@@ -33,7 +33,7 @@ export default function DailyLimitBanner({ questionsAnsweredToday, dailyLimit, r
                 🚫 Limite Diário Atingido
               </h3>
               <p className="text-xs md:text-sm text-red-800 dark:text-red-300 mb-3 leading-relaxed">
-                Você respondeu <strong>{questionsAnsweredToday} questões</strong> hoje e atingiu o limite de <strong>{dailyLimit} questões diárias</strong> do Plano Gratuito.
+                Você respondeu <strong>{questionsAnsweredToday} questões</strong> hoje e atingiu o limite de <strong>20 questões diárias</strong> do Plano Gratuito.
                 Volte amanhã para continuar estudando ou faça upgrade agora!
               </p>
               <div className="flex flex-col gap-2">
