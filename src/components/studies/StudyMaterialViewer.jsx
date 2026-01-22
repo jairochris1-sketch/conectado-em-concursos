@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, FileText, Image, Moon, Sun } from 'lucide-react';
+import { X, FileText, Image, Moon, Sun, ExternalLink } from 'lucide-react';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   const [darkMode, setDarkMode] = useState(false);
@@ -25,6 +25,16 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
             </p>
           </div>
           <div className="flex items-center gap-2 ml-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(material.file_url, '_blank')}
+              className={darkMode ? 'text-gray-300 hover:text-white border-gray-600' : 'text-gray-700 hover:text-gray-900'}
+              title="Abrir em nova guia"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Abrir em Nova Guia
+            </Button>
             <Button
               variant="ghost"
               size="icon"
