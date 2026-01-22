@@ -32,6 +32,7 @@ import QuickResponseManager from '../components/admin/QuickResponseManager';
 import AutoResponseManager from '../components/admin/AutoResponseManager';
 import SpecialUserManager from '../components/admin/SpecialUserManager';
 import SubscriptionManager from '../components/admin/SubscriptionManager';
+import AuditLogViewer from '../components/admin/AuditLogViewer';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -450,6 +451,10 @@ export default function AdminPage() {
               <Zap className="w-4 h-4 mr-2" />
               Automáticas
             </TabsTrigger>
+            <TabsTrigger value="audit-logs">
+              <Shield className="w-4 h-4 mr-2" />
+              🔍 Logs
+            </TabsTrigger>
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
@@ -541,6 +546,10 @@ export default function AdminPage() {
 
           <TabsContent value="auto-responses" className="mt-6">
             <AutoResponseManager />
+          </TabsContent>
+
+          <TabsContent value="audit-logs" className="mt-6">
+            <AuditLogViewer />
           </TabsContent>
 
           <TabsContent value="exportar" className="mt-6">
