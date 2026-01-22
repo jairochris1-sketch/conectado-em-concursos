@@ -11,7 +11,6 @@ export function useQuestionLimit() {
   const [isInTrial, setIsInTrial] = useState(false);
 
   const DAILY_LIMIT_FREE = 20;
-  const DAILY_LIMIT_TRIAL = 5;
 
   useEffect(() => {
     const checkLimit = async () => {
@@ -46,30 +45,28 @@ export function useQuestionLimit() {
           return;
         }
 
-        if (inTrial && plan === 'avancado') {
-          setIsBlocked(false);
-          setLoading(false);
-          return;
+        // Se não for admin, nem plano pago (fora do trial), nem advanced trial, aplica o limite
+        if (plan === 'gratuito') {
+          // Buscar todas as respostas do usuário
+          const allAnswers = await UserAnswer.filter({ created_by: user.email });
+
+          // Filtrar respostas de hoje
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          const todayAnswers = allAnswers.filter(answer => {
+            const answerDate = new Date(answer.created_date);
+            answerDate.setHours(0, 0, 0, 0);
+            return answerDate.getTime() === today.getTime();
+          });
+
+          const count = todayAnswers.length;
+          setQuestionsAnsweredToday(count);
+
+          // Aplicar limite apenas para plano gratuito
+          setIsBlocked(count >= DAILY_LIMIT_FREE);
         }
-
-        // Buscar todas as respostas do usuário
-        const allAnswers = await UserAnswer.filter({ created_by: user.email });
-
-        // Filtrar respostas de hoje
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
         
-        const todayAnswers = allAnswers.filter(answer => {
-          const answerDate = new Date(answer.created_date);
-          answerDate.setHours(0, 0, 0, 0);
-          return answerDate.getTime() === today.getTime();
-        });
-
-        const count = todayAnswers.length;
-        setQuestionsAnsweredToday(count);
-
-        // Aplicar limite apenas para plano gratuito
-        setIsBlocked(count >= DAILY_LIMIT_FREE);
         setLoading(false);
       } catch (error) {
         console.error('Erro ao verificar limite de questões:', error);
@@ -90,8 +87,17 @@ export function useQuestionLimit() {
   };
 
   const getDailyLimit = () => {
-    return DAILY_LIMIT_FREE;
+    if (userPlan === 'gratuito') {
+      return DAILY_LIMIT_FREE;
+    } else if (isInTrial) {
+      return Infinity; // Unlimited during trial
+    } else if (userPlan === 'padrao' || userPlan === 'avancado') {
+      return Infinity; // Unlimited for paid plans
+    }
+    return DAILY_LIMIT_FREE; // Default for safety
   };
+
+  const isCommentingBlocked = isBlocked && userPlan === 'gratuito'; // Block comments if question limit is reached for free plan
 
   return {
     isBlocked,
@@ -101,6 +107,7 @@ export function useQuestionLimit() {
     loading,
     incrementCount,
     isInTrial,
+    isCommentingBlocked,
     remainingQuestions: Math.max(0, getDailyLimit() - questionsAnsweredToday)
   };
 }

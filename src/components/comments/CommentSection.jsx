@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Comment } from '@/entities/Comment';
 import { User } from '@/entities/User';
@@ -10,7 +9,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import ReportModal from './ReportModal'; // Importar o novo modal de reporte
+import ReportModal from './ReportModal';
+import { useQuestionLimit } from '../hooks/useQuestionLimit';
 
 export default function CommentSection({ questionId, onCommentChange }) {
   const [comments, setComments] = useState([]);
@@ -20,8 +20,10 @@ export default function CommentSection({ questionId, onCommentChange }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingComment, setEditingComment] = useState(null);
   const [editText, setEditText] = useState('');
-  const [reportModal, setReportModal] = useState({ isOpen: false, comment: null }); // Novo estado para o modal de reporte
-  const [confirmDeleteModal, setConfirmDeleteModal] = useState(null); // New state for delete confirmation
+  const [reportModal, setReportModal] = useState({ isOpen: false, comment: null });
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(null);
+
+  const { isCommentingBlocked } = useQuestionLimit();
 
   useEffect(() => {
     const loadData = async () => {
@@ -41,7 +43,7 @@ export default function CommentSection({ questionId, onCommentChange }) {
     };
 
     loadData();
-  }, [questionId, onCommentChange]); // Add onCommentChange to dependency array
+  }, [questionId, onCommentChange]);
 
   const loadComments = async () => {
     try {
@@ -56,18 +58,16 @@ export default function CommentSection({ questionId, onCommentChange }) {
   };
 
   const handleSubmitComment = async () => {
-    // Basic check to prevent submitting empty comments (after stripping HTML)
-    if (!newComment.replace(/<(.|\n)*?>/g, '').trim() || !currentUser || isSubmitting) return;
+    if (!newComment.replace(/<(.|\n)*?>/g, '').trim() || !currentUser || isSubmitting || isCommentingBlocked) return;
 
     setIsSubmitting(true);
     try {
       await Comment.create({
         question_id: questionId,
-        comment_text: newComment, // Save full HTML content
+        comment_text: newComment,
         user_name: currentUser.full_name || currentUser.email,
         user_email: currentUser.email,
         user_city: currentUser.city || null,
-        // Assuming user_photo will be available from currentUser or handled by Comment.create
         user_photo: currentUser.profile_photo_url || null,
       });
 
@@ -110,21 +110,20 @@ export default function CommentSection({ questionId, onCommentChange }) {
   };
 
   const handleReport = (comment) => {
-    if (!currentUser) return; // Ensure user is logged in to report
+    if (!currentUser) return;
     setReportModal({ isOpen: true, comment });
   };
 
   const handleReportSuccess = async () => {
     try {
-      // Marcar o comentário como reportado no banco de dados
       await Comment.update(reportModal.comment.id, { is_reported: true });
       alert('Comentário reportado com sucesso. A equipe revisará o conteúdo.');
-      loadComments(); // Recarregar os comentários para refletir a mudança, se necessário
+      loadComments();
     } catch (error) {
       console.error('Erro ao marcar comentário como reportado:', error);
       alert('Erro ao marcar o comentário como reportado no sistema.');
     } finally {
-      setReportModal({ isOpen: false, comment: null }); // Fechar o modal
+      setReportModal({ isOpen: false, comment: null });
     }
   };
 
@@ -137,7 +136,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
     if (!confirmDeleteModal) return;
     try {
       await Comment.delete(confirmDeleteModal);
-      // alert('Comentário excluído com sucesso.'); // Removed as per request to avoid double alert (modal + this)
       await loadComments();
     } catch (error) {
       console.error('Erro ao excluir comentário:', error);
@@ -149,16 +147,15 @@ export default function CommentSection({ questionId, onCommentChange }) {
 
   const handleStartEdit = (comment) => {
     setEditingComment(comment.id);
-    setEditText(comment.comment_text); // Load full HTML content for editing
+    setEditText(comment.comment_text);
   };
 
   const handleSaveEdit = async (commentId) => {
-    // Basic check to prevent submitting empty edits (after stripping HTML)
     if (!editText.replace(/<(.|\n)*?>/g, '').trim()) return;
 
     try {
       await Comment.update(commentId, {
-        comment_text: editText // Save full HTML content
+        comment_text: editText
       });
 
       setEditingComment(null);
@@ -177,11 +174,9 @@ export default function CommentSection({ questionId, onCommentChange }) {
 
   const getTimeAgo = (dateString) => {
     try {
-      // Criar a data assumindo que está em UTC e converter para o fuso local
       const date = new Date(dateString);
       const now = new Date();
       
-      // Calcular diferença em minutos
       const diffInMinutes = Math.floor((now - date) / (1000 * 60));
       
       if (diffInMinutes < 1) {
@@ -217,37 +212,44 @@ export default function CommentSection({ questionId, onCommentChange }) {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <ReactQuill
-              theme="snow"
-              value={newComment}
-              onChange={setNewComment}
-              placeholder="Adicione um comentário sobre esta questão..."
-              modules={{
-                toolbar: [
-                  [{ 'header': [1, 2, false] }],
-                  ['bold', 'italic', 'underline','strike', 'blockquote'],
-                  [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-                  ['link'],
-                  ['clean']
-                ],
-              }}
-            />
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSubmitComment}
-                disabled={!newComment.replace(/<(.|\n)*?>/g, '').trim() || isSubmitting}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {isSubmitting ? 'Enviando...' : (
-                  <>
-                    <Send className="w-4 h-4 mr-2" />
-                    Comentar
-                  </>
-                )}
-              </Button>
+          {isCommentingBlocked ? (
+            <div className="p-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              <p className="text-sm">Você atingiu o limite diário de 20 questões para o plano gratuito. Assine para continuar respondendo e comentando!</p>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              <ReactQuill
+                theme="snow"
+                value={newComment}
+                onChange={setNewComment}
+                placeholder="Adicione um comentário sobre esta questão..."
+                modules={{
+                  toolbar: [
+                    [{ 'header': [1, 2, false] }],
+                    ['bold', 'italic', 'underline','strike', 'blockquote'],
+                    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+                    ['link'],
+                    ['clean']
+                  ],
+                }}
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleSubmitComment}
+                  disabled={!newComment.replace(/<(.|\n)*?>/g, '').trim() || isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isSubmitting ? 'Enviando...' : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Comentar
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-4">
             {comments.length === 0 ? (
@@ -263,7 +265,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
                   <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <Avatar className="w-8 h-8">
-                        {/* Use comment.user_photo if available, otherwise fallback */}
                         {comment.user_photo ? (
                           <AvatarImage src={comment.user_photo} alt={comment.user_name} />
                         ) : null}
@@ -291,7 +292,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
                             {getTimeAgo(comment.created_date)}
                           </span>
 
-                          {/* Botões de ação para o autor do comentário */}
                           {isOwnComment && (
                             <div className="flex items-center gap-1 ml-auto">
                               {editingComment !== comment.id && (
@@ -318,7 +318,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
                           )}
                         </div>
 
-                        {/* Modo de edição */}
                         {editingComment === comment.id ? (
                           <div className="space-y-2 mb-3">
                             <ReactQuill
@@ -360,15 +359,13 @@ export default function CommentSection({ questionId, onCommentChange }) {
                           />
                         )}
 
-                        {/* Botões de ação (só mostra se não estiver editando) */}
                         {editingComment !== comment.id && (
                           <div className="flex items-center gap-4 text-sm">
-                            {/* Gostei - sempre visível, mas clicável apenas se não for o próprio comentário */}
                             <button
                               onClick={() => !isOwnComment && handleLike(comment.id)}
                               className={`flex items-center gap-1 transition-colors ${
                                 isOwnComment
-                                  ? 'text-gray-500 cursor-default' // Disabled appearance for own comments
+                                  ? 'text-gray-500 cursor-default'
                                   : userHasLiked
                                     ? 'text-blue-600 hover:text-blue-700'
                                     : 'text-gray-500 hover:text-gray-700'
@@ -379,7 +376,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
                               Gostei ({comment.likes_count || 0})
                             </button>
 
-                            {/* Reportar abuso - só aparece se não for o próprio comentário */}
                             {!isOwnComment && (
                               <button
                                 onClick={() => handleReport(comment)}
@@ -401,7 +397,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
         </CardContent>
       </Card>
 
-      {/* Renderiza o ReportModal */}
       <ReportModal
         isOpen={reportModal.isOpen}
         onClose={() => setReportModal({ isOpen: false, comment: null })}
@@ -410,7 +405,6 @@ export default function CommentSection({ questionId, onCommentChange }) {
         onReportSuccess={handleReportSuccess}
       />
 
-      {/* NEW: Delete Confirmation Modal */}
       {confirmDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200 dark:border-gray-700 transform transition-all scale-100 opacity-100">
