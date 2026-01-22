@@ -41,6 +41,7 @@ import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import MyDoubts from './pages/MyDoubts';
+import EditalSimulator from './pages/EditalSimulator';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +89,7 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "MyDoubts": MyDoubts,
+    "EditalSimulator": EditalSimulator,
 }
 
 export const pagesConfig = {
