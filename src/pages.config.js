@@ -43,6 +43,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import ResetPassword from './pages/ResetPassword';
 import __Layout from './Layout.jsx';
 
 
@@ -92,6 +93,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "ResetPassword": ResetPassword,
 }
 
 export const pagesConfig = {
