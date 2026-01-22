@@ -10,17 +10,17 @@ Deno.serve(async (req) => {
       return new Response('Material ID não fornecido', { status: 400 });
     }
 
-    // Buscar o material
-    const material = await base44.entities.StudyMaterial.get(materialId);
+    // Buscar o material usando service role
+    const materials = await base44.asServiceRole.entities.StudyMaterial.filter({ id: materialId });
 
-    if (!material || !material.file_url) {
+    if (!materials || materials.length === 0 || !materials[0].file_url) {
       return new Response('Material não encontrado', { status: 404 });
     }
 
     // Redirecionar para o arquivo
-    return Response.redirect(material.file_url, 302);
+    return Response.redirect(materials[0].file_url, 302);
   } catch (error) {
     console.error('Erro ao buscar material:', error);
-    return new Response('Erro ao buscar material', { status: 500 });
+    return new Response(`Erro ao buscar material: ${error.message}`, { status: 500 });
   }
 });
