@@ -33,7 +33,11 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  BookUser } from
+  BookUser,
+  Folder,
+  Star,
+  Clock,
+  ChevronRight } from
 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -176,6 +180,10 @@ export default function StudiesPage() {
   const [currentArticlePage, setCurrentArticlePage] = useState(1);
   const articlesPerPage = 20;
 
+  // Sidebar navigation state
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
   useEffect(() => {
     localStorage.setItem('materialViewMode', materialViewMode);
   }, [materialViewMode]);
@@ -268,6 +276,15 @@ export default function StudiesPage() {
     const filterMaterials = () => {
       let filtered = [...materials];
 
+      // Aplicar filtro de categoria da sidebar
+      if (selectedCategory === 'subject' && selectedSubject) {
+        filtered = filtered.filter((material) => material.subjects?.includes(selectedSubject) || material.subject === selectedSubject);
+      } else if (selectedCategory === 'type' && selectedSubject) {
+        filtered = filtered.filter((material) => material.type === selectedSubject);
+      } else if (selectedCategory === 'recent') {
+        filtered = filtered.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 20);
+      }
+
       if (selectedCargo !== 'all') {
         filtered = filtered.filter((material) => material.cargo === selectedCargo);
       }
@@ -285,7 +302,7 @@ export default function StudiesPage() {
     };
 
     filterMaterials();
-  }, [materials, selectedCargo, searchTerm]);
+  }, [materials, selectedCargo, searchTerm, selectedCategory, selectedSubject]);
 
   useEffect(() => {
     let filtered = [...articles];
@@ -561,31 +578,137 @@ ${videoNotes}
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Área de Estudos
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Seus materiais, resumos e flashcards, tudo em um só lugar.
-            </p>
+    <div className="min-h-screen bg-white dark:bg-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div className="flex h-[calc(100vh-4rem)]">
+        {/* Sidebar Navigation - Windows 11 Style */}
+        <aside className="hidden lg:flex flex-col w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <BookUser className="w-5 h-5" />
+              Área de Estudos
+            </h2>
           </div>
-          {isAdmin &&
-          <Button
-            onClick={() => setShowUploader(!showUploader)}
-            className="bg-indigo-600 hover:bg-indigo-700">
 
-              <Upload className="w-4 h-4 mr-2" />
-              Adicionar Material
-            </Button>
-          }
-        </motion.div>
+          <nav className="flex-1 p-3 space-y-1">
+            {/* Todas as Disciplinas */}
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSelectedSubject(null);
+                setSelectedCargo('all');
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                selectedCategory === 'all' && !selectedSubject
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}>
+              <Folder className="w-4 h-4" />
+              <span className="font-medium">Todas as Disciplinas</span>
+            </button>
+
+            {/* Disciplinas individuais */}
+            <div className="ml-2 space-y-1">
+              {Object.entries(subjectNames).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setSelectedCategory('subject');
+                    setSelectedSubject(key);
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    selectedCategory === 'subject' && selectedSubject === key
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}>
+                  <ChevronRight className="w-3 h-3" />
+                  <span className="truncate">{label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Tipos de Material */}
+            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setSelectedCategory('types')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                  selectedCategory === 'types'
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}>
+                <Folder className="w-4 h-4" />
+                <span className="font-medium">Tipos de Material</span>
+              </button>
+              
+              <div className="ml-2 mt-1 space-y-1">
+                {Object.entries(typeNames).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setSelectedCategory('type');
+                      setSelectedSubject(key);
+                    }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      selectedCategory === 'type' && selectedSubject === key
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="truncate">{label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Recentes */}
+            <div className="pt-4">
+              <button
+                onClick={() => setSelectedCategory('recent')}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                  selectedCategory === 'recent'
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}>
+                <Clock className="w-4 h-4" />
+                <span className="font-medium">Recentes</span>
+              </button>
+            </div>
+          </nav>
+        </aside>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4 md:p-8">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+                  <BookUser className="w-8 h-8 lg:hidden" /> 
+                  {selectedCategory === 'all' && !selectedSubject && 'Todos os Materiais'}
+                  {selectedCategory === 'subject' && selectedSubject && subjectNames[selectedSubject]}
+                  {selectedCategory === 'type' && selectedSubject && typeNames[selectedSubject]}
+                  {selectedCategory === 'types' && 'Tipos de Material'}
+                  {selectedCategory === 'recent' && 'Materiais Recentes'}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {selectedCategory === 'all' && 'Explore todos os seus materiais de estudo'}
+                  {selectedCategory === 'subject' && `Materiais de ${subjectNames[selectedSubject]}`}
+                  {selectedCategory === 'type' && `Materiais do tipo ${typeNames[selectedSubject]}`}
+                  {selectedCategory === 'recent' && 'Materiais acessados recentemente'}
+                </p>
+              </div>
+              {isAdmin &&
+              <Button
+                onClick={() => setShowUploader(!showUploader)}
+                className="bg-indigo-600 hover:bg-indigo-700">
+
+                  <Upload className="w-4 h-4 mr-2" />
+                  Adicionar Material
+                </Button>
+              }
+            </motion.div>
 
         <Tabs defaultValue="materials" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
