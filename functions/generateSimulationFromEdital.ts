@@ -46,11 +46,32 @@ Deno.serve(async (req) => {
         const qTopic = (q.topic || '').toLowerCase();
         const qStatement = (q.statement || '').toLowerCase();
         
-        // Verificar compatibilidade
-        const isCompatible = 
-          qSubject.includes(subjectName) ||
-          keywords.some(kw => qTopic.includes(kw.toLowerCase()) || qStatement.includes(kw.toLowerCase())) ||
-          topicos.some(top => qTopic.includes(top.toLowerCase()));
+        // Verificar compatibilidade com tópicos hierárquicos
+        let isCompatible = qSubject.includes(subjectName) ||
+          keywords.some(kw => qTopic.includes(kw.toLowerCase()) || qStatement.includes(kw.toLowerCase()));
+        
+        // Verificar tópicos e sub-tópicos
+        if (!isCompatible && Array.isArray(topicos)) {
+          topicos.forEach(top => {
+            if (typeof top === 'string') {
+              if (qTopic.includes(top.toLowerCase())) {
+                isCompatible = true;
+              }
+            } else if (top.nome) {
+              if (qTopic.includes(top.nome.toLowerCase())) {
+                isCompatible = true;
+              }
+              // Verificar sub-tópicos
+              if (top.subtopicos && Array.isArray(top.subtopicos)) {
+                top.subtopicos.forEach(sub => {
+                  if (qTopic.includes(sub.toLowerCase()) || qStatement.includes(sub.toLowerCase())) {
+                    isCompatible = true;
+                  }
+                });
+              }
+            }
+          });
+        }
         
         if (isCompatible && !compatibleQuestions.find(cq => cq.id === q.id)) {
           compatibleQuestions.push(q);

@@ -18,9 +18,12 @@ import {
   Play,
   Trash2,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { toast } from "sonner";
+import EditalDashboard from "../components/edital/EditalDashboard";
 
 export default function EditalSimulator() {
   const navigate = useNavigate();
@@ -28,6 +31,7 @@ export default function EditalSimulator() {
   const [loading, setLoading] = useState(false);
   const [processingId, setProcessingId] = useState(null);
   const [generatingSimId, setGeneratingSimId] = useState(null);
+  const [expandedEditalId, setExpandedEditalId] = useState(null);
 
   // Form state
   const [concursoName, setConcursoName] = useState("");
@@ -322,39 +326,54 @@ export default function EditalSimulator() {
                     </div>
 
                     {edital.processed && edital.subjects_content && (
-                      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-3">
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                              {edital.subjects_content.disciplinas?.length || 0}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">Disciplinas</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                              {edital.total_topics || 0}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">Tópicos</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                              {edital.compatible_questions_count || 0}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">Questões</p>
-                          </div>
-                        </div>
+                      <div className="mb-4">
+                        <Button
+                          onClick={() => setExpandedEditalId(expandedEditalId === edital.id ? null : edital.id)}
+                          variant="outline"
+                          className="w-full mb-4"
+                        >
+                          {expandedEditalId === edital.id ? (
+                            <>
+                              <ChevronUp className="w-4 h-4 mr-2" />
+                              Ocultar Análise Detalhada
+                            </>
+                          ) : (
+                            <>
+                              <ChevronDown className="w-4 h-4 mr-2" />
+                              Ver Análise Detalhada do Edital
+                            </>
+                          )}
+                        </Button>
 
-                        {edital.subjects_content.disciplinas && edital.subjects_content.disciplinas.length > 0 && (
-                          <div>
-                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                              Disciplinas Identificadas:
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {edital.subjects_content.disciplinas.map((disc, idx) => (
-                                <Badge key={idx} variant="secondary">
-                                  {disc.nome}
-                                </Badge>
-                              ))}
+                        {expandedEditalId === edital.id ? (
+                          <EditalDashboard edital={edital} />
+                        ) : (
+                          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="text-center">
+                                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                  {edital.subjects_content.disciplinas?.length || 0}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Disciplinas</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                                  {edital.total_topics || 0}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Tópicos</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                                  {edital.total_subtopics || 0}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Sub-tópicos</p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                                  {edital.compatible_questions_count || 0}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">Questões</p>
+                              </div>
                             </div>
                           </div>
                         )}
