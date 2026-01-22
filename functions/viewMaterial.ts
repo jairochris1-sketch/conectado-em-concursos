@@ -2,13 +2,15 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const url = new URL(req.url);
-    const materialId = url.searchParams.get('id');
+    // Parse da URL base44 que vem como /api/functions/viewMaterial?id=...
+    const urlObj = new URL(req.url);
+    const materialId = urlObj.searchParams.get('id');
 
     if (!materialId) {
       return new Response('Material ID não fornecido', { status: 400 });
     }
+
+    const base44 = createClientFromRequest(req);
 
     // Buscar o material usando service role
     const materials = await base44.asServiceRole.entities.StudyMaterial.filter({ id: materialId });
