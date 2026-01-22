@@ -112,14 +112,22 @@ export default function EditalViewer() {
           <CardContent className="p-0">
             <div className="w-full" style={{ height: "calc(100vh - 180px)" }}>
               <iframe
-                src={edital.file_url}
+                src={`https://docs.google.com/viewer?url=${encodeURIComponent(edital.file_url)}&embedded=true`}
                 className="w-full h-full border-0"
                 title={`Edital - ${edital.concurso_name}`}
-                onError={(e) => {
-                  console.error("Erro ao carregar PDF:", e);
-                  toast.error("Erro ao carregar o arquivo. Tente baixar o edital.");
-                }}
+                allow="fullscreen"
               />
+            </div>
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
+              <p>
+                Problemas ao visualizar?{" "}
+                <button
+                  onClick={() => window.open(edital.file_url, "_blank")}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  Clique aqui para abrir em nova aba
+                </button>
+              </p>
             </div>
           </CardContent>
         </Card>
