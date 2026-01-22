@@ -336,13 +336,6 @@ export default function Layout({ children, currentPageName }) {
   React.useEffect(() => {
     const checkAuthAndLoad = async () => {
       try {
-        // Verificar se está autenticado
-        const isAuth = await base44.auth.isAuthenticated();
-        if (!isAuth) {
-          navigate(createPageUrl('Welcome'));
-          return;
-        }
-
         let userData = await User.me();
         setUser(userData);
 
