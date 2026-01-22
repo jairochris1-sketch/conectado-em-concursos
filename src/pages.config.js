@@ -16,7 +16,6 @@ import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
 import FavoriteQuestions from './pages/FavoriteQuestions';
-import ForgotPassword from './pages/ForgotPassword';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import LogicCourse from './pages/LogicCourse';
@@ -29,7 +28,6 @@ import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
 import Questions from './pages/Questions';
 import Ranking from './pages/Ranking';
-import ResetPassword from './pages/ResetPassword';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
 import Schedule from './pages/Schedule';
@@ -45,6 +43,8 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
 import __Layout from './Layout.jsx';
 
 
@@ -67,7 +67,6 @@ export const PAGES = {
     "ExamView": ExamView,
     "Exams": Exams,
     "FavoriteQuestions": FavoriteQuestions,
-    "ForgotPassword": ForgotPassword,
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
     "LogicCourse": LogicCourse,
@@ -80,7 +79,6 @@ export const PAGES = {
     "Profile": Profile,
     "Questions": Questions,
     "Ranking": Ranking,
-    "ResetPassword": ResetPassword,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
     "Schedule": Schedule,
@@ -96,6 +94,8 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "ResetPassword": ResetPassword,
+    "ForgotPassword": ForgotPassword,
 }
 
 export const pagesConfig = {
