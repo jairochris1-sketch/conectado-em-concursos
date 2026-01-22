@@ -70,7 +70,10 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
     "nivel": "fundamental/médio/superior",
     "banca": "nome da banca se mencionado",
     "salario": "salário se mencionado",
-    "inscricoes": "período de inscrições se mencionado"
+    "inscricoes": "período de inscrições se mencionado",
+    "data_prova": "data da prova se mencionado (formato DD/MM/AAAA)",
+    "tipo_questoes": "tipo das questões: múltipla escolha, certo/errado, misto, ou não especificado",
+    "numero_questoes": "número total de questões da prova se mencionado"
   }
 }
 `;
@@ -128,7 +131,10 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
               nivel: { type: "string" },
               banca: { type: "string" },
               salario: { type: "string" },
-              inscricoes: { type: "string" }
+              inscricoes: { type: "string" },
+              data_prova: { type: "string" },
+              tipo_questoes: { type: "string" },
+              numero_questoes: { type: "string" }
             }
           }
         }

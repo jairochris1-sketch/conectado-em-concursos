@@ -141,6 +141,39 @@ export default function EditalDashboard({ edital }) {
                   </div>
                 </div>
               )}
+              {data.informacoes_gerais.data_prova && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <Calendar className="w-5 h-5 text-red-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Data da Prova</p>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {data.informacoes_gerais.data_prova}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {data.informacoes_gerais.tipo_questoes && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <CheckCircle2 className="w-5 h-5 text-indigo-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipo de Questões</p>
+                    <p className="font-semibold text-gray-900 dark:text-white capitalize">
+                      {data.informacoes_gerais.tipo_questoes}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {data.informacoes_gerais.numero_questoes && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <FileText className="w-5 h-5 text-teal-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Nº de Questões</p>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {data.informacoes_gerais.numero_questoes}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
