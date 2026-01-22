@@ -68,38 +68,54 @@ export default function CreateNotebook() {
     try {
       const questions = await base44.entities.Question.list();
 
-      // Extrair disciplinas únicas das questões
-      const subjectsMap = {};
-      questions.forEach(q => {
-        if (q.subject && !subjectsMap[q.subject]) {
-          subjectsMap[q.subject] = {
-            id: q.subject,
-            value: q.subject,
-            label: q.subject.charAt(0).toUpperCase() + q.subject.slice(1).replace(/_/g, ' ')
-          };
-        }
-      });
-      const subjects = Object.values(subjectsMap);
+      // Lista completa de disciplinas
+      const allSubjects = [
+        { id: 'portugues', value: 'portugues', label: 'Português' },
+        { id: 'matematica', value: 'matematica', label: 'Matemática' },
+        { id: 'direito_constitucional', value: 'direito_constitucional', label: 'Direito Constitucional' },
+        { id: 'direito_administrativo', value: 'direito_administrativo', label: 'Direito Administrativo' },
+        { id: 'direito_penal', value: 'direito_penal', label: 'Direito Penal' },
+        { id: 'direito_civil', value: 'direito_civil', label: 'Direito Civil' },
+        { id: 'informatica', value: 'informatica', label: 'Informática' },
+        { id: 'conhecimentos_gerais', value: 'conhecimentos_gerais', label: 'Conhecimentos Gerais' },
+        { id: 'raciocinio_logico', value: 'raciocinio_logico', label: 'Raciocínio Lógico' },
+        { id: 'contabilidade', value: 'contabilidade', label: 'Contabilidade' },
+        { id: 'pedagogia', value: 'pedagogia', label: 'Pedagogia' }
+      ];
 
-      // Extrair instituições únicas das questões
-      const institutionsMap = {};
-      questions.forEach(q => {
-        if (q.institution && !institutionsMap[q.institution]) {
-          institutionsMap[q.institution] = {
-            id: q.institution,
-            name: q.institution.toUpperCase()
-          };
-        }
-      });
-      const institutions = Object.values(institutionsMap);
+      // Lista completa de instituições (bancas)
+      const allInstitutions = [
+        { id: 'fcc', name: 'FCC' },
+        { id: 'cespe', name: 'CESPE' },
+        { id: 'vunesp', name: 'VUNESP' },
+        { id: 'fgv', name: 'FGV' },
+        { id: 'cesgranrio', name: 'CESGRANRIO' },
+        { id: 'esaf', name: 'ESAF' },
+        { id: 'fundatec', name: 'FUNDATEC' },
+        { id: 'consulplan', name: 'CONSULPLAN' },
+        { id: 'idecan', name: 'IDECAN' },
+        { id: 'aocp', name: 'AOCP' },
+        { id: 'quadrix', name: 'QUADRIX' },
+        { id: 'instituto_aocp', name: 'INSTITUTO AOCP' },
+        { id: 'planejar', name: 'PLANEJAR' },
+        { id: 'ibptec', name: 'IBPTEC' },
+        { id: 'amiga_publica', name: 'AMIGA PUBLICA' },
+        { id: 'ibade', name: 'IBADE' },
+        { id: 'ibfc', name: 'IBFC' },
+        { id: 'objetiva', name: 'OBJETIVA' },
+        { id: 'iades', name: 'IADES' },
+        { id: 'itame', name: 'ITAME' },
+        { id: 'consep', name: 'CONSEP' },
+        { id: 'outras', name: 'OUTRAS' }
+      ];
 
       const years = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
       const cargos = [...new Set(questions.map(q => q.cargo).filter(Boolean))].sort();
       const topics = [...new Set(questions.map(q => q.topic).filter(Boolean))].sort();
 
       setAvailableOptions({
-        subjects,
-        institutions,
+        subjects: allSubjects,
+        institutions: allInstitutions,
         years,
         cargos,
         topics
