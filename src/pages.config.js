@@ -38,6 +38,8 @@ import Notebooks from './pages/Notebooks';
 import CreateNotebook from './pages/CreateNotebook';
 import SolveNotebook from './pages/SolveNotebook';
 import NotebookStats from './pages/NotebookStats';
+import CreateSimulation from './pages/CreateSimulation';
+import SolveSimulation from './pages/SolveSimulation';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +84,8 @@ export const PAGES = {
     "CreateNotebook": CreateNotebook,
     "SolveNotebook": SolveNotebook,
     "NotebookStats": NotebookStats,
+    "CreateSimulation": CreateSimulation,
+    "SolveSimulation": SolveSimulation,
 }
 
 export const pagesConfig = {
