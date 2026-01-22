@@ -766,34 +766,34 @@ ${videoNotes}
                       subjectGroups[subject].push(material);
                     });
 
-                    return Object.entries(subjectGroups).map(([subject, materials]) => (
-                      <motion.div
-                        key={subject}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="group cursor-pointer"
-                        onClick={() => {
-                          setSelectedFolder(subject);
-                          setBreadcrumbs([
-                            { label: 'Materiais', value: null },
-                            { label: subjectNames[subject] || subject, value: subject }
-                          ]);
-                        }}>
-                        <div className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                          <div className="relative mb-2">
-                            <Folder className="w-16 h-16 text-yellow-500 group-hover:hidden" />
-                            <FolderOpen className="w-16 h-16 text-yellow-600 hidden group-hover:block" />
-                            <div className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold">
-                              {materials.length}
-                            </div>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-white text-center line-clamp-2">
-                            {subjectNames[subject] || subject}
-                          </span>
-                        </div>
-                      </motion.div>
+                    return Object.entries(subjectGroups).map(([subject, materialsInFolder]) => (
+                     <motion.div
+                       key={subject}
+                       initial={{ opacity: 0, y: 20 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       className="group cursor-pointer"
+                       onClick={() => {
+                         setSelectedFolder(subject);
+                         setBreadcrumbs([
+                           { label: 'Materiais', value: null },
+                           { label: subjectNames[subject] || subject, value: subject }
+                         ]);
+                       }}>
+                       <div className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                         <div className="relative mb-2">
+                           <Folder className="w-16 h-16 text-yellow-500 group-hover:hidden" />
+                           <FolderOpen className="w-16 h-16 text-yellow-600 hidden group-hover:block" />
+                           <div className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold">
+                             {materialsInFolder.length}
+                           </div>
+                         </div>
+                         <span className="text-sm font-medium text-gray-900 dark:text-white text-center line-clamp-2">
+                           {subjectNames[subject] || subject}
+                         </span>
+                       </div>
+                     </motion.div>
                     ));
-                  })()}
+                    })()}
 
                   {/* Materials (filtered by folder if selected) */}
                   {filteredMaterials
