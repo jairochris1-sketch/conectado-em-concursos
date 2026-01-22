@@ -718,10 +718,18 @@ export default function QuestionList({
                             <X className="w-5 h-5" />
                           </button>
                         </div>
-                        <div
-                          className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-200 prose-strong:text-white prose-p:text-gray-200"
-                          dangerouslySetInnerHTML={{ __html: question.explanation.replace(/\n/g, '<br />') }}
-                        />
+                        {isBlocked && !isSubmitted ? (
+                          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                              🔒 Você atingiu o limite de 20 questões diárias gratuitas. Assine um plano para continuar estudando com gabarito comentado ilimitado!
+                            </p>
+                          </div>
+                        ) : (
+                          <div
+                            className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-200 prose-strong:text-white prose-p:text-gray-200"
+                            dangerouslySetInnerHTML={{ __html: question.explanation.replace(/\n/g, '<br />') }}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
