@@ -66,19 +66,40 @@ export default function CreateNotebook() {
 
   const loadOptions = async () => {
     try {
-      const [subjects, institutions, questions] = await Promise.all([
-        base44.entities.Subject.list(),
-        base44.entities.Institution.list(),
-        base44.entities.Question.list()
-      ]);
+      const questions = await base44.entities.Question.list();
+
+      // Extrair disciplinas únicas das questões
+      const subjectsMap = {};
+      questions.forEach(q => {
+        if (q.subject && !subjectsMap[q.subject]) {
+          subjectsMap[q.subject] = {
+            id: q.subject,
+            value: q.subject,
+            label: q.subject.charAt(0).toUpperCase() + q.subject.slice(1).replace(/_/g, ' ')
+          };
+        }
+      });
+      const subjects = Object.values(subjectsMap);
+
+      // Extrair instituições únicas das questões
+      const institutionsMap = {};
+      questions.forEach(q => {
+        if (q.institution && !institutionsMap[q.institution]) {
+          institutionsMap[q.institution] = {
+            id: q.institution,
+            name: q.institution.toUpperCase()
+          };
+        }
+      });
+      const institutions = Object.values(institutionsMap);
 
       const years = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
       const cargos = [...new Set(questions.map(q => q.cargo).filter(Boolean))].sort();
       const topics = [...new Set(questions.map(q => q.topic).filter(Boolean))].sort();
 
       setAvailableOptions({
-        subjects: subjects || [],
-        institutions: institutions || [],
+        subjects,
+        institutions,
         years,
         cargos,
         topics
