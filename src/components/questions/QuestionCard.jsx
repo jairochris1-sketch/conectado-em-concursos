@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
@@ -66,7 +65,8 @@ export default function QuestionCard({
   onAnswerChange, 
   onSubmitAnswer,
   questionNumber, // Changed from index
-  fontSize // Added fontSize prop
+  fontSize, // Added fontSize prop
+  isBlocked // Added isBlocked prop
 }) {
   const [showComments, setShowComments] = useState(false);
   // showExplanation state and its related logic have been removed
@@ -245,10 +245,18 @@ export default function QuestionCard({
                       <MessageSquare className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="font-medium mb-2 text-gray-900 dark:text-white">Gabarito Comentado:</p>
-                        <div 
-                          className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-900 dark:text-gray-100"
-                          dangerouslySetInnerHTML={{ __html: question.explanation }}
-                        />
+                        {isBlocked ? (
+                          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                              🔒 Você atingiu o limite de 20 questões diárias gratuitas. Assine um plano para continuar estudando com gabarito comentado ilimitado!
+                            </p>
+                          </div>
+                        ) : (
+                          <div 
+                            className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-900 dark:text-gray-100"
+                            dangerouslySetInnerHTML={{ __html: question.explanation }}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
