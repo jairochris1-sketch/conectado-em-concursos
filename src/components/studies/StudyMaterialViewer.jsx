@@ -28,7 +28,10 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.open(material.file_url, '_blank')}
+              onClick={() => {
+                const viewUrl = `${window.location.origin}/api/functions/viewMaterial?id=${material.id}`;
+                window.open(viewUrl, '_blank');
+              }}
               className={darkMode ? 'text-gray-300 hover:text-white border-gray-600' : 'text-gray-700 hover:text-gray-900'}
               title="Abrir em nova guia"
             >
