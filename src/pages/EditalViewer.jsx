@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ArrowLeft, Loader2, Download } from "lucide-react";
 import { toast } from "sonner";
 
