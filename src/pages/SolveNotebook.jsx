@@ -50,7 +50,13 @@ export default function SolveNotebook() {
         questionIds.map(id => base44.entities.Question.get(id))
       );
 
-      setQuestions(questionsData);
+      const questionsWithMeta = questionsData.map((q, idx) => ({
+        ...q,
+        user_comment: sortedQuestions[idx].user_comment || "",
+        show_explanation: sortedQuestions[idx].show_explanation !== false
+      }));
+
+      setQuestions(questionsWithMeta);
 
       // Verificar se há tentativa em andamento
       const attempts = await base44.entities.NotebookAttempt.filter({
@@ -236,16 +242,30 @@ export default function SolveNotebook() {
                               Gabarito: <strong className="text-green-600">{q.correct_answer}</strong>
                             </span>
                           </div>
-                          {q.explanation && (
+                          {q.show_explanation && q.explanation && (
                             <details className="mt-2">
                               <summary className="cursor-pointer text-sm text-blue-600 hover:underline">
-                                Ver explicação
+                                Ver explicação oficial
                               </summary>
                               <div 
-                                className="mt-2 p-3 bg-white dark:bg-gray-800 rounded text-sm"
+                                className="mt-2 p-3 bg-blue-50 dark:bg-blue-900 rounded text-sm"
                                 dangerouslySetInnerHTML={{ __html: q.explanation }}
                               />
+                              {q.explanation_author && (
+                                <p className="text-xs text-gray-600 mt-1">
+                                  Por: {q.explanation_author}
+                                  {q.explanation_author_subject && ` - ${q.explanation_author_subject}`}
+                                </p>
+                              )}
                             </details>
+                          )}
+                          {q.user_comment && (
+                            <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900 rounded text-sm border-l-4 border-yellow-400">
+                              <p className="font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+                                💡 Seu comentário:
+                              </p>
+                              <p className="text-gray-700 dark:text-gray-300">{q.user_comment}</p>
+                            </div>
                           )}
                         </div>
                       </div>

@@ -10,8 +10,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Save, Plus, X, Search } from "lucide-react";
+import { ArrowLeft, Save, Plus, X, Search, GripVertical, ChevronUp, ChevronDown, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function CreateNotebook() {
   const navigate = useNavigate();
@@ -21,7 +29,8 @@ export default function CreateNotebook() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    type: "private"
+    type: "private",
+    difficulty: "misto"
   });
 
   const [filters, setFilters] = useState({
@@ -29,7 +38,9 @@ export default function CreateNotebook() {
     topics: [],
     institutions: [],
     years: [],
-    cargos: []
+    cargos: [],
+    difficulties: [],
+    education_levels: []
   });
 
   const [availableOptions, setAvailableOptions] = useState({
@@ -44,6 +55,7 @@ export default function CreateNotebook() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [commentDialog, setCommentDialog] = useState({ open: false, questionId: null, comment: "" });
 
   useEffect(() => {
     loadOptions();
@@ -62,12 +74,14 @@ export default function CreateNotebook() {
 
       const years = [...new Set(questions.map(q => q.year).filter(Boolean))].sort((a, b) => b - a);
       const cargos = [...new Set(questions.map(q => q.cargo).filter(Boolean))].sort();
+      const topics = [...new Set(questions.map(q => q.topic).filter(Boolean))].sort();
 
       setAvailableOptions({
         subjects: subjects || [],
         institutions: institutions || [],
         years,
-        cargos
+        cargos,
+        topics
       });
     } catch (error) {
       console.error("Erro ao carregar opções:", error);
@@ -81,7 +95,8 @@ export default function CreateNotebook() {
       setFormData({
         name: notebook.name,
         description: notebook.description || "",
-        type: notebook.type
+        type: notebook.type,
+        difficulty: notebook.difficulty || "misto"
       });
 
       if (notebook.filters) {
@@ -92,12 +107,20 @@ export default function CreateNotebook() {
         notebook_id: notebookId 
       });
 
-      const questionIds = notebookQuestions.map(q => q.question_id);
+      const sortedNQ = notebookQuestions.sort((a, b) => a.order - b.order);
+      const questionIds = sortedNQ.map(q => q.question_id);
       const questions = await Promise.all(
         questionIds.map(id => base44.entities.Question.get(id))
       );
 
-      setSelectedQuestions(questions);
+      const questionsWithComments = questions.map((q, idx) => ({
+        ...q,
+        notebookQuestionId: sortedNQ[idx].id,
+        user_comment: sortedNQ[idx].user_comment || "",
+        show_explanation: sortedNQ[idx].show_explanation !== false
+      }));
+
+      setSelectedQuestions(questionsWithComments);
     } catch (error) {
       console.error("Erro ao carregar caderno:", error);
       toast.error("Erro ao carregar caderno");
@@ -121,6 +144,15 @@ export default function CreateNotebook() {
       if (filters.cargos.length > 0) {
         query.cargo = { $in: filters.cargos };
       }
+      if (filters.difficulties.length > 0) {
+        query.difficulty = { $in: filters.difficulties };
+      }
+      if (filters.education_levels.length > 0) {
+        query.education_level = { $in: filters.education_levels };
+      }
+      if (filters.topics.length > 0) {
+        query.topic = { $in: filters.topics };
+      }
 
       const questions = await base44.entities.Question.filter(query);
       setSearchResults(questions);
@@ -135,7 +167,11 @@ export default function CreateNotebook() {
 
   const handleAddQuestion = (question) => {
     if (!selectedQuestions.find(q => q.id === question.id)) {
-      setSelectedQuestions([...selectedQuestions, question]);
+      setSelectedQuestions([...selectedQuestions, { 
+        ...question, 
+        user_comment: "", 
+        show_explanation: true 
+      }]);
       toast.success("Questão adicionada");
     }
   };
@@ -147,9 +183,40 @@ export default function CreateNotebook() {
   const handleAddAllResults = () => {
     const newQuestions = searchResults.filter(
       result => !selectedQuestions.find(q => q.id === result.id)
-    );
+    ).map(q => ({ ...q, user_comment: "", show_explanation: true }));
+    
     setSelectedQuestions([...selectedQuestions, ...newQuestions]);
     toast.success(`${newQuestions.length} questões adicionadas`);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(selectedQuestions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setSelectedQuestions(items);
+  };
+
+  const moveQuestion = (index, direction) => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= selectedQuestions.length) return;
+
+    const items = Array.from(selectedQuestions);
+    const [movedItem] = items.splice(index, 1);
+    items.splice(newIndex, 0, movedItem);
+    setSelectedQuestions(items);
+  };
+
+  const handleSaveComment = () => {
+    setSelectedQuestions(selectedQuestions.map(q => 
+      q.id === commentDialog.questionId 
+        ? { ...q, user_comment: commentDialog.comment }
+        : q
+    ));
+    setCommentDialog({ open: false, questionId: null, comment: "" });
+    toast.success("Comentário salvo");
   };
 
   const handleSubmit = async (e) => {
@@ -178,7 +245,6 @@ export default function CreateNotebook() {
         await base44.entities.Notebook.update(notebookId, notebookData);
         notebook = { id: notebookId };
 
-        // Deletar questões antigas
         const oldQuestions = await base44.entities.NotebookQuestion.filter({ 
           notebook_id: notebookId 
         });
@@ -189,13 +255,14 @@ export default function CreateNotebook() {
         notebook = await base44.entities.Notebook.create(notebookData);
       }
 
-      // Adicionar questões
       await Promise.all(
         selectedQuestions.map((q, index) => 
           base44.entities.NotebookQuestion.create({
             notebook_id: notebook.id,
             question_id: q.id,
-            order: index + 1
+            order: index + 1,
+            user_comment: q.user_comment || "",
+            show_explanation: q.show_explanation !== false
           })
         )
       );
@@ -208,6 +275,15 @@ export default function CreateNotebook() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getDifficultyColor = (difficulty) => {
+    const colors = {
+      facil: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
+      medio: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
+      dificil: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+    };
+    return colors[difficulty] || "bg-gray-100 text-gray-700";
   };
 
   return (
@@ -230,15 +306,35 @@ export default function CreateNotebook() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="name">Nome do Caderno *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Ex: Português - FCC 2024"
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Nome do Caderno *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="Ex: Português - FCC 2024"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label>Dificuldade Geral</Label>
+                  <Select
+                    value={formData.difficulty}
+                    onValueChange={(value) => setFormData({...formData, difficulty: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="misto">Misto</SelectItem>
+                      <SelectItem value="facil">Fácil</SelectItem>
+                      <SelectItem value="medio">Médio</SelectItem>
+                      <SelectItem value="dificil">Difícil</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div>
@@ -272,10 +368,10 @@ export default function CreateNotebook() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Adicionar Questões</CardTitle>
+              <CardTitle>Filtros Avançados</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <Label>Disciplinas</Label>
                   <Select
@@ -287,7 +383,7 @@ export default function CreateNotebook() {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione disciplinas" />
+                      <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableOptions.subjects.map(s => (
@@ -327,7 +423,7 @@ export default function CreateNotebook() {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione bancas" />
+                      <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableOptions.institutions.map(i => (
@@ -355,9 +451,165 @@ export default function CreateNotebook() {
                     ))}
                   </div>
                 </div>
+
+                <div>
+                  <Label>Dificuldade</Label>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      if (!filters.difficulties.includes(value)) {
+                        setFilters({...filters, difficulties: [...filters.difficulties, value]});
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="facil">Fácil</SelectItem>
+                      <SelectItem value="medio">Médio</SelectItem>
+                      <SelectItem value="dificil">Difícil</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {filters.difficulties.map(d => (
+                      <Badge key={d} className={getDifficultyColor(d)}>
+                        {d === 'facil' ? 'Fácil' : d === 'medio' ? 'Médio' : 'Difícil'}
+                        <button
+                          type="button"
+                          onClick={() => setFilters({
+                            ...filters, 
+                            difficulties: filters.difficulties.filter(x => x !== d)
+                          })}
+                          className="ml-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Anos</Label>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      if (!filters.years.includes(value)) {
+                        setFilters({...filters, years: [...filters.years, value]});
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableOptions.years.map(y => (
+                        <SelectItem key={y} value={y.toString()}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {filters.years.map(y => (
+                      <Badge key={y} variant="secondary">
+                        {y}
+                        <button
+                          type="button"
+                          onClick={() => setFilters({
+                            ...filters, 
+                            years: filters.years.filter(x => x !== y)
+                          })}
+                          className="ml-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Nível de Escolaridade</Label>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      if (!filters.education_levels.includes(value)) {
+                        setFilters({...filters, education_levels: [...filters.education_levels, value]});
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fundamental">Fundamental</SelectItem>
+                      <SelectItem value="medio">Médio</SelectItem>
+                      <SelectItem value="superior">Superior</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {filters.education_levels.map(e => (
+                      <Badge key={e} variant="secondary">
+                        {e === 'fundamental' ? 'Fundamental' : e === 'medio' ? 'Médio' : 'Superior'}
+                        <button
+                          type="button"
+                          onClick={() => setFilters({
+                            ...filters, 
+                            education_levels: filters.education_levels.filter(x => x !== e)
+                          })}
+                          className="ml-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Assuntos</Label>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      if (!filters.topics.includes(value)) {
+                        setFilters({...filters, topics: [...filters.topics, value]});
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableOptions.topics.map(t => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {filters.topics.map(t => (
+                      <Badge key={t} variant="secondary">
+                        {t}
+                        <button
+                          type="button"
+                          onClick={() => setFilters({
+                            ...filters, 
+                            topics: filters.topics.filter(x => x !== t)
+                          })}
+                          className="ml-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <Button
                   type="button"
                   onClick={handleSearchQuestions}
@@ -397,9 +649,11 @@ export default function CreateNotebook() {
                             <Badge variant="outline" className="text-xs">
                               {availableOptions.subjects.find(s => s.value === q.subject)?.label}
                             </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {availableOptions.institutions.find(i => i.id === q.institution)?.name}
-                            </Badge>
+                            {q.difficulty && (
+                              <Badge className={`text-xs ${getDifficultyColor(q.difficulty)}`}>
+                                {q.difficulty === 'facil' ? 'Fácil' : q.difficulty === 'medio' ? 'Médio' : 'Difícil'}
+                              </Badge>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -430,42 +684,102 @@ export default function CreateNotebook() {
                   Nenhuma questão adicionada ainda
                 </p>
               ) : (
-                <div className="space-y-2">
-                  {selectedQuestions.map((q, index) => (
-                    <div
-                      key={q.id}
-                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <span className="font-bold text-gray-500 min-w-[30px]">
-                          {index + 1}.
-                        </span>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium line-clamp-2">
-                            {q.statement?.replace(/<[^>]*>/g, '') || 'Questão sem enunciado'}
-                          </p>
-                          <div className="flex gap-2 mt-1">
-                            <Badge variant="outline" className="text-xs">
-                              {availableOptions.subjects.find(s => s.value === q.subject)?.label}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {availableOptions.institutions.find(i => i.id === q.institution)?.name}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleRemoveQuestion(q.id)}
-                        className="text-red-600"
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <Droppable droppableId="questions">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="space-y-2"
                       >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                        {selectedQuestions.map((q, index) => (
+                          <Draggable key={q.id} draggableId={q.id} index={index}>
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                              >
+                                <div {...provided.dragHandleProps}>
+                                  <GripVertical className="w-5 h-5 text-gray-400 cursor-grab" />
+                                </div>
+                                <span className="font-bold text-gray-500 min-w-[30px]">
+                                  {index + 1}.
+                                </span>
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium line-clamp-2">
+                                    {q.statement?.replace(/<[^>]*>/g, '') || 'Questão sem enunciado'}
+                                  </p>
+                                  <div className="flex gap-2 mt-1">
+                                    <Badge variant="outline" className="text-xs">
+                                      {availableOptions.subjects.find(s => s.value === q.subject)?.label}
+                                    </Badge>
+                                    {q.difficulty && (
+                                      <Badge className={`text-xs ${getDifficultyColor(q.difficulty)}`}>
+                                        {q.difficulty === 'facil' ? 'Fácil' : q.difficulty === 'medio' ? 'Médio' : 'Difícil'}
+                                      </Badge>
+                                    )}
+                                    {q.user_comment && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        <MessageSquare className="w-3 h-3 mr-1" />
+                                        Com comentário
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex gap-1">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => moveQuestion(index, 'up')}
+                                    disabled={index === 0}
+                                  >
+                                    <ChevronUp className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => moveQuestion(index, 'down')}
+                                    disabled={index === selectedQuestions.length - 1}
+                                  >
+                                    <ChevronDown className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setCommentDialog({
+                                        open: true,
+                                        questionId: q.id,
+                                        comment: q.user_comment || ""
+                                      });
+                                    }}
+                                    className="text-blue-600"
+                                  >
+                                    <MessageSquare className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleRemoveQuestion(q.id)}
+                                    className="text-red-600"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               )}
             </CardContent>
           </Card>
@@ -488,6 +802,31 @@ export default function CreateNotebook() {
             </Button>
           </div>
         </form>
+
+        <Dialog open={commentDialog.open} onOpenChange={(open) => setCommentDialog({...commentDialog, open})}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Adicionar Comentário Pessoal</DialogTitle>
+              <DialogDescription>
+                Escreva suas anotações sobre esta questão
+              </DialogDescription>
+            </DialogHeader>
+            <Textarea
+              value={commentDialog.comment}
+              onChange={(e) => setCommentDialog({...commentDialog, comment: e.target.value})}
+              placeholder="Digite seu comentário..."
+              rows={5}
+            />
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setCommentDialog({ open: false, questionId: null, comment: "" })}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSaveComment} className="bg-blue-600 hover:bg-blue-700">
+                Salvar
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
