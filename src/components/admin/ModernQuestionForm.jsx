@@ -13,6 +13,7 @@ import { Trash2, PlusCircle, Save, X } from 'lucide-react';
 import { toast } from "sonner";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { base44 } from '@/api/base44Client';
 
 // Helper function to format snake_case strings into readable labels
 const formatTopicLabel = (value) => {
@@ -214,7 +215,9 @@ export default function ModernQuestionForm({
 
   const onSubmit = async (data) => {
     try {
+      const user = await base44.auth.me();
       const finalData = { ...data };
+      
       if (finalData.exam_name === '__new__') {
         if (!finalData.new_exam_name || finalData.new_exam_name.trim() === '') {
           toast.error("Por favor, digite o nome do novo concurso.");
@@ -222,7 +225,7 @@ export default function ModernQuestionForm({
         }
         finalData.exam_name = finalData.new_exam_name.trim();
       }
-      delete finalData.new_exam_name; // Remove temporary field
+      delete finalData.new_exam_name;
 
       if (!finalData.subject || !finalData.institution || !finalData.correct_answer) {
         toast.error("Por favor, preencha todos os campos obrigatórios (Disciplina, Banca, Resposta Correta).");
@@ -235,11 +238,44 @@ export default function ModernQuestionForm({
         return;
       }
 
+      // Atualiza a data do comentário se foi modificado
+      if (finalData.explanation && finalData.explanation !== questionToEdit?.explanation) {
+        finalData.explanation_date = new Date().toISOString().split('T')[0];
+      }
+
       if (questionToEdit) {
         await Question.update(questionToEdit.id, finalData);
+
+        // Log de auditoria
+        await base44.asServiceRole.entities.AuditLog.create({
+          admin_email: user.email,
+          admin_name: user.full_name,
+          action_type: 'question_updated',
+          entity_type: 'Question',
+          entity_id: questionToEdit.id,
+          entity_description: finalData.statement?.substring(0, 100) || 'Questão atualizada',
+          changes: {
+            explanation_updated: finalData.explanation !== questionToEdit.explanation,
+            explanation_author: finalData.explanation_author,
+            explanation_author_subject: finalData.explanation_author_subject
+          }
+        });
+
         onQuestionSaved("Questão atualizada com sucesso!");
       } else {
-        await Question.create(finalData);
+        const newQuestion = await Question.create(finalData);
+
+        // Log de auditoria
+        await base44.asServiceRole.entities.AuditLog.create({
+          admin_email: user.email,
+          admin_name: user.full_name,
+          action_type: 'question_created',
+          entity_type: 'Question',
+          entity_id: newQuestion.id,
+          entity_description: finalData.statement?.substring(0, 100) || 'Nova questão',
+          notes: `Banca: ${finalData.institution}, Disciplina: ${finalData.subject}`
+        });
+
         onQuestionSaved("Questão criada com sucesso!");
       }
     } catch (error) {
@@ -587,25 +623,53 @@ export default function ModernQuestionForm({
 
           <Card>
             <CardHeader>
-              <CardTitle>Comentário / Explicação</CardTitle>
+              <CardTitle>Gabarito Comentado</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Controller
-                name="explanation"
-                control={control}
-                render={({ field }) => (
-                  <div style={{ minHeight: '250px' }}>
-                    <ReactQuill
-                      theme="snow"
-                      value={field.value || ''}
-                      onChange={field.onChange}
-                      modules={quillModules}
-                      placeholder="Digite a explicação da resposta correta..."
-                      style={{ height: '200px' }}
-                    />
-                  </div>
-                )}
-              />
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="explanation_author">Professor/Autor do Comentário</Label>
+                  <Input
+                    id="explanation_author"
+                    {...register("explanation_author")}
+                    placeholder="Ex: Prof. João Silva"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="explanation_author_subject">Disciplina de Especialização</Label>
+                  <Input
+                    id="explanation_author_subject"
+                    {...register("explanation_author_subject")}
+                    placeholder="Ex: Português, Matemática, Direito..."
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="explanation">Comentário / Explicação</Label>
+                <Controller
+                  name="explanation"
+                  control={control}
+                  render={({ field }) => (
+                    <div style={{ minHeight: '250px' }} className="mt-2">
+                      <ReactQuill
+                        theme="snow"
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        modules={quillModules}
+                        placeholder="Digite a explicação da resposta correta..."
+                        style={{ height: '200px' }}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+
+              {questionToEdit?.explanation_date && (
+                <p className="text-sm text-gray-500">
+                  Última atualização: {new Date(questionToEdit.explanation_date).toLocaleDateString('pt-BR')}
+                </p>
+              )}
             </CardContent>
           </Card>
 
