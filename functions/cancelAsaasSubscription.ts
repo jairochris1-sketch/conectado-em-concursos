@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
         await base44.entities.Subscription.update(subscriptionId, { status: 'cancelled' });
         
         // Atualizar plano do usuário para gratuito
-        await base44.entities.User.update(user.id, {
+        await base44.asServiceRole.entities.User.update(user.id, {
             current_plan: 'gratuito'
         });
 
