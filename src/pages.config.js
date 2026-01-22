@@ -10,6 +10,7 @@ import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
+import EditalSimulator from './pages/EditalSimulator';
 import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
@@ -18,6 +19,7 @@ import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import LogicCourse from './pages/LogicCourse';
 import MathCourse from './pages/MathCourse';
+import MyDoubts from './pages/MyDoubts';
 import NotebookStats from './pages/NotebookStats';
 import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
@@ -40,8 +42,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import MyDoubts from './pages/MyDoubts';
-import EditalSimulator from './pages/EditalSimulator';
+import EditalViewer from './pages/EditalViewer';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +59,7 @@ export const PAGES = {
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
+    "EditalSimulator": EditalSimulator,
     "EnglishCourse": EnglishCourse,
     "ExamView": ExamView,
     "Exams": Exams,
@@ -66,6 +68,7 @@ export const PAGES = {
     "Home": Home,
     "LogicCourse": LogicCourse,
     "MathCourse": MathCourse,
+    "MyDoubts": MyDoubts,
     "NotebookStats": NotebookStats,
     "Notebooks": Notebooks,
     "Notes": Notes,
@@ -88,8 +91,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "MyDoubts": MyDoubts,
-    "EditalSimulator": EditalSimulator,
+    "EditalViewer": EditalViewer,
 }
 
 export const pagesConfig = {

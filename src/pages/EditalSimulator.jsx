@@ -436,7 +436,7 @@ export default function EditalSimulator() {
                       )}
 
                       <Button
-                        onClick={() => window.open(edital.file_url, '_blank')}
+                        onClick={() => navigate(createPageUrl("EditalViewer") + "?id=" + edital.id)}
                         variant="outline"
                       >
                         <FileText className="w-4 h-4 mr-2" />
