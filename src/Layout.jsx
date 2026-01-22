@@ -89,6 +89,11 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
+  title: "Cadernos de Questões",
+  url: createPageUrl("Notebooks"),
+  icon: BookCopy
+},
+{
   title: "Curso de Inglês",
   url: createPageUrl("EnglishCourse"),
   icon: BookOpen
@@ -200,7 +205,11 @@ const pageNameTranslations = {
   ActivityFeed: "Feed de Atividades",
   MathCourse: "Curso de Matemática Básica",
   EnglishCourse: "Curso de Inglês",
-  LogicCourse: "Raciocínio Lógico para Concursos"
+  LogicCourse: "Raciocínio Lógico para Concursos",
+  Notebooks: "Cadernos de Questões",
+  CreateNotebook: "Criar Caderno",
+  SolveNotebook: "Resolver Caderno",
+  NotebookStats: "Estatísticas do Caderno"
 };
 
 const featureAccess = {
@@ -219,7 +228,8 @@ const featureAccess = {
   'Ranking de Usuários': ['padrao', 'avancado'],
   'Curso de Inglês': ['padrao', 'avancado'],
   'Curso de Matemática': ['padrao', 'avancado'],
-  'Raciocínio Lógico': ['padrao', 'avancado']
+  'Raciocínio Lógico': ['padrao', 'avancado'],
+  'Cadernos de Questões': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
