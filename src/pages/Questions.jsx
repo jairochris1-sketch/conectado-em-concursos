@@ -51,7 +51,7 @@ export default function Questions() {
   
   const { isBlocked, questionsAnsweredToday, dailyLimit, incrementCount, remainingQuestions } = useQuestionLimit();
 
-  const questionsPerPage = 10;
+  const questionsPerPage = 20;
 
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
