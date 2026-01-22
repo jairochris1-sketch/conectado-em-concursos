@@ -94,10 +94,31 @@ export default function SubscriptionManager() {
 
   const handleSaveEdit = async () => {
     try {
+      const user = await base44.auth.me();
+      
       await base44.asServiceRole.entities.Subscription.update(
         selectedSubscription.id,
         editData
       );
+
+      // Log de auditoria
+      await base44.asServiceRole.entities.AuditLog.create({
+        admin_email: user.email,
+        admin_name: user.full_name,
+        action_type: 'subscription_updated',
+        entity_type: 'Subscription',
+        entity_id: selectedSubscription.id,
+        entity_description: `${selectedSubscription.user_email} - ${editData.plan}`,
+        changes: {
+          before: {
+            plan: selectedSubscription.plan,
+            status: selectedSubscription.status,
+            notes: selectedSubscription.notes
+          },
+          after: editData
+        }
+      });
+
       toast.success('Assinatura atualizada com sucesso');
       setShowEditDialog(false);
       loadData();
@@ -109,11 +130,27 @@ export default function SubscriptionManager() {
 
   const handleToggleStatus = async (subscription) => {
     try {
+      const user = await base44.auth.me();
       const newStatus = subscription.status === 'active' ? 'cancelled' : 'active';
+      
       await base44.asServiceRole.entities.Subscription.update(
         subscription.id,
         { status: newStatus }
       );
+
+      // Log de auditoria
+      await base44.asServiceRole.entities.AuditLog.create({
+        admin_email: user.email,
+        admin_name: user.full_name,
+        action_type: 'subscription_updated',
+        entity_type: 'Subscription',
+        entity_id: subscription.id,
+        entity_description: `${subscription.user_email} - Status alterado`,
+        changes: {
+          status: { from: subscription.status, to: newStatus }
+        }
+      });
+
       toast.success(`Assinatura ${newStatus === 'active' ? 'ativada' : 'desativada'}`);
       loadData();
     } catch (error) {
@@ -122,10 +159,24 @@ export default function SubscriptionManager() {
     }
   };
 
-  const handleDeleteSubscription = async (id) => {
+  const handleDeleteSubscription = async (subscription) => {
     if (window.confirm('Tem certeza que deseja deletar esta assinatura?')) {
       try {
-        await base44.asServiceRole.entities.Subscription.delete(id);
+        const user = await base44.auth.me();
+        
+        await base44.asServiceRole.entities.Subscription.delete(subscription.id);
+
+        // Log de auditoria
+        await base44.asServiceRole.entities.AuditLog.create({
+          admin_email: user.email,
+          admin_name: user.full_name,
+          action_type: 'subscription_deleted',
+          entity_type: 'Subscription',
+          entity_id: subscription.id,
+          entity_description: `${subscription.user_email} - ${subscription.plan}`,
+          notes: 'Assinatura deletada pelo administrador'
+        });
+
         toast.success('Assinatura deletada');
         loadData();
       } catch (error) {
@@ -397,7 +448,7 @@ export default function SubscriptionManager() {
                             <Button
                               size="sm"
                               variant="destructive"
-                              onClick={() => handleDeleteSubscription(sub.id)}
+                              onClick={() => handleDeleteSubscription(sub)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
