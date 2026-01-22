@@ -29,8 +29,8 @@ import {
   MessageSquare,
   Brain,
   Target,
-  HelpCircle
-} from "lucide-react";
+  HelpCircle } from
+"lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
@@ -376,7 +376,7 @@ export default function Layout({ children, currentPageName }) {
               daysRemaining: Math.ceil(daysRemaining),
               totalDays: trialDuration
             });
-            
+
             // Mostrar modal no último dia (apenas uma vez por sessão)
             if (Math.ceil(daysRemaining) === 1) {
               const hasSeenModal = sessionStorage.getItem('lastDayModalSeen');
@@ -593,10 +593,10 @@ export default function Layout({ children, currentPageName }) {
       <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
         <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
-              alt="Logo Conectado em Concursos"
-              className="w-10 h-10 object-contain shadow-lg"
-            />
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+            alt="Logo Conectado em Concursos"
+            className="w-10 h-10 object-contain shadow-lg" />
+
             <div>
                 <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
                 <h2 className="font-bold text-white text-sm leading-tight">Concursos Públicos SE</h2>
@@ -626,7 +626,7 @@ export default function Layout({ children, currentPageName }) {
                 }}>
 
                         <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span className="truncate text-center leading-tight">{item.title}</span>
+                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
                     </Link>);
 
@@ -805,10 +805,10 @@ export default function Layout({ children, currentPageName }) {
                    <Menu className="w-6 h-6" aria-hidden="true" />
                  </Button>
                 <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
-                  alt="Logo Conectado em Concursos"
-                  className="w-8 h-8 object-contain"
-                />
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+                alt="Logo Conectado em Concursos"
+                className="w-8 h-8 object-contain" />
+
                 <div>
                   <h1 className="text-lg font-bold text-gray-900 dark:text-white">Conectado SE</h1>
                   <p className="text-xs dark:text-blue-400" style={{ color: 'var(--primary-color)' }}>Rumo à aprovação</p>
@@ -873,20 +873,20 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      {trialInfo && trialInfo.daysRemaining > 0 && (
-        <TrialCountdown 
-          daysRemaining={trialInfo.daysRemaining}
-          totalDays={trialInfo.totalDays}
-        />
-      )}
+      {trialInfo && trialInfo.daysRemaining > 0 &&
+      <TrialCountdown
+        daysRemaining={trialInfo.daysRemaining}
+        totalDays={trialInfo.totalDays} />
 
-      <LastDayModal 
+      }
+
+      <LastDayModal
         isOpen={showLastDayModal}
         onClose={() => setShowLastDayModal(false)}
-        daysRemaining={trialInfo?.daysRemaining || 0}
-      />
+        daysRemaining={trialInfo?.daysRemaining || 0} />
+
 
       <ChatWidget />
       </div>);
 
-      }
+}
