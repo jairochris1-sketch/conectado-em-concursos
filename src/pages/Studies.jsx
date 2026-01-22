@@ -1802,6 +1802,8 @@ ${videoNotes}
           isOpen={!!selectedArticle}
           onClose={() => setSelectedArticle(null)}
         />
+          </div>
+        </div>
       </div>
     </div>);
 
