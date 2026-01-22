@@ -988,7 +988,11 @@ export default function SubscriptionPage() {
 
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             <div className="bg-blue-600 text-slate-300 p-8 text-center from-indigo-600 via-purple-600 to-pink-600">
-              <Shield className="w-16 h-16 mx-auto mb-6 text-white" />
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+                alt="Conectado em Concursos"
+                className="w-20 h-20 mx-auto mb-6 object-contain"
+              />
               <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
                 Quem Somos
               </h2>
