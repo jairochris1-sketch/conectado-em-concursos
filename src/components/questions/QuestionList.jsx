@@ -14,7 +14,8 @@ import {
   Trash2,
   Scissors,
   CheckCircle,
-  XCircle
+  XCircle,
+  HelpCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CommentSection from "../comments/CommentSection";
@@ -99,7 +100,8 @@ export default function QuestionList({
   questionsPerPage,
   layoutMode = 'compact',
   fontSize = 1,
-  isBlocked = false
+  isBlocked = false,
+  onRequestHelp
 }) {
   const [commentsVisible, setCommentsVisible] = useState({});
   const [favorites, setFavorites] = useState({});
@@ -656,20 +658,46 @@ export default function QuestionList({
                         )}
                       </div>
                       {!isCorrect && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                          A resposta correta é: <strong className="text-green-600 dark:text-green-400">{question.options.find(o => o.letter === question.correct_answer)?.text}</strong>
-                        </p>
+                        <>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            A resposta correta é: <strong className="text-green-600 dark:text-green-400">{question.options.find(o => o.letter === question.correct_answer)?.text}</strong>
+                          </p>
+                          {onRequestHelp && (
+                            <Button
+                              onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
+                              size="sm"
+                              variant="outline"
+                              className="mt-3 bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300"
+                            >
+                              <HelpCircle className="w-4 h-4 mr-2" />
+                              Pedir Ajuda da IA
+                            </Button>
+                          )}
+                        </>
                       )}
                     </div>
                   ) : (
                     <div className={`mb-4 ${layoutMode === 'classic' ? 'p-4' : 'p-3'} bg-gray-50 dark:bg-gray-700 rounded-lg print-hide`}>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className={`font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                          {isCorrect ? '✓ Correta!' : '✗ Errada!'}
-                        </span>
-                        <span className="text-gray-600 dark:text-gray-300">
-                          Gabarito: <span className="font-bold text-green-600">{question.correct_answer}</span>
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-sm">
+                          <span className={`font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                            {isCorrect ? '✓ Correta!' : '✗ Errada!'}
+                          </span>
+                          <span className="text-gray-600 dark:text-gray-300">
+                            Gabarito: <span className="font-bold text-green-600">{question.correct_answer}</span>
+                          </span>
+                        </div>
+                        {!isCorrect && onRequestHelp && (
+                          <Button
+                            onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
+                            size="sm"
+                            variant="outline"
+                            className="bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300"
+                          >
+                            <HelpCircle className="w-4 h-4 mr-2" />
+                            Pedir Ajuda
+                          </Button>
+                        )}
                       </div>
                     </div>
                   )

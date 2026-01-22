@@ -28,7 +28,8 @@ import {
   BookOpen as BookOpenIcon,
   MessageSquare,
   Brain,
-  Target
+  Target,
+  HelpCircle
 } from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -92,6 +93,11 @@ const moreMenuItems = [
   title: "Cadernos de Questões",
   url: createPageUrl("Notebooks"),
   icon: BookCopy
+},
+{
+  title: "Minhas Dúvidas",
+  url: createPageUrl("MyDoubts"),
+  icon: HelpCircle
 },
 {
   title: "Curso de Inglês",
