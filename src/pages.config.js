@@ -34,6 +34,9 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import Notebooks from './pages/Notebooks';
+import CreateNotebook from './pages/CreateNotebook';
+import SolveNotebook from './pages/SolveNotebook';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +77,9 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "Notebooks": Notebooks,
+    "CreateNotebook": CreateNotebook,
+    "SolveNotebook": SolveNotebook,
 }
 
 export const pagesConfig = {
