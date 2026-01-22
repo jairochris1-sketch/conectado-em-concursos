@@ -5,13 +5,18 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { ArrowLeft, Loader2, Download } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Brain, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EditalAIAnalysis from "@/components/edital/EditalAIAnalysis";
+import { analyzeEdital } from "@/functions/analyzeEdital";
 
 export default function EditalViewer() {
   const navigate = useNavigate();
   const [edital, setEdital] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [analyzingAI, setAnalyzingAI] = useState(false);
 
   useEffect(() => {
     loadEdital();
@@ -35,11 +40,30 @@ export default function EditalViewer() {
         return;
       }
       setEdital(data[0]);
+      // Carregar análise de IA automaticamente
+      loadAIAnalysis(editalId);
     } catch (error) {
       console.error("Erro ao carregar edital:", error);
       toast.error("Erro ao carregar edital");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAIAnalysis = async (editalId) => {
+    setAnalyzingAI(true);
+    try {
+      const response = await analyzeEdital({ edital_id: editalId });
+      if (response.data?.success) {
+        setAiAnalysis(response.data.analysis);
+      } else {
+        toast.error("Erro ao gerar análise de IA");
+      }
+    } catch (error) {
+      console.error("Erro ao analisar edital com IA:", error);
+      toast.error("Não foi possível gerar a análise de IA");
+    } finally {
+      setAnalyzingAI(false);
     }
   };
 
@@ -100,21 +124,57 @@ export default function EditalViewer() {
         </div>
       </div>
 
-      {/* PDF Viewer */}
+      {/* Tabs: PDF e Análise de IA */}
       <div className="max-w-7xl mx-auto p-4">
-        <Card className="overflow-hidden">
-          <CardContent className="p-0">
-            <div className="w-full" style={{ height: "calc(100vh - 180px)" }}>
-              <iframe
-                src={`https://docs.google.com/viewer?url=${encodeURIComponent(edital.file_url)}&embedded=true`}
-                className="w-full h-full border-0"
-                title={`Edital - ${edital.concurso_name}`}
-                allow="fullscreen"
-              />
-            </div>
+        <Tabs defaultValue="pdf" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="pdf" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Documento do Edital
+            </TabsTrigger>
+            <TabsTrigger value="ai" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              Análise por IA
+              {analyzingAI && <Loader2 className="w-3 h-3 animate-spin ml-1" />}
+            </TabsTrigger>
+          </TabsList>
 
-          </CardContent>
-        </Card>
+          <TabsContent value="pdf">
+            <Card className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="w-full" style={{ height: "calc(100vh - 240px)" }}>
+                  <iframe
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(edital.file_url)}&embedded=true`}
+                    className="w-full h-full border-0"
+                    title={`Edital - ${edital.concurso_name}`}
+                    allow="fullscreen"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="ai">
+            {analyzingAI ? (
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <p className="text-gray-600 dark:text-gray-400">
+                  Analisando edital com IA avançada...
+                </p>
+              </div>
+            ) : aiAnalysis ? (
+              <EditalAIAnalysis analysis={aiAnalysis} />
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Não foi possível gerar a análise de IA
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
