@@ -294,7 +294,22 @@ export default function AdminPage() {
   const handleDeleteQuestion = async (id) => {
     if (window.confirm('Tem certeza que deseja remover esta questão?')) {
       try {
+        const user = await User.me();
+        const question = questions.find(q => q.id === id);
+        
         await Question.delete(id);
+
+        // Log de auditoria
+        await base44.asServiceRole.entities.AuditLog.create({
+          admin_email: user.email,
+          admin_name: user.full_name,
+          action_type: 'question_deleted',
+          entity_type: 'Question',
+          entity_id: id,
+          entity_description: question?.statement?.substring(0, 100) || 'Questão deletada',
+          notes: `Questão da banca ${question?.institution || '-'} deletada`
+        });
+
         toast.success('Questão excluída com sucesso!');
         loadQuestions();
       } catch (error) {
