@@ -18,7 +18,8 @@ import {
   Play,
   Clock,
   CheckCircle2,
-  FileText
+  FileText,
+  BarChart3
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -261,40 +262,52 @@ export default function Notebooks() {
                       <span className="font-semibold">{notebook.attempts_count || 0}</span>
                     </div>
 
-                    <div className="pt-4 flex flex-wrap gap-2">
-                      <Button
-                        onClick={() => navigate(createPageUrl("SolveNotebook") + `?id=${notebook.id}`)}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
-                        disabled={!notebook.question_count}
-                      >
-                        <Play className="w-4 h-4 mr-2" />
-                        Resolver
-                      </Button>
-                      <Button
-                        onClick={() => navigate(createPageUrl("CreateNotebook") + `?id=${notebook.id}`)}
-                        variant="outline"
-                        size="icon"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => handleDuplicate(notebook)}
-                        variant="outline"
-                        size="icon"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setNotebookToDelete(notebook);
-                          setShowDeleteDialog(true);
-                        }}
-                        variant="outline"
-                        size="icon"
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div className="pt-4 space-y-2">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => navigate(createPageUrl("SolveNotebook") + `?id=${notebook.id}`)}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          disabled={!notebook.question_count}
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Resolver
+                        </Button>
+                        <Button
+                          onClick={() => navigate(createPageUrl("NotebookStats") + `?id=${notebook.id}`)}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700"
+                          disabled={notebook.attempts_count === 0}
+                        >
+                          <BarChart3 className="w-4 h-4 mr-2" />
+                          Estatísticas
+                        </Button>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => navigate(createPageUrl("CreateNotebook") + `?id=${notebook.id}`)}
+                          variant="outline"
+                          size="icon"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          onClick={() => handleDuplicate(notebook)}
+                          variant="outline"
+                          size="icon"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setNotebookToDelete(notebook);
+                            setShowDeleteDialog(true);
+                          }}
+                          variant="outline"
+                          size="icon"
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

@@ -37,6 +37,7 @@ import subscription from './pages/subscription';
 import Notebooks from './pages/Notebooks';
 import CreateNotebook from './pages/CreateNotebook';
 import SolveNotebook from './pages/SolveNotebook';
+import NotebookStats from './pages/NotebookStats';
 import __Layout from './Layout.jsx';
 
 
@@ -80,6 +81,7 @@ export const PAGES = {
     "Notebooks": Notebooks,
     "CreateNotebook": CreateNotebook,
     "SolveNotebook": SolveNotebook,
+    "NotebookStats": NotebookStats,
 }
 
 export const pagesConfig = {
