@@ -18,12 +18,14 @@ Deno.serve(async (req) => {
     // Buscar o material usando get direto ao invés de filter
     const material = await base44.asServiceRole.entities.StudyMaterial.get(materialId);
 
-    if (!materials || materials.length === 0 || !materials[0].file_url) {
+    if (!material || !material.file_url) {
       return new Response('Material não encontrado', { status: 404 });
     }
 
+    console.log('[viewMaterial] Redirecionando para:', material.file_url);
+
     // Redirecionar para o arquivo
-    return Response.redirect(materials[0].file_url, 302);
+    return Response.redirect(material.file_url, 302);
   } catch (error) {
     console.error('Erro ao buscar material:', error);
     return new Response(`Erro ao buscar material: ${error.message}`, { status: 500 });
