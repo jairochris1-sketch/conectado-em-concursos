@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Download, ExternalLink, Loader2, FileText } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function EditalViewer() {
@@ -58,50 +58,24 @@ export default function EditalViewer() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <Button
-              onClick={() => navigate(createPageUrl("EditalSimulator"))}
-              variant="outline"
-              size="sm"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white truncate">
-                {edital.concurso_name}
-              </h1>
-              {edital.cargo && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                  {edital.cargo}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button
-              onClick={() => window.open(edital.file_url, "_blank")}
-              variant="outline"
-              size="sm"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              <span className="hidden md:inline">Abrir em Nova Aba</span>
-            </Button>
-            <Button
-              onClick={() => {
-                const link = document.createElement("a");
-                link.href = edital.file_url;
-                link.download = `${edital.concurso_name}.pdf`;
-                link.click();
-              }}
-              variant="default"
-              size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              <span className="hidden md:inline">Baixar</span>
-            </Button>
+        <div className="max-w-7xl mx-auto flex items-center gap-3">
+          <Button
+            onClick={() => navigate(createPageUrl("EditalSimulator"))}
+            variant="outline"
+            size="sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Voltar
+          </Button>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white truncate">
+              {edital.concurso_name}
+            </h1>
+            {edital.cargo && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                {edital.cargo}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -118,17 +92,7 @@ export default function EditalViewer() {
                 allow="fullscreen"
               />
             </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
-              <p>
-                Problemas ao visualizar?{" "}
-                <button
-                  onClick={() => window.open(edital.file_url, "_blank")}
-                  className="text-blue-600 hover:underline font-semibold"
-                >
-                  Clique aqui para abrir em nova aba
-                </button>
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </div>
