@@ -980,7 +980,69 @@ ${videoNotes}
                         </Card>
                   }
                     </motion.div>
-                )}
+                ))}
+
+                  {/* Show all materials in list/compact modes */}
+                  {materialViewMode !== 'grid' && filteredMaterials.map((material, index) => (
+                    <motion.div
+                      key={material.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="min-w-0 overflow-hidden">
+
+                      {materialViewMode === 'list' && (
+                        <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
+                          onClick={() => handleMaterialClick(material)}>
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-4 overflow-hidden">
+                              <div className="flex-shrink-0">
+                                {material.file_type === 'pdf' ?
+                                  <FileText className="w-12 h-12 text-red-500" /> :
+                                  <Eye className="w-12 h-12 text-blue-500" />
+                                }
+                              </div>
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                                  {material.title}
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                                  {material.description}
+                                </p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  <Badge className={typeColors[material.type]} size="sm">
+                                    {typeNames[material.type]}
+                                  </Badge>
+                                  <Badge variant="outline" size="sm">
+                                    {subjectNames[material.subject]}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                {isAdmin &&
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => handleDeleteMaterial(e, material.id)}>
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                }
+                                <Button
+                                  size="sm"
+                                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMaterialClick(material);
+                                  }}>
+                                  Ver
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </motion.div>
+                  ))}
                 </div>
               }
             </div>
