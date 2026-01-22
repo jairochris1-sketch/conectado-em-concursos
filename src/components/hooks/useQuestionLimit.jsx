@@ -39,7 +39,14 @@ export function useQuestionLimit() {
         setIsInTrial(inTrial);
 
         // Planos pagos (não teste) não têm limite
+        // Usuários em teste do Plano Avançado também não têm limite
         if ((plan === 'padrao' || plan === 'avancado') && !inTrial) {
+          setIsBlocked(false);
+          setLoading(false);
+          return;
+        }
+
+        if (inTrial && plan === 'avancado') {
           setIsBlocked(false);
           setLoading(false);
           return;
@@ -60,10 +67,9 @@ export function useQuestionLimit() {
 
         const count = todayAnswers.length;
         setQuestionsAnsweredToday(count);
-        
-        // Aplicar limite baseado no tipo de plano
-        const limit = inTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
-        setIsBlocked(count >= limit);
+
+        // Aplicar limite apenas para plano gratuito
+        setIsBlocked(count >= DAILY_LIMIT_FREE);
         setLoading(false);
       } catch (error) {
         console.error('Erro ao verificar limite de questões:', error);
@@ -77,15 +83,14 @@ export function useQuestionLimit() {
   const incrementCount = () => {
     const newCount = questionsAnsweredToday + 1;
     setQuestionsAnsweredToday(newCount);
-    
-    const limit = isInTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
-    if ((userPlan === 'gratuito' || isInTrial) && newCount >= limit) {
+
+    if (userPlan === 'gratuito' && newCount >= DAILY_LIMIT_FREE) {
       setIsBlocked(true);
     }
   };
 
   const getDailyLimit = () => {
-    return isInTrial ? DAILY_LIMIT_TRIAL : DAILY_LIMIT_FREE;
+    return DAILY_LIMIT_FREE;
   };
 
   return {
