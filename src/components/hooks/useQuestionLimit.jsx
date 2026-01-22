@@ -10,7 +10,7 @@ export function useQuestionLimit() {
   const [loading, setLoading] = useState(true);
   const [isInTrial, setIsInTrial] = useState(false);
 
-  const DAILY_LIMIT_FREE = 10;
+  const DAILY_LIMIT_FREE = 20;
   const DAILY_LIMIT_TRIAL = 5;
 
   useEffect(() => {
