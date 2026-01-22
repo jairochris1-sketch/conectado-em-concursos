@@ -5,6 +5,8 @@ import Calendar from './pages/Calendar';
 import ChatGPT from './pages/ChatGPT';
 import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
+import CreateNotebook from './pages/CreateNotebook';
+import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
@@ -16,6 +18,8 @@ import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import LogicCourse from './pages/LogicCourse';
 import MathCourse from './pages/MathCourse';
+import NotebookStats from './pages/NotebookStats';
+import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
@@ -25,6 +29,8 @@ import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
 import Schedule from './pages/Schedule';
 import SimuladosDigital from './pages/SimuladosDigital';
+import SolveNotebook from './pages/SolveNotebook';
+import SolveSimulation from './pages/SolveSimulation';
 import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
@@ -34,12 +40,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Notebooks from './pages/Notebooks';
-import CreateNotebook from './pages/CreateNotebook';
-import SolveNotebook from './pages/SolveNotebook';
-import NotebookStats from './pages/NotebookStats';
-import CreateSimulation from './pages/CreateSimulation';
-import SolveSimulation from './pages/SolveSimulation';
+import MyDoubts from './pages/MyDoubts';
 import __Layout from './Layout.jsx';
 
 
@@ -51,6 +52,8 @@ export const PAGES = {
     "ChatGPT": ChatGPT,
     "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
+    "CreateNotebook": CreateNotebook,
+    "CreateSimulation": CreateSimulation,
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
@@ -62,6 +65,8 @@ export const PAGES = {
     "Home": Home,
     "LogicCourse": LogicCourse,
     "MathCourse": MathCourse,
+    "NotebookStats": NotebookStats,
+    "Notebooks": Notebooks,
     "Notes": Notes,
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
@@ -71,6 +76,8 @@ export const PAGES = {
     "SavedContests": SavedContests,
     "Schedule": Schedule,
     "SimuladosDigital": SimuladosDigital,
+    "SolveNotebook": SolveNotebook,
+    "SolveSimulation": SolveSimulation,
     "Statistics": Statistics,
     "Studies": Studies,
     "StudyPlans": StudyPlans,
@@ -80,12 +87,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Notebooks": Notebooks,
-    "CreateNotebook": CreateNotebook,
-    "SolveNotebook": SolveNotebook,
-    "NotebookStats": NotebookStats,
-    "CreateSimulation": CreateSimulation,
-    "SolveSimulation": SolveSimulation,
+    "MyDoubts": MyDoubts,
 }
 
 export const pagesConfig = {
