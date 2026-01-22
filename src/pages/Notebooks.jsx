@@ -222,7 +222,20 @@ export default function Notebooks() {
                       </Badge>
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{notebook.name}</CardTitle>
+                  <div className="flex items-center gap-2 mb-1">
+                    <CardTitle className="text-lg">{notebook.name}</CardTitle>
+                    {notebook.difficulty && notebook.difficulty !== 'misto' && (
+                      <Badge className={
+                        notebook.difficulty === 'facil' 
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900' 
+                          : notebook.difficulty === 'medio'
+                          ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900'
+                          : 'bg-red-100 text-red-700 dark:bg-red-900'
+                      }>
+                        {notebook.difficulty === 'facil' ? 'Fácil' : notebook.difficulty === 'medio' ? 'Médio' : 'Difícil'}
+                      </Badge>
+                    )}
+                  </div>
                   {notebook.description && (
                     <CardDescription className="text-sm">
                       {notebook.description}
