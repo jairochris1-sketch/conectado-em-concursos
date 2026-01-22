@@ -1,9 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, FileText, Image, Moon, Sun } from 'lucide-react';
+import { X, FileText, Image, Moon, Sun, Download } from 'lucide-react';
+import { User } from '@/entities/User';
 
 export default function StudyMaterialViewer({ material, isOpen, onClose }) {
   const [darkMode, setDarkMode] = useState(false);
+  const [userPlan, setUserPlan] = useState('gratuito');
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const loadUserPlan = async () => {
+      try {
+        const user = await User.me();
+        setUserPlan(user?.current_plan || 'gratuito');
+      } catch (error) {
+        console.error('Erro ao carregar plano do usuário:', error);
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    if (isOpen) {
+      loadUserPlan();
+    }
+  }, [isOpen]);
+
+  const canDownload = userPlan === 'avancado';
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = material.file_url;
+    link.download = material.file_name || 'material';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   
   if (!isOpen || !material) return null;
 
@@ -25,6 +56,16 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
             </p>
           </div>
           <div className="flex items-center gap-2 ml-4">
+            <Button
+              variant={canDownload ? 'default' : 'outline'}
+              size="icon"
+              onClick={handleDownload}
+              disabled={!canDownload || isLoadingUser}
+              className={canDownload ? 'bg-green-600 hover:bg-green-700 text-white' : ''}
+              title={canDownload ? 'Baixar material' : 'Disponível apenas para plano Avançado'}
+            >
+              <Download className="w-5 h-5" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
