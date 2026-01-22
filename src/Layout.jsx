@@ -245,7 +245,9 @@ const featureAccess = {
   'Curso de Inglês': ['padrao', 'avancado'],
   'Curso de Matemática': ['padrao', 'avancado'],
   'Raciocínio Lógico': ['padrao', 'avancado'],
-  'Cadernos de Questões': ['padrao', 'avancado']
+  'Cadernos de Questões': ['padrao', 'avancado'],
+  'Simulado por Edital': ['padrao', 'avancado'],
+  'Fórum': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
