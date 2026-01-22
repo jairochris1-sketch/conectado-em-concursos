@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, Sparkles, X, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TrialCountdown({ daysRemaining, totalDays }) {
   const [isVisible, setIsVisible] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 60000); // 1 minuto
+
+    return () => clearTimeout(timer);
+  }, []);
   
   if (!daysRemaining || daysRemaining <= 0 || !isVisible) return null;
 
@@ -41,6 +49,12 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
             }`}
           >
             <div className="flex items-start gap-3">
+              <button
+                onClick={() => setIsVisible(false)}
+                className="p-1.5 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm flex-shrink-0"
+                aria-label="Fechar">
+                <X className="w-4 h-4 text-white" />
+              </button>
               <div
                 className={`p-2 rounded-xl shadow-lg ${
                   isLastDay
@@ -81,13 +95,6 @@ export default function TrialCountdown({ daysRemaining, totalDays }) {
                   <Shield className="w-4 h-4 text-white/80" />
                 </div>
               </div>
-              <button
-                onClick={() => setIsVisible(false)}
-                className="p-1.5 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm"
-                aria-label="Fechar"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
             </div>
           </div>
         </div>
