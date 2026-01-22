@@ -10,7 +10,9 @@ import {
   Calendar,
   DollarSign,
   Award,
-  TrendingUp
+  TrendingUp,
+  Clock,
+  ListChecks
 } from "lucide-react";
 
 export default function EditalDashboard({ edital }) {
@@ -137,6 +139,39 @@ export default function EditalDashboard({ edital }) {
                     <p className="text-xs text-gray-500 dark:text-gray-400">Inscrições</p>
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">
                       {data.informacoes_gerais.inscricoes}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {data.informacoes_gerais.data_prova && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <Clock className="w-5 h-5 text-red-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Data da Prova</p>
+                    <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                      {data.informacoes_gerais.data_prova}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {data.informacoes_gerais.tipo_questoes && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <ListChecks className="w-5 h-5 text-indigo-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipo de Questões</p>
+                    <p className="font-semibold text-gray-900 dark:text-white text-sm capitalize">
+                      {data.informacoes_gerais.tipo_questoes}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {data.informacoes_gerais.numero_questoes && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <FileText className="w-5 h-5 text-teal-600" />
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Número de Questões</p>
+                    <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                      {data.informacoes_gerais.numero_questoes}
                     </p>
                   </div>
                 </div>
