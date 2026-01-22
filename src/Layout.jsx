@@ -646,7 +646,11 @@ export default function Layout({ children, currentPageName }) {
                         <span>Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
+                <DropdownMenuContent 
+                  className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto" 
+                  style={{ backgroundColor: 'var(--primary-color)' }}
+                  align="center">
+                    <div className="grid grid-cols-2 gap-1 p-2">
                     {moreMenuItems.map((item) => {
                 const hasAccess = checkAccess(item.title, userPlan, isAdmin);
                 const isCurrentPage = location.pathname === item.url;
@@ -654,14 +658,13 @@ export default function Layout({ children, currentPageName }) {
                   <DropdownMenuItem key={item.title} asChild>
                                 <Link
                       to={hasAccess ? item.url : createPageUrl("Subscription")}
-                      className={`flex items-center justify-between w-full cursor-pointer text-sm`}
-                      style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}>
+                      className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
 
                                     <div className="flex items-center gap-2">
-                                        <item.icon style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                                        <span>{item.title}</span>
+                                        <item.icon className="w-4 h-4 flex-shrink-0" />
+                                        <span className="truncate">{item.title}</span>
                                     </div>
-                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
                                 </Link>
                             </DropdownMenuItem>);
 
@@ -669,23 +672,24 @@ export default function Layout({ children, currentPageName }) {
                     {isAdmin &&
               <>
                         <DropdownMenuItem asChild>
-                             <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm">
+                             <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
                                 <div className="flex items-center gap-2">
-                                    <Shield style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                                    <Shield className="w-4 h-4" />
                                     <span>Admin Geral</span>
                                 </div>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm">
+                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
                                 <div className="flex items-center gap-2">
-                                    <Shield style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                                    <Shield className="w-4 h-4" />
                                     <span>Admin Simulados Digital</span>
                                 </div>
                             </Link>
                         </DropdownMenuItem>
                         </>
               }
+                    </div>
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>
