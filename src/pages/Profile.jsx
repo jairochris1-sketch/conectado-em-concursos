@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User as UserIcon, Loader2, Users } from "lucide-react";
+import { Camera, Save, User as UserIcon, Loader2, Users, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import DeactivateAccountModal from "../components/profile/DeactivateAccountModal";
 // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
 // createPageUrl is no longer used, can be removed if not used elsewhere.
 
@@ -128,6 +129,7 @@ export default function ProfilePage() {
   const [following, setFollowing] = useState([]);
   const [showFollowersDialog, setShowFollowersDialog] = useState(false);
   const [showFollowingDialog, setShowFollowingDialog] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -519,8 +521,57 @@ export default function ProfilePage() {
                 )}
               </Button>
             </motion.div>
+
+            {/* Zona de Perigo - Desativar Conta */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader>
+                  <CardTitle className="text-red-600 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Zona de Perigo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {user?.deactivation_requested && (
+                    <div className="bg-orange-100 border border-orange-300 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-orange-900">
+                        <strong>Desativação agendada:</strong> Sua conta será desativada em breve. 
+                        Clique no botão abaixo para ver mais detalhes ou cancelar a solicitação.
+                      </p>
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Desativar Conta</h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Ao desativar sua conta, você terá 20 dias para mudar de ideia. 
+                      Após esse período, sua conta será desativada permanentemente.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => setShowDeactivateModal(true)}
+                    >
+                      <AlertTriangle className="w-4 h-4 mr-2" />
+                      {user?.deactivation_requested ? 'Ver Status da Desativação' : 'Desativar Conta'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </form>
+
+        <DeactivateAccountModal
+          isOpen={showDeactivateModal}
+          onOpenChange={setShowDeactivateModal}
+          user={user}
+          onDeactivationRequested={() => loadUserData()}
+          onCancelDeactivation={() => loadUserData()}
+        />
       </div>
     </div>
   );
