@@ -229,25 +229,33 @@ const pageNameTranslations = {
 };
 
 const featureAccess = {
-  'Área de Estudos': ['padrao', 'avancado'],
-  'Cronograma de Estudos': ['padrao', 'avancado'],
-  'Planos de Estudo': ['padrao', 'avancado'],
-  'ChatGPT': ['padrao', 'avancado'],
+  'Meu Painel': ['gratuito', 'padrao', 'avancado'],
+  'Questões': ['gratuito', 'padrao', 'avancado'],
+  'Área de Estudos': ['avancado'],
+  'Cronograma de Estudos': ['avancado'],
+  'Planos de Estudo': ['avancado'],
+  'ChatGPT': ['avancado'],
   'Criar Simulado': ['avancado'],
-  'Concursos Abertos': ['padrao', 'avancado'],
+  'Concursos Abertos': ['avancado'],
   'Planos': ['gratuito', 'padrao', 'avancado'],
   'Lousa Digital': ['avancado'],
-  'Minhas Anotações': ['padrao', 'avancado'],
-  'Simulados Digital': ['padrao', 'avancado'],
-  'Resumos': ['padrao', 'avancado'],
-  'Provas': ['padrao', 'avancado'],
+  'Minhas Anotações': ['avancado'],
+  'Simulados Digital': ['avancado'],
+  'Resumos': ['avancado'],
+  'Provas': ['avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
-  'Curso de Inglês': ['padrao', 'avancado'],
-  'Curso de Matemática': ['padrao', 'avancado'],
-  'Raciocínio Lógico': ['padrao', 'avancado'],
-  'Cadernos de Questões': ['padrao', 'avancado'],
-  'Simulado por Edital': ['padrao', 'avancado'],
-  'Fórum': ['padrao', 'avancado']
+  'Curso de Inglês': ['avancado'],
+  'Curso de Matemática': ['avancado'],
+  'Raciocínio Lógico': ['avancado'],
+  'Cadernos de Questões': ['avancado'],
+  'Simulado por Edital': ['avancado'],
+  'Fórum': ['avancado'],
+  'Favoritas': ['gratuito', 'padrao', 'avancado'],
+  'Relatórios': ['padrao', 'avancado'],
+  'Minhas Estatísticas': ['gratuito', 'padrao', 'avancado'],
+  'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
+  'Feed de Atividades': ['padrao', 'avancado'],
+  'Minhas Dúvidas': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
