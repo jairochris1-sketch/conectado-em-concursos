@@ -336,6 +336,8 @@ export default function Layout({ children, currentPageName }) {
         let userData = await User.me();
         setUser(userData);
 
+        const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
+
         // Verificar se é um usuário especial
         const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
         let userPlan = userData.current_plan || 'gratuito';
@@ -350,14 +352,9 @@ export default function Layout({ children, currentPageName }) {
           }
         }
 
-        // Verificar se há uma assinatura ativa que sobrescreve o plano do usuário
-        const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
-        if (activeSubscriptions.length > 0) {
-          userPlan = activeSubscriptions[0].plan;
-          userData = { ...userData, current_plan: userPlan };
-          setUser(userData);
-        }
 
+
+        userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
         const currentTitle = pageNameTranslations[currentPageName] || currentPageName;
