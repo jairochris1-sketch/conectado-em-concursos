@@ -73,13 +73,13 @@ const plans = [
     'Cronograma de Estudos',
     'Planos de Estudo',
     'ChatGPT',
-    'Curso de Inglês',
-    'Curso de Matemática',
-    'Raciocínio Lógico',
     'Simulado por Edital',
     'Fórum da Comunidade',
     'Lousa Digital',
-    'Minhas Dúvidas']
+    'Minhas Dúvidas',
+    'Curso de Inglês',
+    'Curso de Matemática',
+    'Raciocínio Lógico']
 
   },
   semiannual: {
@@ -101,9 +101,6 @@ const plans = [
     'Cronograma de Estudos',
     'Planos de Estudo',
     'Ranking de Usuários',
-    'Curso de Inglês',
-    'Curso de Matemática',
-    'Raciocínio Lógico',
     'Simulado por Edital',
     'Fórum da Comunidade',
     'Minhas Dúvidas',
@@ -112,7 +109,10 @@ const plans = [
     unavailableFeatures: [
     'ChatGPT',
     'Lousa Digital',
-    'Questões inéditas']
+    'Questões inéditas',
+    'Curso de Inglês',
+    'Curso de Matemática',
+    'Raciocínio Lógico']
 
   },
   annual: {
@@ -127,7 +127,10 @@ const plans = [
     'Estatísticas detalhadas',
     'Criação de Flashcards ilimitados',
     'Comentários da comunidade',
-    'Ranking de Usuários'],
+    'Ranking de Usuários',
+    'Curso de Inglês',
+    'Curso de Matemática',
+    'Raciocínio Lógico'],
 
     unavailableFeatures: [
     'Área de Estudos',
@@ -136,9 +139,6 @@ const plans = [
     'Cronograma de Estudos',
     'Planos de Estudo',
     'ChatGPT',
-    'Curso de Inglês',
-    'Curso de Matemática',
-    'Raciocínio Lógico',
     'Simulado por Edital',
     'Fórum da Comunidade',
     'Lousa Digital',
