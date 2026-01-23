@@ -311,6 +311,16 @@ export default function SubscriptionPage() {
     phone: ''
   });
   const [showPendingBanner, setShowPendingBanner] = useState(true);
+
+  useEffect(() => {
+    if (currentSubscription?.status === 'pending' && showPendingBanner) {
+      const timer = setTimeout(() => {
+        setShowPendingBanner(false);
+      }, 3 * 60 * 1000); // 3 minutos
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentSubscription, showPendingBanner]);
   const [loading, setLoading] = useState(true);
   const [cpfError, setCpfError] = useState('');
 
