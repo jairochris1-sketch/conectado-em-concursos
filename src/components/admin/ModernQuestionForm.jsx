@@ -133,7 +133,8 @@ export default function ModernQuestionForm({
       correct_answer: '',
       edital_url: '',
       prova_url: '',
-      gabarito_url: ''
+      gabarito_url: '',
+      exam_cover_image: ''
     },
   });
 
