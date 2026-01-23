@@ -123,9 +123,9 @@ const plans = [
 }];
 
 
-const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError, isInTrial }) => {
+const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError }) => {
   const isCurrentPlan = currentPlan?.plan === plan.key && currentPlan?.status === 'active';
-  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isLoading || isInTrial;
+  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isLoading;
 
   const getCurrentPricing = () => {
     switch (billingCycle) {
@@ -262,8 +262,6 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Processando...
               </> :
-            isInTrial && plan.key !== 'gratuito' ?
-            'Disponível após o teste' :
             getButtonText()
             }
           </Button>
@@ -314,7 +312,6 @@ export default function SubscriptionPage() {
   });
   const [showPendingBanner, setShowPendingBanner] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [trialInfo, setTrialInfo] = useState(null);
   const [cpfError, setCpfError] = useState('');
 
   const validateCPF = (cpf) => {
@@ -372,29 +369,6 @@ export default function SubscriptionPage() {
         const userData = await User.me();
         setUser(userData);
 
-        if (userData.current_plan === 'avancado' && userData.trial_start_date) {
-          const activeSubscriptions = await Subscription.filter({
-            user_email: userData.email,
-            status: 'active'
-          });
-
-          if (activeSubscriptions.length === 0) {
-            const trialStartDate = new Date(userData.trial_start_date);
-            const now = new Date();
-            const diffTime = now.getTime() - trialStartDate.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const trialDuration = 5;
-            const daysRemaining = Math.ceil(trialDuration - diffDays);
-
-            if (daysRemaining > 0) {
-              setTrialInfo({
-                daysRemaining,
-                totalDays: trialDuration
-              });
-            }
-          }
-        }
-
         const subscriptions = await Subscription.filter({ user_email: userData.email });
         if (subscriptions.length > 0) {
           setCurrentSubscription(subscriptions[0]);
@@ -419,18 +393,6 @@ export default function SubscriptionPage() {
 
   const handleSubscribe = async (planKey, cycle) => {
     if (planKey === 'gratuito') return;
-
-    if (trialInfo && trialInfo.daysRemaining > 0) {
-      const confirmSubscription = confirm(
-        `Você ainda tem ${trialInfo.daysRemaining} dias de teste gratuito do Plano Avançado!\n\n` +
-        `Ao assinar agora, você perderá o restante do seu período de teste.\n\n` +
-        `Deseja continuar com a assinatura mesmo assim?`
-      );
-
-      if (!confirmSubscription) {
-        return;
-      }
-    }
 
     const missing = checkMissingData(user);
 
@@ -827,66 +789,6 @@ export default function SubscriptionPage() {
           </motion.div>
         }
 
-        {trialInfo && trialInfo.daysRemaining > 0 &&
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8">
-
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-400 p-[2px] shadow-2xl">
-              <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 rounded-2xl p-6">
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                      <Clock className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow-md">
-                      <span className="text-white text-xs font-bold">✓</span>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-orange-700">
-                        Período de Teste Ativo!
-                      </h3>
-                      <span className="text-2xl">🎉</span>
-                    </div>
-                    <p className="text-amber-900 mb-4 text-base leading-relaxed">
-                      Você tem <span className="font-bold text-orange-600 text-lg">{trialInfo.daysRemaining} {trialInfo.daysRemaining === 1 ? 'dia restante' : 'dias restantes'}</span> de acesso gratuito 
-                      a todas as funcionalidades do <span className="font-bold text-amber-800">Plano Avançado</span>!
-                    </p>
-                    <div className="relative w-full bg-amber-200/50 rounded-full h-3 mb-4 overflow-hidden shadow-inner">
-                      <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(trialInfo.totalDays - trialInfo.daysRemaining) / trialInfo.totalDays * 100}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 h-3 rounded-full shadow-md" />
-
-                    </div>
-                    <div className="flex items-start gap-2 bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-amber-200">
-                      <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs font-bold">!</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-amber-800 leading-relaxed mb-3">
-                          <strong className="text-amber-900">Sua Aprovação Começa Aqui:</strong> O Melhor e Mais Organizado Site para Concursos Públicos.
-                        </p>
-                        <a 
-                          href="https://www.instagram.com/conectadoemconcursos/" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-semibold rounded-lg shadow-md transition-all duration-200 hover:scale-105">
-                          📸 Siga nosso Instagram
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        }
-
         <div className="text-center mb-16">
           <motion.h1
             initial={{ opacity: 0, y: -30 }}
@@ -966,8 +868,7 @@ export default function SubscriptionPage() {
             onCancel={handleCancelSubscription}
             isCancelling={isCancelling}
             billingCycle={billingCycle}
-            cancelError={cancelError}
-            isInTrial={trialInfo && trialInfo.daysRemaining > 0} />
+            cancelError={cancelError} />
 
           )}
         </div>

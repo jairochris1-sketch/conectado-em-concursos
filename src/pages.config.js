@@ -26,6 +26,7 @@ import NotebookStats from './pages/NotebookStats';
 import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
 import PerformanceReports from './pages/PerformanceReports';
+import Profile from './pages/Profile';
 import Questions from './pages/Questions';
 import Ranking from './pages/Ranking';
 import ResetPassword from './pages/ResetPassword';
@@ -44,7 +45,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +77,7 @@ export const PAGES = {
     "Notebooks": Notebooks,
     "Notes": Notes,
     "PerformanceReports": PerformanceReports,
+    "Profile": Profile,
     "Questions": Questions,
     "Ranking": Ranking,
     "ResetPassword": ResetPassword,
@@ -95,7 +96,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Profile": Profile,
 }
 
 export const pagesConfig = {

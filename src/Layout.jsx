@@ -286,9 +286,7 @@ export default function Layout({ children, currentPageName }) {
   const [showProvaUploader, setShowProvaUploader] = React.useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [trialNotification, setTrialNotification] = useState({ show: false, days: 0 });
-  const [showTrialBanner, setShowTrialBanner] = useState(true);
-  const [showLastDayModal, setShowLastDayModal] = useState(false);
+
 
   const [sidebarStats, setSidebarStats] = React.useState({
     streak: 0,
@@ -296,7 +294,6 @@ export default function Layout({ children, currentPageName }) {
     accuracy: 0
   });
   const [userStats, setUserStats] = React.useState(null);
-  const [trialInfo, setTrialInfo] = useState(null);
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
@@ -355,49 +352,7 @@ export default function Layout({ children, currentPageName }) {
           }
         }
 
-        // NÃO ativa teste automaticamente - usuário deve escolher manualmente
 
-        if (activeSubscriptions.length === 0 && userData.trial_start_date && userData.current_plan === 'avancado') {
-          const trialStartDate = new Date(userData.trial_start_date);
-          const now = new Date();
-          const diffTime = now.getTime() - trialStartDate.getTime();
-          const diffDays = diffTime / (1000 * 60 * 60 * 24);
-          const trialDuration = 5;
-          const daysRemaining = trialDuration - diffDays;
-
-          if (daysRemaining <= 0) {
-            console.log("Trial expired. Downgrading plan to 'gratuito'.");
-            await User.updateMyUserData({ current_plan: 'gratuito' });
-            userData = { ...userData, current_plan: 'gratuito' };
-            setUser(userData);
-            setTrialNotification({ show: false, days: 0 });
-            setTrialInfo(null);
-          } else if (daysRemaining > 0 && daysRemaining <= 3) {
-            setTrialNotification({ show: true, days: Math.ceil(daysRemaining) });
-            setTrialInfo({
-              daysRemaining: Math.ceil(daysRemaining),
-              totalDays: trialDuration
-            });
-
-            // Mostrar modal no último dia (apenas uma vez por sessão)
-            if (Math.ceil(daysRemaining) === 1) {
-              const hasSeenModal = sessionStorage.getItem('lastDayModalSeen');
-              if (!hasSeenModal) {
-                setShowLastDayModal(true);
-                sessionStorage.setItem('lastDayModalSeen', 'true');
-              }
-            }
-          } else {
-            setTrialNotification({ show: false, days: 0 });
-            setTrialInfo({
-              daysRemaining: Math.ceil(daysRemaining),
-              totalDays: trialDuration
-            });
-          }
-        } else {
-          setTrialNotification({ show: false, days: 0 });
-          setTrialInfo(null);
-        }
 
         userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
@@ -753,56 +708,6 @@ export default function Layout({ children, currentPageName }) {
 
       <PlanAdvantagesBlock />
 
-      <AnimatePresence>
-        {showTrialBanner && trialNotification.show &&
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="bg-gradient-to-r from-amber-50 to-yellow-50 border-t-4 border-amber-400 shadow-md relative z-30 print-hide">
-
-            <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100">
-                    <AlertTriangle className="w-5 h-5 text-amber-600" />
-                  </div>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm md:text-base font-bold text-amber-900 mb-1">
-                    🎯 Período de Teste Ativo!
-                  </h3>
-                  <p className="text-xs md:text-sm text-amber-800 mb-2">
-                    Você tem <strong className="text-amber-900">{trialNotification.days} {trialNotification.days > 1 ? 'dias restantes' : 'dia restante'}</strong> de acesso gratuito a todas as funcionalidades do <strong>Plano Avançado</strong>.
-                  </p>
-                  <p className="text-xs text-amber-700 mb-3">
-                    Aproveite para explorar todos os recursos! Após o teste, você poderá assinar e manter seu progresso.
-                  </p>
-                  <Link to={createPageUrl('Subscription')}>
-                    <Button
-                    size="sm"
-                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold">
-
-                      Assinar Agora
-                    </Button>
-                  </Link>
-                </div>
-
-                <button
-                onClick={() => setShowTrialBanner(false)}
-                className="flex-shrink-0 p-1 rounded-lg text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
-                aria-label="Fechar aviso">
-
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        }
-      </AnimatePresence>
-
       <main className="flex-1 flex flex-col min-w-0" id="main-content">
         <header className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-40 print-hide">
             <div className="flex items-center justify-between">
@@ -878,19 +783,6 @@ export default function Layout({ children, currentPageName }) {
           </motion.div>
         }
       </AnimatePresence>
-
-      {trialInfo && trialInfo.daysRemaining > 0 &&
-      <TrialCountdown
-        daysRemaining={trialInfo.daysRemaining}
-        totalDays={trialInfo.totalDays} />
-
-      }
-
-      <LastDayModal
-        isOpen={showLastDayModal}
-        onClose={() => setShowLastDayModal(false)}
-        daysRemaining={trialInfo?.daysRemaining || 0} />
-
 
       <ChatWidget />
       </div>);
