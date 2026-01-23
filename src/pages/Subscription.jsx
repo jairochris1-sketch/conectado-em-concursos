@@ -802,7 +802,30 @@ export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        {currentSubscription?.status === 'pending' && showPendingBanner &&
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 p-4 bg-yellow-900/50 border border-yellow-700 rounded-lg flex items-center justify-between gap-4">
 
+            <div className="flex items-center gap-4">
+              <Clock className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-yellow-300">Aguardando Confirmação de Pagamento</h3>
+                <p className="text-sm text-yellow-200">
+                  Sua assinatura do plano <strong>{currentSubscription.plan}</strong> será ativada assim que o pagamento for processado.
+                </p>
+              </div>
+            </div>
+            <button
+            onClick={() => setShowPendingBanner(false)}
+            className="p-1 rounded-full hover:bg-white/10 transition-colors"
+            aria-label="Fechar aviso">
+
+                <X className="w-5 h-5 text-yellow-300" />
+            </button>
+          </motion.div>
+        }
 
         {trialInfo && trialInfo.daysRemaining > 0 &&
         <motion.div
