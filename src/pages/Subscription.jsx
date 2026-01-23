@@ -123,9 +123,9 @@ const plans = [
 }];
 
 
-const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError }) => {
+const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError, isInTrial }) => {
   const isCurrentPlan = currentPlan?.plan === plan.key && currentPlan?.status === 'active';
-  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isLoading;
+  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isLoading || isInTrial;
 
   const getCurrentPricing = () => {
     switch (billingCycle) {
@@ -262,7 +262,8 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Processando...
               </> :
-
+            isInTrial && plan.key !== 'gratuito' ?
+            'Disponível após o teste' :
             getButtonText()
             }
           </Button>
@@ -957,7 +958,8 @@ export default function SubscriptionPage() {
             onCancel={handleCancelSubscription}
             isCancelling={isCancelling}
             billingCycle={billingCycle}
-            cancelError={cancelError} />
+            cancelError={cancelError}
+            isInTrial={trialInfo && trialInfo.daysRemaining > 0} />
 
           )}
         </div>

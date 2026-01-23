@@ -37,6 +37,7 @@ import SimuladosDigital from './pages/SimuladosDigital';
 import SolveNotebook from './pages/SolveNotebook';
 import SolveSimulation from './pages/SolveSimulation';
 import Statistics from './pages/Statistics';
+import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
 import ViewStudyPlan from './pages/ViewStudyPlan';
@@ -44,7 +45,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Studies from './pages/Studies';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +88,7 @@ export const PAGES = {
     "SolveNotebook": SolveNotebook,
     "SolveSimulation": SolveSimulation,
     "Statistics": Statistics,
+    "Studies": Studies,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
     "ViewStudyPlan": ViewStudyPlan,
@@ -95,7 +96,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Studies": Studies,
 }
 
 export const pagesConfig = {
