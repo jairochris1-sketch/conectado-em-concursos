@@ -675,7 +675,7 @@ export default function ModernQuestionForm({
 
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold mb-4">Arquivos para Download (Opcional)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edital_url">URL do Edital</Label>
                 <Input
@@ -699,6 +699,15 @@ export default function ModernQuestionForm({
                   placeholder="https://exemplo.com/gabarito.pdf"
                   className="mt-1"
                 />
+              </div>
+              <div>
+                <Label htmlFor="exam_cover_image">URL da Capa/Logo da Prova</Label>
+                <Input
+                  {...register("exam_cover_image")}
+                  placeholder="https://exemplo.com/logo.png"
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-500 mt-1">Esta imagem aparecerá ao lado do nome da prova na lista</p>
               </div>
             </div>
           </div>
