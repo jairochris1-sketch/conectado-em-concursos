@@ -36,12 +36,9 @@ export default function WelcomePage() {
   const handleContinue = async () => {
     setIsLoading(true);
     try {
-      // Ativa o período de teste de 10 dias no plano avançado
       await User.updateMyUserData({ 
         onboarding_complete: true,
-        current_plan: 'avancado', // Set the plan to 'avancado' for the trial
-        trial_start_date: new Date().toISOString(), // Record the trial start date
-        trial_used: true // Mark trial as used
+        current_plan: 'gratuito'
       });
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
