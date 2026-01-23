@@ -43,7 +43,8 @@ export default function UserManager() {
     role_type: 'leitor',
     status: 'active',
     suspended_until: '',
-    ban_reason: ''
+    ban_reason: '',
+    current_plan: 'gratuito'
   });
 
   useEffect(() => {
@@ -79,7 +80,8 @@ export default function UserManager() {
       role_type: user.role_type || 'leitor',
       status: user.status || 'active',
       suspended_until: user.suspended_until || '',
-      ban_reason: user.ban_reason || ''
+      ban_reason: user.ban_reason || '',
+      current_plan: user.current_plan || 'gratuito'
     });
     setShowEditDialog(true);
   };
@@ -415,6 +417,26 @@ export default function UserManager() {
                   <SelectItem value="banned">Banido</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label>Plano de Assinatura</Label>
+              <Select 
+                value={editForm.current_plan} 
+                onValueChange={(value) => setEditForm({...editForm, current_plan: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gratuito">Gratuito</SelectItem>
+                  <SelectItem value="padrao">Padrão</SelectItem>
+                  <SelectItem value="avancado">Avançado</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">
+                Alterar o plano do usuário manualmente
+              </p>
             </div>
 
             {editForm.status === 'suspended' && (
