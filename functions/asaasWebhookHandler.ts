@@ -6,123 +6,108 @@ Deno.serve(async (req) => {
         
         const webhookData = await req.json();
         
-        // Validação do webhook token (Asaas envia no header "Asaas-Access-Token")
-        const asaasWebhookSecret = Deno.env.get("ASAAS_WEBHOOK_SECRET");
-        const receivedToken = req.headers.get("Asaas-Access-Token") || req.headers.get("asaas-access-token");
-
-        if (asaasWebhookSecret && receivedToken !== asaasWebhookSecret) {
-            console.error("Token de webhook inválido. Recebido:", receivedToken ? "***" : "null");
-            return Response.json({ error: "Acesso não autorizado" }, { status: 401 });
-        }
-        console.log("Webhook recebido:", JSON.stringify(webhookData, null, 2));
+        console.log("Webhook recebido - Event:", webhookData.event);
 
         const event = webhookData.event;
         const payment = webhookData.payment;
         const subscriptionData = webhookData.subscription;
 
-        // Obter ID da assinatura (pode vir do payment ou do subscription)
+        // Obter ID da assinatura
         const asaasSubscriptionId = subscriptionData?.id || payment?.subscription;
 
         if (!asaasSubscriptionId) {
             console.log("Evento sem ID de assinatura, ignorando");
-            return Response.json({ message: "Evento ignorado - sem ID de assinatura" });
+            return Response.json({ success: true, message: "Evento ignorado" }, { status: 200 });
         }
 
-        // Buscar assinatura no banco de dados
+        // Para SUBSCRIPTION_CREATED, responder imediatamente
+        if (event === "SUBSCRIPTION_CREATED") {
+            console.log("SUBSCRIPTION_CREATED recebido - respondendo imediatamente");
+            return Response.json({ success: true, message: "Assinatura criada" }, { status: 200 });
+        }
+
+        // Buscar assinatura no banco
         const subscriptions = await base44.asServiceRole.entities.Subscription.filter({
             asaas_subscription_id: asaasSubscriptionId,
         });
 
         if (subscriptions.length === 0) {
-            console.warn(`Assinatura ${asaasSubscriptionId} não encontrada no banco de dados`);
-            return Response.json({ error: "Assinatura não encontrada" }, { status: 404 });
+            console.warn(`Assinatura ${asaasSubscriptionId} não encontrada`);
+            return Response.json({ success: true, message: "Assinatura não encontrada" }, { status: 200 });
         }
 
-        const internalSubscription = subscriptions[0];
-        let newStatus = internalSubscription.status;
-        let updateData = {};
+        const subscription = subscriptions[0];
+        let newStatus = subscription.status;
+        let shouldUpdateUser = false;
 
         // Processar eventos
         switch (event) {
             case "PAYMENT_CONFIRMED":
             case "PAYMENT_RECEIVED":
             case "PAYMENT_APPROVED":
-                console.log("Pagamento confirmado/recebido/aprovado");
+                console.log("Pagamento confirmado - ativando plano");
                 newStatus = "active";
-                updateData = {
-                    status: newStatus,
-                    next_payment_date: payment?.dueDate || payment?.originalDueDate || internalSubscription.next_payment_date,
-                };
+                shouldUpdateUser = true;
                 break;
 
             case "PAYMENT_OVERDUE":
-                console.log("Pagamento atrasado");
                 newStatus = "overdue";
-                updateData = { status: newStatus };
+                shouldUpdateUser = true;
                 break;
 
             case "PAYMENT_DELETED":
             case "PAYMENT_REFUNDED":
-                console.log("Pagamento deletado/reembolsado");
                 newStatus = "cancelled";
-                updateData = { status: newStatus };
-                break;
-
-            case "SUBSCRIPTION_CREATED":
-                console.log("Assinatura criada no Asaas");
+                shouldUpdateUser = true;
                 break;
 
             case "SUBSCRIPTION_UPDATED":
-                console.log("Assinatura atualizada no Asaas");
-                if (subscriptionData?.status) {
-                    const asaasStatus = subscriptionData.status;
-                    if (asaasStatus === "ACTIVE") {
-                        newStatus = "active";
-                    } else if (asaasStatus === "EXPIRED" || asaasStatus === "INACTIVE") {
-                        newStatus = "inactive";
-                    }
-                    updateData = { status: newStatus };
+                if (subscriptionData?.status === "ACTIVE") {
+                    newStatus = "active";
+                    shouldUpdateUser = true;
+                } else if (subscriptionData?.status === "EXPIRED" || subscriptionData?.status === "INACTIVE") {
+                    newStatus = "inactive";
+                    shouldUpdateUser = true;
                 }
                 break;
 
             default:
-                console.log(`Evento não tratado: ${event}`);
-                return Response.json({ message: `Evento ${event} ignorado` });
+                console.log(`Evento ${event} ignorado`);
+                return Response.json({ success: true, message: "Evento ignorado" }, { status: 200 });
         }
 
-        // Atualizar assinatura se houver mudanças
-        if (Object.keys(updateData).length > 0) {
-            console.log(`Atualizando assinatura de ${internalSubscription.status} para ${newStatus}`);
+        // Atualizar apenas se o status mudou
+        if (newStatus !== subscription.status) {
+            console.log(`Atualizando status: ${subscription.status} -> ${newStatus}`);
             
-            await base44.asServiceRole.entities.Subscription.update(
-                internalSubscription.id,
-                updateData
-            );
+            await base44.asServiceRole.entities.Subscription.update(subscription.id, {
+                status: newStatus,
+                next_payment_date: payment?.dueDate || subscription.next_payment_date,
+            });
 
-            // Atualizar plano do usuário se o status mudou
-            if (internalSubscription.status !== newStatus) {
+            // Atualizar plano do usuário
+            if (shouldUpdateUser) {
                 const users = await base44.asServiceRole.entities.User.filter({ 
-                    email: internalSubscription.user_email 
+                    email: subscription.user_email 
                 });
 
                 if (users.length > 0) {
-                    const userToUpdate = users[0];
-                    const newPlan = newStatus === 'active' ? internalSubscription.plan : 'gratuito';
+                    const planToSet = newStatus === 'active' ? subscription.plan : 'gratuito';
+                    console.log(`Atualizando plano do usuário para: ${planToSet}`);
                     
-                    console.log(`Atualizando plano do usuário ${userToUpdate.email} para ${newPlan}`);
-                    
-                    await base44.asServiceRole.entities.User.update(userToUpdate.id, {
-                        current_plan: newPlan
+                    await base44.asServiceRole.entities.User.update(users[0].id, {
+                        current_plan: planToSet
                     });
                 }
             }
         }
 
         return Response.json({ 
-            message: "Webhook processado com sucesso",
+            success: true,
+            message: "Webhook processado",
             event: event,
             status: newStatus
-        });
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Erro ao processar webhook:", error);
