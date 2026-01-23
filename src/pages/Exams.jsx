@@ -89,6 +89,9 @@ export default function Exams() {
         const examsList = Object.values(groupedExams).map((examQuestions) => {
         const firstQuestion = examQuestions[0];
         const subjects = [...new Set(examQuestions.map((q) => q.subject))];
+        
+        // Buscar a primeira imagem disponível em todas as questões do exame
+        const coverImage = examQuestions.find(q => q.exam_cover_image)?.exam_cover_image || null;
 
         return {
           id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
@@ -98,7 +101,7 @@ export default function Exams() {
           cargo: firstQuestion.cargo || 'Cargo não especificado',
           subjects: subjects,
           question_count: examQuestions.length,
-          cover_image: firstQuestion.exam_cover_image
+          cover_image: coverImage
         };
         }).sort((a, b) => b.year - a.year || a.exam_name.localeCompare(b.exam_name));
 
