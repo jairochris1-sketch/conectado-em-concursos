@@ -246,37 +246,9 @@ export default function ModernQuestionForm({
 
       if (questionToEdit) {
         await Question.update(questionToEdit.id, finalData);
-
-        // Log de auditoria
-        await base44.asServiceRole.entities.AuditLog.create({
-          admin_email: user.email,
-          admin_name: user.full_name,
-          action_type: 'question_updated',
-          entity_type: 'Question',
-          entity_id: questionToEdit.id,
-          entity_description: finalData.statement?.substring(0, 100) || 'Questão atualizada',
-          changes: {
-            explanation_updated: finalData.explanation !== questionToEdit.explanation,
-            explanation_author: finalData.explanation_author,
-            explanation_author_subject: finalData.explanation_author_subject
-          }
-        });
-
         onQuestionSaved("Questão atualizada com sucesso!");
       } else {
-        const newQuestion = await Question.create(finalData);
-
-        // Log de auditoria
-        await base44.asServiceRole.entities.AuditLog.create({
-          admin_email: user.email,
-          admin_name: user.full_name,
-          action_type: 'question_created',
-          entity_type: 'Question',
-          entity_id: newQuestion.id,
-          entity_description: finalData.statement?.substring(0, 100) || 'Nova questão',
-          notes: `Banca: ${finalData.institution}, Disciplina: ${finalData.subject}`
-        });
-
+        await Question.create(finalData);
         onQuestionSaved("Questão criada com sucesso!");
       }
     } catch (error) {
