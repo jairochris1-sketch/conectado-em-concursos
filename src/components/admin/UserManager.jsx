@@ -15,6 +15,7 @@ import { Search, Shield, Ban, Clock, UserCheck, Eye, AlertTriangle, CheckCircle2
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
+import { sanitizeUserData } from '@/components/security/dataValidator';
 
 const roleLabels = {
   admin: { label: 'Administrador', color: 'bg-red-100 text-red-800' },
@@ -94,6 +95,16 @@ export default function UserManager() {
 
   const handleSaveUser = async () => {
     try {
+      const currentUser = await base44.auth.me();
+      const changes = {};
+      
+      // Detectar mudanças
+      Object.keys(editForm).forEach(key => {
+        if (editForm[key] !== selectedUser[key]) {
+          changes[key] = { old: selectedUser[key], new: editForm[key] };
+        }
+      });
+
       // Verificar se o plano está sendo alterado
       if (editForm.current_plan !== selectedUser.current_plan) {
         // Buscar subscriptions ativas do usuário
@@ -120,9 +131,34 @@ export default function UserManager() {
             }
           }
         }
+
+        // Log de auditoria para mudança de plano
+        await base44.asServiceRole.entities.AuditLog.create({
+          action_type: 'plan_changed_manually',
+          performed_by: currentUser.email,
+          target_user: selectedUser.email,
+          changes: JSON.stringify(changes),
+          ip_address: 'admin_panel',
+          description: `Plano alterado de "${selectedUser.current_plan}" para "${editForm.current_plan}" pelo admin ${currentUser.full_name}`
+        });
       }
 
-      await User.update(selectedUser.id, editForm);
+      // Sanitiza dados antes de salvar
+      const sanitizedData = sanitizeUserData(editForm);
+      await User.update(selectedUser.id, sanitizedData);
+
+      // Log de auditoria geral
+      if (Object.keys(changes).length > 0) {
+        await base44.asServiceRole.entities.AuditLog.create({
+          action_type: 'user_updated_by_admin',
+          performed_by: currentUser.email,
+          target_user: selectedUser.email,
+          changes: JSON.stringify(changes),
+          ip_address: 'admin_panel',
+          description: `Usuário ${selectedUser.full_name} atualizado pelo admin ${currentUser.full_name}`
+        });
+      }
+
       toast.success('Usuário atualizado com sucesso!');
       setShowEditDialog(false);
       loadUsers();
