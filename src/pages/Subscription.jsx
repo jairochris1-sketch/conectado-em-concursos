@@ -778,14 +778,14 @@ export default function SubscriptionPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-4 bg-yellow-900/50 border border-yellow-700 rounded-lg flex items-center justify-between gap-4">
+          className="mb-8 p-4 bg-blue-600 border border-blue-500 rounded-lg flex items-center justify-between gap-4">
 
             <div className="flex items-center gap-4">
-              <Clock className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+              <Clock className="w-6 h-6 text-blue-100 flex-shrink-0" />
               <div>
-                <h3 className="font-bold text-yellow-300">Aguardando Confirmação de Pagamento</h3>
-                <p className="text-sm text-yellow-200">
-                  Sua assinatura do plano <strong>{currentSubscription.plan}</strong> será ativada assim que o pagamento for processado.
+                <h3 className="font-bold text-white">Aguardando Confirmação de Pagamento</h3>
+                <p className="text-sm text-blue-100">
+                  Se você já realizou o pagamento, aguarde! Em breve será feita a confirmação e você terá acesso liberado ao plano <strong>{currentSubscription.plan}</strong> escolhido.
                 </p>
               </div>
             </div>
@@ -794,7 +794,7 @@ export default function SubscriptionPage() {
             className="p-1 rounded-full hover:bg-white/10 transition-colors"
             aria-label="Fechar aviso">
 
-                <X className="w-5 h-5 text-yellow-300" />
+                <X className="w-5 h-5 text-blue-100" />
             </button>
           </motion.div>
         }
