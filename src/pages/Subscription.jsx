@@ -867,10 +867,18 @@ export default function SubscriptionPage() {
                       <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-white text-xs font-bold">!</span>
                       </div>
-                      <p className="text-sm text-amber-800 leading-relaxed">
-                        <strong className="text-amber-900">Dica:</strong> Aproveite para explorar todos os recursos! 
-                        Você pode assinar a qualquer momento, mas recomendamos aguardar o fim do teste gratuito.
-                      </p>
+                      <div className="flex-1">
+                        <p className="text-sm text-amber-800 leading-relaxed mb-3">
+                          <strong className="text-amber-900">Sua Aprovação Começa Aqui:</strong> O Melhor e Mais Organizado Site para Concursos Públicos.
+                        </p>
+                        <a 
+                          href="https://www.instagram.com/conectadoemconcursos/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-semibold rounded-lg shadow-md transition-all duration-200 hover:scale-105">
+                          📸 Siga nosso Instagram
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
