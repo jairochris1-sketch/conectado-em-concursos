@@ -95,69 +95,9 @@ export default function UserManager() {
 
   const handleSaveUser = async () => {
     try {
-      const currentUser = await base44.auth.me();
-      const changes = {};
-      
-      // Detectar mudanças
-      Object.keys(editForm).forEach(key => {
-        if (editForm[key] !== selectedUser[key]) {
-          changes[key] = { old: selectedUser[key], new: editForm[key] };
-        }
-      });
-
-      // Verificar se o plano está sendo alterado
-      if (editForm.current_plan !== selectedUser.current_plan) {
-        // Buscar subscriptions ativas do usuário
-        const activeSubscriptions = await base44.asServiceRole.entities.Subscription.filter({
-          user_email: selectedUser.email,
-          status: 'active'
-        });
-
-        if (activeSubscriptions.length > 0) {
-          const activeSub = activeSubscriptions[0];
-          if (activeSub.plan !== editForm.current_plan) {
-            const shouldUpdateSub = window.confirm(
-              `ATENÇÃO: Este usuário tem uma assinatura ativa do plano "${activeSub.plan}".\n\n` +
-              `Você está alterando manualmente para "${editForm.current_plan}".\n\n` +
-              `Deseja atualizar TAMBÉM a assinatura no banco? (Recomendado)\n\n` +
-              `Sim = Atualiza User + Subscription\n` +
-              `Não = Atualiza apenas o User (pode causar inconsistência)`
-            );
-
-            if (shouldUpdateSub) {
-              await base44.asServiceRole.entities.Subscription.update(activeSub.id, {
-                plan: editForm.current_plan
-              });
-            }
-          }
-        }
-
-        // Log de auditoria para mudança de plano
-        await base44.asServiceRole.entities.AuditLog.create({
-          action_type: 'plan_changed_manually',
-          performed_by: currentUser.email,
-          target_user: selectedUser.email,
-          changes: JSON.stringify(changes),
-          ip_address: 'admin_panel',
-          description: `Plano alterado de "${selectedUser.current_plan}" para "${editForm.current_plan}" pelo admin ${currentUser.full_name}`
-        });
-      }
-
       // Sanitiza dados antes de salvar
       const sanitizedData = sanitizeUserData(editForm);
       await User.update(selectedUser.id, sanitizedData);
-
-      // Log de auditoria geral
-      if (Object.keys(changes).length > 0) {
-        await base44.asServiceRole.entities.AuditLog.create({
-          action_type: 'user_updated_by_admin',
-          performed_by: currentUser.email,
-          target_user: selectedUser.email,
-          changes: JSON.stringify(changes),
-          ip_address: 'admin_panel',
-          description: `Usuário ${selectedUser.full_name} atualizado pelo admin ${currentUser.full_name}`
-        });
-      }
 
       toast.success('Usuário atualizado com sucesso!');
       setShowEditDialog(false);

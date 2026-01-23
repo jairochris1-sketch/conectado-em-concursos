@@ -188,9 +188,10 @@ const plans = [
 }];
 
 
-const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError }) => {
+const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError }) => {
   const isCurrentPlan = currentPlan?.plan === plan.key && currentPlan?.status === 'active';
-  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isLoading;
+  const isUserCurrentPlan = currentUserPlan === plan.key;
+  const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isUserCurrentPlan || isLoading;
 
   const getCurrentPricing = () => {
     switch (billingCycle) {
@@ -243,7 +244,7 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
   };
 
   const getButtonText = () => {
-    if (isCurrentPlan) return 'Plano Atual';
+    if (isCurrentPlan || isUserCurrentPlan) return 'Plano Atual';
     if (plan.key === 'gratuito') return 'Grátis';
     return plan.buttonText;
   };
@@ -267,7 +268,7 @@ const PlanCard = ({ plan, currentPlan, onSubscribe, isLoading, loadingPlan, onCa
 
         <CardHeader className={`text-center p-6 ${headerColors[plan.color]}`}>
           <CardTitle className="text-2xl font-bold uppercase tracking-wider">{plan.name}</CardTitle>
-          {isCurrentPlan &&
+          {(isCurrentPlan || isUserCurrentPlan) &&
           <div className="mt-2">
               <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
                 Ativo
@@ -937,6 +938,7 @@ export default function SubscriptionPage() {
             key={plan.name}
             plan={plan}
             currentPlan={currentSubscription}
+            currentUserPlan={user?.current_plan}
             onSubscribe={handleSubscribe}
             isLoading={isSubmitting}
             loadingPlan={loadingPlan}
