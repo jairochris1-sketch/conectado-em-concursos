@@ -1,9 +1,39 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import moment from 'npm:moment';
 
+// Rate limiting simples em memória
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minuto
+const MAX_REQUESTS = 30; // 30 requests por minuto
+
+function checkRateLimit(identifier) {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier) || { count: 0, resetTime: now + RATE_LIMIT_WINDOW };
+  
+  if (now > record.resetTime) {
+    record.count = 0;
+    record.resetTime = now + RATE_LIMIT_WINDOW;
+  }
+  
+  record.count++;
+  rateLimitMap.set(identifier, record);
+  
+  return record.count <= MAX_REQUESTS;
+}
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
+        
+        // Rate limiting baseado no IP
+        const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+        
+        if (!checkRateLimit(clientIP)) {
+            console.warn(`⚠️ Rate limit excedido para IP: ${clientIP}`);
+            return Response.json({ 
+                error: 'Rate limit exceeded. Try again later.' 
+            }, { status: 429 });
+        }
         
         const webhookData = await req.json();
         
