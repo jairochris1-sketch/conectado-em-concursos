@@ -60,7 +60,7 @@ export default function Questions() {
         return;
     }
     try {
-      const questionsData = await Question.list("-created_date", 500);
+      const questionsData = await Question.list("-created_date", 100);
       const shuffledQuestions = shuffleArray([...questionsData]);
       setAllQuestions(shuffledQuestions);
       
