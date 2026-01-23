@@ -94,6 +94,34 @@ export default function UserManager() {
 
   const handleSaveUser = async () => {
     try {
+      // Verificar se o plano está sendo alterado
+      if (editForm.current_plan !== selectedUser.current_plan) {
+        // Buscar subscriptions ativas do usuário
+        const activeSubscriptions = await base44.asServiceRole.entities.Subscription.filter({
+          user_email: selectedUser.email,
+          status: 'active'
+        });
+
+        if (activeSubscriptions.length > 0) {
+          const activeSub = activeSubscriptions[0];
+          if (activeSub.plan !== editForm.current_plan) {
+            const shouldUpdateSub = window.confirm(
+              `ATENÇÃO: Este usuário tem uma assinatura ativa do plano "${activeSub.plan}".\n\n` +
+              `Você está alterando manualmente para "${editForm.current_plan}".\n\n` +
+              `Deseja atualizar TAMBÉM a assinatura no banco? (Recomendado)\n\n` +
+              `Sim = Atualiza User + Subscription\n` +
+              `Não = Atualiza apenas o User (pode causar inconsistência)`
+            );
+
+            if (shouldUpdateSub) {
+              await base44.asServiceRole.entities.Subscription.update(activeSub.id, {
+                plan: editForm.current_plan
+              });
+            }
+          }
+        }
+      }
+
       await User.update(selectedUser.id, editForm);
       toast.success('Usuário atualizado com sucesso!');
       setShowEditDialog(false);
