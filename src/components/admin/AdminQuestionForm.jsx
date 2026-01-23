@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -8,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusCircle, Loader2 } from 'lucide-react';
+import { PlusCircle, Loader2, Upload, X } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 // *** IMPORTANTE: ESTES OPTIONS DEVEM SER IDÊNTICOS AOS DO FILTRO ***
 const subjectOptions = [
@@ -387,6 +387,7 @@ const initialQuestionState = {
   year: new Date().getFullYear(),
   cargo: '',
   exam_name: '',
+  exam_icon_url: '',
   education_level: 'medio',
   options: [
     { letter: 'A', text: '' }, { letter: 'B', text: '' },
@@ -400,6 +401,7 @@ export default function AdminQuestionForm({ onFormSubmit, questionToEdit }) {
   const [question, setQuestion] = useState(initialQuestionState);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingIcon, setUploadingIcon] = useState(false);
 
   useEffect(() => {
     if (questionToEdit) {
@@ -428,6 +430,26 @@ export default function AdminQuestionForm({ onFormSubmit, questionToEdit }) {
       newOptions = initialQuestionState.options;
     }
     setQuestion(prev => ({ ...prev, type, options: newOptions, correct_answer: '' }));
+  };
+
+  const handleIconUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingIcon(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleInputChange('exam_icon_url', file_url);
+    } catch (error) {
+      console.error('Erro ao fazer upload do ícone:', error);
+      alert('Erro ao fazer upload do ícone. Tente novamente.');
+    } finally {
+      setUploadingIcon(false);
+    }
+  };
+
+  const removeIcon = () => {
+    handleInputChange('exam_icon_url', '');
   };
 
   const handleSubmit = async (e) => {
@@ -603,9 +625,34 @@ export default function AdminQuestionForm({ onFormSubmit, questionToEdit }) {
             </Select>
           </div>
           
-          <div className="md:col-span-2 space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="exam_name" className="dark:text-gray-200">Prova</Label> 
             <Input id="exam_name" value={question.exam_name} placeholder="Ex: TRT-SP" onChange={e => handleInputChange('exam_name', e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="dark:text-gray-200">Ícone/Logo da Prova</Label>
+            {question.exam_icon_url ? (
+              <div className="flex items-center gap-3">
+                <img src={question.exam_icon_url} alt="Ícone da prova" className="w-16 h-16 object-contain rounded border border-gray-300" />
+                <Button type="button" variant="outline" size="sm" onClick={removeIcon} className="text-red-600 hover:text-red-700">
+                  <X className="w-4 h-4 mr-1" />
+                  Remover
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Input
+                  id="exam-icon-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleIconUpload}
+                  disabled={uploadingIcon}
+                  className="dark:bg-gray-700 dark:text-white"
+                />
+                {uploadingIcon && <Loader2 className="w-4 h-4 animate-spin" />}
+              </div>
+            )}
           </div>
 
           <div className="md:col-span-2 space-y-4">
