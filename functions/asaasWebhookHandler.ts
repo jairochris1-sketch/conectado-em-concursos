@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import moment from 'npm:moment';
 
 Deno.serve(async (req) => {
     try {
@@ -6,7 +7,19 @@ Deno.serve(async (req) => {
         
         const webhookData = await req.json();
         
-        console.log("Webhook recebido - Event:", webhookData.event);
+        // Validação do token
+        const asaasWebhookSecret = Deno.env.get("ASAAS_WEBHOOK_SECRET");
+        const receivedToken = req.headers.get("Asaas-Access-Token") || req.headers.get("asaas-access-token");
+
+        if (asaasWebhookSecret && receivedToken !== asaasWebhookSecret) {
+            console.error("Token inválido");
+            return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        
+        console.log("=== WEBHOOK ASAAS ===");
+        console.log("Event:", webhookData.event);
+        console.log("Payment ID:", webhookData.payment?.id);
+        console.log("Subscription ID:", webhookData.subscription?.id);
 
         const event = webhookData.event;
         const payment = webhookData.payment;
@@ -76,16 +89,36 @@ Deno.serve(async (req) => {
                 return Response.json({ success: true, message: "Evento ignorado" }, { status: 200 });
         }
 
-        // Atualizar apenas se o status mudou
-        if (newStatus !== subscription.status) {
-            console.log(`Atualizando status: ${subscription.status} -> ${newStatus}`);
+        // Processar atualização
+        if (newStatus !== subscription.status || shouldUpdateUser) {
+            console.log(`Atualizando subscription ${subscription.id}: ${subscription.status} -> ${newStatus}`);
             
-            await base44.asServiceRole.entities.Subscription.update(subscription.id, {
-                status: newStatus,
-                next_payment_date: payment?.dueDate || subscription.next_payment_date,
-            });
+            // Preparar dados de atualização da subscription
+            const updateData = { status: newStatus };
+            
+            if (newStatus === 'active' && payment?.dueDate) {
+                let nextPayment = moment(payment.dueDate);
+                let endDate = moment(payment.dueDate);
 
-            // Atualizar plano do usuário
+                if (subscription.cycle === 'monthly') {
+                    nextPayment.add(1, 'month');
+                    endDate.add(1, 'month').subtract(1, 'day');
+                } else if (subscription.cycle === 'semiannual') {
+                    nextPayment.add(6, 'months');
+                    endDate.add(6, 'months').subtract(1, 'day');
+                } else if (subscription.cycle === 'annual') {
+                    nextPayment.add(1, 'year');
+                    endDate.add(1, 'year').subtract(1, 'day');
+                }
+
+                updateData.next_payment_date = nextPayment.format('YYYY-MM-DD');
+                updateData.end_date = endDate.format('YYYY-MM-DD');
+            }
+
+            await base44.asServiceRole.entities.Subscription.update(subscription.id, updateData);
+            console.log("Subscription atualizada!");
+
+            // Atualizar plano do usuário SEMPRE que for active
             if (shouldUpdateUser) {
                 const users = await base44.asServiceRole.entities.User.filter({ 
                     email: subscription.user_email 
@@ -93,13 +126,19 @@ Deno.serve(async (req) => {
 
                 if (users.length > 0) {
                     const planToSet = newStatus === 'active' ? subscription.plan : 'gratuito';
-                    console.log(`Atualizando plano do usuário para: ${planToSet}`);
+                    console.log(`Atualizando User ${users[0].email}: current_plan -> ${planToSet}`);
                     
                     await base44.asServiceRole.entities.User.update(users[0].id, {
                         current_plan: planToSet
                     });
+                    
+                    console.log("User atualizado com sucesso!");
+                } else {
+                    console.error(`Usuário não encontrado: ${subscription.user_email}`);
                 }
             }
+        } else {
+            console.log("Nenhuma atualização necessária");
         }
 
         return Response.json({ 
