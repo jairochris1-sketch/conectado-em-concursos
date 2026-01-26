@@ -1,55 +1,24 @@
 import { base44 } from '@/api/base44Client';
 
 export const optimizeImageFile = async (file, options = {}) => {
-  const {
-    maxWidth = 1920,
-    quality = 80,
-    onProgress = null
-  } = options;
+  const { onProgress = null } = options;
 
   try {
-    if (onProgress) onProgress('Lendo imagem...');
+    if (onProgress) onProgress('Enviando imagem...');
 
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    // Upload direto usando a integração Core
+    const response = await base44.integrations.Core.UploadFile({ file });
 
-      reader.onload = async () => {
-        try {
-          if (onProgress) onProgress('Otimizando imagem...');
+    if (onProgress) onProgress('Upload concluído!');
 
-          const response = await base44.functions.invoke('optimizeImage', {
-            file_base64: reader.result,
-            max_width: maxWidth,
-            quality
-          });
-
-          if (!response.success) {
-            throw new Error(response.error || 'Falha ao otimizar imagem');
-          }
-
-          if (onProgress) {
-            onProgress(`Compressão: ${response.compression_ratio}%`);
-          }
-
-          resolve({
-            file_url: response.file_url,
-            original_size: response.original_size,
-            optimized_size: response.optimized_size,
-            compression_ratio: response.compression_ratio
-          });
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      reader.onerror = () => {
-        reject(new Error('Falha ao ler arquivo'));
-      };
-
-      reader.readAsDataURL(file);
-    });
+    return {
+      file_url: response.file_url,
+      original_size: file.size,
+      optimized_size: file.size,
+      compression_ratio: '0'
+    };
   } catch (error) {
-    console.error('Erro ao otimizar imagem:', error);
+    console.error('Erro ao fazer upload da imagem:', error);
     throw error;
   }
 };
