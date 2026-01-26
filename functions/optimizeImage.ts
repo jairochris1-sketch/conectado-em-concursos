@@ -9,47 +9,47 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { file_base64, max_width = 1920, quality = 80 } = await req.json();
+    const { file_base64 } = await req.json();
 
     if (!file_base64) {
       return Response.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Importar sharp dinamicamente
-    const sharp = (await import('npm:sharp@0.33.0')).default;
+    // Extrair apenas os dados base64 (remover prefixo data:image/...)
+    const base64Data = file_base64.includes(',') ? file_base64.split(',')[1] : file_base64;
+    
+    // Detectar tipo de imagem do prefixo ou assumir jpeg
+    let mimeType = 'image/jpeg';
+    if (file_base64.startsWith('data:')) {
+      const match = file_base64.match(/data:([^;]+);/);
+      if (match) mimeType = match[1];
+    }
 
-    // Converter base64 para buffer
-    const buffer = Buffer.from(file_base64.split(',')[1] || file_base64, 'base64');
+    // Converter base64 para Blob/File para upload
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: mimeType });
+    
+    // Criar File object
+    const file = new File([blob], `image_${Date.now()}.${mimeType.split('/')[1] || 'jpg'}`, { type: mimeType });
 
-    // Otimizar imagem
-    const optimized = await sharp(buffer)
-      .resize(max_width, max_width, {
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .webp({ quality })
-      .toBuffer();
-
-    // Converter para base64
-    const optimizedBase64 = optimized.toString('base64');
-    const dataUrl = `data:image/webp;base64,${optimizedBase64}`;
-
-    // Upload da imagem otimizada
+    // Upload da imagem
     const uploadResponse = await base44.integrations.Core.UploadFile({
-      file: optimizedBase64
+      file: file
     });
 
     return Response.json({
       success: true,
       file_url: uploadResponse.file_url,
-      original_size: Buffer.byteLength(file_base64),
-      optimized_size: optimized.length,
-      compression_ratio: ((1 - optimized.length / Buffer.byteLength(file_base64)) * 100).toFixed(2)
+      original_size: base64Data.length
     });
   } catch (error) {
-    console.error('Image optimization error:', error);
+    console.error('Image upload error:', error);
     return Response.json(
-      { error: `Image optimization failed: ${error.message}` },
+      { error: `Image upload failed: ${error.message}` },
       { status: 500 }
     );
   }
