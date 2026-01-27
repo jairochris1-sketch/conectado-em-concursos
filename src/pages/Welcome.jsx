@@ -19,7 +19,8 @@ export default function WelcomePage() {
     background_image_url: "",
     background_image_url_desktop: "",
     background_image_url_mobile: "",
-    card_background_color: "rgba(0, 0, 0, 0.2)"
+    card_background_color: "#000000",
+    card_opacity: 20
   });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -102,7 +103,19 @@ export default function WelcomePage() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="backdrop-blur-sm rounded-2xl"
-        style={{ backgroundColor: content.card_background_color || 'rgba(0, 0, 0, 0.2)' }}
+        style={{ 
+          backgroundColor: (() => {
+            const color = content.card_background_color || '#000000';
+            const opacity = (content.card_opacity ?? 20) / 100;
+            if (color.startsWith('#')) {
+              const r = parseInt(color.slice(1, 3), 16);
+              const g = parseInt(color.slice(3, 5), 16);
+              const b = parseInt(color.slice(5, 7), 16);
+              return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            }
+            return color;
+          })()
+        }}
       >
         <Card className="max-w-lg w-full shadow-2xl border-0 rounded-2xl overflow-hidden bg-transparent text-white">
           <div className="p-8 text-center">

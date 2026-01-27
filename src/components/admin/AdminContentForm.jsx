@@ -215,31 +215,38 @@ export default function AdminContentForm({ content, onSave }) {
 
           <div className="space-y-4 p-4 border rounded-lg bg-purple-50">
             <h3 className="font-semibold text-sm">🎨 Cor do Bloco de Conteúdo</h3>
-            <div className="space-y-2">
-              <Label htmlFor="card_background_color">Cor de Fundo do Bloco (com transparência)</Label>
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
+                <Label htmlFor="card_background_color">Cor de Fundo</Label>
                 <Input 
                   id="card_background_color" 
                   type="color" 
-                  value={formData.card_background_color?.replace(/rgba?\([^)]+\)/, '#000000') || '#000000'} 
-                  onChange={e => {
-                    const hex = e.target.value;
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    handleInputChange('card_background_color', `rgba(${r}, ${g}, ${b}, 0.2)`);
-                  }}
-                  className="h-12 w-20"
+                  value={formData.card_background_color || '#000000'} 
+                  onChange={e => handleInputChange('card_background_color', e.target.value)}
+                  className="h-10 w-16"
                 />
                 <Input 
                   type="text" 
-                  value={formData.card_background_color || 'rgba(0, 0, 0, 0.2)'} 
+                  value={formData.card_background_color || ''} 
                   onChange={e => handleInputChange('card_background_color', e.target.value)}
-                  placeholder="rgba(0, 0, 0, 0.2)"
+                  placeholder="#000000 ou rgba(0,0,0,0.2)"
                   className="flex-1"
                 />
               </div>
-              <p className="text-xs text-gray-500">Use formato rgba para transparência. Ex: rgba(0, 0, 0, 0.2) = preto 20% opaco</p>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="card_opacity">Transparência</Label>
+                <Input 
+                  id="card_opacity" 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  value={formData.card_opacity ?? 20} 
+                  onChange={e => handleInputChange('card_opacity', parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-sm w-12 text-center">{formData.card_opacity ?? 20}%</span>
+              </div>
+              <p className="text-xs text-gray-500">0% = totalmente transparente, 100% = cor sólida sem transparência</p>
             </div>
           </div>
 
