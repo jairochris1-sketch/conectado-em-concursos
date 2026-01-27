@@ -18,7 +18,8 @@ export default function WelcomePage() {
     secondary_text: "Explore questões, acompanhe suas estatísticas, monte seu cronograma e muito mais!",
     background_image_url: "",
     background_image_url_desktop: "",
-    background_image_url_mobile: ""
+    background_image_url_mobile: "",
+    card_background_color: "rgba(0, 0, 0, 0.2)"
   });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -100,7 +101,8 @@ export default function WelcomePage() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="bg-black bg-opacity-20 backdrop-blur-sm rounded-2xl"
+        className="backdrop-blur-sm rounded-2xl"
+        style={{ backgroundColor: content.card_background_color || 'rgba(0, 0, 0, 0.2)' }}
       >
         <Card className="max-w-lg w-full shadow-2xl border-0 rounded-2xl overflow-hidden bg-transparent text-white">
           <div className="p-8 text-center">

@@ -213,6 +213,36 @@ export default function AdminContentForm({ content, onSave }) {
             </div>
           </div>
 
+          <div className="space-y-4 p-4 border rounded-lg bg-purple-50">
+            <h3 className="font-semibold text-sm">🎨 Cor do Bloco de Conteúdo</h3>
+            <div className="space-y-2">
+              <Label htmlFor="card_background_color">Cor de Fundo do Bloco (com transparência)</Label>
+              <div className="flex items-center gap-2">
+                <Input 
+                  id="card_background_color" 
+                  type="color" 
+                  value={formData.card_background_color?.replace(/rgba?\([^)]+\)/, '#000000') || '#000000'} 
+                  onChange={e => {
+                    const hex = e.target.value;
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    handleInputChange('card_background_color', `rgba(${r}, ${g}, ${b}, 0.2)`);
+                  }}
+                  className="h-12 w-20"
+                />
+                <Input 
+                  type="text" 
+                  value={formData.card_background_color || 'rgba(0, 0, 0, 0.2)'} 
+                  onChange={e => handleInputChange('card_background_color', e.target.value)}
+                  placeholder="rgba(0, 0, 0, 0.2)"
+                  className="flex-1"
+                />
+              </div>
+              <p className="text-xs text-gray-500">Use formato rgba para transparência. Ex: rgba(0, 0, 0, 0.2) = preto 20% opaco</p>
+            </div>
+          </div>
+
           <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
             <h3 className="font-semibold text-sm">Configurações do Botão</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
