@@ -25,22 +25,20 @@ export default function AdminContentForm({ content, onSave }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleBackgroundUpload = async (event) => {
+  const handleBackgroundUpload = async (event, type) => {
     const file = event.target.files[0];
     if (!file) return;
 
     setIsUploadingBg(true);
-    setOptimizationStatus('Otimizando imagem...');
+    setOptimizationStatus(`Enviando imagem ${type === 'desktop' ? 'desktop' : 'mobile'}...`);
     try {
       const result = await optimizeImageFile(file, {
-        maxWidth: 1920,
-        quality: 85,
         onProgress: setOptimizationStatus
       });
 
-      handleInputChange('background_image_url', result.file_url);
-      const stats = getImageStats(result.original_size, result.optimized_size);
-      setOptimizationStatus(`✓ Otimizada: ${stats.percentage} de redução`);
+      const fieldName = type === 'desktop' ? 'background_image_url_desktop' : 'background_image_url_mobile';
+      handleInputChange(fieldName, result.file_url);
+      setOptimizationStatus(`✓ Imagem ${type === 'desktop' ? 'desktop' : 'mobile'} enviada!`);
       
       setTimeout(() => setOptimizationStatus(''), 3000);
     } catch (error) {
@@ -79,25 +77,48 @@ export default function AdminContentForm({ content, onSave }) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4 p-4 border rounded-lg">
-            <Label className="flex items-center gap-2 font-semibold"><ImageIcon /> Imagem de Fundo (otimizada automaticamente)</Label>
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20 rounded-md">
-                <AvatarImage src={formData.background_image_url} />
-                <AvatarFallback className="rounded-md">
-                  <ImageIcon />
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                 <Input id="background-upload" type="file" accept="image/*" onChange={handleBackgroundUpload} disabled={isUploadingBg} />
-                 <p className="text-xs text-gray-500 mt-2">Escolha uma imagem para o fundo. Será otimizada automaticamente.</p>
-                 {optimizationStatus && (
-                   <div className="text-xs p-2 mt-2 bg-blue-100 text-blue-700 rounded">
-                     {optimizationStatus}
-                   </div>
-                 )}
+            <Label className="flex items-center gap-2 font-semibold"><ImageIcon /> Imagens de Fundo</Label>
+            
+            {/* Desktop */}
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm font-medium mb-2">🖥️ Desktop / PC</p>
+              <div className="flex items-center gap-4">
+                <Avatar className="w-20 h-20 rounded-md">
+                  <AvatarImage src={formData.background_image_url_desktop || formData.background_image_url} />
+                  <AvatarFallback className="rounded-md">
+                    <ImageIcon />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                   <Input id="background-upload-desktop" type="file" accept="image/*" onChange={(e) => handleBackgroundUpload(e, 'desktop')} disabled={isUploadingBg} />
+                   <p className="text-xs text-gray-500 mt-1">Imagem para telas maiores (recomendado: 1920x1080)</p>
+                </div>
               </div>
-               {isUploadingBg && <Loader2 className="w-5 h-5 animate-spin" />}
             </div>
+
+            {/* Mobile */}
+            <div className="p-3 bg-green-50 rounded-lg">
+              <p className="text-sm font-medium mb-2">📱 Celular / Mobile</p>
+              <div className="flex items-center gap-4">
+                <Avatar className="w-20 h-20 rounded-md">
+                  <AvatarImage src={formData.background_image_url_mobile} />
+                  <AvatarFallback className="rounded-md">
+                    <ImageIcon />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                   <Input id="background-upload-mobile" type="file" accept="image/*" onChange={(e) => handleBackgroundUpload(e, 'mobile')} disabled={isUploadingBg} />
+                   <p className="text-xs text-gray-500 mt-1">Imagem para celulares (recomendado: 1080x1920 vertical)</p>
+                </div>
+              </div>
+            </div>
+
+            {isUploadingBg && (
+              <div className="flex items-center gap-2 text-sm text-blue-600">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {optimizationStatus || 'Enviando imagem...'}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

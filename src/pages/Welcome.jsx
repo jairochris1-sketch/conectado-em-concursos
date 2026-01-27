@@ -16,8 +16,18 @@ export default function WelcomePage() {
     subtitle: "Sua jornada para a aprovação começa agora.",
     main_text: "Você está prestes a entrar em uma plataforma completa, projetada para te ajudar a alcançar seus objetivos.",
     secondary_text: "Explore questões, acompanhe suas estatísticas, monte seu cronograma e muito mais!",
-    background_image_url: ""
+    background_image_url: "",
+    background_image_url_desktop: "",
+    background_image_url_mobile: ""
   });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -49,9 +59,21 @@ export default function WelcomePage() {
     setIsLoading(false);
   };
   
-  const backgroundStyle = content.background_image_url 
+  const getBackgroundImage = () => {
+    if (isMobile && content.background_image_url_mobile) {
+      return content.background_image_url_mobile;
+    }
+    if (!isMobile && content.background_image_url_desktop) {
+      return content.background_image_url_desktop;
+    }
+    // Fallback para imagem legada
+    return content.background_image_url || content.background_image_url_desktop || content.background_image_url_mobile;
+  };
+
+  const bgImage = getBackgroundImage();
+  const backgroundStyle = bgImage 
     ? { 
-        backgroundImage: `url(${content.background_image_url})`,
+        backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       } 
@@ -71,7 +93,7 @@ export default function WelcomePage() {
 
   return (
     <div 
-      className={`min-h-screen flex items-center justify-center p-4 ${!content.background_image_url ? 'bg-gradient-to-br from-blue-50 via-white to-indigo-50' : ''}`}
+      className={`min-h-screen flex items-center justify-center p-4 ${!bgImage ? 'bg-gradient-to-br from-blue-50 via-white to-indigo-50' : ''}`}
       style={backgroundStyle}
     >
       <motion.div
