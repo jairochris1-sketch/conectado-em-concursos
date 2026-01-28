@@ -36,9 +36,20 @@ export default function AdminContentForm({ content, onSave }) {
         onProgress: setOptimizationStatus
       });
 
-      const fieldName = type === 'desktop' ? 'background_image_url_desktop' : 'background_image_url_mobile';
-      handleInputChange(fieldName, result.file_url);
+      if (type === 'desktop') {
+        // Adicionar ao array de imagens desktop
+        const currentImages = formData.background_images_desktop || [];
+        if (currentImages.length < 3) {
+          handleInputChange('background_images_desktop', [...currentImages, result.file_url]);
+        }
+      } else {
+        handleInputChange('background_image_url_mobile', result.file_url);
+      }
+      
       setOptimizationStatus(`✓ Imagem ${type === 'desktop' ? 'desktop' : 'mobile'} enviada!`);
+      
+      // Limpar o input para permitir upload da mesma imagem
+      event.target.value = '';
       
       setTimeout(() => setOptimizationStatus(''), 3000);
     } catch (error) {
@@ -79,20 +90,53 @@ export default function AdminContentForm({ content, onSave }) {
           <div className="space-y-4 p-4 border rounded-lg">
             <Label className="flex items-center gap-2 font-semibold"><ImageIcon /> Imagens de Fundo</Label>
             
-            {/* Desktop */}
+            {/* Desktop - Múltiplas imagens */}
             <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium mb-2">🖥️ Desktop / PC</p>
-              <div className="flex items-center gap-4">
-                <Avatar className="w-20 h-20 rounded-md">
-                  <AvatarImage src={formData.background_image_url_desktop || formData.background_image_url} />
-                  <AvatarFallback className="rounded-md">
-                    <ImageIcon />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                   <Input id="background-upload-desktop" type="file" accept="image/*" onChange={(e) => handleBackgroundUpload(e, 'desktop')} disabled={isUploadingBg} />
-                   <p className="text-xs text-gray-500 mt-1">Imagem para telas maiores (recomendado: 1920x1080)</p>
-                </div>
+              <p className="text-sm font-medium mb-2">🖥️ Desktop / PC (até 3 imagens - rotação aleatória)</p>
+              
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                {[0, 1, 2].map((index) => {
+                  const images = formData.background_images_desktop || [];
+                  const imageUrl = images[index];
+                  return (
+                    <div key={index} className="relative">
+                      <Avatar className="w-full h-20 rounded-md">
+                        <AvatarImage src={imageUrl} className="object-cover" />
+                        <AvatarFallback className="rounded-md bg-gray-100">
+                          <span className="text-xs text-gray-400">Imagem {index + 1}</span>
+                        </AvatarFallback>
+                      </Avatar>
+                      {imageUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newImages = [...(formData.background_images_desktop || [])];
+                            newImages.splice(index, 1);
+                            handleInputChange('background_images_desktop', newImages);
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="flex-1">
+                <Input 
+                  id="background-upload-desktop" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleBackgroundUpload(e, 'desktop')} 
+                  disabled={isUploadingBg || (formData.background_images_desktop?.length || 0) >= 3} 
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {(formData.background_images_desktop?.length || 0) >= 3 
+                    ? '✓ Máximo de 3 imagens atingido' 
+                    : `Adicionar imagem (${formData.background_images_desktop?.length || 0}/3) - recomendado: 1920x1080`}
+                </p>
               </div>
             </div>
 

@@ -18,9 +18,10 @@ export default function WelcomePage() {
     secondary_text: "Explore questões, acompanhe suas estatísticas, monte seu cronograma e muito mais!",
     background_image_url: "",
     background_image_url_desktop: "",
+    background_images_desktop: [],
     background_image_url_mobile: "",
     card_background_color: "#000000",
-    card_opacity: 20
+    card_opacity: 100
   });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -65,9 +66,20 @@ export default function WelcomePage() {
     if (isMobile && content.background_image_url_mobile) {
       return content.background_image_url_mobile;
     }
-    if (!isMobile && content.background_image_url_desktop) {
-      return content.background_image_url_desktop;
+    
+    // Desktop: usar rotação de imagens se disponível
+    if (!isMobile) {
+      const desktopImages = content.background_images_desktop || [];
+      if (desktopImages.length > 0) {
+        // Escolher imagem aleatória
+        const randomIndex = Math.floor(Math.random() * desktopImages.length);
+        return desktopImages[randomIndex];
+      }
+      if (content.background_image_url_desktop) {
+        return content.background_image_url_desktop;
+      }
     }
+    
     // Fallback para imagem legada
     return content.background_image_url || content.background_image_url_desktop || content.background_image_url_mobile;
   };
