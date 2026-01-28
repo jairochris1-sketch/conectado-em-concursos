@@ -21,7 +21,8 @@ export default function WelcomePage() {
     background_images_desktop: [],
     background_image_url_mobile: "",
     card_background_color: "#000000",
-    card_opacity: 100
+    card_opacity: 100,
+    background_blur: 0
   });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -85,13 +86,7 @@ export default function WelcomePage() {
   };
 
   const bgImage = getBackgroundImage();
-  const backgroundStyle = bgImage 
-    ? { 
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      } 
-    : {};
+  const blurAmount = content.background_blur || 0;
 
   const getFontStyle = (fontType) => {
     const fonts = {
@@ -107,14 +102,23 @@ export default function WelcomePage() {
 
   return (
     <div 
-      className={`min-h-screen flex items-center justify-center p-4 ${!bgImage ? 'bg-gradient-to-br from-blue-50 via-white to-indigo-50' : ''}`}
-      style={backgroundStyle}
+      className={`min-h-screen flex items-center justify-center p-4 relative overflow-hidden ${!bgImage ? 'bg-gradient-to-br from-blue-50 via-white to-indigo-50' : ''}`}
     >
+      {bgImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ 
+            backgroundImage: `url(${bgImage})`,
+            filter: blurAmount > 0 ? `blur(${blurAmount}px)` : 'none',
+            transform: blurAmount > 0 ? 'scale(1.1)' : 'none'
+          }}
+        />
+      )}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="backdrop-blur-sm rounded-2xl"
+        className="backdrop-blur-sm rounded-2xl relative z-10"
         style={{ 
           backgroundColor: (() => {
             let color = content.card_background_color || '#000000';

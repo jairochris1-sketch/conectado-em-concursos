@@ -163,6 +163,23 @@ export default function AdminContentForm({ content, onSave }) {
                 {optimizationStatus || 'Enviando imagem...'}
               </div>
             )}
+
+            {/* Desfoque */}
+            <div className="p-3 bg-yellow-50 rounded-lg">
+              <p className="text-sm font-medium mb-2">🔍 Desfoque da Imagem de Fundo</p>
+              <div className="flex items-center gap-3">
+                <Input 
+                  type="range" 
+                  min="0" 
+                  max="20" 
+                  value={formData.background_blur || 0} 
+                  onChange={e => handleInputChange('background_blur', parseInt(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-sm w-16 text-center">{formData.background_blur || 0}px</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">0 = sem desfoque, 20 = desfoque máximo</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
