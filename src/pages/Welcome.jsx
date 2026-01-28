@@ -105,14 +105,23 @@ export default function WelcomePage() {
         className="backdrop-blur-sm rounded-2xl"
         style={{ 
           backgroundColor: (() => {
-            const color = content.card_background_color || '#000000';
-            const opacity = (content.card_opacity ?? 20) / 100;
+            let color = content.card_background_color || '#000000';
+            const opacity = (content.card_opacity ?? 100) / 100;
+            
+            // If already rgba, extract rgb values
+            const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            if (rgbaMatch) {
+              return `rgba(${rgbaMatch[1]}, ${rgbaMatch[2]}, ${rgbaMatch[3]}, ${opacity})`;
+            }
+            
+            // If hex, convert to rgba
             if (color.startsWith('#')) {
               const r = parseInt(color.slice(1, 3), 16);
               const g = parseInt(color.slice(3, 5), 16);
               const b = parseInt(color.slice(5, 7), 16);
               return `rgba(${r}, ${g}, ${b}, ${opacity})`;
             }
+            
             return color;
           })()
         }}

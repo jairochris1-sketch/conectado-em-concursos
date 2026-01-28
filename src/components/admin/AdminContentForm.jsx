@@ -221,32 +221,44 @@ export default function AdminContentForm({ content, onSave }) {
                 <Input 
                   id="card_background_color" 
                   type="color" 
-                  value={formData.card_background_color || '#000000'} 
+                  value={(() => {
+                    const color = formData.card_background_color || '#000000';
+                    if (color.startsWith('#')) return color;
+                    // Convert rgba to hex for color picker
+                    const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                    if (match) {
+                      const r = parseInt(match[1]).toString(16).padStart(2, '0');
+                      const g = parseInt(match[2]).toString(16).padStart(2, '0');
+                      const b = parseInt(match[3]).toString(16).padStart(2, '0');
+                      return `#${r}${g}${b}`;
+                    }
+                    return '#000000';
+                  })()}
                   onChange={e => handleInputChange('card_background_color', e.target.value)}
                   className="h-10 w-16"
                 />
                 <Input 
                   type="text" 
-                  value={formData.card_background_color || ''} 
+                  value={formData.card_background_color || '#000000'} 
                   onChange={e => handleInputChange('card_background_color', e.target.value)}
-                  placeholder="#000000 ou rgba(0,0,0,0.2)"
+                  placeholder="#000000"
                   className="flex-1"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Label htmlFor="card_opacity">Transparência</Label>
+                <Label htmlFor="card_opacity">Opacidade</Label>
                 <Input 
                   id="card_opacity" 
                   type="range" 
                   min="0" 
                   max="100" 
-                  value={formData.card_opacity ?? 20} 
+                  value={formData.card_opacity ?? 100} 
                   onChange={e => handleInputChange('card_opacity', parseInt(e.target.value))}
                   className="flex-1"
                 />
-                <span className="text-sm w-12 text-center">{formData.card_opacity ?? 20}%</span>
+                <span className="text-sm w-12 text-center">{formData.card_opacity ?? 100}%</span>
               </div>
-              <p className="text-xs text-gray-500">0% = totalmente transparente, 100% = cor sólida sem transparência</p>
+              <p className="text-xs text-gray-500">100% = cor sólida, 0% = totalmente transparente</p>
             </div>
           </div>
 
