@@ -39,7 +39,7 @@ export default function AdminContentForm({ content, onSave }) {
       if (type === 'desktop') {
         // Adicionar ao array de imagens desktop
         const currentImages = formData.background_images_desktop || [];
-        if (currentImages.length < 3) {
+        if (currentImages.length < 7) {
           handleInputChange('background_images_desktop', [...currentImages, result.file_url]);
         }
       } else {
@@ -92,10 +92,10 @@ export default function AdminContentForm({ content, onSave }) {
             
             {/* Desktop - Múltiplas imagens */}
             <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium mb-2">🖥️ Desktop / PC (até 3 imagens - rotação aleatória)</p>
+              <p className="text-sm font-medium mb-2">🖥️ Desktop / PC (até 7 imagens - rotação aleatória)</p>
               
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {[0, 1, 2].map((index) => {
+              <div className="grid grid-cols-4 gap-3 mb-3">
+                {[0, 1, 2, 3, 4, 5, 6].map((index) => {
                   const images = formData.background_images_desktop || [];
                   const imageUrl = images[index];
                   return (
@@ -130,12 +130,12 @@ export default function AdminContentForm({ content, onSave }) {
                   type="file" 
                   accept="image/*" 
                   onChange={(e) => handleBackgroundUpload(e, 'desktop')} 
-                  disabled={isUploadingBg || (formData.background_images_desktop?.length || 0) >= 3} 
+                  disabled={isUploadingBg || (formData.background_images_desktop?.length || 0) >= 7} 
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {(formData.background_images_desktop?.length || 0) >= 3 
-                    ? '✓ Máximo de 3 imagens atingido' 
-                    : `Adicionar imagem (${formData.background_images_desktop?.length || 0}/3) - recomendado: 1920x1080`}
+                  {(formData.background_images_desktop?.length || 0) >= 7 
+                    ? '✓ Máximo de 7 imagens atingido' 
+                    : `Adicionar imagem (${formData.background_images_desktop?.length || 0}/7) - recomendado: 1920x1080`}
                 </p>
               </div>
             </div>
