@@ -2,16 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Typography Scale */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+}
+
 * {
-  font-family: Arial, sans-serif !important;
+  font-family: var(--font-family-base) !important;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
+/* Headings */
+h1, .h1 {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2, .h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+h3, .h3 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+}
+
+h4, .h4 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+}
+
+h5, .h5 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+h6, .h6 {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+/* Paragraphs and Body Text */
+p {
+  line-height: var(--leading-relaxed);
+  margin-bottom: 0.75em;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Small Text */
+small, .text-small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.text-xs {
+  font-size: var(--text-xs) !important;
+  line-height: var(--leading-normal);
+}
+
+/* Strong/Bold */
 strong, b, .font-bold {
-  font-weight: 600 !important;
+  font-weight: var(--font-semibold) !important;
+}
+
+.font-extrabold {
+  font-weight: var(--font-extrabold) !important;
+}
+
+/* Labels and Captions */
+label, .label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+.caption {
+  font-size: var(--text-xs);
+  color: var(--muted-foreground);
+  line-height: var(--leading-normal);
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  :root {
+    --text-4xl: 1.875rem;  /* 30px on mobile */
+    --text-3xl: 1.5rem;    /* 24px on mobile */
+    --text-2xl: 1.25rem;   /* 20px on mobile */
+  }
+  
+  body {
+    font-size: 0.9375rem; /* 15px on mobile */
+  }
 }
 
 @layer base {
