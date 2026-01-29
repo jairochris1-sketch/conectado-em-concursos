@@ -744,7 +744,7 @@ export default function SubscriptionPage() {
 
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 md:p-8">
         <div className="max-w-2xl mx-auto">
           <Button
             variant="ghost"
@@ -753,7 +753,7 @@ export default function SubscriptionPage() {
               setSelectedPlan(null);
               setSelectedPaymentMethod('');
             }}
-            className="mb-6 text-gray-700 hover:text-gray-900">
+            className="mb-6 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
 
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar aos Planos
@@ -764,15 +764,15 @@ export default function SubscriptionPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8">
 
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Escolha a forma de pagamento
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Assinatura do Plano <strong>{plan.name}</strong> - R$ {pricing.price} 
               {selectedPlan.cycle === 'annual' ? '/ano' : selectedPlan.cycle === 'semiannual' ? '/semestre' : '/mês'}
             </p>
             {pricing.savings &&
-            <p className="text-green-600 font-semibold mt-1">
+            <p className="text-green-600 dark:text-green-400 font-semibold mt-1">
                 Economize R$ {pricing.savings}!
               </p>
             }
@@ -787,7 +787,7 @@ export default function SubscriptionPage() {
               transition={{ delay: index * 0.1 }}>
 
                 <Card
-                className={`cursor-pointer transition-all duration-300 ${
+                className={`cursor-pointer transition-all duration-300 bg-white dark:bg-gray-800 ${
                 selectedPaymentMethod === method.id ?
                 'ring-4 ring-blue-500 shadow-xl' :
                 'hover:shadow-lg hover:scale-105'}`
@@ -800,11 +800,11 @@ export default function SubscriptionPage() {
                         <method.icon className="w-8 h-8 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900">{method.name}</h3>
-                        <p className="text-gray-600">{method.description}</p>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{method.name}</h3>
+                        <p className="text-gray-600 dark:text-gray-300">{method.description}</p>
                       </div>
                       {selectedPaymentMethod === method.id &&
-                    <Check className="w-8 h-8 text-blue-600" />
+                    <Check className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                     }
                     </div>
                   </CardContent>
@@ -829,7 +829,7 @@ export default function SubscriptionPage() {
             }
           </Button>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Você será redirecionado para uma página segura do Asaas para finalizar o pagamento
           </p>
         </div>
