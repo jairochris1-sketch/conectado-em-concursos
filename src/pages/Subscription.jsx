@@ -855,13 +855,26 @@ export default function SubscriptionPage() {
                 </p>
               </div>
             </div>
-            <button
-            onClick={() => setShowPendingBanner(false)}
-            className="p-1 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Fechar aviso">
-
-                <X className="w-5 h-5 text-blue-100" />
-            </button>
+            <div className="flex items-center gap-2">
+              {currentSubscription.payment_url &&
+              <Button
+                size="sm"
+                variant="secondary"
+                className="bg-white text-blue-600 hover:bg-blue-50"
+                onClick={() => {
+                  window.open(currentSubscription.payment_url, '_blank');
+                  setShowPendingBanner(false);
+                }}>
+                Abrir Pagamento
+              </Button>
+              }
+              <button
+              onClick={() => setShowPendingBanner(false)}
+              className="p-1 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Fechar aviso">
+                  <X className="w-5 h-5 text-blue-100" />
+              </button>
+            </div>
           </motion.div>
         }
 
