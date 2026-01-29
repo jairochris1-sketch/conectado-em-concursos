@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Added RadioGroup, RadioGroupItem
 import { Label } from '@/components/ui/label'; // Added Label
 import { Alert, AlertDescription } from '@/components/ui/alert'; // Added Alert, AlertDescription
-import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase } from 'lucide-react'; // Added Building, Calendar, Briefcase
+import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase, Pencil } from 'lucide-react'; // Added Building, Calendar, Briefcase, Pencil
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils'; // Added cn utility
 
@@ -242,7 +242,7 @@ export default function QuestionCard({
                 {question.explanation && (
                   <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                     <div className="flex items-start gap-2">
-                      <MessageSquare className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                      <Pencil className="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="font-medium mb-2 text-gray-900 dark:text-white">Gabarito Comentado:</p>
                         {isBlocked ? (
@@ -253,7 +253,7 @@ export default function QuestionCard({
                           </div>
                         ) : (
                           <div 
-                            className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-900 dark:text-gray-100"
+                            className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-900 dark:text-gray-100 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"
                             dangerouslySetInnerHTML={{ __html: question.explanation }}
                           />
                         )}
