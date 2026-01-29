@@ -224,6 +224,7 @@ Deno.serve(async (req) => {
                 billing_type: billingType,
                 asaas_customer_id: customer.id,
                 asaas_subscription_id: subscription.id,
+                payment_url: firstPayment.invoiceUrl,
                 price: price,
                 cycle: cycle,
                 start_date: new Date().toISOString().split('T')[0],
