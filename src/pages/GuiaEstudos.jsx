@@ -292,10 +292,14 @@ export default function GuiaEstudos() {
                 {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
               </div>
               <div 
-                className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert' : ''}`}
+                className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert [&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}`}
                 dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
                 style={{
-                  color: darkMode ? '#e5e7eb' : '#1f2937'
+                  color: darkMode ? '#e5e7eb' : '#1f2937',
+                  '--tw-prose-body': darkMode ? '#e5e7eb' : '#1f2937',
+                  '--tw-prose-headings': darkMode ? '#ffffff' : '#111827',
+                  '--tw-prose-links': darkMode ? '#93c5fd' : '#2563eb',
+                  '--tw-prose-bold': darkMode ? '#ffffff' : '#111827'
                 }}
               />
             </article>
@@ -561,11 +565,20 @@ export default function GuiaEstudos() {
                   style={{
                     fontFamily: readingSettings.fontFamily,
                     fontSize: `${readingSettings.fontSize}px`,
-                    lineHeight: readingSettings.lineHeight
+                    lineHeight: readingSettings.lineHeight,
+                    '--tw-prose-body': darkMode ? '#e5e7eb' : '#1f2937',
+                    '--tw-prose-headings': darkMode ? '#ffffff' : '#111827',
+                    '--tw-prose-links': darkMode ? '#93c5fd' : '#2563eb',
+                    '--tw-prose-bold': darkMode ? '#ffffff' : '#111827',
+                    '--tw-prose-counters': darkMode ? '#9ca3af' : '#6b7280',
+                    '--tw-prose-bullets': darkMode ? '#9ca3af' : '#6b7280',
+                    '--tw-prose-quotes': darkMode ? '#e5e7eb' : '#1f2937',
+                    color: darkMode ? '#e5e7eb' : '#1f2937'
                   }}
                 >
                   <div 
                     dangerouslySetInnerHTML={{ __html: a.content }}
+                    className={darkMode ? '[&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}
                     style={{
                       color: darkMode ? '#e5e7eb' : '#1f2937'
                     }}
