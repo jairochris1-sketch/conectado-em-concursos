@@ -71,6 +71,7 @@ export default function GuideManager() {
   const [videoUrl, setVideoUrl] = useState("");
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [editingArticleId, setEditingArticleId] = useState(null);
 
   const orderedGuides = useMemo(() =>
     [...guides].sort((a, b) => {
@@ -269,6 +270,23 @@ export default function GuideManager() {
     toast.success('Vídeo inserido!');
   };
 
+  const handleEditArticle = (article) => {
+    setEditingArticleId(article.id);
+    setArticleTitle(article.title || "");
+    setArticleSummary(article.summary || "");
+    setArticleContent(article.content || "");
+    setArticleSubject(article.subject || "portugues");
+    setArticleFeatured(article.is_featured || false);
+  };
+
+  const resetArticleForm = () => {
+    setEditingArticleId(null);
+    setArticleTitle("");
+    setArticleSummary("");
+    setArticleContent("");
+    setArticleFeatured(true);
+  };
+
   const handleCreateArticle = async () => {
     if (!articleGuideSlug) {
       toast.error('Selecione um guia');
@@ -279,24 +297,32 @@ export default function GuideManager() {
       return;
     }
     try {
-      await Article.create({
-        title: articleTitle.trim(),
-        content: articleContent,
-        summary: articleSummary.trim(),
-        subject: articleSubject,
-        tags: [articleGuideSlug],
-        is_featured: articleFeatured,
-        is_published: true,
-      });
-      toast.success('Artigo criado neste guia');
-      setArticleTitle("");
-      setArticleSummary("");
-      setArticleContent("");
-      setArticleFeatured(true);
+      if (editingArticleId) {
+        await Article.update(editingArticleId, {
+          title: articleTitle.trim(),
+          content: articleContent,
+          summary: articleSummary.trim(),
+          subject: articleSubject,
+          is_featured: articleFeatured,
+        });
+        toast.success('Artigo atualizado com sucesso!');
+      } else {
+        await Article.create({
+          title: articleTitle.trim(),
+          content: articleContent,
+          summary: articleSummary.trim(),
+          subject: articleSubject,
+          tags: [articleGuideSlug],
+          is_featured: articleFeatured,
+          is_published: true,
+        });
+        toast.success('Artigo criado neste guia');
+      }
+      resetArticleForm();
       await loadGuideArticles(articleGuideSlug);
     } catch (e) {
       console.error(e);
-      toast.error('Erro ao criar artigo');
+      toast.error('Erro ao salvar artigo');
     }
   };
 
@@ -494,7 +520,12 @@ export default function GuideManager() {
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleCreateArticle} className="bg-indigo-600 hover:bg-indigo-700 text-white">Criar artigo</Button>
+                <Button onClick={handleCreateArticle} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                  {editingArticleId ? 'Atualizar artigo' : 'Criar artigo'}
+                </Button>
+                {editingArticleId && (
+                  <Button variant="outline" onClick={resetArticleForm}>Cancelar edição</Button>
+                )}
               </div>
 
               {articleGuideSlug && (
@@ -517,6 +548,7 @@ export default function GuideManager() {
                               <span className="text-xs text-gray-500">Ordem</span>
                               <Input type="number" className="w-20 h-8" defaultValue={a.order ?? 0} onBlur={(e) => handleUpdateArticleOrder(a, e.target.value)} />
                             </div>
+                            <Button size="sm" variant="outline" onClick={() => handleEditArticle(a)}>Editar</Button>
                             <Button size="sm" variant="destructive" onClick={() => handleDeleteArticle(a)}>Excluir</Button>
                           </div>
                         </div>
