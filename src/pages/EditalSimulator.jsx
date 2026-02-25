@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import EditalDashboard from "../components/edital/EditalDashboard";
-import SimulationConfigModal from "../components/edital/SimulationConfigModal";
 
 export default function EditalSimulator() {
   const navigate = useNavigate();
@@ -33,8 +32,6 @@ export default function EditalSimulator() {
   const [processingId, setProcessingId] = useState(null);
   const [generatingSimId, setGeneratingSimId] = useState(null);
   const [expandedEditalId, setExpandedEditalId] = useState(null);
-  const [configModalOpen, setConfigModalOpen] = useState(false);
-  const [selectedEditalForConfig, setSelectedEditalForConfig] = useState(null);
 
   // Form state
   const [concursoName, setConcursoName] = useState("");
@@ -126,95 +123,15 @@ export default function EditalSimulator() {
   const processEdital = async (editalId) => {
     setProcessingId(editalId);
     try {
-      const edital = editais.find(e => e.id === editalId);
-      if (!edital) throw new Error("Edital não encontrado");
-
-      toast.info("Extraindo conteúdo do edital...");
+      const response = await base44.functions.invoke('processEdital', { edital_id: editalId });
       
-      // Buscar o conteúdo do arquivo
-      const fileResponse = await fetch(edital.file_url);
-      const fileBlob = await fileResponse.blob();
-      
-      // Atualizar status para processing
-      await base44.entities.Edital.update(editalId, { processing_status: 'processing' });
-      await loadEditais();
-
-      toast.info("Analisando edital com IA...");
-      
-      // Processar com LLM
-      const analysisResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analise este edital de concurso público e extraia as seguintes informações em formato JSON:
-        
-        1. Lista de disciplinas cobradas
-        2. Para cada disciplina, liste os principais tópicos e sub-tópicos
-        3. Identifique o cargo, banca organizadora (se houver) e nível de escolaridade
-        
-        Retorne no seguinte formato:
-        {
-          "disciplinas": [
-            {
-              "nome": "nome_da_disciplina",
-              "topicos": ["topico1", "topico2"],
-              "subtopicos": ["subtopico1", "subtopico2"]
-            }
-          ],
-          "cargo": "cargo identificado",
-          "banca": "banca organizadora",
-          "nivel_escolaridade": "fundamental/medio/superior"
-        }`,
-        file_urls: [edital.file_url],
-        response_json_schema: {
-          type: "object",
-          properties: {
-            disciplinas: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  nome: { type: "string" },
-                  topicos: { type: "array", items: { type: "string" } },
-                  subtopicos: { type: "array", items: { type: "string" } }
-                }
-              }
-            },
-            cargo: { type: "string" },
-            banca: { type: "string" },
-            nivel_escolaridade: { type: "string" }
-          }
-        }
-      });
-
-      const totalTopics = analysisResult.disciplinas.reduce((acc, d) => acc + (d.topicos?.length || 0), 0);
-      const totalSubtopics = analysisResult.disciplinas.reduce((acc, d) => acc + (d.subtopicos?.length || 0), 0);
-
-      // Buscar questões compatíveis
-      const allQuestions = await base44.entities.Question.list('-created_date', 5000);
-      const compatibleQuestions = allQuestions.filter(q => 
-        analysisResult.disciplinas.some(d => 
-          q.subject?.toLowerCase().includes(d.nome.toLowerCase()) ||
-          d.nome.toLowerCase().includes(q.subject?.toLowerCase())
-        )
-      );
-
-      // Atualizar edital com resultados
-      await base44.entities.Edital.update(editalId, {
-        processing_status: 'completed',
-        processed: true,
-        subjects_content: analysisResult,
-        total_topics: totalTopics,
-        total_subtopics: totalSubtopics,
-        compatible_questions_count: compatibleQuestions.length,
-        cargo: analysisResult.cargo || edital.cargo,
-        banca: analysisResult.banca
-      });
-
-      toast.success(`Edital processado! ${analysisResult.disciplinas.length} disciplinas, ${totalTopics} tópicos e ${compatibleQuestions.length} questões compatíveis.`);
-      await loadEditais();
+      if (response.data.success) {
+        toast.success(`Edital processado! ${response.data.total_topics} tópicos identificados, ${response.data.compatible_questions_count} questões compatíveis encontradas.`);
+        await loadEditais();
+      }
     } catch (error) {
       console.error("Erro ao processar edital:", error);
-      await base44.entities.Edital.update(editalId, { processing_status: 'failed' });
-      toast.error("Erro ao processar edital: " + (error.message || "Tente novamente"));
-      await loadEditais();
+      toast.error("Erro ao processar edital. Tente novamente.");
     } finally {
       setProcessingId(null);
     }
@@ -223,115 +140,21 @@ export default function EditalSimulator() {
   const generateSimulation = async (editalId, questionCount = 20) => {
     setGeneratingSimId(editalId);
     try {
-      const edital = editais.find(e => e.id === editalId);
-      if (!edital || !edital.subjects_content) {
-        toast.error("Edital não processado ainda");
-        return;
-      }
-
-      const user = await base44.auth.me();
-      
-      // Buscar todas as questões
-      const allQuestions = await base44.entities.Question.list('-created_date', 5000);
-      
-      // Filtrar questões compatíveis com as disciplinas do edital
-      const compatibleQuestions = allQuestions.filter(q => 
-        edital.subjects_content.disciplinas.some(d => 
-          q.subject?.toLowerCase().includes(d.nome.toLowerCase()) ||
-          d.nome.toLowerCase().includes(q.subject?.toLowerCase())
-        )
-      );
-
-      if (compatibleQuestions.length === 0) {
-        toast.error("Nenhuma questão compatível encontrada no banco de dados");
-        return;
-      }
-
-      // Selecionar questões aleatórias
-      const shuffled = compatibleQuestions.sort(() => 0.5 - Math.random());
-      const selectedQuestions = shuffled.slice(0, Math.min(questionCount, compatibleQuestions.length));
-
-      // Criar simulado
-      const simulation = await base44.entities.Simulation.create({
-        name: `Simulado - ${edital.concurso_name}`,
-        question_count: selectedQuestions.length,
-        question_ids: selectedQuestions.map(q => q.id),
-        subjects: [...new Set(selectedQuestions.map(q => q.subject))],
-        institutions: [...new Set(selectedQuestions.map(q => q.institution))],
-        status: 'nao_iniciado',
-        edital_based: true,
-        edital_id: editalId
-      });
-
-      toast.success(`Simulado criado com ${selectedQuestions.length} questões!`);
-      navigate(createPageUrl("SolveSimulation") + "?id=" + simulation.id);
-    } catch (error) {
-      console.error("Erro ao gerar simulado:", error);
-      toast.error("Erro ao gerar simulado: " + (error.message || "Tente novamente"));
-    } finally {
-      setGeneratingSimId(null);
-    }
-  };
-
-  const generateCustomSimulation = async (disciplineConfig, totalQuestions) => {
-    const editalId = selectedEditalForConfig.id;
-    setGeneratingSimId(editalId);
-    try {
-      const edital = editais.find(e => e.id === editalId);
-      
-      // Buscar todas as questões
-      const allQuestions = await base44.entities.Question.list('-created_date', 5000);
-      
-      const selectedQuestions = [];
-      
-      // Para cada disciplina na configuração
-      for (const [disciplinaNome, quantidade] of Object.entries(disciplineConfig)) {
-        if (quantidade > 0) {
-          // Filtrar questões dessa disciplina específica
-          const disciplinaQuestions = allQuestions.filter(q => 
-            q.subject?.toLowerCase().includes(disciplinaNome.toLowerCase()) ||
-            disciplinaNome.toLowerCase().includes(q.subject?.toLowerCase())
-          );
-          
-          // Embaralhar e pegar a quantidade solicitada
-          const shuffled = disciplinaQuestions.sort(() => 0.5 - Math.random());
-          const selected = shuffled.slice(0, Math.min(quantidade, shuffled.length));
-          selectedQuestions.push(...selected);
-        }
-      }
-
-      if (selectedQuestions.length === 0) {
-        toast.error("Nenhuma questão compatível encontrada");
-        return;
-      }
-
-      // Criar simulado
-      const simulation = await base44.entities.Simulation.create({
-        name: `Simulado Personalizado - ${edital.concurso_name}`,
-        question_count: selectedQuestions.length,
-        question_ids: selectedQuestions.map(q => q.id),
-        subjects: [...new Set(selectedQuestions.map(q => q.subject))],
-        institutions: [...new Set(selectedQuestions.map(q => q.institution))],
-        status: 'nao_iniciado',
-        edital_based: true,
+      const response = await base44.functions.invoke('generateSimulationFromEdital', {
         edital_id: editalId,
-        custom_config: disciplineConfig
+        question_count: questionCount
       });
 
-      toast.success(`Simulado personalizado criado com ${selectedQuestions.length} questões!`);
-      setConfigModalOpen(false);
-      navigate(createPageUrl("SolveSimulation") + "?id=" + simulation.id);
+      if (response.data.success) {
+        toast.success(`Simulado criado com ${response.data.questions_count} questões!`);
+        navigate(createPageUrl("SolveSimulation") + "?id=" + response.data.simulation_id);
+      }
     } catch (error) {
       console.error("Erro ao gerar simulado:", error);
-      toast.error("Erro ao gerar simulado: " + (error.message || "Tente novamente"));
+      toast.error(error.response?.data?.error || "Erro ao gerar simulado");
     } finally {
       setGeneratingSimId(null);
     }
-  };
-
-  const openConfigModal = (edital) => {
-    setSelectedEditalForConfig(edital);
-    setConfigModalOpen(true);
   };
 
   const deleteEdital = async (editalId) => {
@@ -561,18 +384,9 @@ export default function EditalSimulator() {
                       {edital.processing_status === 'completed' ? (
                         <>
                           <Button
-                            onClick={() => openConfigModal(edital)}
-                            disabled={generatingSimId === edital.id}
-                            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
-                          >
-                            <Target className="w-4 h-4 mr-2" />
-                            Simulado Personalizado
-                          </Button>
-                          
-                          <Button
                             onClick={() => generateSimulation(edital.id, 20)}
                             disabled={generatingSimId === edital.id}
-                            variant="outline"
+                            className="bg-green-600 hover:bg-green-700 text-white"
                           >
                             {generatingSimId === edital.id ? (
                               <>
@@ -582,7 +396,7 @@ export default function EditalSimulator() {
                             ) : (
                               <>
                                 <Play className="w-4 h-4 mr-2" />
-                                Rápido (20q)
+                                Gerar Simulado (20 questões)
                               </>
                             )}
                           </Button>
@@ -592,8 +406,8 @@ export default function EditalSimulator() {
                             disabled={generatingSimId === edital.id}
                             variant="outline"
                           >
-                            <BookOpen className="w-4 h-4 mr-2" />
-                            Completo (40q)
+                            <Target className="w-4 h-4 mr-2" />
+                            40 questões
                           </Button>
                         </>
                       ) : edital.processing_status === 'pending' || edital.processing_status === 'failed' ? (
@@ -653,14 +467,6 @@ export default function EditalSimulator() {
           )}
         </div>
       </div>
-
-      <SimulationConfigModal
-        isOpen={configModalOpen}
-        onClose={() => setConfigModalOpen(false)}
-        edital={selectedEditalForConfig}
-        onGenerateSimulation={generateCustomSimulation}
-        isGenerating={generatingSimId === selectedEditalForConfig?.id}
-      />
     </div>
   );
 }
