@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
@@ -52,6 +52,10 @@ export default function GuiaEstudos() {
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [currentArticlePage, setCurrentArticlePage] = useState(1);
+  const [currentVideoPage, setCurrentVideoPage] = useState(1);
+  const articlesPerPage = 5;
+  const videosPerPage = 3;
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -80,6 +84,19 @@ export default function GuiaEstudos() {
     return v.title.toLowerCase().includes(search) ||
            (v.description || '').toLowerCase().includes(search);
   });
+
+  const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
+  const totalVideoPages = Math.ceil(filteredVideos.length / videosPerPage);
+  
+  const paginatedArticles = filteredArticles.slice(
+    (currentArticlePage - 1) * articlesPerPage,
+    currentArticlePage * articlesPerPage
+  );
+  
+  const paginatedVideos = filteredVideos.slice(
+    (currentVideoPage - 1) * videosPerPage,
+    currentVideoPage * videosPerPage
+  );
 
   useEffect(() => {
     const load = async () => {
@@ -324,29 +341,57 @@ export default function GuiaEstudos() {
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
-            <div className={`shadow-xl rounded-md p-4 sticky top-24 max-h-[80vh] overflow-auto ${darkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
-              <h2 className={`text-sm font-semibold mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>Guias</h2>
-              <div className="relative mb-3">
+            <div className={`shadow-xl rounded-lg p-5 sticky top-24 max-h-[80vh] overflow-hidden flex flex-col ${darkMode ? 'bg-gray-800 text-gray-100 border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'}`}>
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen className={`w-5 h-5 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                <h2 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Navegação</h2>
+              </div>
+              <div className="relative mb-4">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   value={guideSearch}
                   onChange={(e) => setGuideSearch(e.target.value)}
                   placeholder="Buscar guias..."
-                  className={`pl-10 h-9 text-sm ${darkMode ? 'bg-gray-700 text-white border-gray-600' : ''}`}
+                  className={`pl-10 h-10 text-sm rounded-lg ${darkMode ? 'bg-gray-700 text-white border-gray-600 focus:border-indigo-500' : 'border-gray-300 focus:border-indigo-500'}`}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 overflow-y-auto flex-1 pr-2">
                 {filteredGuides.map((g) => (
-                  <div key={g.id} className={`rounded border p-2 ${slug === g.page_key ? (darkMode ? 'border-indigo-500 bg-indigo-900/30' : 'border-indigo-500 bg-indigo-50') : (darkMode ? 'border-gray-700 bg-gray-900/20' : 'border-gray-200 bg-white hover:bg-gray-50')}`}>
-                    <button className={`text-left w-full font-medium text-sm ${darkMode ? 'text-gray-100' : 'text-gray-900'} hover:${darkMode ? 'text-white' : 'text-black'}`} onClick={() => setSlug(g.page_key)}>
-                      {(g.title || g.page_key).replaceAll('_', ' ')}
+                  <div 
+                    key={g.id} 
+                    className={`rounded-lg border-2 transition-all duration-200 ${
+                      slug === g.page_key 
+                        ? (darkMode ? 'border-indigo-500 bg-indigo-900/40 shadow-lg' : 'border-indigo-500 bg-indigo-50 shadow-md') 
+                        : (darkMode ? 'border-gray-700 bg-gray-900/20 hover:border-gray-600 hover:bg-gray-900/40' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50')
+                    }`}
+                  >
+                    <button 
+                      className={`text-left w-full p-3 font-semibold text-sm transition-colors ${
+                        darkMode ? 'text-gray-100 hover:text-white' : 'text-gray-900 hover:text-black'
+                      }`} 
+                      onClick={() => {
+                        setSlug(g.page_key);
+                        setCurrentArticlePage(1);
+                        setCurrentVideoPage(1);
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${slug === g.page_key ? 'bg-indigo-500' : (darkMode ? 'bg-gray-600' : 'bg-gray-300')}`} />
+                        {(g.title || g.page_key).replaceAll('_', ' ')}
+                      </div>
                     </button>
-                    {guideArticlesMap[g.page_key]?.length > 0 && (
-                      <ul className="mt-2 pl-3 space-y-1">
+                    {slug === g.page_key && guideArticlesMap[g.page_key]?.length > 0 && (
+                      <ul className="px-3 pb-2 space-y-1 border-t pt-2" style={{ borderColor: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 1)' }}>
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
-                            <a href={`#art-${a.id}`} className={`text-xs ${darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'}`}>
-                              {a.title}
+                            <a 
+                              href={`#art-${a.id}`} 
+                              className={`flex items-start gap-2 text-xs py-1 transition-colors ${
+                                darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'
+                              }`}
+                            >
+                              <span className="text-[10px] mt-0.5">→</span>
+                              <span className="flex-1">{a.title}</span>
                             </a>
                           </li>
                         ))}
@@ -355,10 +400,10 @@ export default function GuiaEstudos() {
                   </div>
                 ))}
                 {filteredGuides.length === 0 && guides.length > 0 && (
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia encontrado.</p>
+                  <p className={`text-sm text-center py-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia encontrado.</p>
                 )}
                 {guides.length === 0 && (
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia criado ainda.</p>
+                  <p className={`text-sm text-center py-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia criado ainda.</p>
                 )}
               </div>
             </div>
@@ -449,7 +494,7 @@ export default function GuiaEstudos() {
               {filteredVideos.length === 0 ? (
                 <p className={`text-center py-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Nenhum vídeo encontrado.</p>
               ) : (
-                filteredVideos.map((v) => {
+                paginatedVideos.map((v) => {
                 const id = v.video_id || extractYouTubeId(v.youtube_url);
                 return (
                   <div key={v.id} className="w-full">
@@ -482,6 +527,31 @@ export default function GuiaEstudos() {
                 );
               }))}
             </div>
+            {totalVideoPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage(p => Math.max(1, p - 1))}
+                  disabled={currentVideoPage === 1}
+                  className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 disabled:opacity-50' : ''}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Página {currentVideoPage} de {totalVideoPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage(p => Math.min(totalVideoPages, p + 1))}
+                  disabled={currentVideoPage === totalVideoPages}
+                  className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 disabled:opacity-50' : ''}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </section>
         )}
 
@@ -515,7 +585,7 @@ export default function GuiaEstudos() {
             {filteredArticles.length === 0 ? (
               <p className={`text-center py-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Nenhum artigo encontrado.</p>
             ) : (
-              filteredArticles.map((a) => (
+              paginatedArticles.map((a) => (
               <div key={a.id} id={`art-${a.id}`} className={`relative p-6 rounded-lg mb-6 ${darkMode ? 'bg-gray-700/50' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
@@ -587,6 +657,52 @@ export default function GuiaEstudos() {
                 <hr className={`my-6 ${darkMode ? 'border-gray-700' : ''}`} />
               </div>
             )))}
+            {totalArticlePages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setCurrentArticlePage(p => Math.max(1, p - 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentArticlePage === 1}
+                  className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 disabled:opacity-50' : ''}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Anterior
+                </Button>
+                <div className="flex items-center gap-1">
+                  {[...Array(totalArticlePages)].map((_, i) => (
+                    <Button
+                      key={i}
+                      variant={currentArticlePage === i + 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setCurrentArticlePage(i + 1);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={currentArticlePage === i + 1 ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : (darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600' : '')}
+                    >
+                      {i + 1}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setCurrentArticlePage(p => Math.min(totalArticlePages, p + 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentArticlePage === totalArticlePages}
+                  className={darkMode ? 'bg-gray-700 text-gray-100 border-gray-600 hover:bg-gray-600 disabled:opacity-50' : ''}
+                >
+                  Próximo
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            )}
           </section>
         )}
 
