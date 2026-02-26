@@ -8,18 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen, Menu } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
 import ArticleFeedback from "../components/feedback/ArticleFeedback";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 export default function GuiaEstudos() {
   const [searchParams] = useSearchParams();
@@ -61,7 +54,6 @@ export default function GuiaEstudos() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [currentArticlePage, setCurrentArticlePage] = useState(1);
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const articlesPerPage = 5;
   const videosPerPage = 3;
 
@@ -335,94 +327,6 @@ export default function GuiaEstudos() {
   return (
     <div className={`min-h-screen py-8 px-4 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'}`}>
       <div className="mx-auto max-w-7xl">
-        {/* Botão para abrir menu lateral no mobile */}
-        <div className="md:hidden mb-4">
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button 
-                variant="outline" 
-                className={`w-full ${darkMode ? 'bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700' : ''}`}
-              >
-                <Menu className="w-5 h-5 mr-2" />
-                Ver Guias de Navegação
-              </Button>
-            </SheetTrigger>
-            <SheetContent 
-              side="left" 
-              className={`w-[300px] sm:w-[400px] overflow-y-auto ${darkMode ? 'bg-gray-800 text-gray-100 border-gray-700' : 'bg-white'}`}
-            >
-              <SheetHeader className="mb-4">
-                <SheetTitle className={`flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  <BookOpen className={`w-5 h-5 ${darkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
-                  Navegação
-                </SheetTitle>
-              </SheetHeader>
-              <div className="relative mb-4">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  value={guideSearch}
-                  onChange={(e) => setGuideSearch(e.target.value)}
-                  placeholder="Buscar guias..."
-                  className={`pl-10 h-10 text-sm rounded-lg ${darkMode ? 'bg-gray-700 text-white border-gray-600 focus:border-indigo-500' : 'border-gray-300 focus:border-indigo-500'}`}
-                />
-              </div>
-              <div className="space-y-2">
-                {filteredGuides.map((g) => (
-                  <div 
-                    key={g.id} 
-                    className={`rounded-lg border-2 transition-all duration-200 ${
-                      slug === g.page_key 
-                        ? (darkMode ? 'border-indigo-500 bg-indigo-900/40 shadow-lg' : 'border-indigo-500 bg-indigo-50 shadow-md') 
-                        : (darkMode ? 'border-gray-700 bg-gray-900/20 hover:border-gray-600 hover:bg-gray-900/40' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50')
-                    }`}
-                  >
-                    <button 
-                      className={`text-left w-full p-3 font-semibold text-sm transition-colors ${
-                        darkMode ? 'text-gray-100 hover:text-white' : 'text-gray-900 hover:text-black'
-                      }`} 
-                      onClick={() => {
-                        setSlug(g.page_key);
-                        setCurrentArticlePage(1);
-                        setCurrentVideoPage(1);
-                        setIsSheetOpen(false);
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${slug === g.page_key ? 'bg-indigo-500' : (darkMode ? 'bg-gray-600' : 'bg-gray-300')}`} />
-                        {(g.title || g.page_key).replaceAll('_', ' ')}
-                      </div>
-                    </button>
-                    {slug === g.page_key && guideArticlesMap[g.page_key]?.length > 0 && (
-                      <ul className="px-3 pb-2 space-y-1 border-t pt-2" style={{ borderColor: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 1)' }}>
-                        {guideArticlesMap[g.page_key].map((a) => (
-                          <li key={a.id}>
-                            <a 
-                              href={`#art-${a.id}`} 
-                              onClick={() => setIsSheetOpen(false)}
-                              className={`flex items-start gap-2 text-xs py-1 transition-colors ${
-                                darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'
-                              }`}
-                            >
-                              <span className="text-[10px] mt-0.5">→</span>
-                              <span className="flex-1">{a.title}</span>
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-                {filteredGuides.length === 0 && guides.length > 0 && (
-                  <p className={`text-sm text-center py-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia encontrado.</p>
-                )}
-                {guides.length === 0 && (
-                  <p className={`text-sm text-center py-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nenhum guia criado ainda.</p>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <aside className="hidden md:block md:col-span-4 lg:col-span-3">
             <div className={`shadow-xl rounded-lg p-5 sticky top-24 max-h-[80vh] overflow-hidden flex flex-col ${darkMode ? 'bg-gray-800 text-gray-100 border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'}`}>
