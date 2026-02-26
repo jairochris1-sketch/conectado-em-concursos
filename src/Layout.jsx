@@ -77,7 +77,7 @@ const navigationItems = [
   icon: Target
 },
 {
-  title: "Guia de Estudos",
+  title: "Resumos",
   url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
   icon: BookOpenIcon
 },
@@ -215,8 +215,8 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  GuiaEstudos: "Guia de Estudos",
-  ComoEstudarPrimeiroLugar: "Resumos",
+  GuiaEstudos: "Resumos",
+  ComoEstudarPrimeiroLugar: "Como Estudar",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
@@ -242,7 +242,7 @@ const featureAccess = {
   'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['avancado'],
   'Simulados Digital': ['avancado'],
-  'Guia de Estudos': ['avancado'],
+  'Resumos': ['avancado'],
   'Provas': ['avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
   'Curso de Inglês': ['avancado'],
