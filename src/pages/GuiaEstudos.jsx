@@ -287,50 +287,38 @@ export default function GuiaEstudos() {
             </div>
           </div>
         </div>
-        <div className={`mx-auto py-12 px-6 ${maxWidthClasses[readingSettings.maxWidth]}`}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <article 
-              className="lg:col-span-8 max-h-[80vh] overflow-y-auto"
+        <div className="mx-auto py-12 px-6 max-w-5xl">
+          <article 
+            className="w-full"
+            style={{
+              fontFamily: readingSettings.fontFamily,
+              fontSize: `${readingSettings.fontSize}px`,
+              lineHeight: readingSettings.lineHeight
+            }}
+            onScroll={(e) => {
+              handleArticleScroll(selectedArticle.id, e.target.scrollTop);
+              handleScroll(e);
+            }}
+          >
+            <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              {selectedArticle.title}
+            </h1>
+            <div className="flex items-center gap-2 mb-6">
+              {selectedArticle.author && <Badge variant="outline">{selectedArticle.author}</Badge>}
+              {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
+            </div>
+            <div 
+              className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert [&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}`}
+              dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
               style={{
-                fontFamily: readingSettings.fontFamily,
-                fontSize: `${readingSettings.fontSize}px`,
-                lineHeight: readingSettings.lineHeight
+                color: darkMode ? '#e5e7eb' : '#1f2937',
+                '--tw-prose-body': darkMode ? '#e5e7eb' : '#1f2937',
+                '--tw-prose-headings': darkMode ? '#ffffff' : '#111827',
+                '--tw-prose-links': darkMode ? '#93c5fd' : '#2563eb',
+                '--tw-prose-bold': darkMode ? '#ffffff' : '#111827'
               }}
-              onScroll={(e) => {
-                handleArticleScroll(selectedArticle.id, e.target.scrollTop);
-                handleScroll(e);
-              }}
-            >
-              <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {selectedArticle.title}
-              </h1>
-              <div className="flex items-center gap-2 mb-6">
-                {selectedArticle.author && <Badge variant="outline">{selectedArticle.author}</Badge>}
-                {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
-              </div>
-              <div 
-                className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert [&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}`}
-                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                style={{
-                  color: darkMode ? '#e5e7eb' : '#1f2937',
-                  '--tw-prose-body': darkMode ? '#e5e7eb' : '#1f2937',
-                  '--tw-prose-headings': darkMode ? '#ffffff' : '#111827',
-                  '--tw-prose-links': darkMode ? '#93c5fd' : '#2563eb',
-                  '--tw-prose-bold': darkMode ? '#ffffff' : '#111827'
-                }}
-              />
-            </article>
-            <aside className="lg:col-span-4 space-y-4">
-              <div className={`sticky top-24 p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <AnnotationTools articleId={selectedArticle.id} darkMode={darkMode} />
-              </div>
-              <ArticleFeedback 
-                articleId={selectedArticle.id} 
-                articleTitle={selectedArticle.title}
-                darkMode={darkMode}
-              />
-            </aside>
-          </div>
+            />
+          </article>
         </div>
       </div>
     );
