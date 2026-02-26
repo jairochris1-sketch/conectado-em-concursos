@@ -78,7 +78,7 @@ const navigationItems = [
 },
 {
   title: "Guia de Estudos",
-  url: createPageUrl("ComoEstudarPrimeiroLugar"),
+  url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
   icon: BookOpenIcon
 },
 {
@@ -215,7 +215,8 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  ComoEstudarPrimeiroLugar: "Guia de Estudos",
+  GuiaEstudos: "Guia de Estudos",
+  ComoEstudarPrimeiroLugar: "Resumos",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
