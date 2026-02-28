@@ -568,6 +568,10 @@ export default function AdminPage() {
             <AutoResponseManager />
           </TabsContent>
 
+          <TabsContent value="configuracoes" className="mt-6">
+            <NotificationSoundManager />
+          </TabsContent>
+
           <TabsContent value="audit-logs" className="mt-6">
             <AuditLogViewer />
           </TabsContent>
