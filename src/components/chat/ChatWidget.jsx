@@ -123,6 +123,12 @@ export default function ChatWidget() {
           [event.data.message_id]: [...(prev[event.data.message_id] || []), event.data]
         }));
 
+        // Tocar som de notificação
+        if (notificationSoundUrl) {
+          const audio = new Audio(notificationSoundUrl);
+          audio.play().catch(() => {});
+        }
+
         // Enviar notificação se notificações estão habilitadas
         if (notificationsEnabled) {
           NotificationManager.send('Resposta recebida!', {
