@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare, Volume2 } from 'lucide-react';
+
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -563,6 +564,10 @@ export default function AdminPage() {
 
           <TabsContent value="chat" className="mt-6">
             <ChatAdmin />
+          </TabsContent>
+
+          <TabsContent value="admin-chat" className="mt-6">
+            <AdminInternalChat />
           </TabsContent>
 
           <TabsContent value="quick-responses" className="mt-6">
