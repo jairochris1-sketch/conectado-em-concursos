@@ -24,6 +24,15 @@ export default function ChatWidget() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // Carregar URL do som de notificação
+    base44.entities.SiteSettings.filter({ key: 'notification_sound' }).then((settings) => {
+      if (settings.length > 0 && settings[0].notification_sound_url) {
+        setNotificationSoundUrl(settings[0].notification_sound_url);
+      }
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
     if (isOpen && visitorName && hasUserInfo) {
       loadHistoryAndReplies();
     }
