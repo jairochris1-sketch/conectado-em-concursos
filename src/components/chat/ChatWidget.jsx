@@ -9,6 +9,7 @@ import { NotificationManager } from '@/components/NotificationManager';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [notificationSoundUrl, setNotificationSoundUrl] = useState(null);
   const [messages, setMessages] = useState([]);
   const [visitorName, setVisitorName] = useState('');
   const [visitorEmail, setVisitorEmail] = useState('');

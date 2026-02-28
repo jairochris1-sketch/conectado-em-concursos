@@ -33,6 +33,7 @@ import AutoResponseManager from '../components/admin/AutoResponseManager';
 import SpecialUserManager from '../components/admin/SpecialUserManager';
 import SubscriptionManager from '../components/admin/SubscriptionManager';
 import AuditLogViewer from '../components/admin/AuditLogViewer';
+import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));

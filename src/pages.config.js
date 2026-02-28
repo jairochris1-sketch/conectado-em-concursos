@@ -47,106 +47,106 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Notebooks from './pages/Notebooks';
-import PaymentHistory from './pages/PaymentHistory';
-import Subscription from './pages/Subscription';
-import LogicCourse from './pages/LogicCourse';
-import EditalViewer from './pages/EditalViewer';
-import GuiaEstudos from './pages/GuiaEstudos';
-import ViewStudyPlan from './pages/ViewStudyPlan';
-import Dashboard from './pages/Dashboard';
-import SavedContests from './pages/SavedContests';
-import ChatGPT from './pages/ChatGPT';
-import SDAdmin from './pages/SDAdmin';
-import EditalSimulator from './pages/EditalSimulator';
-import MathCourse from './pages/MathCourse';
-import ResetPassword from './pages/ResetPassword';
-import Ranking from './pages/Ranking';
-import chatgpt from './pages/chatgpt';
-import NotebookStats from './pages/NotebookStats';
-import Home from './pages/Home';
-import Profile from './pages/Profile';
-import Calendar from './pages/Calendar';
-import CreateStudyPlan from './pages/CreateStudyPlan';
-import CreateNotebook from './pages/CreateNotebook';
-import ForgotPassword from './pages/ForgotPassword';
-import FavoriteQuestions from './pages/FavoriteQuestions';
-import subscription from './pages/subscription';
-import PerformanceReports from './pages/PerformanceReports';
-import MyDoubts from './pages/MyDoubts';
-import Community from './pages/Community';
-import Admin from './pages/Admin';
-import EnglishCourse from './pages/EnglishCourse';
-import studies from './pages/studies';
-import Exams from './pages/Exams';
 import ActivityFeed from './pages/ActivityFeed';
-import StudyPlans from './pages/StudyPlans';
-import ExamView from './pages/ExamView';
-import SimuladosDigital from './pages/SimuladosDigital';
-import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
-import SolveNotebook from './pages/SolveNotebook';
-import Schedule from './pages/Schedule';
-import Statistics from './pages/Statistics';
+import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
-import DigitalWhiteboard from './pages/DigitalWhiteboard';
-import SolveSimulation from './pages/SolveSimulation';
-import Studies from './pages/Studies';
-import Questions from './pages/Questions';
+import Calendar from './pages/Calendar';
+import ChatGPT from './pages/ChatGPT';
+import Community from './pages/Community';
+import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
+import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
+import CreateStudyPlan from './pages/CreateStudyPlan';
+import Dashboard from './pages/Dashboard';
+import DigitalWhiteboard from './pages/DigitalWhiteboard';
+import EditalSimulator from './pages/EditalSimulator';
+import EditalViewer from './pages/EditalViewer';
+import EnglishCourse from './pages/EnglishCourse';
+import ExamView from './pages/ExamView';
+import Exams from './pages/Exams';
+import FavoriteQuestions from './pages/FavoriteQuestions';
+import ForgotPassword from './pages/ForgotPassword';
+import GuiaEstudos from './pages/GuiaEstudos';
+import Home from './pages/Home';
+import LogicCourse from './pages/LogicCourse';
+import MathCourse from './pages/MathCourse';
+import MyDoubts from './pages/MyDoubts';
+import NotebookStats from './pages/NotebookStats';
+import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
+import PaymentHistory from './pages/PaymentHistory';
+import PerformanceReports from './pages/PerformanceReports';
+import Profile from './pages/Profile';
+import Questions from './pages/Questions';
+import Ranking from './pages/Ranking';
+import ResetPassword from './pages/ResetPassword';
+import SDAdmin from './pages/SDAdmin';
+import SavedContests from './pages/SavedContests';
+import Schedule from './pages/Schedule';
+import SimuladosDigital from './pages/SimuladosDigital';
+import SolveNotebook from './pages/SolveNotebook';
+import SolveSimulation from './pages/SolveSimulation';
+import Statistics from './pages/Statistics';
+import Studies from './pages/Studies';
+import StudyPlans from './pages/StudyPlans';
+import Subscription from './pages/Subscription';
+import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
+import chatgpt from './pages/chatgpt';
+import studies from './pages/studies';
+import subscription from './pages/subscription';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Notebooks": Notebooks,
-    "PaymentHistory": PaymentHistory,
-    "Subscription": Subscription,
-    "LogicCourse": LogicCourse,
-    "EditalViewer": EditalViewer,
-    "GuiaEstudos": GuiaEstudos,
-    "ViewStudyPlan": ViewStudyPlan,
-    "Dashboard": Dashboard,
-    "SavedContests": SavedContests,
-    "ChatGPT": ChatGPT,
-    "SDAdmin": SDAdmin,
-    "EditalSimulator": EditalSimulator,
-    "MathCourse": MathCourse,
-    "ResetPassword": ResetPassword,
-    "Ranking": Ranking,
-    "chatgpt": chatgpt,
-    "NotebookStats": NotebookStats,
-    "Home": Home,
-    "Profile": Profile,
-    "Calendar": Calendar,
-    "CreateStudyPlan": CreateStudyPlan,
-    "CreateNotebook": CreateNotebook,
-    "ForgotPassword": ForgotPassword,
-    "FavoriteQuestions": FavoriteQuestions,
-    "subscription": subscription,
-    "PerformanceReports": PerformanceReports,
-    "MyDoubts": MyDoubts,
-    "Community": Community,
-    "Admin": Admin,
-    "EnglishCourse": EnglishCourse,
-    "studies": studies,
-    "Exams": Exams,
     "ActivityFeed": ActivityFeed,
-    "StudyPlans": StudyPlans,
-    "ExamView": ExamView,
-    "SimuladosDigital": SimuladosDigital,
-    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
-    "SolveNotebook": SolveNotebook,
-    "Schedule": Schedule,
-    "Statistics": Statistics,
+    "Admin": Admin,
     "AssistirAula": AssistirAula,
-    "DigitalWhiteboard": DigitalWhiteboard,
-    "SolveSimulation": SolveSimulation,
-    "Studies": Studies,
-    "Questions": Questions,
+    "Calendar": Calendar,
+    "ChatGPT": ChatGPT,
+    "Community": Community,
+    "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
+    "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
+    "CreateStudyPlan": CreateStudyPlan,
+    "Dashboard": Dashboard,
+    "DigitalWhiteboard": DigitalWhiteboard,
+    "EditalSimulator": EditalSimulator,
+    "EditalViewer": EditalViewer,
+    "EnglishCourse": EnglishCourse,
+    "ExamView": ExamView,
+    "Exams": Exams,
+    "FavoriteQuestions": FavoriteQuestions,
+    "ForgotPassword": ForgotPassword,
+    "GuiaEstudos": GuiaEstudos,
+    "Home": Home,
+    "LogicCourse": LogicCourse,
+    "MathCourse": MathCourse,
+    "MyDoubts": MyDoubts,
+    "NotebookStats": NotebookStats,
+    "Notebooks": Notebooks,
     "Notes": Notes,
+    "PaymentHistory": PaymentHistory,
+    "PerformanceReports": PerformanceReports,
+    "Profile": Profile,
+    "Questions": Questions,
+    "Ranking": Ranking,
+    "ResetPassword": ResetPassword,
+    "SDAdmin": SDAdmin,
+    "SavedContests": SavedContests,
+    "Schedule": Schedule,
+    "SimuladosDigital": SimuladosDigital,
+    "SolveNotebook": SolveNotebook,
+    "SolveSimulation": SolveSimulation,
+    "Statistics": Statistics,
+    "Studies": Studies,
+    "StudyPlans": StudyPlans,
+    "Subscription": Subscription,
+    "ViewStudyPlan": ViewStudyPlan,
     "Welcome": Welcome,
+    "chatgpt": chatgpt,
+    "studies": studies,
+    "subscription": subscription,
 }
 
 export const pagesConfig = {
