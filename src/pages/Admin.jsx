@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare, Volume2 } from 'lucide-react';
 import { format } from "date-fns";
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
@@ -466,6 +466,10 @@ export default function AdminPage() {
             <TabsTrigger value="auto-responses">
               <Zap className="w-4 h-4 mr-2" />
               Automáticas
+            </TabsTrigger>
+            <TabsTrigger value="configuracoes">
+              <Volume2 className="w-4 h-4 mr-2" />
+              🔊 Som
             </TabsTrigger>
             <TabsTrigger value="audit-logs">
               <Shield className="w-4 h-4 mr-2" />
