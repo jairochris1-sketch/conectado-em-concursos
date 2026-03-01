@@ -300,52 +300,18 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     const content = text.trim();
 
     try {
-      // Step 1: Pre-flight security check (catches obvious issues early)
-      const securityRes = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
-      if (!securityRes.data?.allowed) {
-        toast.error(securityRes.data?.reason || "Não foi possível enviar a mensagem.");
-        setSending(false);
-        return;
-      }
-
       setText("");
       
-      // Step 2: Backend guard validates connection and sanitizes BEFORE creation
-      // This ensures RLS + security rules are enforced at backend level
-      const guardRes = await base44.functions.invoke('studyPartnerMessageGuard', {
-        sender_email: currentUser.email,
-        sender_name: currentUser.full_name,
-        sender_photo: currentUser.profile_photo_url || "",
+      // Backend function handles connection validation + message creation
+      await base44.functions.invoke('sendStudyPartnerMessage', {
         receiver_email: partner.email,
-        content,
-        conversation_key: convKey
+        content
       });
 
-      if (!guardRes.data?.allowed) {
-        toast.error(guardRes.data?.error || "Falha na validação.");
-        setSending(false);
-        return;
-      }
-
-      // Step 3: Create message with sanitized data from guard (backend already validated connection)
-      const newMsg = await base44.entities.StudyPartnerMessage.create(guardRes.data.message);
-
-      // Step 4: Update message status to 'delivered' after creation
-      if (newMsg?.id) {
-        setTimeout(() => {
-          base44.entities.StudyPartnerMessage.update(newMsg.id, { status: 'delivered' }).catch(() => {});
-        }, 500);
-      }
-      
-      if (newMsg?.id) {
-        setLastMessageId(newMsg.id);
-        toast.success("Mensagem enviada!");
-      } else {
-        throw new Error("Falha ao criar mensagem - sem ID retornado");
-      }
+      toast.success("Mensagem enviada!");
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
-      toast.error("Erro ao enviar mensagem. Tente novamente.");
+      toast.error(error.response?.data?.error || "Erro ao enviar mensagem. Tente novamente.");
       setText(content); // Restore text on error
     } finally {
       setSending(false);
