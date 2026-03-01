@@ -12,6 +12,7 @@ import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
+import { StaffBadge } from "@/components/ui/staff-badge";
 
 const subjectLabels = {
   portugues: "Português", matematica: "Matemática",
@@ -127,7 +128,10 @@ export default function UserProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileUser.full_name}</h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileUser.full_name}</h1>
+                  <StaffBadge email={profileUser.email} className="w-5 h-5" />
+                </div>
                 {(profileUser.city || profileUser.state) && (
                   <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
                     <MapPin className="w-3.5 h-3.5" />

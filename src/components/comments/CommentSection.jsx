@@ -278,6 +278,7 @@ export default function CommentSection({ questionId, onCommentChange }) {
                           <span className="text-slate-200 font-medium">
                             {comment.user_name}
                           </span>
+                          <StaffBadge email={comment.user_email} />
                           {comment.user_city &&
                         <>
                               <span className="text-gray-400">•</span>

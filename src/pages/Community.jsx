@@ -19,6 +19,7 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { StaffBadge } from "@/components/ui/staff-badge";
 
 const defaultCategories = [
 { value: "depoimentos", label: "Depoimentos de Aprovação" },
@@ -377,6 +378,7 @@ export default function CommunityPage() {
 
                   {reply.author_name}
                 </Link>
+                <StaffBadge email={reply.author_email} className="ml-0.5" />
                 {reply.is_best_answer &&
               <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
               }
@@ -467,15 +469,16 @@ export default function CommunityPage() {
                   <div className="flex-1">
                           <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm text-gray-500">
+                            <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <Link
-                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
-                          className="font-semibold hover:underline text-blue-600">
+                                to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                                className="font-semibold hover:underline text-blue-600 ml-1">
 
                                 {selectedPost.author_name}
                               </Link>
-                              {" "}• {new Date(selectedPost.created_date).toLocaleDateString()}
+                              <StaffBadge email={selectedPost.author_email} className="ml-1" />
+                              <span className="ml-1">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
                             </p>
                       <FollowButton
                         targetEmail={selectedPost.author_email}
@@ -780,13 +783,16 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <Link
-                      to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
-                      className="font-semibold hover:underline text-blue-600"
-                      onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1">
+                        <Link
+                        to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
+                        className="font-semibold hover:underline text-blue-600"
+                        onClick={(e) => e.stopPropagation()}>
 
-                        {post.author_name}
-                      </Link>
+                          {post.author_name}
+                        </Link>
+                        <StaffBadge email={post.author_email} />
+                      </div>
                       <span>•</span>
                       <span>{new Date(post.created_date).toLocaleDateString()}</span>
                       <span>•</span>
