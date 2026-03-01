@@ -123,6 +123,9 @@ export default function ChatWidget() {
           [event.data.message_id]: [...(prev[event.data.message_id] || []), event.data]
         }));
 
+        // Abrir chat automaticamente
+        setIsOpen(true);
+
         // Tocar som de notificação
         if (notificationSoundUrl) {
           const audio = new Audio(notificationSoundUrl);
