@@ -85,7 +85,7 @@ const navigationItems = [
   icon: BookOpenIcon
 },
 {
-  title: "Área de Estudos",
+  title: "Meus Cursos",
   url: createPageUrl("Studies"),
   icon: BookOpen
 },
