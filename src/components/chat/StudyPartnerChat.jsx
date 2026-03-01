@@ -91,20 +91,26 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     setShowNewMessageIndicator(false);
   }, [messages]);
 
-  // Infinite scroll - load older messages
+  // Infinite scroll - load older messages with debounce
   useEffect(() => {
     const container = document.querySelector('[data-chat-messages]');
     if (!container) return;
 
     const handleScroll = () => {
-      if (container.scrollTop < 100 && !loadingOlder && hasMoreOlder) {
-        loadOlderMessages();
+      if (container.scrollTop < 100 && !loadingRef.current && hasMoreOlder) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          loadOlderMessages();
+        }, 300);
       }
     };
 
     container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [loadingOlder, hasMoreOlder]);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeoutRef.current);
+    };
+  }, [hasMoreOlder]);
 
   // Load + subscribe to messages with notifications
   useEffect(() => {
