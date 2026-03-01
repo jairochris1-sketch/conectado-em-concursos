@@ -363,7 +363,7 @@ export default function Exams() {
                       className="w-12 h-12 object-contain flex-shrink-0 rounded" />
 
                     }
-                        <CardTitle className="text-lime-500 text-base font-semibold tracking-tight dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
+                        <CardTitle className="text-gray-900 text-base font-semibold tracking-tight dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </CardTitle>
                         <button
