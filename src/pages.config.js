@@ -98,7 +98,6 @@ import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import UserProfile from './pages/UserProfile';
-import UserPresenceHistory from './pages/UserPresenceHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -154,7 +153,6 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "UserProfile": UserProfile,
-    "UserPresenceHistory": UserPresenceHistory,
 }
 
 export const pagesConfig = {
