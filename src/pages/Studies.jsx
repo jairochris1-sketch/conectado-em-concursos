@@ -316,21 +316,21 @@ export default function StudiesPage() {
     setSelectedSubject(subject);
     setSelectedType(null);
     setCurrentView('subject');
-    setNavigationPath(['Área de Estudos', subjectNames[subject]]);
+    setNavigationPath(['Meus Cursos', subjectNames[subject]]);
   };
 
   const handleNavigateToType = (type) => {
     setSelectedType(type);
     setSelectedSubject(null);
     setCurrentView('type');
-    setNavigationPath(['Área de Estudos', typeNames[type]]);
+    setNavigationPath(['Meus Cursos', typeNames[type]]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
     setCurrentView('root');
-    setNavigationPath(['Área de Estudos']);
+    setNavigationPath(['Meus Cursos']);
   };
 
   const handleBreadcrumbClick = (index) => {
