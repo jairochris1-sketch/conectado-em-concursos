@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
       title: `Nova mensagem de ${user.full_name || 'Usuário'}`,
       message: content.length > 50 ? content.substring(0, 50) + '...' : content,
       type: "chat_message",
-      action_url: "/people", // Ou link para a página de pessoas/chat
+      action_url: `/UserProfile?email=${encodeURIComponent(user.email)}&openChat=true`,
       related_user_name: user.full_name,
       related_user_photo: user.profile_photo_url,
       entity_id: message.id,
