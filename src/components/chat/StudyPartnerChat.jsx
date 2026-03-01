@@ -317,6 +317,25 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           );
         })}
         <div ref={messagesEnd} />
+        
+        {/* New message indicator */}
+        <AnimatePresence>
+          {showNewMessageIndicator && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute bottom-16 left-0 right-0 flex justify-center"
+            >
+              <button
+                onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
+                className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center gap-1"
+              >
+                <Circle className="w-2 h-2 fill-white" /> Nova mensagem
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Input */}
