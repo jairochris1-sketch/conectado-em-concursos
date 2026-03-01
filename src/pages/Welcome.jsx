@@ -63,17 +63,22 @@ export default function WelcomePage() {
     fetchContent();
   }, []);
 
+  const filteredCities = sergipeCities.filter(c =>
+    c.toLowerCase().includes(citySearch.toLowerCase())
+  );
+
   const handleContinue = async () => {
     setIsLoading(true);
     try {
       await User.updateMyUserData({ 
         onboarding_complete: true,
-        current_plan: 'gratuito'
+        current_plan: 'gratuito',
+        city: city || undefined,
+        state: city ? 'SE' : undefined,
       });
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
       console.error("Erro ao atualizar status do usuário:", error);
-      // Mesmo se falhar, navega para o dashboard para não prender o usuário
       navigate(createPageUrl('Dashboard'));
     }
     setIsLoading(false);
