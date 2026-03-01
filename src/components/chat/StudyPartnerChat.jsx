@@ -259,25 +259,35 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     setSending(true);
     const content = text.trim();
 
-    // Security check via backend
-    const res = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
-    if (!res.data?.allowed) {
-      toast.error(res.data?.reason || "Não foi possível enviar a mensagem.");
-      setSending(false);
-      return;
-    }
+    try {
+      // Security check via backend
+      const res = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
+      if (!res.data?.allowed) {
+        toast.error(res.data?.reason || "Não foi possível enviar a mensagem.");
+        setSending(false);
+        return;
+      }
 
-    setText("");
-    await base44.entities.StudyPartnerMessage.create({
-      sender_email: currentUser.email,
-      sender_name: currentUser.full_name,
-      sender_photo: currentUser.profile_photo_url || "",
-      receiver_email: partner.email,
-      content,
-      conversation_key: convKey,
-      is_read: false
-    });
-    setSending(false);
+      setText("");
+      const newMsg = await base44.entities.StudyPartnerMessage.create({
+        sender_email: currentUser.email,
+        sender_name: currentUser.full_name,
+        sender_photo: currentUser.profile_photo_url || "",
+        receiver_email: partner.email,
+        content,
+        conversation_key: convKey,
+        is_read: false
+      });
+      
+      if (newMsg) {
+        toast.success("Mensagem enviada!");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      toast.error("Erro ao enviar mensagem. Tente novamente.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
