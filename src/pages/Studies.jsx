@@ -643,9 +643,128 @@ ${videoNotes}
           }
         </motion.div>
 
-        <Tabs defaultValue="materials" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="materials" className="flex items-center gap-2">
+        {!selectedCourse ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
+              <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
+                  setSelectedCourse(cargo);
+                  setSelectedCargo(cargo.value);
+              }}>
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-300">
+                    <BookOpen className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{cargo.label}</h3>
+                  <p className="text-sm text-gray-500 mt-2">Acessar conteúdo do curso</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+            <div className="flex items-center gap-4 px-6 pt-6 pb-2">
+               <Button variant="ghost" onClick={() => {
+                   setSelectedCourse(null);
+                   setSelectedCargo('all');
+               }} className="text-gray-500 hover:text-gray-900 dark:hover:text-white -ml-4">
+                 <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
+               </Button>
+               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCourse.label}</h2>
+            </div>
+            
+            <Tabs value={courseTab} onValueChange={setCourseTab} className="w-full">
+              <TabsList className="flex border-b border-gray-200 dark:border-gray-800 bg-transparent h-auto p-0 px-6 space-x-8 rounded-none overflow-x-auto justify-start">
+                <TabsTrigger value="painel" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                  Painel
+                </TabsTrigger>
+                <TabsTrigger value="conteudo" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                  Conteúdo
+                </TabsTrigger>
+                <TabsTrigger value="cronograma" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                  Cronograma
+                </TabsTrigger>
+                <TabsTrigger value="forum" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                  Fórum de dúvidas
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="painel" className="p-6 min-h-[400px]">
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-8 rounded-xl border border-gray-200 dark:border-gray-700 text-center flex flex-col items-center justify-center h-64">
+                   <BarChart3 className="w-12 h-12 text-gray-400 mb-4" />
+                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Painel de Estatísticas</h3>
+                   <p className="text-gray-500 dark:text-gray-400 max-w-md">O progresso e as estatísticas do seu curso estarão disponíveis em breve nesta seção.</p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="cronograma" className="p-6 min-h-[400px]">
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-8 rounded-xl border border-gray-200 dark:border-gray-700 text-center flex flex-col items-center justify-center h-64">
+                   <Timer className="w-12 h-12 text-gray-400 mb-4" />
+                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Cronograma</h3>
+                   <p className="text-gray-500 dark:text-gray-400 max-w-md">O cronograma focado neste curso será disponibilizado em breve.</p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="forum" className="mt-0 min-h-[500px]">
+                <div className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 px-6 py-3 border-b border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center gap-6">
+                      <button onClick={() => setForumSubTab('videoaula')} className={`flex items-center gap-2 pb-3 -mb-[13px] border-b-2 text-sm font-medium ${forumSubTab === 'videoaula' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}>
+                        <Play className="w-4 h-4" fill={forumSubTab === 'videoaula' ? 'currentColor' : 'none'} /> Videoaula
+                      </button>
+                      <button onClick={() => setForumSubTab('pdf')} className={`flex items-center gap-2 pb-3 -mb-[13px] border-b-2 text-sm font-medium ${forumSubTab === 'pdf' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}>
+                        PDF
+                      </button>
+                    </div>
+                    
+                    <div className="sm:ml-auto w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                      <div className="relative">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          placeholder="Filtrar por disciplina ou professor(a)" 
+                          value={forumSearch}
+                          onChange={(e) => setForumSearch(e.target.value)}
+                          className="pl-9 h-9 w-full sm:w-[300px] bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-1"
+                        />
+                      </div>
+                      <Button className="h-9 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 shrink-0">
+                        Fazer uma pergunta <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Visualizar por:</span>
+                      <div className="flex p-1 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <button onClick={() => setForumFilter('todas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'todas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Todas</button>
+                        <button onClick={() => setForumFilter('respondidas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'respondidas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Respondidas</button>
+                        <button onClick={() => setForumFilter('nao_respondidas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'nao_respondidas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Não respondidas</button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex bg-gray-50 dark:bg-gray-800 rounded-full p-1 self-stretch md:self-auto">
+                      <button onClick={() => setForumScope('todas_perguntas')} className={`px-4 py-1.5 text-xs sm:text-sm rounded-full transition-colors flex-1 ${forumScope === 'todas_perguntas' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Todas as perguntas</button>
+                      <button onClick={() => setForumScope('minhas_perguntas')} className={`px-4 py-1.5 text-xs sm:text-sm rounded-full transition-colors flex-1 ${forumScope === 'minhas_perguntas' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Minhas perguntas</button>
+                    </div>
+                  </div>
+                  
+                  <div className="px-6 pb-8 space-y-1 mt-2">
+                    {Object.values(subjectNames).slice(0, 5).map((subject) => (
+                      <div key={subject} className="border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900 border-b">
+                        <button className="w-full flex items-center justify-between px-2 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <span className="font-semibold text-gray-700 dark:text-gray-300 text-sm">{subject}</span>
+                          <ChevronDown className="w-4 h-4 text-gray-400" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="conteudo" className="p-6">
+                <Tabs defaultValue="materials" className="w-full">
+                  <TabsList className="grid w-full grid-cols-4 mb-6">
+                    <TabsTrigger value="materials" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Materiais
             </TabsTrigger>
