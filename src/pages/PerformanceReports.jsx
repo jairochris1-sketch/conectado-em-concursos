@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import PeriodFilter from '../components/reports/PeriodFilter';
 import ProgressChart from '../components/reports/ProgressChart';
 import SubjectPerformance from '../components/reports/SubjectPerformance';
+import InstitutionPerformance from '../components/reports/InstitutionPerformance';
 import UserComparison from '../components/reports/UserComparison';
 import SimulationHistory from '../components/reports/SimulationHistory';
 import { Toaster } from '@/components/ui/sonner';
@@ -50,6 +51,7 @@ export default function PerformanceReports() {
 
   const [progressData, setProgressData] = useState([]);
   const [subjectData, setSubjectData] = useState([]);
+  const [institutionData, setInstitutionData] = useState([]);
   const [userStats, setUserStats] = useState({ taxaAcerto: 0, questoes: 0 });
   const [averageStats, setAverageStats] = useState({ taxaAcerto: 0, questoes: 0 });
   const [simulations, setSimulations] = useState([]);
@@ -118,6 +120,29 @@ export default function PerformanceReports() {
           .sort((a, b) => b.taxa - a.taxa);
 
         setSubjectData(subjectChartData);
+
+        // Preparar dados por banca (instituição)
+        const institutionMap = {};
+        filteredAnswers.forEach(answer => {
+          if (!answer.institution) return;
+          const instName = answer.institution.toUpperCase().replace(/_/g, ' ');
+          if (!institutionMap[instName]) {
+            institutionMap[instName] = { acertos: 0, total: 0 };
+          }
+          institutionMap[instName].total++;
+          if (answer.is_correct) institutionMap[instName].acertos++;
+        });
+
+        const institutionChartData = Object.entries(institutionMap)
+          .map(([instituicao, data]) => ({
+            instituicao: instituicao,
+            acertos: data.acertos,
+            total: data.total,
+            taxa: (data.acertos / data.total) * 100,
+          }))
+          .sort((a, b) => b.total - a.total); // Ordenar por mais respondidas
+
+        setInstitutionData(institutionChartData);
 
         // Calcular estatísticas do usuário
         const totalCorrect = filteredAnswers.filter(a => a.is_correct).length;
@@ -213,6 +238,14 @@ export default function PerformanceReports() {
             transition={{ delay: 0.3 }}
           >
             <SubjectPerformance data={subjectData} loading={loading} />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+          >
+            <InstitutionPerformance data={institutionData} loading={loading} />
           </motion.div>
 
           <motion.div
