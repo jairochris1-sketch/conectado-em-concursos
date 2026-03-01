@@ -35,13 +35,19 @@ Deno.serve(async (req) => {
       }, { status: 403 });
     }
 
+    const conversation_key = [user.email, receiver_email].sort().join("|");
+
     // Criar mensagem
     const message = await base44.entities.StudyPartnerMessage.create({
       sender_email: user.email,
+      sender_name: user.full_name || 'Usuário',
+      sender_photo: user.profile_photo_url || '',
       receiver_email,
       content,
+      conversation_key,
       status: 'sent',
-      is_read: false
+      is_read: false,
+      timestamp: new Date().toISOString()
     });
 
     return Response.json({ success: true, message });
