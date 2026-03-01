@@ -705,7 +705,13 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>{post.author_name}</span>
+                      <Link
+                        to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
+                        className="font-semibold hover:underline text-blue-600"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {post.author_name}
+                      </Link>
                       <span>•</span>
                       <span>{new Date(post.created_date).toLocaleDateString()}</span>
                       <span>•</span>
