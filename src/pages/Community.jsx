@@ -327,12 +327,12 @@ export default function CommunityPage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
-          <Button onClick={() => setSelectedPost(null)} variant="outline" className="mb-4">
+          <Button onClick={() => setSelectedPost(null)} variant="outline" className="bg-blue-600 text-slate-50 mb-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
             ← Voltar
           </Button>
 
           <Card className="mb-6">
-            <CardHeader>
+            <CardHeader className="bg-slate-800 p-6 rounded flex flex-col space-y-1.5">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <Avatar>
@@ -368,7 +368,7 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <Badge>{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
+                  <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
                   {selectedPost.author_email === user.email &&
                   <DropdownMenu>
@@ -502,7 +502,7 @@ export default function CommunityPage() {
                   onChange={(e) => setReplyContent(e.target.value)}
                   rows={3} />
 
-                <Button onClick={handleReply} className="self-end">
+                <Button onClick={handleReply} className="bg-blue-600 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 self-end">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
