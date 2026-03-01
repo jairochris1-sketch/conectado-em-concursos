@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, ChevronDown, Bell } from "lucide-react";
+import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -66,6 +66,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [hasMoreOlder, setHasMoreOlder] = useState(true);
   const [showDebug, setShowDebug] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [prefs, setPrefs] = useState(notificationService.getPreferences());
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const myStatusRef = useRef("online");
@@ -104,6 +106,23 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           loadOlderMessages();
         }, 300);
       }
+      
+      // Check if scrolled to bottom to clear unread indicator
+      if (container.scrollHeight - container.scrollTop - container.clientHeight < 50) {
+         if (showNewMessageIndicator || unreadCount > 0) {
+             setShowNewMessageIndicator(false);
+             setUnreadCount(0);
+             
+             // Mark pending unread messages as read
+             const unreadMsgs = messages.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+             if (unreadMsgs.length > 0) {
+               Promise.all(
+                 unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true, status: 'read' }).catch(() => {}))
+               );
+               setMessages(prev => prev.map(m => unreadMsgs.find(u => u.id === m.id) ? { ...m, is_read: true, status: 'read' } : m));
+             }
+         }
+      }
     };
 
     container.addEventListener('scroll', handleScroll);
@@ -111,7 +130,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       container.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeoutRef.current);
     };
-  }, [hasMoreOlder]);
+  }, [hasMoreOlder, showNewMessageIndicator, unreadCount, messages, currentUser.email]);
 
   // Load + subscribe to messages with notifications
   useEffect(() => {
