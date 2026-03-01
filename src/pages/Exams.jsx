@@ -343,7 +343,7 @@ export default function Exams() {
                   </Card> :
               viewMode === 'list' ?
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
-                    <CardContent className="p-4 flex items-center justify-between gap-3">
+                    <CardContent className="bg-slate-800 p-4 flex items-center justify-between gap-3">
                       {exam.cover_image &&
                   <img
                     src={exam.cover_image}
