@@ -51,6 +51,8 @@ function PresenceDot({ presence }) {
   );
 }
 
+const MESSAGES_PER_PAGE = 30;
+
 export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -61,7 +63,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
   const [lastMessageId, setLastMessageId] = useState(null);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const [hasMoreOlder, setHasMoreOlder] = useState(true);
   const messagesEnd = useRef(null);
+  const messagesStart = useRef(null);
   const myStatusRef = useRef("online");
   const visibilityUnsubRef = useRef(null);
   const convKey = getConversationKey(currentUser.email, partner.email);
