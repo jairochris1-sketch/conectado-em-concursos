@@ -450,7 +450,7 @@ export default function QuestionList({
                       </div>
                     </div>
                     
-                    <span className="text-blue-600 font-medium">
+                    <span className="text-slate-600 font-medium">
                       {subjectNames[question.subject] || question.subject}
                     </span>
                     
@@ -632,8 +632,8 @@ export default function QuestionList({
                 <div className="mb-4 print-hide">
                     <Button
                     onClick={() => onSubmitAnswer(question)}
-                    disabled={isBlocked}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isBlocked} className="bg-blue-600 text-white px-8 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+
                     title={isBlocked ? "Limite diário de questões atingido" : ""}>
 
                       {isBlocked ? "Limite Atingido" : "Responder"}
