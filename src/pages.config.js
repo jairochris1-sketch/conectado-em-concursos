@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import Calendar from './pages/Calendar';
@@ -74,6 +75,7 @@ import NotebookStats from './pages/NotebookStats';
 import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
 import PaymentHistory from './pages/PaymentHistory';
+import People from './pages/People';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
 import Questions from './pages/Questions';
@@ -97,12 +99,11 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import People from './pages/People';
-import ActivityFeed from './pages/ActivityFeed';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "ActivityFeed": ActivityFeed,
     "Admin": Admin,
     "AssistirAula": AssistirAula,
     "Calendar": Calendar,
@@ -130,6 +131,7 @@ export const PAGES = {
     "Notebooks": Notebooks,
     "Notes": Notes,
     "PaymentHistory": PaymentHistory,
+    "People": People,
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
     "Questions": Questions,
@@ -153,8 +155,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "People": People,
-    "ActivityFeed": ActivityFeed,
 }
 
 export const pagesConfig = {

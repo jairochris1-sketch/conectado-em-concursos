@@ -49,6 +49,7 @@ export default function CommunityPage() {
   const [editingReply, setEditingReply] = useState(null);
   const [deletePostId, setDeletePostId] = useState(null);
   const [deleteReplyId, setDeleteReplyId] = useState(null);
+  const [replyingTo, setReplyingTo] = useState(null);
 
   const [newPost, setNewPost] = useState({
     title: "",
@@ -174,7 +175,8 @@ export default function CommunityPage() {
         content: replyContent,
         author_name: user.full_name,
         author_email: user.email,
-        author_photo_url: user.profile_photo_url
+        author_photo_url: user.profile_photo_url,
+        parent_reply_id: replyingTo ? replyingTo.id : null
       });
 
       await ForumPost.update(selectedPost.id, {
@@ -196,6 +198,7 @@ export default function CommunityPage() {
 
       toast.success("Resposta enviada!");
       setReplyContent("");
+      setReplyingTo(null);
 
       const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
       setReplies(updatedReplies);
@@ -315,6 +318,115 @@ export default function CommunityPage() {
     }
   };
 
+  const buildReplyTree = (flatReplies) => {
+    const replyMap = {};
+    const roots = [];
+    flatReplies.forEach((r) => {
+      replyMap[r.id] = { ...r, children: [] };
+    });
+    flatReplies.forEach((r) => {
+      if (r.parent_reply_id && replyMap[r.parent_reply_id]) {
+        replyMap[r.parent_reply_id].children.push(replyMap[r.id]);
+      } else {
+        roots.push(replyMap[r.id]);
+      }
+    });
+    const sortByDate = (a, b) => new Date(a.created_date) - new Date(b.created_date);
+    roots.sort(sortByDate);
+    const sortChildren = (node) => {
+      node.children.sort(sortByDate);
+      node.children.forEach(sortChildren);
+    };
+    roots.forEach(sortChildren);
+    return roots;
+  };
+
+  const renderReplies = (replyNodes, level = 0) => {
+    return replyNodes.map((reply) => (
+      <div key={reply.id} className={`${level > 0 ? 'ml-8 md:ml-12 mt-2 relative' : 'mt-4'}`}>
+        {level > 0 && (
+          <div className="absolute -left-6 md:-left-8 top-4 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
+        )}
+        {level > 0 && (
+          <div className="absolute -left-6 md:-left-8 top-4 w-6 h-px bg-gray-200 dark:bg-gray-700" />
+        )}
+        <div className="flex items-start gap-2 relative z-10">
+          <Avatar className={`w-8 h-8 ${level > 0 ? 'w-6 h-6 mt-1' : ''} shrink-0 bg-white`}>
+            <AvatarImage src={reply.author_photo_url} />
+            <AvatarFallback>{reply.author_name?.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
+              <div className="flex items-center gap-2 mb-0.5">
+                <Link
+                  to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
+                  className="font-bold text-sm hover:underline text-gray-900 dark:text-white"
+                >
+                  {reply.author_name}
+                </Link>
+                {reply.is_best_answer &&
+                  <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
+                }
+                {reply.author_email === user.email &&
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
+                        <MoreVertical className="w-3 h-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => setEditingReply(reply)}>
+                        <Edit2 className="w-3 h-3 mr-2" /> Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
+                        <Trash2 className="w-3 h-3 mr-2" /> Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                }
+              </div>
+              {editingReply?.id === reply.id ?
+                <div className="space-y-2 mt-2 w-full min-w-[200px] md:min-w-[400px]">
+                  <Textarea
+                    value={editingReply.content}
+                    onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
+                    rows={2} />
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
+                    <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
+                  </div>
+                </div> :
+                <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{reply.content}</p>
+              }
+            </div>
+            {(!editingReply || editingReply.id !== reply.id) && (
+              <div className="flex items-center gap-4 text-xs font-semibold text-gray-500 mt-1 ml-2">
+                <span>{new Date(reply.created_date).toLocaleDateString()}</span>
+                <button
+                  className={`hover:underline ${reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}`}
+                  onClick={() => handleLikeReply(reply)}
+                >
+                  Curtir {reply.likes_count > 0 && `(${reply.likes_count})`}
+                </button>
+                <button
+                  className="hover:underline"
+                  onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name })}
+                >
+                  Responder
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        {reply.children && reply.children.length > 0 && (
+          <div className="pl-2 relative">
+            {renderReplies(reply.children, level + 1)}
+          </div>
+        )}
+      </div>
+    ));
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
@@ -421,90 +533,28 @@ export default function CommunityPage() {
               <CardTitle>Respostas ({replies.length})</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {replies.map((reply) =>
-                <div key={reply.id} className="border-l-2 border-gray-200 pl-4 py-2">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={reply.author_photo_url} />
-                        <AvatarFallback>{reply.author_name?.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Link
-                          to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
-                          className="font-semibold text-sm hover:underline text-blue-600">
-
-                              {reply.author_name}
-                            </Link>
-                          <span className="text-xs text-gray-500">
-                            {new Date(reply.created_date).toLocaleDateString()}
-                          </span>
-                          {reply.is_best_answer &&
-                        <Badge variant="outline" className="text-green-600">Melhor Resposta</Badge>
-                        }
-                          {reply.author_email === user.email &&
-                        <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
-                                  <MoreVertical className="w-3 h-3" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => setEditingReply(reply)}>
-                                  <Edit2 className="w-3 h-3 mr-2" />
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
-                                  <Trash2 className="w-3 h-3 mr-2" />
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                        }
-                        </div>
-                        {editingReply?.id === reply.id ?
-                      <div className="space-y-2">
-                            <Textarea
-                          value={editingReply.content}
-                          onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
-                          rows={3} />
-
-                            <div className="flex gap-2">
-                              <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
-                              <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
-                            </div>
-                          </div> :
-
-                      <>
-                            <p className="text-sm whitespace-pre-wrap mb-2">{reply.content}</p>
-                            <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleLikeReply(reply)}
-                          className={reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}>
-
-                              <ThumbsUp className="w-3 h-3 mr-1" />
-                              {reply.likes_count || 0}
-                            </Button>
-                          </>
-                      }
-                      </div>
-                    </div>
-                  </div>
-                )}
+              <div className="space-y-1 mb-8">
+                {renderReplies(buildReplyTree(replies))}
               </div>
 
-              <div className="mt-6 flex gap-2">
-                <Textarea
-                  placeholder="Digite sua resposta..."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  rows={3} />
+              <div className="mt-6">
+                {replyingTo && (
+                  <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
+                    <span>Respondendo a <strong>{replyingTo.name}</strong></span>
+                    <button onClick={() => setReplyingTo(null)} className="hover:text-blue-900 font-bold">&times;</button>
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  <Textarea
+                    placeholder={replyingTo ? `Escreva sua resposta...` : "Escreva um comentário..."}
+                    value={replyContent}
+                    onChange={(e) => setReplyContent(e.target.value)}
+                    rows={3} />
 
-                <Button onClick={handleReply} className="bg-blue-600 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 self-end">
-                  <Send className="w-4 h-4" />
-                </Button>
+                  <Button onClick={handleReply} className="bg-blue-600 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 self-end">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
