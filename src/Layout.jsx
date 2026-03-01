@@ -185,6 +185,11 @@ const moreMenuItems = [
   icon: ClipboardList
 },
 {
+  title: "Revisão de Simulados",
+  url: createPageUrl("SimulationReview"),
+  icon: ClipboardList
+},
+{
   title: "Meu Perfil",
   url: createPageUrl("Profile"),
   icon: Shield
