@@ -288,7 +288,7 @@ export default function Questions() {
   }
 
   return (
-    <div className="bg-slate-300 p-3 min-h-screen dark:bg-gray-900 md:p-8">
+    <div className="bg-gray-50 p-3 min-h-screen dark:bg-gray-900 md:p-8">
       <Toaster richColors position="top-center" />
       <div className="max-w-7xl mx-auto">
         <motion.div
