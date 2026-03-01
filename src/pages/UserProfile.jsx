@@ -53,8 +53,7 @@ export default function UserProfilePage() {
       const me = await User.me();
       setCurrentUser(me);
 
-      const [allUsers, stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
-        base44.entities.User.filter({ email: targetEmail }),
+      const [stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
         base44.entities.UserStats.filter({ user_email: targetEmail }),
         base44.entities.UserRanking.filter({ created_by: targetEmail }),
         base44.entities.StudyPartner.filter({ requester_email: targetEmail, status: "accepted" }),
@@ -62,7 +61,9 @@ export default function UserProfilePage() {
         base44.entities.UserFollow.filter({ following_email: targetEmail }),
       ]);
 
-      if (allUsers.length > 0) setProfileUser(allUsers[0]);
+      // Get profile user via backend function (User entity is restricted by RLS)
+      const profileUserResult = await base44.functions.invoke('getUserProfile', { email: targetEmail });
+      if (profileUserResult.data) setProfileUser(profileUserResult.data);
       if (stats.length > 0) setUserStats(stats[0]);
       if (ranking.length > 0) setUserRanking(ranking[0]);
       setPartners([...partnersSent, ...partnersReceived]);
