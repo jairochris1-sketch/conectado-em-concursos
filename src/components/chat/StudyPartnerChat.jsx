@@ -325,7 +325,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" data-chat-messages>
+        {loadingOlder && (
+          <div className="text-center text-gray-400 text-xs py-2">
+            <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando mensagens antigas...
+          </div>
+        )}
+        <div ref={messagesStart} />
         {messages.length === 0 && (
           <p className="text-center text-gray-400 text-sm mt-8">Nenhuma mensagem ainda. Diga olá! 👋</p>
         )}
