@@ -190,7 +190,7 @@ const featureAccess = {
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
   'Pessoas': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
-  'Área de Estudos': ['avancado'],
+  'Meus Cursos': ['avancado'],
   'Cronograma de Estudos': ['avancado'],
   'Planos de Estudo': ['avancado'],
   'Criar Simulado': ['avancado'],
