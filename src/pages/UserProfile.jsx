@@ -177,7 +177,9 @@ export default function UserProfilePage() {
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats?.streak_days || 0}</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {canSeeDetails ? (userStats?.streak_days || 0) : "🔒"}
+              </div>
               <div className="text-xs text-gray-500 mt-1 flex items-center justify-center gap-1">
                 <Flame className="w-3 h-3 text-orange-400" /> Sequência
               </div>
@@ -185,8 +187,17 @@ export default function UserProfilePage() {
           </Card>
         </div>
 
-        {/* Desempenho */}
-        {userStats && (
+        {/* Not a partner notice */}
+        {!isOwnProfile && !isPartner && (
+          <Card className="mb-5 border-dashed border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20">
+            <CardContent className="p-4 text-center text-sm text-yellow-700 dark:text-yellow-300">
+              🔒 Aceite o convite de parceria para ver o perfil completo e trocar mensagens.
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Desempenho - only for partners/self */}
+        {canSeeDetails && userStats && (
           <Card className="mb-5">
             <CardContent className="p-5">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -218,8 +229,8 @@ export default function UserProfilePage() {
           </Card>
         )}
 
-        {/* Cargo pretendido */}
-        {profileUser.target_position && (
+        {/* Cargo pretendido - only for partners/self */}
+        {canSeeDetails && profileUser.target_position && (
           <Card className="mb-5">
             <CardContent className="p-5">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
@@ -230,8 +241,8 @@ export default function UserProfilePage() {
           </Card>
         )}
 
-        {/* Disciplinas preferidas */}
-        {profileUser.preferred_subjects?.length > 0 && (
+        {/* Disciplinas preferidas - only for partners/self */}
+        {canSeeDetails && profileUser.preferred_subjects?.length > 0 && (
           <Card className="mb-5">
             <CardContent className="p-5">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Preferidas</h2>
