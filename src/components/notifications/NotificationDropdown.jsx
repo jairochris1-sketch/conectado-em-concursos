@@ -13,11 +13,31 @@ import { User } from '@/entities/User';
 // AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
 // Not used in this component, but kept as existing import.
 
+async function getNotificationSoundUrl() {
+  try {
+    const settings = await base44.entities.SiteSettings.filter({ key: 'notification_sound' });
+    return settings?.[0]?.notification_sound_url || null;
+  } catch { return null; }
+}
+
+function playNotificationSound(url) {
+  if (!url) return;
+  const audio = new Audio(url);
+  audio.volume = 0.7;
+  audio.play().catch(() => {});
+}
+
 export default function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false); // Added for dropdown state
+  const soundUrlRef = React.useRef(null);
+
+  useEffect(() => {
+    // Carrega a URL do som uma vez
+    getNotificationSoundUrl().then(url => { soundUrlRef.current = url; });
+  }, []);
 
   // Removed `readNotifications` state and its associated `useEffect` logic
   // as the new approach focuses on `notification.read_by` stored in the database.
