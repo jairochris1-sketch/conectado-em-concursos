@@ -92,12 +92,12 @@ import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
+import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import UserProfile from './pages/UserProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -147,12 +147,12 @@ export const PAGES = {
     "Studies": Studies,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
+    "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
     "Welcome": Welcome,
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "UserProfile": UserProfile,
 }
 
 export const pagesConfig = {

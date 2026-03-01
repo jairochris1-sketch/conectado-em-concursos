@@ -41,6 +41,12 @@ export default function UserProfilePage() {
     loadData();
   }, [targetEmail]);
 
+  useEffect(() => {
+    if (!isLoading && isPartner && urlParams.get("openChat") === "true") {
+      setChatOpen(true);
+    }
+  }, [isLoading, isPartner]);
+
   const loadData = async () => {
     setIsLoading(true);
     try {
