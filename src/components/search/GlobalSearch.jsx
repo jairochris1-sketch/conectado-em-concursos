@@ -72,7 +72,7 @@ export default function GlobalSearch({ isMobile }) {
 
   const handleUserClick = (email) => {
     setOpen(false);
-    navigate(`${createPageUrl('Profile')}?email=${encodeURIComponent(email)}`);
+    navigate(`${createPageUrl('UserProfile')}?email=${encodeURIComponent(email)}`);
   };
 
   const activeFiltersCount = (dateFrom ? 1 : 0) + (dateTo ? 1 : 0);
