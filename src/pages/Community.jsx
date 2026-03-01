@@ -334,11 +334,18 @@ export default function CommunityPage() {
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm text-gray-500">
-                        Por {selectedPost.author_name} • {new Date(selectedPost.created_date).toLocaleDateString()}
-                      </p>
+                          <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-500">
+                              Por{" "}
+                              <Link
+                                to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                                className="font-semibold hover:underline text-blue-600"
+                              >
+                                {selectedPost.author_name}
+                              </Link>
+                              {" "}• {new Date(selectedPost.created_date).toLocaleDateString()}
+                            </p>
                       <FollowButton 
                         targetEmail={selectedPost.author_email}
                         targetName={selectedPost.author_name}
