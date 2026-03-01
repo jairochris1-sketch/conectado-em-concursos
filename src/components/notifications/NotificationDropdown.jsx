@@ -85,7 +85,11 @@ export default function NotificationDropdown() {
       setIsOpen(false);
       
       if (notification.action_url) {
-        window.location.href = notification.action_url;
+        if (notification.action_url.startsWith('http')) {
+          window.location.href = notification.action_url;
+        } else {
+          navigate(notification.action_url);
+        }
       }
     } catch (error) {
       console.error('Erro ao marcar notificação como lida:', error);
