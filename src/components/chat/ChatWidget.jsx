@@ -90,7 +90,8 @@ export default function ChatWidget() {
   };
 
   const loadMoreMessages = async () => {
-    if (!visitorName) return;
+    if (!visitorName || isLoadingMoreRef.current) return;
+    isLoadingMoreRef.current = true;
     setIsLoadingMore(true);
     try {
       const allVisitorMessages = await base44.entities.ChatMessage.filter({
@@ -102,15 +103,19 @@ export default function ChatWidget() {
       setMessages((prev) => [...newMessages.reverse(), ...prev]);
       setMessagesOffset(messagesOffset + 30);
       setTotalMessagesCount(allVisitorMessages.length);
-
-      // Scroll para novo topo
-      setTimeout(() => {
-        messagesStartRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     } catch (error) {
       console.error('Erro ao carregar mais mensagens:', error);
     } finally {
       setIsLoadingMore(false);
+      isLoadingMoreRef.current = false;
+    }
+  };
+
+  // Detectar scroll infinito
+  const handleScroll = (e) => {
+    const container = e.target;
+    if (container.scrollTop < 100 && !isLoadingMore && messages.length < totalMessagesCount) {
+      loadMoreMessages();
     }
   };
 
