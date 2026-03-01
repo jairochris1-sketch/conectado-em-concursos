@@ -55,6 +55,7 @@ import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
 import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 import ChatWidget from './components/chat/ChatWidget';
+import GlobalStudyPartnerChat from './components/chat/GlobalStudyPartnerChat';
 import GlobalSearch from './components/search/GlobalSearch';
 
 const navigationItems = [
@@ -798,7 +799,7 @@ export default function Layout({ children, currentPageName }) {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed bottom-24 md:bottom-6 right-6 z-50">
+          className="fixed bottom-24 md:bottom-6 right-6 z-40">
 
             <Button
             size="icon"
@@ -814,6 +815,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       <ChatWidget />
+      <GlobalStudyPartnerChat currentUser={user} />
       </div>);
 
 }

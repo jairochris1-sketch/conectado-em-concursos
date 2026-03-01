@@ -12,7 +12,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
@@ -169,7 +168,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
             <span className="bg-blue-600 text-slate-50 px-2.5 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 border border-green-300">Parceiros de Estudo
 
           </span>
-            <Button size="sm" onClick={() => setChatOpen(true)} variant="outline" className="bg-blue-600 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-blue-300">
+            <Button size="sm" onClick={() => window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }))} variant="outline" className="bg-blue-600 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-blue-300">
               <MessageSquare className="w-3.5 h-3.5" /> Chat
             </Button>
             <Button size="sm" onClick={undoPartnership} disabled={loading} variant="outline" className="bg-blue-500 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-red-200">
@@ -187,18 +186,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
         </Button>
       </div>
 
-      {/* Chat Dialog */}
-      {status === "accepted" &&
-      <Dialog open={chatOpen} onOpenChange={setChatOpen}>
-          <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
-            <StudyPartnerChat
-            currentUser={currentUser}
-            partner={partner}
-            onClose={() => setChatOpen(false)} />
 
-          </DialogContent>
-        </Dialog>
-      }
 
       {/* Report Modal */}
       <ReportUserModal

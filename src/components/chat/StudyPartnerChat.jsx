@@ -53,7 +53,7 @@ function PresenceDot({ presence }) {
 
 const MESSAGES_PER_PAGE = 30;
 
-export default function StudyPartnerChat({ currentUser, partner, onClose }) {
+export default function StudyPartnerChat({ currentUser, partner, onClose, isMinimized, onToggleMinimize }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -390,7 +390,14 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0">
+      <div 
+        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0 cursor-pointer"
+        onClick={(e) => {
+          if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
+            onToggleMinimize();
+          }
+        }}
+      >
         <div className="relative">
           <Avatar className="w-9 h-9">
             <AvatarImage src={partner.photo} />
@@ -453,11 +460,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
+        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8 ml-auto" onClick={(e) => { e.stopPropagation(); onClose(); }}>
           <X className="w-4 h-4" />
         </Button>
       </div>
 
+      {!isMinimized && (
+        <>
       {/* Debug Panel */}
       {showDebug && (
         <div className="p-3 bg-gray-900 border-b border-gray-700 max-h-60 overflow-y-auto">
@@ -549,6 +558,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
         </Button>
       </div>
+        </>
+      )}
     </motion.div>
   );
 }
