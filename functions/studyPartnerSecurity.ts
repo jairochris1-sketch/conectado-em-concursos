@@ -55,34 +55,31 @@ Deno.serve(async (req) => {
       return Response.json({ allowed: false, reason: 'Mensagem inválida.' });
     }
 
-    // Verify accepted partnership exists
+    // Verify accepted partnership exists - check both directions
     const convKey = [user.email, targetEmail].sort().join('|');
-    const [partner1, partner2] = await Promise.all([
-      base44.entities.StudyPartner.filter({ requester_email: user.email, target_email: targetEmail, status: 'accepted' }),
-      base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: user.email, status: 'accepted' })
-    ]);
-    if (partner1.length === 0 && partner2.length === 0) {
+    const partnerships = await base44.entities.StudyPartner.filter({
+      status: 'accepted'
+    });
+    
+    const hasAcceptedPartnership = partnerships.some(p => 
+      (p.requester_email === user.email && p.target_email === targetEmail) ||
+      (p.requester_email === targetEmail && p.target_email === user.email)
+    );
+    
+    if (!hasAcceptedPartnership) {
       return Response.json({ allowed: false, reason: 'Sem parceria aceita para enviar mensagens.' });
     }
 
     // Check if blocked
-    const [blockedByThem, blockedByMe] = await Promise.all([
-      base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: user.email, status: 'blocked' }),
-      base44.entities.StudyPartner.filter({ requester_email: user.email, target_email: targetEmail, status: 'blocked' })
-    ]);
-    if (blockedByThem.length > 0 || blockedByMe.length > 0) {
+    const isBlocked = partnerships.some(p =>
+      p.status === 'blocked' && (
+        (p.requester_email === targetEmail && p.target_email === user.email) ||
+        (p.requester_email === user.email && p.target_email === targetEmail)
+      )
+    );
+    
+    if (isBlocked) {
       return Response.json({ allowed: false, reason: 'Não é possível enviar mensagens para este usuário.' });
-    }
-
-    // Rate limit: max 10 messages per minute
-    const oneMinuteAgo = new Date(Date.now() - 60_000).toISOString();
-    const recentMsgs = await base44.entities.StudyPartnerMessage.filter({
-      sender_email: user.email,
-      conversation_key: convKey
-    });
-    const lastMinuteMsgs = recentMsgs.filter(m => m.created_date >= oneMinuteAgo);
-    if (lastMinuteMsgs.length >= MSG_PER_MINUTE_LIMIT) {
-      return Response.json({ allowed: false, reason: `Limite de ${MSG_PER_MINUTE_LIMIT} mensagens por minuto atingido. Aguarde um momento.` });
     }
 
     return Response.json({ allowed: true });
