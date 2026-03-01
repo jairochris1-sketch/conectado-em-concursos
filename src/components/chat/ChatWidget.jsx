@@ -349,17 +349,15 @@ export default function ChatWidget() {
             </AnimatePresence>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
+            <div 
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
                         <div ref={messagesStartRef} />
                         
-                        {messages.length === messagesOffset && messages.length > 0 && (
+                        {isLoadingMore && (
                           <div className="flex justify-center my-2">
-                            <button
-                              onClick={loadMoreMessages}
-                              disabled={isLoadingMore || messages.length === 0}
-                              className="text-xs text-blue-600 hover:text-blue-700 disabled:text-gray-400 font-medium px-3 py-1 rounded hover:bg-blue-50 transition-colors">
-                              {isLoadingMore ? '⏳ Carregando...' : '📜 Carregar mensagens antigas'}
-                            </button>
+                            <span className="text-xs text-gray-400">⏳ Carregando mensagens antigas...</span>
                           </div>
                         )}
 
@@ -379,6 +377,9 @@ export default function ChatWidget() {
                         ) : (
                 messages.map((msg, idx) => (
                   <div key={idx} className="space-y-2">
+                    <div className="text-xs text-gray-400 px-1">
+                      {msg.created_date ? format(new Date(msg.created_date), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : 'Agora'}
+                    </div>
                     {msg.image_url && (
                       <img
                         src={msg.image_url}
@@ -395,7 +396,9 @@ export default function ChatWidget() {
                       <div className="space-y-1">
                         {adminReplies[msg.id].map((reply) => (
                           <div key={reply.id} className="bg-green-50 text-green-900 p-3 rounded-lg text-sm border-l-4 border-green-600">
-                            <p className="font-semibold text-xs text-green-700 mb-1">📧 Resposta do Suporte:</p>
+                            <div className="text-xs text-green-600 mb-1">
+                              📧 Resposta • {reply.created_date ? format(new Date(reply.created_date), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : 'Agora'}
+                            </div>
                             <p>{reply.reply_text}</p>
                           </div>
                         ))}
