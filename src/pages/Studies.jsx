@@ -1011,6 +1011,7 @@ ${videoNotes}
             )}
 
             {selectedType === 'articles' && (
+            <div className="w-full">
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
