@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 // Not used in this component, but kept as existing import.
 
 export default function NotificationDropdown() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
