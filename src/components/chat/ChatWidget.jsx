@@ -16,12 +16,16 @@ export default function ChatWidget() {
   const [currentMessage, setCurrentMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasUserInfo, setHasUserInfo] = useState(false);
   const [adminReplies, setAdminReplies] = useState({});
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+  const [totalMessagesCount, setTotalMessagesCount] = useState(0);
+  const [messagesOffset, setMessagesOffset] = useState(0);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const messagesStartRef = useRef(null);
 
   useEffect(() => {
     // Carregar URL do som de notificação
