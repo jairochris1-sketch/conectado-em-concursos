@@ -5,12 +5,28 @@ import { SiteContent } from '@/entities/SiteContent';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Rocket, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Rocket, Loader2, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const sergipeCities = [
+  "Aracaju","Nossa Senhora do Socorro","Lagarto","Itabaiana","São Cristóvão",
+  "Estância","Tobias Barreto","Simão Dias","Propriá","Nossa Senhora das Dores",
+  "Itaporanga d'Ajuda","Boquim","Neópolis","Canindé de São Francisco","Poço Redondo",
+  "Carira","Aquidabã","Itabi","Nossa Senhora da Glória","Porto da Folha",
+  "Frei Paulo","Moita Bonita","Campo do Brito","Areia Branca","Poço Verde",
+  "Ribeirópolis","Gararu","Monte Alegre de Sergipe","Pedrinhas","Japaratuba",
+  "Laranjeiras","Maruim","Santo Amaro das Brotas","General Maynard","Divina Pastora",
+  "Riachuelo","Rosário do Catete","Cumbe","Feira Nova","Gracho Cardoso",
+  "Outra cidade"
+];
 
 export default function WelcomePage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [city, setCity] = useState("");
+  const [citySearch, setCitySearch] = useState("");
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [content, setContent] = useState({
     title: "Seja Bem-vindo!",
     subtitle: "Sua jornada para a aprovação começa agora.",
