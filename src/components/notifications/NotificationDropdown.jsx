@@ -52,6 +52,7 @@ export default function NotificationDropdown() {
     const unsubscribe = base44.entities.Notification.subscribe((event) => {
       if (event.type === 'create' && event.data.user_email === user.email) {
         setNotifications(prev => [event.data, ...prev]);
+        playNotificationSound(soundUrlRef.current);
       } else if (event.type === 'update') {
         setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
       } else if (event.type === 'delete') {
