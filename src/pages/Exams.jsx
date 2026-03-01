@@ -198,7 +198,7 @@ export default function Exams() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="bg-gray-300 min-h-screen dark:bg-gray-900">
       <div className="bg-gray-300 text-stone-200 mx-auto p-4 max-w-7xl md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
