@@ -85,6 +85,19 @@ export default function NotificationDropdown() {
       setIsOpen(false);
       
       if (notification.action_url) {
+        if (notification.type === 'chat_message') {
+           const urlParams = new URLSearchParams(notification.action_url.split('?')[1]);
+           const partnerEmail = urlParams.get('email');
+           if (partnerEmail) {
+             const partner = {
+               email: partnerEmail,
+               name: notification.related_user_name,
+               photo: notification.related_user_photo
+             };
+             window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
+             return; // Don't navigate
+           }
+        }
         if (notification.action_url.startsWith('http')) {
           window.location.href = notification.action_url;
         } else {

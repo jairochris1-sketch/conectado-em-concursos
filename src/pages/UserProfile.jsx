@@ -37,7 +37,7 @@ export default function UserProfilePage() {
   const [followers, setFollowers] = useState([]);
   const [partnershipStatus, setPartnershipStatus] = useState(null);
   const [isPartner, setIsPartner] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,10 +46,16 @@ export default function UserProfilePage() {
   }, [targetEmail]);
 
   useEffect(() => {
-    if (!isLoading && isPartner && urlParams.get("openChat") === "true") {
-      setChatOpen(true);
+    if (!isLoading && isPartner && urlParams.get("openChat") === "true" && profileUser) {
+      const partner = { email: targetEmail, name: profileUser.full_name, photo: profileUser.profile_photo_url };
+      window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
+      
+      // Clean up URL to prevent reopening on reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete('openChat');
+      window.history.replaceState({}, '', newUrl);
     }
-  }, [isLoading, isPartner, location.search]);
+  }, [isLoading, isPartner, location.search, profileUser, targetEmail]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -287,18 +293,6 @@ export default function UserProfilePage() {
         )}
       </div>
 
-      {/* Chat */}
-      {chatOpen && currentUser && (
-        <Dialog open={chatOpen} onOpenChange={setChatOpen}>
-          <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
-            <StudyPartnerChat
-              currentUser={currentUser}
-              partner={{ email: targetEmail, name: profileUser.full_name, photo: profileUser.profile_photo_url }}
-              onClose={() => setChatOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }
