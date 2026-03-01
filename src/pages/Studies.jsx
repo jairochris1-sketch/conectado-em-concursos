@@ -778,7 +778,7 @@ ${videoNotes}
         {currentView === 'content' && selectedType && (
           <div className="w-full">
             {selectedType !== 'articles' && selectedType !== 'videos' && selectedType !== 'flashcards' && (
-              <>
+              <div>
                 {showUploader && isAdmin &&
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
@@ -848,7 +848,7 @@ ${videoNotes}
 
             {/* Materials List */}
                 <div>
-              {filteredMaterials.length === 0 ?
+                  {filteredMaterials.length === 0 ?
                   <Card className="text-center py-12">
                   <CardContent className="space-y-4">
                     <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
@@ -1007,7 +1007,7 @@ ${videoNotes}
                 </div>
                   }
                 </div>
-              </>
+              </div>
             )}
 
             {selectedType === 'articles' && (
