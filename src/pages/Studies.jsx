@@ -607,7 +607,7 @@ ${videoNotes}
   }
 
   return (
-    <div className="bg-gray-300 p-4 min-h-screen dark:bg-gray-900 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
