@@ -241,7 +241,8 @@ const pageNameTranslations = {
   Notebooks: "Cadernos de Questões",
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
-  NotebookStats: "Estatísticas do Caderno"
+  NotebookStats: "Estatísticas do Caderno",
+  UserPresenceHistory: "Histórico de Presença"
 };
 
 const featureAccess = {
