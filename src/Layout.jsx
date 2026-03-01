@@ -103,11 +103,6 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
-  title: "Simulado por Edital",
-  url: createPageUrl("EditalSimulator"),
-  icon: Target
-},
-{
   title: "Cadernos de Questões",
   url: createPageUrl("Notebooks"),
   icon: BookCopy
