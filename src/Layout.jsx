@@ -629,19 +629,19 @@ export default function Layout({ children, currentPageName }) {
                         <span>Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto" 
-                  style={{ backgroundColor: 'var(--primary-color)' }}
-                  align="center">
+                <DropdownMenuContent
+              className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto"
+              style={{ backgroundColor: 'var(--primary-color)' }}
+              align="center">
                     <div className="grid grid-cols-2 gap-1 p-2">
                     {moreMenuItems.map((item) => {
-                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                const isCurrentPage = location.pathname === item.url;
-                return (
-                  <DropdownMenuItem key={item.title} asChild>
+                  const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                  const isCurrentPage = location.pathname === item.url;
+                  return (
+                    <DropdownMenuItem key={item.title} asChild>
                                 <Link
-                      to={hasAccess ? item.url : createPageUrl("Subscription")}
-                      className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
+                        to={hasAccess ? item.url : createPageUrl("Subscription")}
+                        className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
 
                                     <div className="flex items-center gap-2">
                                         <item.icon className="w-4 h-4 flex-shrink-0" />
@@ -651,9 +651,9 @@ export default function Layout({ children, currentPageName }) {
                                 </Link>
                             </DropdownMenuItem>);
 
-              })}
+                })}
                     {isAdmin &&
-              <>
+                <>
                         <DropdownMenuItem asChild>
                              <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
                                 <div className="flex items-center gap-2">
@@ -671,7 +671,7 @@ export default function Layout({ children, currentPageName }) {
                             </Link>
                         </DropdownMenuItem>
                         </>
-              }
+                }
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -772,7 +772,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
 
-        <header className="hidden md:flex bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3 items-center justify-between shadow-sm print-hide">
+        <header className="bg-green-500 px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {pageNameTranslations[currentPageName] || currentPageName}
             </h1>
