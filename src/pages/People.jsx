@@ -8,6 +8,7 @@ import { Search, MapPin, Briefcase } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
+import ConnectButton from "@/components/social/ConnectButton";
 import { base44 } from "@/api/base44Client";
 
 export default function PeoplePage() {
@@ -96,6 +97,11 @@ export default function PeoplePage() {
                       targetName={person.name} 
                       targetPhotoUrl={person.photo} 
                       size="sm" 
+                    />
+                    <ConnectButton
+                      targetEmail={person.email} 
+                      targetName={person.name} 
+                      size="sm"
                     />
                   </div>
                 </CardContent>
