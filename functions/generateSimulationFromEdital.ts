@@ -151,11 +151,30 @@ Deno.serve(async (req) => {
       simulation_ids: updatedSimulationIds
     });
 
+    const notifMsg = `🎯 Seu simulado "${simulation.name}" foi gerado com ${selectedQuestions.length} questão(ões) baseadas no edital "${edital.concurso_name}". Clique para iniciar!`;
+
+    // Notificação in-app
+    await base44.asServiceRole.entities.Notification.create({
+      user_email: user.email,
+      title: 'Simulado gerado com sucesso!',
+      message: notifMsg,
+      type: 'simulation_ready',
+      is_read: false,
+      link: `/SolveSimulation?id=${simulation.id}`
+    });
+
+    // Notificação por e-mail
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: user.email,
+      subject: `🎯 Simulado pronto: ${edital.concurso_name}`,
+      body: `Olá, ${user.full_name || 'usuário'}!\n\n${notifMsg}\n\nAcesse o app agora e comece a praticar!\n\nBons estudos!\nEquipe Conectado em Concursos`
+    });
+
     return Response.json({
       success: true,
       simulation_id: simulation.id,
       questions_count: selectedQuestions.length,
-      available_questions: compatibleQuestions.length
+      available_questions: allCompatibleCount
     });
 
   } catch (error) {

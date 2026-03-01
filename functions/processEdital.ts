@@ -207,6 +207,26 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
       compatible_questions_count: compatibleCount
     });
 
+    const numDisc = (extractedData.disciplinas || []).length;
+    const notifMsg = `✅ Edital "${edital.concurso_name}" processado com sucesso! ${numDisc} disciplina(s), ${totalTopics} tópico(s) e ${compatibleCount} questão(ões) compatível(is) encontrada(s).`;
+
+    // Notificação in-app
+    await base44.asServiceRole.entities.Notification.create({
+      user_email: user.email,
+      title: 'Edital processado com sucesso!',
+      message: notifMsg,
+      type: 'edital_processed',
+      is_read: false,
+      link: `/EditalSimulator`
+    });
+
+    // Notificação por e-mail
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: user.email,
+      subject: `✅ Edital processado: ${edital.concurso_name}`,
+      body: `Olá, ${user.full_name || 'usuário'}!\n\n${notifMsg}\n\nAcesse o app para gerar seu simulado personalizado baseado neste edital.\n\nBons estudos!\nEquipe Conectado em Concursos`
+    });
+
     return Response.json({
       success: true,
       data: extractedData,
