@@ -75,11 +75,6 @@ const navigationItems = [
   icon: BookCopy
 },
 {
-  title: "Simulado por Edital",
-  url: createPageUrl("EditalSimulator"),
-  icon: Target
-},
-{
   title: "Resumos",
   url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
   icon: BookOpenIcon
@@ -260,6 +255,9 @@ export default function Layout({ children, currentPageName }) {
   });
   const [userStats, setUserStats] = React.useState(null);
 
+  const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
+  const [iconSize, setIconSize] = useState(localStorage.getItem('iconSizeKey') || 'md');
+
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
   useEffect(() => {
@@ -267,9 +265,25 @@ export default function Layout({ children, currentPageName }) {
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
     const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
 
+    setPrimaryColor(savedColor);
+    setIconSize(savedIconSizeKey);
     document.documentElement.style.setProperty('--primary-color', savedColor);
     document.documentElement.style.setProperty('--icon-size', iconSizes[savedIconSizeKey]);
   }, []);
+
+  const handleColorChange = (e) => {
+    const newColor = e.target.value;
+    setPrimaryColor(newColor);
+    localStorage.setItem('primaryColor', newColor);
+    document.documentElement.style.setProperty('--primary-color', newColor);
+  };
+
+  const handleIconSizeChange = (sizeKey) => {
+    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
+    setIconSize(sizeKey);
+    localStorage.setItem('iconSizeKey', sizeKey);
+    document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
+  };
 
   React.useEffect(() => {
     let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -702,7 +716,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
+            <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
               {user.job_title &&
               <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
                   <BookOpen className="w-4 h-4" />
@@ -713,7 +727,52 @@ export default function Layout({ children, currentPageName }) {
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 text-sm flex items-center gap-2">
+              <div className="h-px bg-white/20 my-2 mx-2" />
+              <div className="px-2 py-2">
+                <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
+                <div className="space-y-3 px-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-200">Cor Principal</span>
+                    <input
+                      type="color"
+                      value={primaryColor}
+                      onChange={handleColorChange}
+                      className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-200">Tamanho Ícones</span>
+                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        P
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        M
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        G
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="h-px bg-white/20 my-2 mx-2" />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
                 Sair
               </DropdownMenuItem>
