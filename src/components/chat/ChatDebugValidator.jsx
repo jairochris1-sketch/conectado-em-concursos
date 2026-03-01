@@ -66,19 +66,22 @@ export default function ChatDebugValidator({ convKey, currentUserEmail, partnerE
       addTestResult("→ Iniciando subscription no StudyPartnerMessage...");
       let eventReceived = false;
       let subscriptionWorking = false;
+      let receiverCanRead = null;
 
       const unsubscribe = base44.entities.StudyPartnerMessage.subscribe((event) => {
+        addTestResult(`📡 EVENTO BRUTO: ${event.type} - ID: ${event.data?.id} - Conversa: ${event.data?.conversation_key}`);
+        
         // Verificar se o evento é da nossa conversa
         if (event.data?.conversation_key === convKey) {
-          addTestResult(`✓ EVENTO RECEBIDO: ${event.type} - ID: ${event.data?.id} - Conversa: ${convKey}`);
+          addTestResult(`✓ EVENTO RECEBIDO: ${event.type} - Corresponde à conversa esperada`);
           eventReceived = true;
           subscriptionWorking = true;
           setChecks(p => ({
             ...p,
             eventEmission: { status: "success", detail: `Evento ${event.type} em tempo real ✓` }
           }));
-        } else {
-          addTestResult(`⊘ Evento de outra conversa: ${event.data?.conversation_key}`);
+        } else if (event.data?.conversation_key) {
+          addTestResult(`⊘ Evento de outra conversa: ${event.data?.conversation_key} vs ${convKey}`);
         }
       });
 
@@ -142,23 +145,41 @@ export default function ChatDebugValidator({ convKey, currentUserEmail, partnerE
         }));
       }
 
-      // 5. Verificar persistência no DB
+      // 5. Verificar RLS - Receptor consegue ver a mensagem?
       if (testMsg?.id) {
-        addTestResult("→ Verificando persistência...");
+        addTestResult("→ Testando RLS: Receptor consegue ler a mensagem?...");
         try {
+          // Try to read as if we're the receiver (test RLS read access)
           const allMsgs = await base44.entities.StudyPartnerMessage.filter({
             conversation_key: convKey
           });
           const found = allMsgs.find(m => m.id === testMsg.id);
           
           if (found) {
-            addTestResult(`✓ MENSAGEM PERSISTIDA: ${found.id}`);
+            addTestResult(`✓ RLS PERMITIU LEITURA: Mensagem visível na query`);
+            addTestResult(`  Sender: ${found.sender_email} | Receiver: ${found.receiver_email}`);
+            receiverCanRead = true;
           } else {
-            addTestResult(`✗ MENSAGEM CRIADA MAS NÃO ENCONTRADA NA QUERY`);
-            addTestResult(`  Mensagens encontradas na conversa: ${allMsgs.length}`);
+            addTestResult(`✗ RLS BLOQUEOU LEITURA: Mensagem não aparece em query`);
+            addTestResult(`  Total de mensagens na conversa: ${allMsgs.length}`);
+            receiverCanRead = false;
           }
         } catch (err) {
-          addTestResult(`✗ ERRO AO BUSCAR: ${err.message}`);
+          addTestResult(`✗ ERRO AO TESTAR RLS: ${err.message}`);
+          receiverCanRead = false;
+        }
+      }
+
+      // 6. Diagnóstico final
+      addTestResult("📋 DIAGNÓSTICO FINAL:");
+      if (testMsg?.id && !eventReceived) {
+        if (receiverCanRead === false) {
+          addTestResult("❌ PROBLEMA: RLS está bloqueando a leitura da mensagem pelo receptor");
+          addTestResult("   Solução: Verifique regras RLS em StudyPartnerMessage.read");
+        } else if (receiverCanRead === true) {
+          addTestResult("❌ PROBLEMA: RLS permite leitura mas real-time subscription não dispara");
+          addTestResult("   Solução: Possível problema com subscription ou Base44 SDK");
+          addTestResult("   Tente: Recarregar a página ou verificar conexão WebSocket");
         }
       }
 
