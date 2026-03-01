@@ -258,16 +258,6 @@ export default function ChatWidget() {
         page_url: window.location.href
       });
 
-      setMessages([
-        ...messages,
-        {
-          visitor_name: visitorName,
-          message: currentMessage,
-          image_url: imageUrl,
-          created_date: new Date().toISOString()
-        }
-      ]);
-
       setCurrentMessage('');
       setSelectedImage(null);
       setHasUserInfo(true);
