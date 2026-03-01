@@ -297,14 +297,14 @@ export default function Questions() {
           className="flex flex-col gap-4 mb-6 md:mb-8">
 
           <div>
-            <h1 className="text-slate-900 mb-2 text-2xl font-bold md:text-3xl dark:text-white">Questões de Concursos Públicos
-
+            <h1 className="text-slate-900 mb-2 text-2xl font-bold md:text-3xl dark:text-white">
+              Questões de Concursos Públicos
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
-              <span className="text-gray-950">
+              <span className="text-gray-900 dark:text-gray-300">
                 {allQuestions.length} questões disponíveis
               </span>
-              <span className="bg-transparent text-gray-950 flex items-center gap-1">
+              <span className="bg-transparent text-gray-900 dark:text-gray-300 flex items-center gap-1">
                 <Award className="w-4 h-4" />
                 {stats.accuracy}% de acerto ({stats.correct}/{stats.submitted})
               </span>
