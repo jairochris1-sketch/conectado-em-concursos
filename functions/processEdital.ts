@@ -203,19 +203,6 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
 
   } catch (error) {
     console.error('Erro ao processar edital:', error);
-    
-    // Atualizar status para failed se tiver edital_id
-    try {
-      const { edital_id } = await req.json();
-      if (edital_id) {
-        await base44.entities.Edital.update(edital_id, {
-          processing_status: 'failed'
-        });
-      }
-    } catch (e) {
-      console.error('Erro ao atualizar status:', e);
-    }
-
     return Response.json({
       error: 'Erro ao processar edital',
       details: error.message
