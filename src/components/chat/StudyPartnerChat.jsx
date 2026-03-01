@@ -66,7 +66,24 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const visibilityUnsubRef = useRef(null);
   const convKey = getConversationKey(currentUser.email, partner.email);
 
-  useEffect(() => { messagesEnd.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  // Initialize notifications
+  useEffect(() => {
+    const initNotifications = async () => {
+      const hasPermission = await notificationService.requestNotificationPermission();
+      setNotificationsEnabled(hasPermission);
+      if (hasPermission) {
+        await notificationService.registerServiceWorker();
+      }
+    };
+    initNotifications();
+  }, []);
+
+  // Scroll to latest message
+  useEffect(() => { 
+    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+    // Hide indicator when scrolled into view
+    setShowNewMessageIndicator(false);
+  }, [messages]);
 
   // Load + subscribe
   useEffect(() => {
