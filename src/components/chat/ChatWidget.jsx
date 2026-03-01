@@ -28,6 +28,8 @@ export default function ChatWidget() {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messagesStartRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const isLoadingMoreRef = useRef(false);
 
   useEffect(() => {
     // Carregar URL do som de notificação
