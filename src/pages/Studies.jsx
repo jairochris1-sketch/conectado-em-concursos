@@ -1496,6 +1496,7 @@ ${videoNotes}
                 </div>
               </>
             }
+            </div>
             )}
 
             {selectedType === 'flashcards' && (
