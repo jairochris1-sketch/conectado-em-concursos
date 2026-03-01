@@ -377,8 +377,16 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
   const isScrolledToBottom = () => {
+    if (isMinimized) return false;
     if (!messagesEnd.current) return true;
-    return messagesEnd.current.scrollIntoView ? true : false;
+    // We can't perfectly tell if scrolled to bottom just by the ref existing.
+    // However, the container scroll event handles unreadCount reset.
+    // If we are minimized, we definitely aren't at the bottom.
+    const container = document.querySelector('[data-chat-messages]');
+    if (container) {
+       return container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+    }
+    return true;
   };
 
   return (
