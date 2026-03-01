@@ -20,13 +20,13 @@ Deno.serve(async (req) => {
     }
 
     // Validar se existe conexão accepted
-    const connections = await base44.entities.StudyPartnerConnection.filter({
+    const connections = await base44.entities.StudyPartner.filter({
       status: 'accepted'
     });
 
     const hasAcceptedConnection = connections.some(conn => 
-      (conn.user_a === user.email && conn.user_b === receiver_email) ||
-      (conn.user_a === receiver_email && conn.user_b === user.email)
+      (conn.requester_email === user.email && conn.target_email === receiver_email) ||
+      (conn.requester_email === receiver_email && conn.target_email === user.email)
     );
 
     if (!hasAcceptedConnection) {
