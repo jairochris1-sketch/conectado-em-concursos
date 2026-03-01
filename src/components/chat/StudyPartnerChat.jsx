@@ -68,6 +68,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [showDebug, setShowDebug] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [prefs, setPrefs] = useState(notificationService.getPreferences());
+  const containerRef = useRef(null);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const myStatusRef = useRef("online");
@@ -97,7 +98,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
   // Infinite scroll - load older messages with debounce
   useEffect(() => {
-    const container = document.querySelector('[data-chat-messages]');
+    const container = containerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
@@ -379,15 +380,30 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const isScrolledToBottom = () => {
     if (isMinimized) return false;
     if (!messagesEnd.current) return true;
-    // We can't perfectly tell if scrolled to bottom just by the ref existing.
-    // However, the container scroll event handles unreadCount reset.
-    // If we are minimized, we definitely aren't at the bottom.
-    const container = document.querySelector('[data-chat-messages]');
+    const container = containerRef.current;
     if (container) {
        return container.scrollHeight - container.scrollTop - container.clientHeight < 50;
     }
     return true;
   };
+
+  useEffect(() => {
+    // When maximizing, scroll to bottom to mark messages as read
+    if (!isMinimized && messagesEnd.current) {
+      messagesEnd.current.scrollIntoView({ behavior: "smooth" });
+      if (showNewMessageIndicator || unreadCount > 0) {
+        setShowNewMessageIndicator(false);
+        setUnreadCount(0);
+        const unreadMsgs = messages.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+        if (unreadMsgs.length > 0) {
+          Promise.all(
+            unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true, status: 'read' }).catch(() => {}))
+          );
+          setMessages(prev => prev.map(m => unreadMsgs.find(u => u.id === m.id) ? { ...m, is_read: true, status: 'read' } : m));
+        }
+      }
+    }
+  }, [isMinimized]);
 
   return (
     <motion.div
@@ -487,7 +503,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" data-chat-messages>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" ref={containerRef}>
         {loadingOlder && (
           <div className="text-center text-gray-400 text-xs py-2">
             <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando mensagens antigas...
