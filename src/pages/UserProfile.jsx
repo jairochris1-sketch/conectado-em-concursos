@@ -48,7 +48,7 @@ export default function UserProfilePage() {
     if (!isLoading && isPartner && urlParams.get("openChat") === "true") {
       setChatOpen(true);
     }
-  }, [isLoading, isPartner]);
+  }, [isLoading, isPartner, location.search]);
 
   const loadData = async () => {
     setIsLoading(true);
