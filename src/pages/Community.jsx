@@ -20,7 +20,7 @@ import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
-const categories = [
+const defaultCategories = [
   { value: "depoimentos", label: "Depoimentos de Aprovação" },
   { value: "dicas_estudos", label: "Dicas de Estudos" },
   { value: "motivacao", label: "Motivação" },
@@ -35,6 +35,7 @@ const categories = [
 ];
 
 export default function CommunityPage() {
+  const [categories, setCategories] = useState(defaultCategories);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -73,6 +74,11 @@ export default function CommunityPage() {
 
       const allPosts = await ForumPost.list("-created_date");
       setPosts(allPosts);
+
+      const allCategories = await base44.entities.ForumCategory.list('order');
+      if (allCategories && allCategories.length > 0) {
+        setCategories(allCategories.filter(c => c.is_active));
+      }
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     }

@@ -36,6 +36,7 @@ import SubscriptionManager from '../components/admin/SubscriptionManager';
 import AuditLogViewer from '../components/admin/AuditLogViewer';
 import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 import AdminInternalChat from '../components/admin/AdminInternalChat';
+import ForumAdmin from '../components/admin/ForumAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -457,6 +458,10 @@ export default function AdminPage() {
               <Bookmark className="w-4 h-4 mr-2" />
               Guias
             </TabsTrigger>
+            <TabsTrigger value="forum">
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Fórum
+            </TabsTrigger>
             <TabsTrigger value="chat">
               <MessageSquare className="w-4 h-4 mr-2" />
               💬 Chat
@@ -560,6 +565,10 @@ export default function AdminPage() {
 
           <TabsContent value="guias" className="mt-6">
             <GuideManager />
+          </TabsContent>
+
+          <TabsContent value="forum" className="mt-6">
+            <ForumAdmin />
           </TabsContent>
 
           <TabsContent value="chat" className="mt-6">
