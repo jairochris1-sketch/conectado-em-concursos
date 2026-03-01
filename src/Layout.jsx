@@ -95,6 +95,11 @@ const navigationItems = [
 
 const moreMenuItems = [
 {
+  title: "Histórico de Presença",
+  url: createPageUrl("UserPresenceHistory"),
+  icon: Clock
+},
+{
   title: "Simulado por Edital",
   url: createPageUrl("EditalSimulator"),
   icon: Target
