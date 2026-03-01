@@ -3,12 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { X, Send, Loader2, Circle, ChevronDown, Bell } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { studyPartnerSecurity } from "@/functions/studyPartnerSecurity";
+import { notificationService } from "@/components/chat/notificationService";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
