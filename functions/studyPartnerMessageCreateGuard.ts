@@ -11,6 +11,16 @@ Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   
   try {
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return Response.json({ 
+        error: 'Invalid JSON',
+        allowed: false 
+      }, { status: 400 });
+    }
+
     const user = await base44.auth.me();
     if (!user) {
       return Response.json({ 
@@ -19,7 +29,7 @@ Deno.serve(async (req) => {
       }, { status: 401 });
     }
 
-    const { messageData } = await req.json();
+    const messageData = body;
 
     // ── STRICT VALIDATION ──
     if (!messageData) {
