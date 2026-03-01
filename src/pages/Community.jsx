@@ -343,6 +343,12 @@ export default function CommunityPage() {
                         targetPhotoUrl={selectedPost.author_photo_url}
                         size="sm"
                       />
+                      <StudyPartnerButton
+                        currentUser={user}
+                        targetEmail={selectedPost.author_email}
+                        targetName={selectedPost.author_name}
+                        targetPhoto={selectedPost.author_photo_url}
+                      />
                     </div>
                   </div>
                 </div>
