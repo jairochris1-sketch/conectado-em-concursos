@@ -124,6 +124,14 @@ const LAYOUT_MODES = {
 };
 
 export default function StudiesPage() {
+  // Course State
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseTab, setCourseTab] = useState('conteudo');
+  const [forumSubTab, setForumSubTab] = useState('videoaula');
+  const [forumFilter, setForumFilter] = useState('todas');
+  const [forumScope, setForumScope] = useState('todas_perguntas');
+  const [forumSearch, setForumSearch] = useState('');
+
   // State for Study Materials
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
