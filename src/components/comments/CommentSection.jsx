@@ -12,7 +12,6 @@ import 'react-quill/dist/quill.snow.css';
 import ReportModal from './ReportModal';
 import { useQuestionLimit } from '../hooks/useQuestionLimit';
 import { StaffBadge } from "@/components/ui/staff-badge";
-import { StaffBadge } from "@/components/ui/staff-badge";
 
 export default function CommentSection({ questionId, onCommentChange }) {
   const [comments, setComments] = useState([]);
