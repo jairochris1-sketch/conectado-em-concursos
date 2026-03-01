@@ -155,7 +155,12 @@ export default function ProfilePage() {
         profile_photo_url: userData.profile_photo_url || "",
         instagram_url: userData.instagram_url || "",
         linkedin_url: userData.linkedin_url || "",
-        portfolio_url: userData.portfolio_url || ""
+        portfolio_url: userData.portfolio_url || "",
+        notify_forum_replies: userData.notify_forum_replies !== false,
+        notify_study_invites: userData.notify_study_invites !== false,
+        notify_mentions: userData.notify_mentions !== false,
+        notify_system_updates: userData.notify_system_updates !== false,
+        notify_by_email: userData.notify_by_email !== false
       });
 
       const [followersList, followingList] = await Promise.all([
@@ -495,6 +500,82 @@ export default function ProfilePage() {
                           </label>
                         ))}
                       </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Preferências de Notificação */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bell className="w-5 h-5" />
+                    Preferências de Notificação
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label className="text-base">Notificações por E-mail</Label>
+                      <p className="text-sm text-gray-500">Receber alertas importantes no seu e-mail.</p>
+                    </div>
+                    <Switch 
+                      checked={formData.notify_by_email} 
+                      onCheckedChange={(c) => handleInputChange('notify_by_email', c)} 
+                    />
+                  </div>
+                  
+                  <div className="h-px bg-gray-200 dark:bg-gray-800" />
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Respostas no Fórum</Label>
+                        <p className="text-xs text-gray-500">Quando alguém responder às suas discussões ou comentários.</p>
+                      </div>
+                      <Switch 
+                        checked={formData.notify_forum_replies} 
+                        onCheckedChange={(c) => handleInputChange('notify_forum_replies', c)} 
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Convites de Estudo</Label>
+                        <p className="text-xs text-gray-500">Quando alguém te convidar para ser parceiro(a) de estudos.</p>
+                      </div>
+                      <Switch 
+                        checked={formData.notify_study_invites} 
+                        onCheckedChange={(c) => handleInputChange('notify_study_invites', c)} 
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Menções</Label>
+                        <p className="text-xs text-gray-500">Quando alguém te mencionar em um comentário.</p>
+                      </div>
+                      <Switch 
+                        checked={formData.notify_mentions} 
+                        onCheckedChange={(c) => handleInputChange('notify_mentions', c)} 
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Atualizações do Sistema</Label>
+                        <p className="text-xs text-gray-500">Avisos importantes sobre a plataforma e sua conta.</p>
+                      </div>
+                      <Switch 
+                        checked={formData.notify_system_updates} 
+                        onCheckedChange={(c) => handleInputChange('notify_system_updates', c)} 
+                      />
                     </div>
                   </div>
                 </CardContent>

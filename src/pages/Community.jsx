@@ -138,15 +138,15 @@ export default function CommunityPage() {
     });
 
     if (!hasLiked && post.author_email !== user.email) {
-      await base44.entities.Notification.create({
-        user_email: post.author_email,
+      await base44.functions.invoke("sendAppNotification", {
+        targetEmail: post.author_email,
         title: "Alguém curtiu sua discussão",
         message: `${user.full_name} curtiu seu post: "${post.title}"`,
         type: "like",
-        action_url: createPageUrl("Community"),
-        related_user_name: user.full_name,
-        related_user_photo: user.profile_photo_url,
-        entity_id: post.id
+        actionUrl: createPageUrl("Community"),
+        relatedUserName: user.full_name,
+        relatedUserPhoto: user.profile_photo_url,
+        entityId: post.id
       });
     }
 
@@ -183,16 +183,29 @@ export default function CommunityPage() {
         replies_count: (selectedPost.replies_count || 0) + 1
       });
 
-      if (selectedPost.author_email !== user.email) {
-        await base44.entities.Notification.create({
-          user_email: selectedPost.author_email,
+      // If answering someone directly
+      if (replyingTo && replyingTo.email && replyingTo.email !== user.email) {
+        await base44.functions.invoke("sendAppNotification", {
+          targetEmail: replyingTo.email,
+          title: "Você foi respondido!",
+          message: `${user.full_name} respondeu ao seu comentário na discussão "${selectedPost.title}".`,
+          type: "mention",
+          actionUrl: createPageUrl("Community"),
+          relatedUserName: user.full_name,
+          relatedUserPhoto: user.profile_photo_url,
+          entityId: selectedPost.id
+        });
+      } else if (selectedPost.author_email !== user.email) {
+        // If not replying directly, notify the post author
+        await base44.functions.invoke("sendAppNotification", {
+          targetEmail: selectedPost.author_email,
           title: "Nova resposta na sua discussão",
           message: `${user.full_name} respondeu: "${replyContent.substring(0, 100)}${replyContent.length > 100 ? '...' : ''}"`,
           type: "reply",
-          action_url: createPageUrl("Community"),
-          related_user_name: user.full_name,
-          related_user_photo: user.profile_photo_url,
-          entity_id: selectedPost.id
+          actionUrl: createPageUrl("Community"),
+          relatedUserName: user.full_name,
+          relatedUserPhoto: user.profile_photo_url,
+          entityId: selectedPost.id
         });
       }
 
@@ -220,15 +233,15 @@ export default function CommunityPage() {
     });
 
     if (!hasLiked && reply.author_email !== user.email) {
-      await base44.entities.Notification.create({
-        user_email: reply.author_email,
+      await base44.functions.invoke("sendAppNotification", {
+        targetEmail: reply.author_email,
         title: "Alguém curtiu sua resposta",
         message: `${user.full_name} curtiu sua resposta no fórum`,
         type: "like",
-        action_url: createPageUrl("Community"),
-        related_user_name: user.full_name,
-        related_user_photo: user.profile_photo_url,
-        entity_id: reply.id
+        actionUrl: createPageUrl("Community"),
+        relatedUserName: user.full_name,
+        relatedUserPhoto: user.profile_photo_url,
+        entityId: reply.id
       });
     }
 
@@ -410,7 +423,7 @@ export default function CommunityPage() {
                 </button>
                 <button
                   className="hover:underline"
-                  onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name })}
+                  onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name, email: reply.author_email })}
                 >
                   Responder
                 </button>

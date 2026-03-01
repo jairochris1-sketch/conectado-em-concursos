@@ -36,12 +36,15 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("not_connected");
   };
 
-  const notify = async (toEmail, title, message) => {
-    await base44.entities.Notification.create({
-      user_email: toEmail, title, message, type: "follow",
-      action_url: createPageUrl("Community"),
-      related_user_name: currentUser.full_name,
-      related_user_photo: currentUser.profile_photo_url || ""
+  const notify = async (toEmail, title, message, type = "invite") => {
+    await base44.functions.invoke("sendAppNotification", {
+      targetEmail: toEmail, 
+      title, 
+      message, 
+      type,
+      actionUrl: createPageUrl("Community"),
+      relatedUserName: currentUser.full_name,
+      relatedUserPhoto: currentUser.profile_photo_url || ""
     });
   };
 
