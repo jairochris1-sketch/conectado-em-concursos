@@ -425,7 +425,12 @@ export default function CommunityPage() {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-sm">{reply.author_name}</span>
+                          <Link
+                              to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
+                              className="font-semibold text-sm hover:underline text-blue-600"
+                            >
+                              {reply.author_name}
+                            </Link>
                           <span className="text-xs text-gray-500">
                             {new Date(reply.created_date).toLocaleDateString()}
                           </span>
