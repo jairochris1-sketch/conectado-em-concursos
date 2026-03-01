@@ -36,6 +36,7 @@ import SubscriptionManager from '../components/admin/SubscriptionManager';
 import AuditLogViewer from '../components/admin/AuditLogViewer';
 import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 import AdminInternalChat from '../components/admin/AdminInternalChat';
+import ConnectionsAdmin from '../components/admin/ConnectionsAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
