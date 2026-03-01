@@ -285,7 +285,8 @@ export default function ProfilePage() {
                       <p className="text-xs text-gray-500 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
-                      <div className="flex gap-4 mt-3">
+                      <div className="flex gap-4 mt-3 flex-wrap">
+                        <ConnectionManager user={user} />
                         <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
