@@ -110,7 +110,24 @@ export default function NotificationDropdown() {
       case 'like': return <Heart className="w-4 h-4" />;
       case 'follow': return <UserPlus className="w-4 h-4" />;
       case 'activity': return <Activity className="w-4 h-4" />;
+      case 'simulation_ready': return <Target className="w-4 h-4" />;
+      case 'simulation_incomplete': return <PlayCircle className="w-4 h-4" />;
+      case 'contest_deadline': return <CalendarClock className="w-4 h-4" />;
+      case 'new_questions': return <BookOpenCheck className="w-4 h-4" />;
       default: return <Bell className="w-4 h-4" />;
+    }
+  };
+
+  const getIconColors = (type) => {
+    switch(type) {
+      case 'simulation_ready': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
+      case 'simulation_incomplete': return 'bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300';
+      case 'contest_deadline': return 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300';
+      case 'new_questions': return 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300';
+      case 'reply': return 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300';
+      case 'like': return 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300';
+      case 'follow': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
+      default: return 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
