@@ -13,35 +13,53 @@ Deno.serve(async (req) => {
 
   // ── SEND INVITE ──────────────────────────────────────────────────────────────
   if (action === 'check_invite') {
-    // Block if target has blocked requester
-    const blocked = await base44.entities.StudyPartner.filter({
-      requester_email: targetEmail,
-      target_email: user.email,
-      status: 'blocked'
-    });
-    if (blocked.length > 0) {
-      return Response.json({ allowed: false, reason: 'Você não pode enviar convite para este usuário.' });
+    // Strict validation
+    if (!targetEmail || typeof targetEmail !== 'string' || !targetEmail.includes('@')) {
+      return Response.json({ allowed: false, reason: 'Email de destino inválido.' });
     }
 
-    // Block if requester blocked target
-    const iBlocked = await base44.entities.StudyPartner.filter({
-      requester_email: user.email,
-      target_email: targetEmail,
-      status: 'blocked'
-    });
-    if (iBlocked.length > 0) {
-      return Response.json({ allowed: false, reason: 'Você bloqueou este usuário.' });
+    // Prevent self-invites
+    if (user.email === targetEmail) {
+      return Response.json({ allowed: false, reason: 'Não é possível enviar convite para si mesmo.' });
     }
 
-    // Daily invite limit
+    // Check existing relationships
+    const partnerships = await base44.entities.StudyPartner.filter();
+    
+    // Check if blocked (either direction)
+    const blocked = partnerships.some(p => 
+      (p.requester_email === targetEmail && p.target_email === user.email && p.status === 'blocked') ||
+      (p.requester_email === user.email && p.target_email === targetEmail && p.status === 'blocked')
+    );
+    
+    if (blocked) {
+      return Response.json({ allowed: false, reason: 'Não é possível enviar convite para este usuário.' });
+    }
+
+    // Check if already connected (pending or accepted)
+    const existing = partnerships.find(p =>
+      (p.requester_email === user.email && p.target_email === targetEmail) ||
+      (p.requester_email === targetEmail && p.target_email === user.email)
+    );
+
+    if (existing && existing.status === 'pending') {
+      return Response.json({ allowed: false, reason: 'Convite já foi enviado para este usuário.' });
+    }
+
+    if (existing && existing.status === 'accepted') {
+      return Response.json({ allowed: false, reason: 'Você já está conectado com este usuário.' });
+    }
+
+    // Daily invite limit - only count actual invites sent by this user
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
-    const todayInvites = await base44.entities.StudyPartner.filter({
-      requester_email: user.email,
-      status: 'pending'
-    });
-    // Filter created today (approximation via created_date)
-    const sentToday = todayInvites.filter(i => new Date(i.created_date) >= todayStart);
+    
+    const sentToday = partnerships.filter(p => 
+      p.requester_email === user.email && 
+      p.status === 'pending' && 
+      new Date(p.created_date) >= todayStart
+    );
+
     if (sentToday.length >= INVITE_DAILY_LIMIT) {
       return Response.json({ allowed: false, reason: `Limite de ${INVITE_DAILY_LIMIT} convites por dia atingido.` });
     }
