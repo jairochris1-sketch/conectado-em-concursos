@@ -301,10 +301,10 @@ export default function Questions() {
 
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
-              <span className="text-blue-950">
+              <span className="text-blue-900">
                 {allQuestions.length} questões disponíveis
               </span>
-              <span className="bg-transparent text-blue-950 flex items-center gap-1">
+              <span className="bg-transparent text-blue-900 flex items-center gap-1">
                 <Award className="w-4 h-4" />
                 {stats.accuracy}% de acerto ({stats.correct}/{stats.submitted})
               </span>
