@@ -231,6 +231,11 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
 
   const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
+  const isScrolledToBottom = () => {
+    if (!messagesEnd.current) return true;
+    return messagesEnd.current.scrollIntoView ? true : false;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
