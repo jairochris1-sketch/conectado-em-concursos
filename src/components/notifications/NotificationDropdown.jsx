@@ -155,7 +155,8 @@ export default function NotificationDropdown() {
   const recentNotifications = notifications.slice(0, 10);
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-white hover:bg-black/10">
           <Bell className="w-5 h-5" />
@@ -249,10 +250,9 @@ export default function NotificationDropdown() {
           </div>
         )}
       </DropdownMenuContent>
-    </DropdownMenu>
+      </DropdownMenu>
 
-    {/* Preferences Dialog */}
-    <Dialog open={showPreferences} onOpenChange={setShowPreferences}>
+      <Dialog open={showPreferences} onOpenChange={setShowPreferences}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Preferências de Notificações</DialogTitle>
@@ -264,6 +264,7 @@ export default function NotificationDropdown() {
           />
         )}
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }
