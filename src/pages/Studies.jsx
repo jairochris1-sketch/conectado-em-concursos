@@ -33,7 +33,9 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  BookUser } from
+  BookUser,
+  ChevronRight,
+  ChevronDown } from
 'lucide-react';
 import { motion } from 'framer-motion';
 
