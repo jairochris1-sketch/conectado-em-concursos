@@ -285,6 +285,7 @@ export default function ProfilePage() {
                       <p className="text-xs text-gray-500 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
+                      <ProfileStatsCard user={user} />
                       <div className="flex gap-4 mt-3">
                         <Dialog open={showFollowersDialog} onOpenChange={setShowFollowersDialog}>
                           <DialogTrigger asChild>
