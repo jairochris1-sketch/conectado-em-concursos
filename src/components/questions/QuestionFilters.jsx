@@ -471,7 +471,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
   return (
     <div className="space-y-4 mb-6">
       <Card className="shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-        <CardContent className="bg-slate-300 text-slate-300 p-6">
+        <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-gray-900 text-lg font-semibold dark:text-white">Filtros de Questões</h2>
             {getAllSelectedCount() > 0 &&
