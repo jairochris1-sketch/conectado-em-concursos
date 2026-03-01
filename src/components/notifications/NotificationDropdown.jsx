@@ -191,13 +191,7 @@ export default function NotificationDropdown() {
                       <AvatarFallback>{notification.related_user_name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   ) : (
-                    <div className={`flex-shrink-0 w-8 h-8 rounded-full mt-1 flex items-center justify-center ${
-                      notification.type === 'reply' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' :
-                      notification.type === 'like' ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300' :
-                      notification.type === 'follow' ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300' :
-                      notification.type === 'activity' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300' :
-                      'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
-                    }`}>
+                    <div className={`flex-shrink-0 w-8 h-8 rounded-full mt-1 flex items-center justify-center ${getIconColors(notification.type)}`}>
                       {getNotificationIcon(notification.type)}
                     </div>
                   )}
