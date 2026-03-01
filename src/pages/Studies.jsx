@@ -626,10 +626,10 @@ ${videoNotes}
 
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Área de Estudos
+              <BookUser className="w-8 h-8" /> Meus Cursos
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Seus materiais, resumos e flashcards, tudo em um só lugar.
+              Seus materiais, resumos e videoaulas organizados por curso.
             </p>
           </div>
           {isAdmin &&
