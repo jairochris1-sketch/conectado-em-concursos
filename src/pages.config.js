@@ -96,6 +96,7 @@ import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import SimulationReview from './pages/SimulationReview';
+import Ranking from './pages/Ranking';
 import __Layout from './Layout.jsx';
 
 
@@ -149,6 +150,7 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "SimulationReview": SimulationReview,
+    "Ranking": Ranking,
 }
 
 export const pagesConfig = {
