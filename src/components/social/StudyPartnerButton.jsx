@@ -123,20 +123,35 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setLoading(false);
   };
 
+  const unblock = async () => {
+    if (!partnerId) return;
+    setLoading(true);
+    await base44.entities.StudyPartner.delete(partnerId);
+    setStatus("not_connected");
+    setPartnerId(null);
+    toast.success("Usuário desbloqueado");
+    setLoading(false);
+  };
+
   if (!currentUser || currentUser.email === targetEmail) return null;
   if (status === "loading") return null;
-  if (status === "blocked") return null;
 
   const partner = { email: targetEmail, name: targetName, photo: targetPhoto };
 
   return (
     <>
       <div className="flex gap-2 flex-wrap items-center">
-        {status === "not_connected" &&
+        {status === "not_connected" && !targetIsAdmin &&
         <Button size="sm" onClick={sendInvite} disabled={loading} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
             <BookOpen className="w-3.5 h-3.5" /> Convidar para Estudar
           </Button>
         }
+
+        {status === "blocked" && (
+          <Button size="sm" onClick={unblock} disabled={loading} variant="outline" className="gap-1 text-gray-600 border-gray-300 text-xs">
+            <Ban className="w-3.5 h-3.5" /> Desbloquear
+          </Button>
+        )}
 
         {status === "pending_sent" &&
         <>
@@ -180,10 +195,12 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
           </>
         }
 
-        {/* Report button always visible (except self) */}
-        <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
-          <Flag className="w-3 h-3" /> Denunciar
-        </Button>
+        {/* Report button always visible (except self and admin) */}
+        {!targetIsAdmin && status !== "blocked" && (
+          <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
+            <Flag className="w-3 h-3" /> Denunciar
+          </Button>
+        )}
       </div>
 
 

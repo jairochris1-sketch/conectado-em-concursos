@@ -113,7 +113,8 @@ export default function UserProfilePage() {
 
   const isOwnProfile = currentUser?.email === targetEmail;
   // Only accepted partners or own profile can see full stats/details
-  const canSeeDetails = isOwnProfile || isPartner;
+  const targetIsAdmin = profileUser?.role === 'admin' || ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'].includes(profileUser?.email);
+  const canSeeDetails = isOwnProfile || isPartner || targetIsAdmin;
   const accuracy = userStats ? Math.round((userStats.correct_answers / Math.max(1, userStats.total_answers)) * 100) : 0;
 
   return (
@@ -181,6 +182,7 @@ export default function UserProfilePage() {
                       targetEmail={targetEmail}
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
+                      targetIsAdmin={targetIsAdmin}
                     />
                   </div>
                 )}
