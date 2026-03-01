@@ -155,7 +155,7 @@ const pageNameTranslations = {
   People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
-  Studies: "Área de Estudos",
+  Studies: "Meus Cursos",
   Schedule: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
