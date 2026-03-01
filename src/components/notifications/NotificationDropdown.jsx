@@ -11,6 +11,7 @@ import {
 import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 // AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
 // Not used in this component, but kept as existing import.
 
