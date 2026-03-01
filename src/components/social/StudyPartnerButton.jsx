@@ -37,15 +37,19 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   };
 
   const notify = async (toEmail, title, message, type = "invite") => {
-    await base44.functions.invoke("sendAppNotification", {
-      targetEmail: toEmail, 
-      title, 
-      message, 
-      type,
-      actionUrl: createPageUrl("Community"),
-      relatedUserName: currentUser.full_name,
-      relatedUserPhoto: currentUser.profile_photo_url || ""
-    });
+    try {
+      await base44.functions.invoke("sendAppNotification", {
+        targetEmail: toEmail, 
+        title, 
+        message, 
+        type,
+        actionUrl: createPageUrl("Community"),
+        relatedUserName: currentUser.full_name,
+        relatedUserPhoto: currentUser.profile_photo_url || ""
+      });
+    } catch (error) {
+      console.warn("Failed to send notification:", error);
+    }
   };
 
   const sendInvite = async () => {
