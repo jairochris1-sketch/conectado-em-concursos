@@ -62,14 +62,14 @@ export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, 
         setFollowId(newFollow.id);
         toast.success(`Você agora está seguindo ${targetName}`);
 
-        await base44.entities.Notification.create({
-          user_email: targetEmail,
+        await base44.functions.invoke("sendAppNotification", {
+          targetEmail: targetEmail,
           title: "Novo seguidor",
           message: `${user.full_name} começou a seguir você`,
           type: "follow",
-          action_url: createPageUrl("UserProfile") + "?email=" + encodeURIComponent(user.email),
-          related_user_name: user.full_name,
-          related_user_photo: user.profile_photo_url
+          actionUrl: createPageUrl("UserProfile") + "?email=" + encodeURIComponent(user.email),
+          relatedUserName: user.full_name,
+          relatedUserPhoto: user.profile_photo_url
         });
       }
     } catch (error) {
