@@ -51,14 +51,12 @@ import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import Calendar from './pages/Calendar';
-import ChatGPT from './pages/ChatGPT';
 import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
-import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import EditalSimulator from './pages/EditalSimulator';
 import EditalViewer from './pages/EditalViewer';
 import EnglishCourse from './pages/EnglishCourse';
@@ -107,14 +105,12 @@ export const PAGES = {
     "Admin": Admin,
     "AssistirAula": AssistirAula,
     "Calendar": Calendar,
-    "ChatGPT": ChatGPT,
     "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
-    "DigitalWhiteboard": DigitalWhiteboard,
     "EditalSimulator": EditalSimulator,
     "EditalViewer": EditalViewer,
     "EnglishCourse": EnglishCourse,
