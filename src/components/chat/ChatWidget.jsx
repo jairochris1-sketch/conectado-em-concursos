@@ -60,10 +60,13 @@ export default function ChatWidget() {
 
   const loadHistoryAndReplies = async () => {
     try {
-      // Carregar todas as mensagens do visitante
+      // Carregar 50 mensagens do visitante
       const visitorMessages = await base44.entities.ChatMessage.filter({
         visitor_name: visitorName
-      }, '-created_date', 100);
+      }, '-created_date', 50);
+
+      setTotalMessagesCount(visitorMessages.length);
+      setMessagesOffset(50);
 
       // Carregar todas as respostas do admin
       const allReplies = await base44.entities.ChatReply.list('-created_date', 500);
@@ -79,6 +82,31 @@ export default function ChatWidget() {
       setMessages(visitorMessages.reverse()); // Ordenar cronologicamente (mais antigo primeiro)
     } catch (error) {
       console.error('Erro ao carregar histórico:', error);
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    if (!visitorName) return;
+    setIsLoadingMore(true);
+    try {
+      const allVisitorMessages = await base44.entities.ChatMessage.filter({
+        visitor_name: visitorName
+      }, '-created_date', messagesOffset + 30);
+
+      const newMessages = allVisitorMessages.slice(0, allVisitorMessages.length - messages.length);
+      
+      setMessages((prev) => [...newMessages.reverse(), ...prev]);
+      setMessagesOffset(messagesOffset + 30);
+      setTotalMessagesCount(allVisitorMessages.length);
+
+      // Scroll para novo topo
+      setTimeout(() => {
+        messagesStartRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } catch (error) {
+      console.error('Erro ao carregar mais mensagens:', error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
