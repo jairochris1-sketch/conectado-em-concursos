@@ -54,6 +54,7 @@ import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
 import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 import ChatWidget from './components/chat/ChatWidget';
+import GlobalSearch from './components/search/GlobalSearch';
 
 const navigationItems = [
 {
@@ -669,6 +670,7 @@ export default function Layout({ children, currentPageName }) {
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
+          <GlobalSearch />
           <Button
             onClick={() => setShowProvaUploader(true)}
             size="sm"
@@ -746,6 +748,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <GlobalSearch isMobile />
                 <Link to={createPageUrl("Subscription")}>
                   <Button
                   variant="default"
