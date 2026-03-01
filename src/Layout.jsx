@@ -582,11 +582,11 @@ export default function Layout({ children, currentPageName }) {
             className="w-10 h-10 object-contain shadow-lg" />
 
             <div>
-                <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
-                <h2 className="font-bold text-white text-sm leading-tight">Concursos Públicos SE</h2>
-                <div className="text-xs leading-tight" style={{ color: '#FFD700' }}>
-                  ⭐⭐⭐⭐⭐
-                </div>
+                <h2 className="text-white text-sm font-semibold text-justify normal-case leading-tight">Conectado em Concursos </h2>
+                <h2 className="font-bold text-white text-sm leading-tight"></h2>
+                
+
+
             </div>
         </Link>
 
