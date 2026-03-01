@@ -1259,6 +1259,7 @@ ${videoNotes}
                 </div>
               </>
             }
+            </div>
             )}
 
             {selectedType === 'videos' && (
