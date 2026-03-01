@@ -11,7 +11,7 @@ import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
-import { StudyPartner } from "@/entities/all";
+import StudyPartnerRequests from "@/components/social/StudyPartnerRequests";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
