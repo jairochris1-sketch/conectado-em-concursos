@@ -17,12 +17,12 @@ export function ThemeToggle() {
   const updateTheme = (darkMode) => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
-      document.body.style.backgroundColor = '#1a1a1a';
-      document.body.style.color = '#ffffff';
+      document.body.style.backgroundColor = '';
+      document.body.style.color = '';
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.style.backgroundColor = '#ffffff';
-      document.body.style.color = '#000000';
+      document.body.style.backgroundColor = '';
+      document.body.style.color = '';
     }
   };
 
