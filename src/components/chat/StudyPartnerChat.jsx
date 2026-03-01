@@ -118,29 +118,34 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     loadPresence();
 
     const unsub = base44.entities.StudyPartnerMessage.subscribe((event) => {
-      if (event.data?.conversation_key === convKey && event.type === "create") {
-        const isNewMessage = !messages.some(m => m.id === event.data.id);
+      if (event.type === "create") {
+        const msg = event.data;
+        // Verify message belongs to THIS conversation
+        if (msg?.conversation_key !== convKey) return;
+        // Avoid duplicates
+        if (messages.some(m => m.id === msg.id)) return;
         
-        if (isNewMessage) {
-          setMessages((prev) => [...prev, event.data]);
-          setLastMessageId(event.data.id);
+        // Add message to chat
+        setMessages((prev) => [...prev, msg]);
+        setLastMessageId(msg.id);
 
-          // Handle notifications
-          if (event.data.receiver_email === currentUser.email) {
-            base44.entities.StudyPartnerMessage.update(event.data.id, { is_read: true }).catch(() => {});
+        // If I'm receiving this message, mark as read
+        if (msg.receiver_email === currentUser.email) {
+          base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true }).catch((err) => {
+            console.warn("Failed to mark message as read:", err);
+          });
 
-            // Show notification if app is in background
-            if (notificationsEnabled) {
-              notificationService.showVisualNotification(
-                event.data.content.substring(0, 50),
-                event.data.sender_name
-              );
-            }
+          // Show notification if app in background
+          if (notificationsEnabled && document.hidden) {
+            notificationService.showVisualNotification(
+              msg.content.substring(0, 50),
+              msg.sender_name
+            );
+          }
 
-            // Show indicator if not scrolled to bottom
-            if (!isScrolledToBottom()) {
-              setShowNewMessageIndicator(true);
-            }
+          // Show scroll-to-bottom indicator
+          if (!isScrolledToBottom()) {
+            setShowNewMessageIndicator(true);
           }
         }
       }
