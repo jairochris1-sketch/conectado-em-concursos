@@ -453,18 +453,28 @@ export default function EditalSimulator() {
                             ) : (
                               <>
                                 <Play className="w-4 h-4 mr-2" />
-                                Gerar Simulado (20 questões)
+                                Gerar (20 q.)
                               </>
                             )}
                           </Button>
-                          
+
                           <Button
                             onClick={() => generateSimulation(edital.id, 40)}
                             disabled={generatingSimId === edital.id}
                             variant="outline"
                           >
                             <Target className="w-4 h-4 mr-2" />
-                            40 questões
+                            40 q.
+                          </Button>
+
+                          <Button
+                            onClick={() => setAdvancedModalEdital(edital)}
+                            disabled={generatingSimId === edital.id}
+                            variant="outline"
+                            className="border-purple-400 text-purple-700 hover:bg-purple-50 dark:text-purple-300 dark:border-purple-600 dark:hover:bg-purple-900/20"
+                          >
+                            <Settings2 className="w-4 h-4 mr-2" />
+                            Avançado
                           </Button>
                         </>
                       ) : edital.processing_status === 'pending' || edital.processing_status === 'failed' ? (
