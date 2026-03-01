@@ -170,6 +170,18 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       conversation_key: convKey,
       is_read: false
     });
+
+    // Notificar o destinatário para que receba a mensagem
+    await base44.entities.Notification.create({
+      user_email: partner.email,
+      title: `💬 ${currentUser.full_name}`,
+      message: content.length > 80 ? content.slice(0, 80) + "…" : content,
+      type: "reply",
+      related_user_name: currentUser.full_name,
+      related_user_photo: currentUser.profile_photo_url || "",
+      action_url: `/pages/Community`,
+    }).catch(() => {});
+
     setSending(false);
   };
 
