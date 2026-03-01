@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
-import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
+import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag } from "lucide-react";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
+import ReportUserModal from "@/components/social/ReportUserModal";
+import { studyPartnerSecurity } from "@/functions/studyPartnerSecurity";
 
 export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
     if (!currentUser || !targetEmail || currentUser.email === targetEmail) return;
@@ -46,6 +48,13 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
 
   const sendInvite = async () => {
     setLoading(true);
+    // Security check
+    const res = await studyPartnerSecurity({ action: "check_invite", targetEmail });
+    if (!res.data?.allowed) {
+      toast.error(res.data?.reason || "Não foi possível enviar o convite.");
+      setLoading(false);
+      return;
+    }
     setStatus("pending_sent");
     const record = await base44.entities.StudyPartner.create({
       requester_email: currentUser.email, requester_name: currentUser.full_name,
@@ -124,7 +133,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
 
   return (
     <>
-      {/* Buttons */}
       <div className="flex gap-2 flex-wrap items-center">
         {status === "not_connected" && (
           <Button size="sm" onClick={sendInvite} disabled={loading} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
@@ -163,7 +171,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
               <Users className="w-3.5 h-3.5" /> Parceiros de Estudo
             </span>
             <Button size="sm" onClick={() => setChatOpen(true)} variant="outline" className="gap-1 text-xs text-blue-600 border-blue-300">
-              <MessageSquare className="w-3.5 h-3.5" /> Abrir Chat
+              <MessageSquare className="w-3.5 h-3.5" /> Chat
             </Button>
             <Button size="sm" onClick={undoPartnership} disabled={loading} variant="outline" className="gap-1 text-xs text-red-500 border-red-200">
               <UserMinus className="w-3.5 h-3.5" /> Desfazer
@@ -173,9 +181,14 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
             </Button>
           </>
         )}
+
+        {/* Report button always visible (except self) */}
+        <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
+          <Flag className="w-3 h-3" /> Denunciar
+        </Button>
       </div>
 
-      {/* Chat Dialog - only available when accepted */}
+      {/* Chat Dialog */}
       {status === "accepted" && (
         <Dialog open={chatOpen} onOpenChange={setChatOpen}>
           <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
@@ -187,6 +200,15 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Report Modal */}
+      <ReportUserModal
+        currentUser={currentUser}
+        reportedEmail={targetEmail}
+        reportedName={targetName}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+      />
     </>
   );
 }

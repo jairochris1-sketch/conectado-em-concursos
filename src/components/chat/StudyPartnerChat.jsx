@@ -3,46 +3,49 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, Eye, EyeOff } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { X, Send, Loader2, Circle, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import { studyPartnerSecurity } from "@/functions/studyPartnerSecurity";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-const HEARTBEAT_INTERVAL = 30_000; // 30s
-const ONLINE_THRESHOLD_MS = 3 * 60 * 1000; // 3 minutes
+const HEARTBEAT_INTERVAL = 30_000;
+const ONLINE_THRESHOLD_MS = 3 * 60 * 1000;
 
 function getConversationKey(emailA, emailB) {
   return [emailA, emailB].sort().join("|");
 }
 
-function PresenceDot({ status, lastSeen }) {
-  if (status === "online") {
-    return (
-      <span className="flex items-center gap-1 text-xs text-green-500 font-medium">
-        <Circle className="w-2 h-2 fill-green-500 text-green-500" /> Online
-      </span>
-    );
+const STATUS_OPTIONS = [
+  { value: "online",    label: "🟢 Online",    color: "text-green-500" },
+  { value: "offline",   label: "⚪ Offline",   color: "text-gray-400" },
+  { value: "invisible", label: "👁 Invisível", color: "text-gray-400" },
+];
+
+function resolvePresence(p) {
+  if (!p) return null;
+  if (p.status === "invisible") return { ...p, display: "offline" };
+  const lastSeenMs = p.last_seen ? Date.now() - new Date(p.last_seen).getTime() : Infinity;
+  if (p.status === "online" && lastSeenMs < ONLINE_THRESHOLD_MS) return { ...p, display: "online" };
+  return { ...p, display: "offline" };
+}
+
+function PresenceDot({ presence }) {
+  if (!presence) return null;
+  if (presence.display === "online") {
+    return <span className="flex items-center gap-1 text-xs text-green-400 font-medium"><Circle className="w-2 h-2 fill-green-400" /> Online</span>;
   }
-  if (status === "invisible") {
-    return (
-      <span className="flex items-center gap-1 text-xs text-gray-400">
-        <Circle className="w-2 h-2 fill-gray-300 text-gray-300" /> Offline
-      </span>
-    );
-  }
-  // offline
-  if (lastSeen) {
-    const ago = formatDistanceToNow(new Date(lastSeen), { addSuffix: true, locale: ptBR });
-    return (
-      <span className="flex items-center gap-1 text-xs text-gray-400">
-        <Circle className="w-2 h-2 fill-gray-300 text-gray-300" /> Visto {ago}
-      </span>
-    );
-  }
+  const ago = presence.last_seen
+    ? formatDistanceToNow(new Date(presence.last_seen), { addSuffix: true, locale: ptBR })
+    : null;
   return (
-    <span className="flex items-center gap-1 text-xs text-gray-400">
-      <Circle className="w-2 h-2 fill-gray-300 text-gray-300" /> Offline
+    <span className="flex items-center gap-1 text-xs text-gray-300">
+      <Circle className="w-2 h-2 fill-gray-400" />
+      {ago ? `Visto ${ago}` : "Offline"}
     </span>
   );
 }
@@ -52,53 +55,50 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [partnerPresence, setPartnerPresence] = useState(null);
-  const [myStatus, setMyStatus] = useState("online"); // online | invisible
+  const [myStatus, setMyStatus] = useState("online");
   const [myPresenceId, setMyPresenceId] = useState(null);
   const messagesEnd = useRef(null);
+  const myStatusRef = useRef("online");
   const convKey = getConversationKey(currentUser.email, partner.email);
 
-  // scroll to bottom on new messages
-  useEffect(() => {
-    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { messagesEnd.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  // Load messages and subscribe
+  // Load + subscribe
   useEffect(() => {
     loadMessages();
     loadPresence();
 
     const unsub = base44.entities.StudyPartnerMessage.subscribe((event) => {
-      if (event.data?.conversation_key === convKey) {
-        if (event.type === "create") {
-          setMessages((prev) => {
-            if (prev.some(m => m.id === event.data.id)) return prev;
-            return [...prev, event.data];
-          });
-          // Mark as read if we're the receiver
-          if (event.data.receiver_email === currentUser.email) {
-            base44.entities.StudyPartnerMessage.update(event.data.id, { is_read: true }).catch(() => {});
-          }
+      if (event.data?.conversation_key === convKey && event.type === "create") {
+        setMessages((prev) => prev.some(m => m.id === event.data.id) ? prev : [...prev, event.data]);
+        if (event.data.receiver_email === currentUser.email) {
+          base44.entities.StudyPartnerMessage.update(event.data.id, { is_read: true }).catch(() => {});
         }
       }
     });
 
-    // Presence subscription
     const unsubPresence = base44.entities.UserPresence.subscribe((event) => {
       if (event.data?.user_email === partner.email) {
-        setPartnerPresence(event.data);
+        setPartnerPresence(resolvePresence(event.data));
       }
     });
 
     return () => { unsub(); unsubPresence(); };
   }, [convKey, partner.email]);
 
-  // Heartbeat - update my presence
+  // Heartbeat
   useEffect(() => {
     initMyPresence();
-    const interval = setInterval(updateMyPresence, HEARTBEAT_INTERVAL);
+    const interval = setInterval(() => {
+      if (myPresenceId) {
+        base44.entities.UserPresence.update(myPresenceId, {
+          last_seen: new Date().toISOString(),
+          status: myStatusRef.current
+        }).catch(() => {});
+      }
+    }, HEARTBEAT_INTERVAL);
     return () => {
       clearInterval(interval);
-      // Set offline on unmount
       if (myPresenceId) {
         base44.entities.UserPresence.update(myPresenceId, { status: "offline" }).catch(() => {});
       }
@@ -108,59 +108,58 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const initMyPresence = async () => {
     const existing = await base44.entities.UserPresence.filter({ user_email: currentUser.email });
     if (existing.length > 0) {
-      setMyPresenceId(existing[0].id);
-      setMyStatus(existing[0].status === "invisible" ? "invisible" : "online");
-      await base44.entities.UserPresence.update(existing[0].id, {
-        last_seen: new Date().toISOString(),
-        status: existing[0].status === "invisible" ? "invisible" : "online"
-      });
+      const rec = existing[0];
+      setMyPresenceId(rec.id);
+      const savedStatus = rec.status === "invisible" ? "invisible" : "online";
+      setMyStatus(savedStatus);
+      myStatusRef.current = savedStatus;
+      await base44.entities.UserPresence.update(rec.id, { last_seen: new Date().toISOString(), status: savedStatus });
     } else {
       const record = await base44.entities.UserPresence.create({
-        user_email: currentUser.email,
-        last_seen: new Date().toISOString(),
-        status: "online"
+        user_email: currentUser.email, last_seen: new Date().toISOString(), status: "online"
       });
       setMyPresenceId(record.id);
     }
   };
 
-  const updateMyPresence = async () => {
-    if (!myPresenceId) return;
-    await base44.entities.UserPresence.update(myPresenceId, {
-      last_seen: new Date().toISOString(),
-      status: myStatus
-    }).catch(() => {});
-  };
-
   const loadMessages = async () => {
     const msgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
     setMessages(msgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
-    // Mark unread ones as read
-    msgs.filter(m => m.receiver_email === currentUser.email && !m.is_read).forEach(m => {
-      base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {});
-    });
+    msgs.filter(m => m.receiver_email === currentUser.email && !m.is_read).forEach(m =>
+      base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {})
+    );
   };
 
   const loadPresence = async () => {
     const records = await base44.entities.UserPresence.filter({ user_email: partner.email });
-    if (records.length > 0) {
-      const p = records[0];
-      // Check if really online (within 3 min) or treat as offline
-      const lastSeenMs = p.last_seen ? Date.now() - new Date(p.last_seen).getTime() : Infinity;
-      if (p.status === "invisible") {
-        setPartnerPresence({ ...p, status: "offline" }); // show as offline
-      } else if (p.status === "online" && lastSeenMs < ONLINE_THRESHOLD_MS) {
-        setPartnerPresence({ ...p, status: "online" });
-      } else {
-        setPartnerPresence({ ...p, status: "offline" });
-      }
+    if (records.length > 0) setPartnerPresence(resolvePresence(records[0]));
+  };
+
+  const changeMyStatus = async (newStatus) => {
+    setMyStatus(newStatus);
+    myStatusRef.current = newStatus;
+    if (myPresenceId) {
+      await base44.entities.UserPresence.update(myPresenceId, {
+        status: newStatus, last_seen: new Date().toISOString()
+      });
     }
+    const label = STATUS_OPTIONS.find(s => s.value === newStatus)?.label;
+    toast.success(`Status: ${label}`);
   };
 
   const sendMessage = async () => {
-    if (!text.trim()) return;
+    if (!text.trim() || sending) return;
     setSending(true);
     const content = text.trim();
+
+    // Security check via backend
+    const res = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
+    if (!res.data?.allowed) {
+      toast.error(res.data?.reason || "Não foi possível enviar a mensagem.");
+      setSending(false);
+      return;
+    }
+
     setText("");
     await base44.entities.StudyPartnerMessage.create({
       sender_email: currentUser.email,
@@ -174,17 +173,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     setSending(false);
   };
 
-  const toggleInvisible = async () => {
-    const newStatus = myStatus === "invisible" ? "online" : "invisible";
-    setMyStatus(newStatus);
-    if (myPresenceId) {
-      await base44.entities.UserPresence.update(myPresenceId, {
-        status: newStatus,
-        last_seen: new Date().toISOString()
-      });
-    }
-    toast.success(newStatus === "invisible" ? "Você está invisível" : "Você está visível");
-  };
+  const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
   return (
     <motion.div
@@ -192,34 +181,40 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-700"
+      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden"
     >
       {/* Header */}
-      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white">
+      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0">
         <div className="relative">
           <Avatar className="w-9 h-9">
             <AvatarImage src={partner.photo} />
             <AvatarFallback className="text-sm bg-green-800">{partner.name?.charAt(0)}</AvatarFallback>
           </Avatar>
-          {partnerPresence?.status === "online" && (
+          {partnerPresence?.display === "online" && (
             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
           )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm truncate">{partner.name}</p>
-          {partnerPresence && (
-            <PresenceDot status={partnerPresence.status} lastSeen={partnerPresence.last_seen} />
-          )}
+          <PresenceDot presence={partnerPresence} />
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          title={myStatus === "invisible" ? "Ficar visível" : "Ficar invisível"}
-          className="text-white hover:bg-green-600 w-8 h-8"
-          onClick={toggleInvisible}
-        >
-          {myStatus === "invisible" ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-        </Button>
+
+        {/* My status selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2">
+              {currentStatusOption.label} <ChevronDown className="w-3 h-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {STATUS_OPTIONS.map(opt => (
+              <DropdownMenuItem key={opt.value} onClick={() => changeMyStatus(opt.value)} className={opt.color}>
+                {opt.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
           <X className="w-4 h-4" />
         </Button>
@@ -258,7 +253,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2">
+      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
