@@ -569,7 +569,7 @@ export default function QuestionList({
                     const isCorrectAnswer = option.letter === question.correct_answer;
                     const isEliminated = eliminatedOptions[question.id]?.[option.letter];
 
-                    let optionStyle = textStyles.hoverBg;
+                    let optionStyle = '';
                     let textStyle = textStyles.primary;
 
                     if (isSubmitted) {
