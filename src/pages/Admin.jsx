@@ -486,6 +486,10 @@ export default function AdminPage() {
               <Download className="w-4 h-4 mr-2" />
               Exportar
             </TabsTrigger>
+            <TabsTrigger value="connections">
+              <Users className="w-4 h-4 mr-2" />
+              Conexões
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
