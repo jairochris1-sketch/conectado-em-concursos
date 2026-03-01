@@ -120,7 +120,10 @@ export default function ProfilePage() {
     target_position: "",
     study_hours_per_day: 0,
     preferred_subjects: [],
-    profile_photo_url: ""
+    profile_photo_url: "",
+    instagram_url: "",
+    linkedin_url: "",
+    portfolio_url: ""
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -149,7 +152,10 @@ export default function ProfilePage() {
         target_position: userData.target_position || "",
         study_hours_per_day: userData.study_hours_per_day || 0,
         preferred_subjects: userData.preferred_subjects || [],
-        profile_photo_url: userData.profile_photo_url || ""
+        profile_photo_url: userData.profile_photo_url || "",
+        instagram_url: userData.instagram_url || "",
+        linkedin_url: userData.linkedin_url || "",
+        portfolio_url: userData.portfolio_url || ""
       });
 
       const [followersList, followingList] = await Promise.all([
@@ -494,6 +500,52 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
             </motion.div>
+
+            {/* Redes Sociais - Apenas Admins */}
+            {(user?.email === 'conectadoemconcursos@gmail.com' || user?.email === 'jairochris1@gmail.com' || user?.email === 'juniorgmj2016@gmail.com') && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Redes Sociais e Portfólio</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <Label htmlFor="instagram_url">Instagram</Label>
+                        <Input
+                          id="instagram_url"
+                          value={formData.instagram_url}
+                          onChange={(e) => handleInputChange('instagram_url', e.target.value)}
+                          placeholder="https://instagram.com/seu_usuario"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="linkedin_url">LinkedIn</Label>
+                        <Input
+                          id="linkedin_url"
+                          value={formData.linkedin_url}
+                          onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
+                          placeholder="https://linkedin.com/in/seu_usuario"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="portfolio_url">Site ou Portfólio</Label>
+                        <Input
+                          id="portfolio_url"
+                          value={formData.portfolio_url}
+                          onChange={(e) => handleInputChange('portfolio_url', e.target.value)}
+                          placeholder="https://seusite.com.br"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
             {/* Botão de salvar */}
             <motion.div

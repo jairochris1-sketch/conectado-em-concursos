@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Users, BookOpen, MapPin, Target, BarChart3, Flame, ArrowLeft } from "lucide-react";
+import { Users, BookOpen, MapPin, Target, BarChart3, Flame, ArrowLeft, Instagram, Linkedin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
@@ -137,6 +137,28 @@ export default function UserProfilePage() {
                 {profileUser.profession && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{profileUser.profession}</p>
                 )}
+
+                {/* Redes Sociais */}
+                {(profileUser.instagram_url || profileUser.linkedin_url || profileUser.portfolio_url) && (
+                  <div className="flex items-center gap-3 mt-3">
+                    {profileUser.instagram_url && (
+                      <a href={profileUser.instagram_url} target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-700 transition-colors">
+                        <Instagram className="w-5 h-5" />
+                      </a>
+                    )}
+                    {profileUser.linkedin_url && (
+                      <a href={profileUser.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-800 transition-colors">
+                        <Linkedin className="w-5 h-5" />
+                      </a>
+                    )}
+                    {profileUser.portfolio_url && (
+                      <a href={profileUser.portfolio_url} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">
+                        <Globe className="w-5 h-5" />
+                      </a>
+                    )}
+                  </div>
+                )}
+
                 {!isOwnProfile && currentUser && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     <FollowButton
