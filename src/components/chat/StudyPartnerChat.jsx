@@ -170,7 +170,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       unsubPresence();
       visibilityUnsubRef.current?.();
     };
-  }, [convKey, partner.email, notificationsEnabled, messages]);
+  }, [convKey, partner.email, notificationsEnabled]);
 
   // Heartbeat
   useEffect(() => {
