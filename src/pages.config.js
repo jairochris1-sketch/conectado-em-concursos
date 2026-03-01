@@ -78,7 +78,6 @@ import PaymentHistory from './pages/PaymentHistory';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
 import Questions from './pages/Questions';
-import Ranking from './pages/Ranking';
 import ResetPassword from './pages/ResetPassword';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
@@ -132,7 +131,6 @@ export const PAGES = {
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
     "Questions": Questions,
-    "Ranking": Ranking,
     "ResetPassword": ResetPassword,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
