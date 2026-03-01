@@ -210,6 +210,7 @@ const moreMenuItems = [
 
 const pageNameTranslations = {
   Dashboard: "Meu Painel",
+  People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
   Studies: "Área de Estudos",
@@ -248,6 +249,7 @@ const pageNameTranslations = {
 
 const featureAccess = {
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
+  'Pessoas': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
   'Área de Estudos': ['avancado'],
   'Cronograma de Estudos': ['avancado'],
