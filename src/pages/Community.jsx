@@ -355,14 +355,14 @@ export default function CommunityPage() {
   };
 
   const renderReplies = (replyNodes, level = 0) => {
-    return replyNodes.map((reply) => (
-      <div key={reply.id} className={`${level > 0 ? 'ml-8 md:ml-12 mt-2 relative' : 'mt-4'}`}>
-        {level > 0 && (
-          <div className="absolute -left-6 md:-left-8 top-4 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
-        )}
-        {level > 0 && (
-          <div className="absolute -left-6 md:-left-8 top-4 w-6 h-px bg-gray-200 dark:bg-gray-700" />
-        )}
+    return replyNodes.map((reply) =>
+    <div key={reply.id} className={`${level > 0 ? 'ml-8 md:ml-12 mt-2 relative' : 'mt-4'}`}>
+        {level > 0 &&
+      <div className="absolute -left-6 md:-left-8 top-4 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
+      }
+        {level > 0 &&
+      <div className="absolute -left-6 md:-left-8 top-4 w-6 h-px bg-gray-200 dark:bg-gray-700" />
+      }
         <div className="flex items-start gap-2 relative z-10">
           <Avatar className={`w-8 h-8 ${level > 0 ? 'w-6 h-6 mt-1' : ''} shrink-0 bg-white`}>
             <AvatarImage src={reply.author_photo_url} />
@@ -372,16 +372,16 @@ export default function CommunityPage() {
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
                 <Link
-                  to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
-                  className="font-bold text-sm hover:underline text-gray-900 dark:text-white"
-                >
+                to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
+                className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
+
                   {reply.author_name}
                 </Link>
                 {reply.is_best_answer &&
-                  <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
-                }
+              <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
+              }
                 {reply.author_email === user.email &&
-                  <DropdownMenu>
+              <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
                         <MoreVertical className="w-3 h-3" />
@@ -396,48 +396,48 @@ export default function CommunityPage() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                }
+              }
               </div>
               {editingReply?.id === reply.id ?
-                <div className="space-y-2 mt-2 w-full min-w-[200px] md:min-w-[400px]">
+            <div className="space-y-2 mt-2 w-full min-w-[200px] md:min-w-[400px]">
                   <Textarea
-                    value={editingReply.content}
-                    onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
-                    rows={2} />
+                value={editingReply.content}
+                onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
+                rows={2} />
                   <div className="flex gap-2">
                     <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
                     <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
                   </div>
                 </div> :
-                <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{reply.content}</p>
-              }
+            <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{reply.content}</p>
+            }
             </div>
-            {(!editingReply || editingReply.id !== reply.id) && (
-              <div className="flex items-center gap-4 text-xs font-semibold text-gray-500 mt-1 ml-2">
+            {(!editingReply || editingReply.id !== reply.id) &&
+          <div className="flex items-center gap-4 text-xs font-semibold text-gray-500 mt-1 ml-2">
                 <span>{new Date(reply.created_date).toLocaleDateString()}</span>
                 <button
-                  className={`hover:underline ${reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}`}
-                  onClick={() => handleLikeReply(reply)}
-                >
+              className={`hover:underline ${reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}`}
+              onClick={() => handleLikeReply(reply)}>
+
                   Curtir {reply.likes_count > 0 && `(${reply.likes_count})`}
                 </button>
                 <button
-                  className="hover:underline"
-                  onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name, email: reply.author_email })}
-                >
+              className="hover:underline"
+              onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name, email: reply.author_email })}>
+
                   Responder
                 </button>
               </div>
-            )}
+          }
           </div>
         </div>
-        {reply.children && reply.children.length > 0 && (
-          <div className="pl-2 relative">
+        {reply.children && reply.children.length > 0 &&
+      <div className="pl-2 relative">
             {renderReplies(reply.children, level + 1)}
           </div>
-        )}
+      }
       </div>
-    ));
+    );
   };
 
   if (isLoading) {
@@ -517,7 +517,7 @@ export default function CommunityPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-slate-800 pt-0 p-6">
               <p className="whitespace-pre-wrap mb-4">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <Button
@@ -542,21 +542,21 @@ export default function CommunityPage() {
           </Card>
 
           <Card className="mb-6">
-            <CardHeader>
+            <CardHeader className="bg-slate-900 p-6 flex flex-col space-y-1.5">
               <CardTitle>Respostas ({replies.length})</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-slate-900 pt-0 p-6">
               <div className="space-y-1 mb-8">
                 {renderReplies(buildReplyTree(replies))}
               </div>
 
               <div className="mt-6">
-                {replyingTo && (
-                  <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
+                {replyingTo &&
+                <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
                     <span>Respondendo a <strong>{replyingTo.name}</strong></span>
                     <button onClick={() => setReplyingTo(null)} className="hover:text-blue-900 font-bold">&times;</button>
                   </div>
-                )}
+                }
                 <div className="flex gap-2">
                   <Textarea
                     placeholder={replyingTo ? `Escreva sua resposta...` : "Escreva um comentário..."}
