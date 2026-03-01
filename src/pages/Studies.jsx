@@ -1263,6 +1263,7 @@ ${videoNotes}
             )}
 
             {selectedType === 'videos' && (
+            <div className="w-full">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vídeo-Aulas</h2>
               
