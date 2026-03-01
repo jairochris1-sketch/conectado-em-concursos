@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag } from "lucide-react";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
-import { studyPartnerSecurity } from "@/functions/studyPartnerSecurity";
 
 export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto }) {
   const [status, setStatus] = useState("loading");
@@ -48,13 +47,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
 
   const sendInvite = async () => {
     setLoading(true);
-    // Security check
-    const res = await studyPartnerSecurity({ action: "check_invite", targetEmail });
-    if (!res.data?.allowed) {
-      toast.error(res.data?.reason || "Não foi possível enviar o convite.");
-      setLoading(false);
-      return;
-    }
     setStatus("pending_sent");
     const record = await base44.entities.StudyPartner.create({
       requester_email: currentUser.email, requester_name: currentUser.full_name,
