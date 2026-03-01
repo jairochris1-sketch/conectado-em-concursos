@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
-import { studyPartnerSecurity } from "@/functions/studyPartnerSecurity";
 import { notificationService } from "@/components/chat/notificationService";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
