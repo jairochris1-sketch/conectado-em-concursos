@@ -3,18 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-export default function Pagination({ 
-  currentPage, 
-  totalPages, 
-  onPageChange, 
-  totalItems, 
-  itemsPerPage 
+export default function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage
 }) {
   const [goToPage, setGoToPage] = useState('');
-  
+
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-  
+
   const handleGoToPage = () => {
     const pageNumber = parseInt(goToPage);
     if (pageNumber && pageNumber >= 1 && pageNumber <= totalPages) {
@@ -28,7 +28,7 @@ export default function Pagination({
       handleGoToPage();
     }
   };
-  
+
   const getVisiblePages = () => {
     const delta = 5; // Mostra mais páginas como na imagem
     const range = [];
@@ -40,9 +40,9 @@ export default function Pagination({
     }
 
     // Calcular range ao redor da página atual
-    for (let i = Math.max(2, currentPage - delta); 
-         i <= Math.min(totalPages - 1, currentPage + delta); 
-         i++) {
+    for (let i = Math.max(2, currentPage - delta);
+    i <= Math.min(totalPages - 1, currentPage + delta);
+    i++) {
       range.push(i);
     }
 
@@ -89,8 +89,8 @@ export default function Pagination({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-2"
-            >
+              className="px-2">
+
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
@@ -100,8 +100,8 @@ export default function Pagination({
                   return (
                     <div key={`dots-${index}`} className="px-2 py-1">
                       <MoreHorizontal className="w-4 h-4 text-gray-400" />
-                    </div>
-                  );
+                    </div>);
+
                 }
 
                 return (
@@ -111,14 +111,14 @@ export default function Pagination({
                     size="sm"
                     onClick={() => onPageChange(page)}
                     className={`min-w-[36px] ${
-                      currentPage === page 
-                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'text-gray-700 hover:bg-blue-50'
-                    }`}
-                  >
+                    currentPage === page ?
+                    'bg-blue-600 text-white hover:bg-blue-700' :
+                    'text-gray-700 hover:bg-blue-50'}`
+                    }>
+
                     {page}
-                  </Button>
-                );
+                  </Button>);
+
               })}
             </div>
 
@@ -126,9 +126,9 @@ export default function Pagination({
               variant="outline"
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-2"
-            >
+              disabled={currentPage === totalPages} className="bg-blue-600 px-2 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-8">
+
+
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
@@ -146,18 +146,18 @@ export default function Pagination({
               onChange={(e) => setGoToPage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="1"
-              className="w-20 h-8 text-center"
-            />
+              className="w-20 h-8 text-center" />
+
             <Button
               size="sm"
               onClick={handleGoToPage}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4"
-            >
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4">
+
               OK
             </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
