@@ -18,6 +18,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const categories = [
   { value: "depoimentos", label: "Depoimentos de Aprovação" },
