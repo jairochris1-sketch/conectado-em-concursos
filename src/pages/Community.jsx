@@ -504,16 +504,33 @@ export default function CommunityPage() {
                 ))}
               </div>
 
-              <div className="mt-6 flex gap-2">
-                <Textarea
-                  placeholder="Digite sua resposta..."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  rows={3}
-                />
-                <Button onClick={handleReply} className="self-end">
-                  <Send className="w-4 h-4" />
-                </Button>
+              <div className="mt-6">
+                {!canMessage(selectedPost.author_email) ? (
+                  <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <span className="text-sm text-yellow-800 dark:text-yellow-300">
+                      Você precisa estar <strong>conectado</strong> ao autor para responder.
+                    </span>
+                    <ConnectButton
+                      currentUser={user}
+                      targetEmail={selectedPost.author_email}
+                      targetName={selectedPost.author_name}
+                      targetPhoto={selectedPost.author_photo_url}
+                      size="sm"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Textarea
+                      placeholder="Digite sua resposta..."
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                      rows={3}
+                    />
+                    <Button onClick={handleReply} className="self-end">
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
