@@ -417,7 +417,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#1c2c34' }}>
+    <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden bg-gray-50 dark:bg-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-blue-600 focus:text-white focus:rounded">
         Pular para conteúdo principal
       </a>
