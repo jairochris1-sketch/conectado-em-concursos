@@ -23,10 +23,12 @@ import {
   Sparkles,
   ListChecks,
   Database,
-  ClipboardList
+  ClipboardList,
+  Settings2
 } from "lucide-react";
 import { toast } from "sonner";
 import EditalDashboard from "../components/edital/EditalDashboard";
+import AdvancedSimulationModal from "../components/edital/AdvancedSimulationModal";
 
 export default function EditalSimulator() {
   const navigate = useNavigate();
