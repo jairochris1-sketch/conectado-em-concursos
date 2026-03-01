@@ -146,7 +146,7 @@ export default function StudiesPage() {
   });
 
   // New Windows 11 Explorer-style navigation
-  const [navigationPath, setNavigationPath] = useState(['Área de Estudos']);
+  const [navigationPath, setNavigationPath] = useState(['Meus Cursos']);
   const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
