@@ -127,14 +127,9 @@ Deno.serve(async (req) => {
     const allCompatibleCount = new Set(Object.values(questionsByDiscipline).flatMap(g => g.questions.map(q => q.id))).size;
 
     if (selectedQuestions.length === 0) {
-      // Fallback: se não encontrou nada, pegar questões aleatórias do banco
-      const fallback = allQuestions.sort(() => Math.random() - 0.5).slice(0, question_count);
-      if (fallback.length === 0) {
-        return Response.json({
-          error: 'Nenhuma questão encontrada no banco de dados'
-        }, { status: 404 });
-      }
-      fallback.forEach(q => { selectedQuestions.push(q); usedIds.add(q.id); });
+      return Response.json({
+        error: 'Não encontramos questões compatíveis com as disciplinas deste edital no nosso banco de dados no momento. Em breve novos conteúdos serão adicionados!'
+      }, { status: 404 });
     }
 
     // Embaralhar resultado final
