@@ -68,13 +68,18 @@ export default function ChatDebugValidator({ convKey, currentUserEmail, partnerE
       let subscriptionWorking = false;
 
       const unsubscribe = base44.entities.StudyPartnerMessage.subscribe((event) => {
-        addTestResult(`✓ EVENTO RECEBIDO: ${event.type} - ${event.data?.id}`);
-        eventReceived = true;
-        subscriptionWorking = true;
-        setChecks(p => ({
-          ...p,
-          eventEmission: { status: "success", detail: `Evento ${event.type} recebido em tempo real` }
-        }));
+        // Verificar se o evento é da nossa conversa
+        if (event.data?.conversation_key === convKey) {
+          addTestResult(`✓ EVENTO RECEBIDO: ${event.type} - ID: ${event.data?.id} - Conversa: ${convKey}`);
+          eventReceived = true;
+          subscriptionWorking = true;
+          setChecks(p => ({
+            ...p,
+            eventEmission: { status: "success", detail: `Evento ${event.type} em tempo real ✓` }
+          }));
+        } else {
+          addTestResult(`⊘ Evento de outra conversa: ${event.data?.conversation_key}`);
+        }
       });
 
       setChecks(p => ({
