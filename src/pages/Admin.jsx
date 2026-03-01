@@ -36,7 +36,6 @@ import SubscriptionManager from '../components/admin/SubscriptionManager';
 import AuditLogViewer from '../components/admin/AuditLogViewer';
 import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 import AdminInternalChat from '../components/admin/AdminInternalChat';
-import ConnectionsAdmin from '../components/admin/ConnectionsAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -486,10 +485,6 @@ export default function AdminPage() {
               <Download className="w-4 h-4 mr-2" />
               Exportar
             </TabsTrigger>
-            <TabsTrigger value="connections">
-              <Users className="w-4 h-4 mr-2" />
-              Conexões
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -609,10 +604,6 @@ export default function AdminPage() {
 
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
-          </TabsContent>
-
-          <TabsContent value="connections" className="mt-6">
-            <ConnectionsAdmin />
           </TabsContent>
         </Tabs>
       </div>

@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FollowButton from "@/components/social/FollowButton";
-import ConnectButton from "@/components/social/ConnectButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -38,7 +37,6 @@ export default function CommunityPage() {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [replies, setReplies] = useState([]);
-  const [connections, setConnections] = useState([]); // accepted connections emails
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
@@ -65,8 +63,6 @@ export default function CommunityPage() {
     filterPosts();
   }, [posts, searchTerm, selectedSubject]);
 
-  const isAdmin = (u) => u?.email === 'conectadoemconcursos@gmail.com' || u?.email === 'jairochris1@gmail.com' || u?.role === 'admin';
-
   const loadData = async () => {
     try {
       const userData = await User.me();
@@ -74,17 +70,6 @@ export default function CommunityPage() {
 
       const allPosts = await ForumPost.list("-created_date");
       setPosts(allPosts);
-
-      // Load accepted connections
-      const [asReq, asTarget] = await Promise.all([
-        base44.entities.Connection.filter({ requester_email: userData.email, status: "accepted" }),
-        base44.entities.Connection.filter({ target_email: userData.email, status: "accepted" }),
-      ]);
-      const connectedEmails = [
-        ...asReq.map(c => c.target_email),
-        ...asTarget.map(c => c.requester_email),
-      ];
-      setConnections(connectedEmails);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     }
@@ -168,21 +153,9 @@ export default function CommunityPage() {
     setReplies(postReplies);
   };
 
-  const canMessage = (targetEmail) => {
-    if (!user) return false;
-    if (targetEmail === user.email) return true;
-    if (isAdmin(user)) return true;
-    return connections.includes(targetEmail);
-  };
-
   const handleReply = async () => {
     if (!replyContent.trim()) {
       toast.error("Digite uma resposta");
-      return;
-    }
-
-    if (!canMessage(selectedPost.author_email)) {
-      toast.error("Você precisa estar conectado ao autor para responder neste post.");
       return;
     }
 
@@ -363,21 +336,12 @@ export default function CommunityPage() {
                       <p className="text-sm text-gray-500">
                         Por {selectedPost.author_name} • {new Date(selectedPost.created_date).toLocaleDateString()}
                       </p>
-                      <div className="flex gap-2">
-                        <FollowButton 
-                          targetEmail={selectedPost.author_email}
-                          targetName={selectedPost.author_name}
-                          targetPhotoUrl={selectedPost.author_photo_url}
-                          size="sm"
-                        />
-                        <ConnectButton
-                          currentUser={user}
-                          targetEmail={selectedPost.author_email}
-                          targetName={selectedPost.author_name}
-                          targetPhoto={selectedPost.author_photo_url}
-                          size="sm"
-                        />
-                      </div>
+                      <FollowButton 
+                        targetEmail={selectedPost.author_email}
+                        targetName={selectedPost.author_name}
+                        targetPhotoUrl={selectedPost.author_photo_url}
+                        size="sm"
+                      />
                     </div>
                   </div>
                 </div>
@@ -504,33 +468,16 @@ export default function CommunityPage() {
                 ))}
               </div>
 
-              <div className="mt-6">
-                {!canMessage(selectedPost.author_email) ? (
-                  <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                    <span className="text-sm text-yellow-800 dark:text-yellow-300">
-                      Você precisa estar <strong>conectado</strong> ao autor para responder.
-                    </span>
-                    <ConnectButton
-                      currentUser={user}
-                      targetEmail={selectedPost.author_email}
-                      targetName={selectedPost.author_name}
-                      targetPhoto={selectedPost.author_photo_url}
-                      size="sm"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <Textarea
-                      placeholder="Digite sua resposta..."
-                      value={replyContent}
-                      onChange={(e) => setReplyContent(e.target.value)}
-                      rows={3}
-                    />
-                    <Button onClick={handleReply} className="self-end">
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
-                )}
+              <div className="mt-6 flex gap-2">
+                <Textarea
+                  placeholder="Digite sua resposta..."
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  rows={3}
+                />
+                <Button onClick={handleReply} className="self-end">
+                  <Send className="w-4 h-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>
