@@ -44,6 +44,7 @@ export default function EditalSimulator() {
   const [cargo, setCargo] = useState("");
   const [uploadingFile, setUploadingFile] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
+  const [advancedModalEdital, setAdvancedModalEdital] = useState(null);
 
   useEffect(() => {
     loadEditais();
