@@ -306,7 +306,7 @@ export default function Exams() {
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
-                    <CardHeader className="bg-slate-900 pb-3 p-6 flex flex-col space-y-1.5">
+                    <CardHeader className="bg-slate-800 p-6 flex flex-col space-y-1.5">
                       <div className="flex items-start gap-3">
                         {exam.cover_image &&
                     <img
@@ -320,7 +320,7 @@ export default function Exams() {
                         </CardTitle>
                       </div>
                     </CardHeader>
-                    <CardContent className="bg-slate-900 pt-0 p-6 space-y-2">
+                    <CardContent className="bg-slate-800 p-6 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Building className="w-4 h-4 flex-shrink-0" />
                         <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
