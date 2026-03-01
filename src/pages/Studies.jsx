@@ -610,7 +610,7 @@ ${videoNotes}
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando área de estudos...</p>
+            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando seus cursos...</p>
           </div>
         </div>);
 
