@@ -58,8 +58,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [partnerPresence, setPartnerPresence] = useState(null);
   const [myStatus, setMyStatus] = useState("online");
   const [myPresenceId, setMyPresenceId] = useState(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
+  const [lastMessageId, setLastMessageId] = useState(null);
   const messagesEnd = useRef(null);
   const myStatusRef = useRef("online");
+  const visibilityUnsubRef = useRef(null);
   const convKey = getConversationKey(currentUser.email, partner.email);
 
   useEffect(() => { messagesEnd.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
