@@ -15,8 +15,8 @@ import {
   Scissors,
   CheckCircle,
   XCircle,
-  HelpCircle
-} from "lucide-react";
+  HelpCircle } from
+"lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CommentSection from "../comments/CommentSection";
 import { Favorite } from "@/entities/Favorite";
@@ -119,24 +119,24 @@ export default function QuestionList({
 
   const fetchCommentCounts = useCallback(async () => {
     if (!questions || questions.length === 0) return;
-    const questionIds = questions.map(q => q.id);
+    const questionIds = questions.map((q) => q.id);
     try {
-        const filteredComments = await Comment.list();
-        const commentsByQuestionId = {};
-        
-        filteredComments.forEach(comment => {
-          if (questionIds.includes(comment.question_id)) {
-            commentsByQuestionId[comment.question_id] = (commentsByQuestionId[comment.question_id] || 0) + 1;
-          }
-        });
-        
-        setCommentCounts(commentsByQuestionId);
-    } catch (error) {
-        if (error.response?.status !== 429) {
-            console.error("Erro ao carregar contagens de comentários:", error);
-        } else {
-          console.warn("Rate limit atingido ao buscar contagens de comentários.");
+      const filteredComments = await Comment.list();
+      const commentsByQuestionId = {};
+
+      filteredComments.forEach((comment) => {
+        if (questionIds.includes(comment.question_id)) {
+          commentsByQuestionId[comment.question_id] = (commentsByQuestionId[comment.question_id] || 0) + 1;
         }
+      });
+
+      setCommentCounts(commentsByQuestionId);
+    } catch (error) {
+      if (error.response?.status !== 429) {
+        console.error("Erro ao carregar contagens de comentários:", error);
+      } else {
+        console.warn("Rate limit atingido ao buscar contagens de comentários.");
+      }
     }
   }, [questions]);
 
@@ -145,21 +145,21 @@ export default function QuestionList({
       try {
         const user = await User.me();
         setCurrentUser(user);
-        if(user) {
-            const favoriteData = await Favorite.filter({ created_by: user.email });
-            const favs = favoriteData.reduce((acc, fav) => {
-              acc[fav.question_id] = fav.id;
-              return acc;
-            }, {});
-            setFavorites(favs);
+        if (user) {
+          const favoriteData = await Favorite.filter({ created_by: user.email });
+          const favs = favoriteData.reduce((acc, fav) => {
+            acc[fav.question_id] = fav.id;
+            return acc;
+          }, {});
+          setFavorites(favs);
 
-            const savedNotes = favoriteData.reduce((acc, fav) => {
-              if (fav.note) {
-                acc[fav.question_id] = fav.note;
-              }
-              return acc;
-            }, {});
-            setUserNotes(savedNotes);
+          const savedNotes = favoriteData.reduce((acc, fav) => {
+            if (fav.note) {
+              acc[fav.question_id] = fav.note;
+            }
+            return acc;
+          }, {});
+          setUserNotes(savedNotes);
         }
       } catch (error) {
         if (error.response?.status !== 429) {
@@ -174,13 +174,13 @@ export default function QuestionList({
     const fetchCounts = async () => {
       if (!questions || questions.length === 0) return;
 
-      const uniqueSubjects = [...new Set(questions.map(q => q.subject))];
+      const uniqueSubjects = [...new Set(questions.map((q) => q.subject))];
 
       try {
         await fetchCommentCounts();
-        
+
         const filteredMaterials = await StudyMaterial.list(null, null, { subject__in: uniqueSubjects });
-        
+
         const materialsBySubject = _.groupBy(filteredMaterials, 'subject');
         const newMaterialCounts = _.mapValues(materialsBySubject, (materials) => materials.length);
         setStudyMaterialCounts(newMaterialCounts);
@@ -198,43 +198,43 @@ export default function QuestionList({
   }, [questions, fetchCommentCounts]);
 
   const toggleAssociatedText = (questionId) => {
-    setAssociatedTextVisible(prev => ({
+    setAssociatedTextVisible((prev) => ({
       ...prev,
       [questionId]: !prev[questionId]
     }));
   };
 
   const toggleComments = (questionId) => {
-    setCommentsVisible(prev => ({
+    setCommentsVisible((prev) => ({
       ...prev,
       [questionId]: !prev[questionId]
     }));
   };
 
   const toggleExplanation = (questionId) => {
-    setExplanationVisible(prev => ({
+    setExplanationVisible((prev) => ({
       ...prev,
       [questionId]: !prev[questionId]
     }));
   };
 
   const toggleStats = (questionId) => {
-    setStatsVisible(prev => ({
+    setStatsVisible((prev) => ({
       ...prev,
       [questionId]: !prev[questionId]
     }));
   };
 
   const toggleNotes = (questionId) => {
-    setNotesVisible(prev => {
+    setNotesVisible((prev) => {
       const isCurrentlyVisible = prev[questionId];
       if (!isCurrentlyVisible) {
-        setNotes(currentNotes => ({
+        setNotes((currentNotes) => ({
           ...currentNotes,
           [questionId]: userNotes[questionId] || ''
         }));
       } else {
-        setNotes(currentNotes => {
+        setNotes((currentNotes) => {
           const newCurrentNotes = { ...currentNotes };
           delete newCurrentNotes[questionId];
           return newCurrentNotes;
@@ -248,7 +248,7 @@ export default function QuestionList({
   };
 
   const handleEditNote = (questionId) => {
-    setNotes(prev => ({
+    setNotes((prev) => ({
       ...prev,
       [questionId]: userNotes[questionId] || ''
     }));
@@ -263,12 +263,12 @@ export default function QuestionList({
     try {
       await Favorite.update(favoriteId, { note: null });
 
-      setUserNotes(prev => {
+      setUserNotes((prev) => {
         const newNotes = { ...prev };
         delete newNotes[questionId];
         return newNotes;
       });
-      setNotes(prev => {
+      setNotes((prev) => {
         const newNotes = { ...prev };
         delete newNotes[questionId];
         return newNotes;
@@ -284,24 +284,24 @@ export default function QuestionList({
 
     try {
       let favoriteId = favorites[questionId];
-      
+
       if (favoriteId) {
         await Favorite.update(favoriteId, { note: noteText });
       } else {
-        const newFavorite = await Favorite.create({ 
-          question_id: questionId, 
+        const newFavorite = await Favorite.create({
+          question_id: questionId,
           note: noteText,
           created_by: currentUser.email
         });
-        setFavorites(prev => ({ ...prev, [questionId]: newFavorite.id }));
+        setFavorites((prev) => ({ ...prev, [questionId]: newFavorite.id }));
       }
-      
-      setUserNotes(prev => ({
+
+      setUserNotes((prev) => ({
         ...prev,
         [questionId]: noteText
       }));
-      
-      setNotes(prev => {
+
+      setNotes((prev) => {
         const newNotes = { ...prev };
         delete newNotes[questionId];
         return newNotes;
@@ -323,25 +323,25 @@ export default function QuestionList({
 
   const handleToggleFavorite = async (questionId) => {
     if (!currentUser) return;
-    
+
     const isFavorited = favorites[questionId];
-    
+
     try {
       if (isFavorited) {
         await Favorite.delete(favorites[questionId]);
-        setFavorites(prev => {
+        setFavorites((prev) => {
           const newFavs = { ...prev };
           delete newFavs[questionId];
           return newFavs;
         });
-        setUserNotes(prev => {
+        setUserNotes((prev) => {
           const newNotes = { ...prev };
           delete newNotes[questionId];
           return newNotes;
         });
       } else {
         const newFavorite = await Favorite.create({ question_id: questionId });
-        setFavorites(prev => ({ ...prev, [questionId]: newFavorite.id }));
+        setFavorites((prev) => ({ ...prev, [questionId]: newFavorite.id }));
       }
     } catch (error) {
       console.error("Erro ao favoritar questão:", error);
@@ -349,7 +349,7 @@ export default function QuestionList({
   };
 
   const handleEliminateOption = (questionId, optionLetter) => {
-    setEliminatedOptions(prev => ({
+    setEliminatedOptions((prev) => ({
       ...prev,
       [questionId]: {
         ...prev[questionId],
@@ -387,7 +387,7 @@ export default function QuestionList({
         background: 'bg-white',
         headerBg: 'bg-gray-50',
         hoverBg: 'hover:bg-gray-50',
-        hoverText: 'hover:text-gray-800',
+        hoverText: 'hover:text-gray-800'
       };
     }
     return {
@@ -403,7 +403,7 @@ export default function QuestionList({
   };
 
   return (
-    <div className={getContainerStyle()}>
+    <div className="bg-slate-300">
       <AnimatePresence>
         {questions.map((question, index) => {
           const userAnswer = userAnswers[question.id];
@@ -415,9 +415,9 @@ export default function QuestionList({
           const showStats = statsVisible[question.id];
           const showNotes = notesVisible[question.id];
           const showAssociatedText = associatedTextVisible[question.id];
-          
+
           const lastResponse = responseHistory ? responseHistory[question.id] : undefined;
-          
+
           const isFavorited = favorites[question.id];
           const questionNumber = generateQuestionNumber(index, currentPage, questionsPerPage);
           const textStyles = getTextStyles();
@@ -432,13 +432,13 @@ export default function QuestionList({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(index * 0.05, 0.3) }}
               className={getQuestionCardStyle()}
-              style={{ 
+              style={{
                 marginBottom: layoutMode === 'classic' ? '0.75rem' : '1rem',
                 fontFamily: 'Arial, sans-serif',
                 willChange: 'transform, opacity'
-              }}
-            >
-              <div className={`${textStyles.headerBg} px-6 py-3 ${textStyles.border} border-b print-hide`}>
+              }}>
+
+              <div className="bg-slate-300 px-6 py-3 border-gray-200 border-b print-hide">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -454,114 +454,114 @@ export default function QuestionList({
                       {subjectNames[question.subject] || question.subject}
                     </span>
                     
-                    {question.topic && (
-                      <>
+                    {question.topic &&
+                    <>
                         <span className="text-gray-400">•</span>
                         <span className={`${textStyles.secondary} text-sm capitalize`}>
                           {question.topic.replace(/_/g, ' ')}
                         </span>
                       </>
-                    )}
+                    }
                   </div>
 
-                  {lastResponse && (
-                    <div className="flex items-center gap-2">
-                      {lastResponse.is_correct ? (
-                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
+                  {lastResponse &&
+                  <div className="flex items-center gap-2">
+                      {lastResponse.is_correct ?
+                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
                           Resolvi certo!
-                        </span>
-                      ) : (
-                        <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
+                        </span> :
+
+                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
                           Resolvi errado!
                         </span>
-                      )}
+                    }
                     </div>
-                  )}
+                  }
                 </div>
                 
                 <div className={`mt-2 text-xs md:text-sm ${textStyles.secondary} leading-relaxed`}>
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="whitespace-nowrap">Ano: <strong>{question.year}</strong></span>
                     <span className="hidden sm:inline">•</span>
-                    <span className="whitespace-nowrap">Banca: <strong className="text-orange-600">{institutionNames[question.institution] || question.institution.toUpperCase()}</strong></span>
-                    {question.cargo && (
-                      <>
+                    <span className="whitespace-nowrap">Banca: <strong className="text-blue-500">{institutionNames[question.institution] || question.institution.toUpperCase()}</strong></span>
+                    {question.cargo &&
+                    <>
                         <span className="hidden sm:inline">•</span>
                         <span className="break-words">Cargo: <strong className="break-words">{question.cargo}</strong></span>
                       </>
-                    )}
+                    }
                   </div>
-                  {question.exam_name && (
-                    <div className="mt-1">
+                  {question.exam_name &&
+                  <div className="mt-1">
                       <span>Prova: </span>
-                      <Link 
-                        to={createPageUrl(`ExamView?institution=${question.institution}&year=${question.year}&exam_name=${encodeURIComponent(question.exam_name)}&cargo=${encodeURIComponent(question.cargo || '')}`)}
-                        className="font-bold text-orange-600 hover:underline break-words"
-                      >
+                      <Link
+                      to={createPageUrl(`ExamView?institution=${question.institution}&year=${question.year}&exam_name=${encodeURIComponent(question.exam_name)}&cargo=${encodeURIComponent(question.cargo || '')}`)} className="text-blue-500 font-bold hover:underline break-words">
+
+
                          {question.exam_name} {question.cargo && `(${question.cargo})`}
                       </Link>
                     </div>
-                  )}
+                  }
                 </div>
               </div>
 
-              <div className={`px-6 ${layoutMode === 'classic' ? 'py-6' : 'py-5'}`}>
-                {question.associated_text && (
-                  <div className="mb-4 print-hide">
+              <div className="bg-slate-300 px-6 py-6">
+                {question.associated_text &&
+                <div className="mb-4 print-hide">
                     <button
-                      onClick={() => toggleAssociatedText(question.id)}
-                      className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        showAssociatedText 
-                          ? 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                      }`}
-                    >
+                    onClick={() => toggleAssociatedText(question.id)}
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    showAssociatedText ?
+                    'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800' :
+                    'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}`
+                    }>
+
                       <FileText className="w-4 h-4" />
                       {showAssociatedText ? 'Ocultar texto' : 'Exibir texto associado'}
                     </button>
                     
-                    {showAssociatedText && (
-                      <div className="mt-4 print-hide">
+                    {showAssociatedText &&
+                  <div className="mt-4 print-hide">
                         <div
-                          className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed`}
-                          dangerouslySetInnerHTML={{ __html: question.associated_text }}
-                          style={{ 
-                            fontSize: `${fontSize}rem`, 
-                            textAlign: 'justify',
-                            textIndent: '3em'
-                          }}
-                        />
+                      className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed`}
+                      dangerouslySetInnerHTML={{ __html: question.associated_text }}
+                      style={{
+                        fontSize: `${fontSize}rem`,
+                        textAlign: 'justify',
+                        textIndent: '3em'
+                      }} />
+
                       </div>
-                    )}
+                  }
                   </div>
-                )}
+                }
 
                 <div className="hidden print:block mb-4">
                   <span className="text-lg font-bold">Questão {questionNumber}</span>
                 </div>
 
-                {question.statement && (
-                  <div
-                    className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed mb-4`}
-                    dangerouslySetInnerHTML={{ __html: question.statement }}
-                    style={{ 
-                      fontSize: `${fontSize}rem`, 
-                      textAlign: 'justify',
-                      textIndent: '3em'
-                    }}
-                  />
-                )}
+                {question.statement &&
+                <div
+                  className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed mb-4`}
+                  dangerouslySetInnerHTML={{ __html: question.statement }}
+                  style={{
+                    fontSize: `${fontSize}rem`,
+                    textAlign: 'justify',
+                    textIndent: '3em'
+                  }} />
 
-                {question.command && (
-                  <div
-                    className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed mb-4 font-semibold`}
-                    dangerouslySetInnerHTML={{ __html: question.command }}
-                    style={{ 
-                      fontSize: `${fontSize}rem`, 
-                      textAlign: 'justify'
-                    }}
-                  />
-                )}
+                }
+
+                {question.command &&
+                <div
+                  className={`prose prose-sm max-w-none ${textStyles.primary} leading-relaxed mb-4 font-semibold`}
+                  dangerouslySetInnerHTML={{ __html: question.command }}
+                  style={{
+                    fontSize: `${fontSize}rem`,
+                    textAlign: 'justify'
+                  }} />
+
+                }
 
                 <div className="mb-3 space-y-1">
                   {question.options?.map((option, optionIndex) => {
@@ -571,7 +571,7 @@ export default function QuestionList({
 
                     let optionStyle = textStyles.hoverBg;
                     let textStyle = textStyles.primary;
-                    
+
                     if (isSubmitted) {
                       if (isCorrectAnswer) {
                         optionStyle = 'bg-green-50';
@@ -581,103 +581,103 @@ export default function QuestionList({
                         textStyle = 'text-red-800 font-medium';
                       }
                     } else if (isUserChoice) {
-                        optionStyle = 'bg-blue-50';
-                        textStyle = 'text-blue-800';
+                      optionStyle = 'bg-blue-50';
+                      textStyle = 'text-blue-800';
                     }
 
                     return (
                       <div
                         key={option.letter}
                         className={`group flex items-start gap-3 p-2 transition-all duration-200 ${!isSubmitted ? 'cursor-pointer' : ''} ${optionStyle} relative rounded-lg`}
-                        onClick={() => !isSubmitted && onAnswerChange(question.id, option.letter)}
-                      >
-                        {!isSubmitted && question.type !== 'true_false' && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEliminateOption(question.id, option.letter);
-                            }}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-1 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded print-hide"
-                            title={isEliminated ? "Restaurar alternativa" : "Eliminar alternativa"}
-                          >
+                        onClick={() => !isSubmitted && onAnswerChange(question.id, option.letter)}>
+
+                        {!isSubmitted && question.type !== 'true_false' &&
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEliminateOption(question.id, option.letter);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-1 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded print-hide"
+                          title={isEliminated ? "Restaurar alternativa" : "Eliminar alternativa"}>
+
                             <Scissors className={`w-3 h-3 ${isEliminated ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`} />
                           </button>
-                        )}
+                        }
 
-                        {question.type !== 'true_false' && (
-                          <span 
-                            className={`${textStyle} ${!isSubmitted ? 'ml-6' : ''}`}
-                            style={{ fontWeight: 600 }}
-                          >
+                        {question.type !== 'true_false' &&
+                        <span
+                          className={`${textStyle} ${!isSubmitted ? 'ml-6' : ''}`}
+                          style={{ fontWeight: 600 }}>
+
                             {option.letter.toLowerCase()})
                           </span>
-                        )}
+                        }
                         
-                        <div 
+                        <div
                           className={`prose prose-sm max-w-none flex-1 leading-relaxed ${textStyle} ${
-                            isEliminated && !isSubmitted ? 'line-through opacity-50' : ''
-                          } ${question.type === 'true_false' ? '' : ''}`}
-                          style={{ 
+                          isEliminated && !isSubmitted ? 'line-through opacity-50' : ''} ${
+                          question.type === 'true_false' ? '' : ''}`}
+                          style={{
                             fontSize: `${fontSize}rem`,
                             fontWeight: question.type === 'true_false' ? 600 : 'normal'
                           }}
-                          dangerouslySetInnerHTML={{ __html: option.text }}
-                        />
-                      </div>
-                    );
+                          dangerouslySetInnerHTML={{ __html: option.text }} />
+
+                      </div>);
+
                   })}
                 </div>
 
-                {!isSubmitted && userAnswer && (
-                  <div className="mb-4 print-hide">
+                {!isSubmitted && userAnswer &&
+                <div className="mb-4 print-hide">
                     <Button
-                      onClick={() => onSubmitAnswer(question)}
-                      disabled={isBlocked}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                      title={isBlocked ? "Limite diário de questões atingido" : ""}
-                    >
+                    onClick={() => onSubmitAnswer(question)}
+                    disabled={isBlocked}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={isBlocked ? "Limite diário de questões atingido" : ""}>
+
                       {isBlocked ? "Limite Atingido" : "Responder"}
                     </Button>
                   </div>
-                )}
+                }
 
                 {isSubmitted && (
-                  question.type === 'true_false' ? (
-                    <div className="mb-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 print-hide">
+                question.type === 'true_false' ?
+                <div className="mb-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 print-hide">
                       <div className="flex items-center gap-2">
-                        {isCorrect ? (
-                          <>
+                        {isCorrect ?
+                    <>
                             <CheckCircle className="w-5 h-5 text-green-600" />
                             <span className="font-semibold text-green-600 dark:text-green-400">Parabéns! Você acertou!</span>
-                          </>
-                        ) : (
-                          <>
+                          </> :
+
+                    <>
                             <XCircle className="w-5 h-5 text-red-600" />
                             <span className="font-semibold text-red-600 dark:text-red-400">Você errou!</span>
                           </>
-                        )}
+                    }
                       </div>
-                      {!isCorrect && (
-                        <>
+                      {!isCorrect &&
+                  <>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                            A resposta correta é: <strong className="text-green-600 dark:text-green-400">{question.options.find(o => o.letter === question.correct_answer)?.text}</strong>
+                            A resposta correta é: <strong className="text-green-600 dark:text-green-400">{question.options.find((o) => o.letter === question.correct_answer)?.text}</strong>
                           </p>
-                          {onRequestHelp && (
-                            <Button
-                              onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
-                              size="sm"
-                              variant="outline"
-                              className="mt-3 bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300"
-                            >
+                          {onRequestHelp &&
+                    <Button
+                      onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
+                      size="sm"
+                      variant="outline"
+                      className="mt-3 bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300">
+
                               <HelpCircle className="w-4 h-4 mr-2" />
                               Pedir Ajuda da IA
                             </Button>
-                          )}
+                    }
                         </>
-                      )}
-                    </div>
-                  ) : (
-                    <div className={`mb-4 ${layoutMode === 'classic' ? 'p-4' : 'p-3'} bg-gray-50 dark:bg-gray-700 rounded-lg print-hide`}>
+                  }
+                    </div> :
+
+                <div className={`mb-4 ${layoutMode === 'classic' ? 'p-4' : 'p-3'} bg-gray-50 dark:bg-gray-700 rounded-lg print-hide`}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-sm">
                           <span className={`font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
@@ -687,56 +687,56 @@ export default function QuestionList({
                             Gabarito: <span className="font-bold text-green-600">{question.correct_answer}</span>
                           </span>
                         </div>
-                        {!isCorrect && onRequestHelp && (
-                          <Button
-                            onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
-                            size="sm"
-                            variant="outline"
-                            className="bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300"
-                          >
+                        {!isCorrect && onRequestHelp &&
+                    <Button
+                      onClick={() => onRequestHelp(question, userAnswer, question.correct_answer)}
+                      size="sm"
+                      variant="outline"
+                      className="bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300">
+
                             <HelpCircle className="w-4 h-4 mr-2" />
                             Pedir Ajuda
                           </Button>
-                        )}
+                    }
                       </div>
-                    </div>
-                  )
-                )}
+                    </div>)
 
-                {question.explanation && showExplanation && (
-                  <div className="rounded-lg p-4 mb-4 text-white print-hide" style={{ backgroundColor: '#344151', border: '1px solid #2a3441' }}>
+                }
+
+                {question.explanation && showExplanation &&
+                <div className="rounded-lg p-4 mb-4 text-white print-hide" style={{ backgroundColor: '#344151', border: '1px solid #2a3441' }}>
                     <div className="flex items-start gap-3">
                       <Lightbulb className="w-5 h-5 text-yellow-300 mt-0.5" />
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-medium text-white">Gabarito Comentado:</h4>
                           <button
-                            onClick={() => toggleExplanation(question.id)}
-                            className="text-gray-300 hover:text-white transition-colors"
-                            title="Fechar explicação"
-                          >
+                          onClick={() => toggleExplanation(question.id)}
+                          className="text-gray-300 hover:text-white transition-colors"
+                          title="Fechar explicação">
+
                             <X className="w-5 h-5" />
                           </button>
                         </div>
-                        {isBlocked && !isSubmitted ? (
-                          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        {isBlocked && !isSubmitted ?
+                      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                             <p className="text-sm text-yellow-800 dark:text-yellow-200">
                               🔒 Você atingiu o limite de 20 questões diárias gratuitas. Assine um plano para continuar estudando com gabarito comentado ilimitado!
                             </p>
-                          </div>
-                        ) : (
-                          <div
-                            className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-200 prose-strong:text-white prose-p:text-gray-200"
-                            dangerouslySetInnerHTML={{ __html: question.explanation.replace(/\n/g, '<br />') }}
-                          />
-                        )}
+                          </div> :
+
+                      <div
+                        className="text-sm leading-relaxed prose prose-sm max-w-none text-gray-200 prose-strong:text-white prose-p:text-gray-200"
+                        dangerouslySetInnerHTML={{ __html: question.explanation.replace(/\n/g, '<br />') }} />
+
+                      }
                       </div>
                     </div>
                   </div>
-                )}
+                }
 
-                {showStats && (
-                  <div className="bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800 rounded-lg p-4 mb-4 print-hide">
+                {showStats &&
+                <div className="bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800 rounded-lg p-4 mb-4 print-hide">
                     <div className="flex items-start gap-3">
                       <BarChart3 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                       <div>
@@ -762,26 +762,26 @@ export default function QuestionList({
                       </div>
                     </div>
                   </div>
-                )}
+                }
 
-                {showNotes && (
-                  <div className="bg-yellow-50 border border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800 rounded-lg p-4 mb-4 print-hide">
+                {showNotes &&
+                <div className="bg-yellow-50 border border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800 rounded-lg p-4 mb-4 print-hide">
                     <div className="flex items-start gap-3">
                       <StickyNote className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="font-medium text-yellow-900 dark:text-yellow-200">Suas Anotações:</h4>
                           <button
-                            onClick={() => toggleNotes(question.id)}
-                            className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200 transition-colors"
-                            title="Fechar anotações"
-                          >
+                          onClick={() => toggleNotes(question.id)}
+                          className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200 transition-colors"
+                          title="Fechar anotações">
+
                             <X className="w-4 h-4" />
                           </button>
                         </div>
                         
-                        {userNotes[question.id] && (
-                          <div className="mb-4 p-3 bg-white dark:bg-gray-800 border border-yellow-300 dark:border-yellow-600 rounded-lg">
+                        {userNotes[question.id] &&
+                      <div className="mb-4 p-3 bg-white dark:bg-gray-800 border border-yellow-300 dark:border-yellow-600 rounded-lg">
                             <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">{userNotes[question.id]}</p>
                             <div className="flex justify-end gap-2 mt-2">
                                 <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" onClick={() => handleEditNote(question.id)}>
@@ -794,79 +794,79 @@ export default function QuestionList({
                                 </Button>
                             </div>
                           </div>
-                        )}
+                      }
                         
                         <textarea
-                          className="w-full p-3 border rounded-lg resize-none bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-                          rows="4"
-                          placeholder="Escreva suas anotações sobre esta questão..."
-                          value={notes[question.id] || ''}
-                          onChange={(e) => setNotes(prev => ({ ...prev, [question.id]: e.target.value }))}
-                        />
+                        className="w-full p-3 border rounded-lg resize-none bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        rows="4"
+                        placeholder="Escreva suas anotações sobre esta questão..."
+                        value={notes[question.id] || ''}
+                        onChange={(e) => setNotes((prev) => ({ ...prev, [question.id]: e.target.value }))} />
+
                         <div className="flex justify-end mt-2">
                           <Button
-                            size="sm"
-                            onClick={() => handleSaveNote(question.id, notes[question.id] || '')}
-                            className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600"
-                          >
+                          size="sm"
+                          onClick={() => handleSaveNote(question.id, notes[question.id] || '')}
+                          className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600">
+
                             Salvar Anotação
                           </Button>
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
+                }
               </div>
 
-              <div className={`${textStyles.headerBg} px-4 sm:px-6 py-3 ${textStyles.border} border-t print-hide`}>
+              <div className="bg-slate-300 px-4 py-3 sm:px-6 border-gray-200 border-t print-hide">
                 <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-                    {question.explanation && (
-                      <button 
-                        onClick={() => toggleExplanation(question.id)}
-                        className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm relative`}
-                      >
+                    {question.explanation &&
+                    <button
+                      onClick={() => toggleExplanation(question.id)}
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm relative`}>
+
                         <Lightbulb className="w-4 h-4" />
                         <span className="hidden sm:inline">Gabarito Comentado</span>
                         <span className="sm:hidden">Gabarito</span>
                         <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                       </button>
-                    )}
+                    }
 
-                    <button 
+                    <button
                       onClick={() => toggleComments(question.id)}
-                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}
-                    >
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}>
+
                       <MessageSquare className="w-4 h-4" />
                       <span className="hidden sm:inline">Comentários</span>
                       <span className="sm:hidden">Fórum</span>
                        ({commentCount})
                     </button>
 
-                    {materialCount > 0 && (
-                      <Link 
-                        to={createPageUrl(`Studies?subject=${question.subject}`)}
-                        className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}
-                      >
+                    {materialCount > 0 &&
+                    <Link
+                      to={createPageUrl(`Studies?subject=${question.subject}`)}
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}>
+
                         <Play className="w-4 h-4" />
                         <span className="hidden sm:inline">Aulas</span>
                          ({materialCount})
                       </Link>
-                    )}
+                    }
 
-                    <button 
+                    <button
                       onClick={() => toggleStats(question.id)}
-                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}
-                    >
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}>
+
                       <BarChart3 className="w-4 h-4" />
                       <span className="hidden sm:inline">Estatísticas</span>
                        <span className="sm:hidden">Stats</span>
                     </button>
 
-                    <button 
+                    <button
                       onClick={() => toggleNotes(question.id)}
-                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}
-                    >
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${textStyles.hoverText} text-sm`}>
+
                       <StickyNote className="w-4 h-4" />
                       <span className="hidden sm:inline">Criar anotações</span>
                       <span className="sm:hidden">Anotar</span>
@@ -874,20 +874,20 @@ export default function QuestionList({
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <button 
+                    <button
                       onClick={() => handleToggleFavorite(question.id)}
                       className={`p-2 rounded-lg transition-colors ${
-                        isFavorited ? 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : `text-gray-400 ${layoutMode === 'classic' ? 'hover:text-yellow-500 hover:bg-yellow-50' : 'hover:text-yellow-500 dark:hover:text-yellow-500 dark:hover:bg-yellow-50/10'}`
-                      }`}
-                      title={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                    >
+                      isFavorited ? 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : `text-gray-400 ${layoutMode === 'classic' ? 'hover:text-yellow-500 hover:bg-yellow-50' : 'hover:text-yellow-500 dark:hover:text-yellow-500 dark:hover:bg-yellow-50/10'}`}`
+                      }
+                      title={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}>
+
                       <Star className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
                     </button>
 
-                    <button 
+                    <button
                       onClick={() => handleReportError(question.id)}
-                      className={`flex items-center gap-2 ${textStyles.secondary} ${layoutMode === 'classic' ? 'hover:text-red-600' : 'dark:hover:text-red-500'} text-sm`}
-                    >
+                      className={`flex items-center gap-2 ${textStyles.secondary} ${layoutMode === 'classic' ? 'hover:text-red-600' : 'dark:hover:text-red-500'} text-sm`}>
+
                       <Flag className="w-4 h-4" />
                       <span className="hidden sm:inline">Notificar Erro</span>
                     </button>
@@ -895,66 +895,66 @@ export default function QuestionList({
                 </div>
               </div>
 
-              {showComments && (
-                <div className={`${textStyles.border} border-t ${textStyles.background} print-hide`}>
-                  <div className="p-6">
+              {showComments &&
+              <div className={`${textStyles.border} border-t ${textStyles.background} print-hide`}>
+                  <div className="bg-slate-300 p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className={`font-medium ${textStyles.primary}`}>Comentários da Questão</h4>
                       <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleComments(question.id)}
-                        className={`${textStyles.muted} hover:text-gray-700 dark:hover:text-gray-300`}
-                      >
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleComments(question.id)}
+                      className={`${textStyles.muted} hover:text-gray-700 dark:hover:text-gray-300`}>
+
                         <X className="w-4 h-4" />
                       </Button>
                     </div>
-                    <CommentSection 
-                        questionId={question.id} 
-                        onCommentChange={fetchCommentCounts}
-                    />
+                    <CommentSection
+                    questionId={question.id}
+                    onCommentChange={fetchCommentCounts} />
+
                   </div>
                 </div>
-              )}
-            </motion.div>
-          );
+              }
+            </motion.div>);
+
         })}
       </AnimatePresence>
 
-      {showReportModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 print-hide">
+      {showReportModal &&
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 print-hide">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Reportar Erro</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Descreva o erro encontrado na questão:
             </p>
             <textarea
-              className="w-full p-3 border rounded-lg resize-none bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              rows="4"
-              placeholder="Descreva o erro..."
-              id="reportText"
-            />
+            className="w-full p-3 border rounded-lg resize-none bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            rows="4"
+            placeholder="Descreva o erro..."
+            id="reportText" />
+
             <div className="flex justify-end gap-3 mt-4">
               <Button
-                variant="outline"
-                onClick={() => setShowReportModal(null)}
-                className="dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
-              >
+              variant="outline"
+              onClick={() => setShowReportModal(null)}
+              className="dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700">
+
                 Cancelar
               </Button>
               <Button
-                onClick={() => {
-                  const reportText = document.getElementById('reportText').value;
-                  handleSubmitReport(showReportModal, reportText);
-                }}
-                className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
-              >
+              onClick={() => {
+                const reportText = document.getElementById('reportText').value;
+                handleSubmitReport(showReportModal, reportText);
+              }}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600">
+
                 Enviar Relatório
               </Button>
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 }
