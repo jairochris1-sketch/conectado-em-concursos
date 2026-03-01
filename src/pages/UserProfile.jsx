@@ -32,6 +32,7 @@ export default function UserProfilePage() {
   const [partners, setPartners] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [partnershipStatus, setPartnershipStatus] = useState(null);
+  const [isPartner, setIsPartner] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
