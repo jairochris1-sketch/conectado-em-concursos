@@ -147,9 +147,9 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         setMessages((prev) => [...prev, msg]);
         setLastMessageId(msg.id);
 
-        // If I'm receiving this message, mark as read
+        // If I'm receiving this message, mark as read and update status
         if (msg.receiver_email === currentUser.email && !msg.is_read) {
-          base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true }).catch((err) => {
+          base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
             console.warn("Failed to mark message as read:", err);
           });
 
@@ -182,7 +182,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         const unreadMsgs = messages.filter(m => m.receiver_email === currentUser.email && !m.is_read);
         if (unreadMsgs.length > 0) {
           Promise.all(
-            unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {}))
+            unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true, status: 'read' }).catch(() => {}))
           );
         }
       }
@@ -249,12 +249,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       setMessages(skipCount === 0 ? paginated : prev => [...paginated, ...prev]);
       setHasMoreOlder(sorted.length > MESSAGES_PER_PAGE + skipCount);
       
-      // Mark unread messages as read
+      // Mark unread messages as read with status update
       const unreadMsgs = paginated.filter(m => m.receiver_email === currentUser.email && !m.is_read);
       if (unreadMsgs.length > 0) {
         console.log(`Marking ${unreadMsgs.length} messages as read`);
         await Promise.all(
-          unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(err => {
+          unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true, status: 'read' }).catch(err => {
             console.warn("Failed to mark message as read:", m.id, err);
           }))
         );
@@ -310,16 +310,15 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
 
       setText("");
       
-      // Step 2: Backend guard validates and sanitizes BEFORE creation
-      // This ensures RLS + security rules are enforced
-      const guardRes = await base44.functions.invoke('studyPartnerMessageCreateGuard', {
+      // Step 2: Backend guard validates connection and sanitizes BEFORE creation
+      // This ensures RLS + security rules are enforced at backend level
+      const guardRes = await base44.functions.invoke('studyPartnerMessageGuard', {
         sender_email: currentUser.email,
         sender_name: currentUser.full_name,
         sender_photo: currentUser.profile_photo_url || "",
         receiver_email: partner.email,
         content,
-        conversation_key: convKey,
-        is_read: false
+        conversation_key: convKey
       });
 
       if (!guardRes.data?.allowed) {
@@ -328,8 +327,15 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         return;
       }
 
-      // Step 3: Create message with sanitized data from guard
+      // Step 3: Create message with sanitized data from guard (backend already validated connection)
       const newMsg = await base44.entities.StudyPartnerMessage.create(guardRes.data.message);
+
+      // Step 4: Update message status to 'delivered' after creation
+      if (newMsg?.id) {
+        setTimeout(() => {
+          base44.entities.StudyPartnerMessage.update(newMsg.id, { status: 'delivered' }).catch(() => {});
+        }, 500);
+      }
       
       if (newMsg?.id) {
         setLastMessageId(newMsg.id);
@@ -452,11 +458,16 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
               }`}>
                 <p>{msg.content}</p>
                 <p className={`text-xs mt-0.5 flex items-center gap-1 ${isMe ? "text-green-100" : "text-gray-400"}`}>
-                  {new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                  {msg.timestamp 
+                    ? new Date(msg.timestamp).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                    : new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                  }
                   {isMe && (
-                    msg.is_read 
-                      ? <span title="Lido">✓✓</span> 
-                      : <span title="Entregue">✓</span>
+                    msg.status === 'read'
+                      ? <span title="Lido">✓✓</span>
+                      : msg.status === 'delivered'
+                      ? <span title="Entregue">✓</span>
+                      : <span title="Enviado">⏱</span>
                   )}
                 </p>
               </div>
