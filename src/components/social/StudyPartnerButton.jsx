@@ -8,7 +8,7 @@ import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag }
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
 
-export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto }) {
+export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
