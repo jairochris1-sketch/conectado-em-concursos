@@ -87,22 +87,22 @@ export default function Exams() {
         );
 
         const examsList = Object.values(groupedExams).map((examQuestions) => {
-        const firstQuestion = examQuestions[0];
-        const subjects = [...new Set(examQuestions.map((q) => q.subject))];
-        
-        // Buscar a primeira imagem disponível em todas as questões do exame
-        const coverImage = examQuestions.find(q => q.exam_cover_image)?.exam_cover_image || null;
+          const firstQuestion = examQuestions[0];
+          const subjects = [...new Set(examQuestions.map((q) => q.subject))];
 
-        return {
-          id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
-          institution: firstQuestion.institution,
-          year: firstQuestion.year,
-          exam_name: firstQuestion.exam_name,
-          cargo: firstQuestion.cargo || 'Cargo não especificado',
-          subjects: subjects,
-          question_count: examQuestions.length,
-          cover_image: coverImage
-        };
+          // Buscar a primeira imagem disponível em todas as questões do exame
+          const coverImage = examQuestions.find((q) => q.exam_cover_image)?.exam_cover_image || null;
+
+          return {
+            id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
+            institution: firstQuestion.institution,
+            year: firstQuestion.year,
+            exam_name: firstQuestion.exam_name,
+            cargo: firstQuestion.cargo || 'Cargo não especificado',
+            subjects: subjects,
+            question_count: examQuestions.length,
+            cover_image: coverImage
+          };
         }).sort((a, b) => b.year - a.year || a.exam_name.localeCompare(b.exam_name));
 
         setExams(examsList);
@@ -178,7 +178,7 @@ export default function Exams() {
 
         {/* Filtros e Busca */}
         <Card className="mb-6 shadow-sm">
-          <CardHeader>
+          <CardHeader className="bg-slate-900 p-6 flex flex-col space-y-1.5">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
@@ -216,7 +216,7 @@ export default function Exams() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="bg-slate-900 pt-0 p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -280,7 +280,7 @@ export default function Exams() {
                 onClick={() => {
                   setSearchTerm("");
                   setFilters({ institution: "all", year: "all", subject: "all" });
-                }}>
+                }} className="bg-blue-600 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
 
                 Limpar Filtros
               </Button>
@@ -306,21 +306,21 @@ export default function Exams() {
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="bg-slate-900 pb-3 p-6 flex flex-col space-y-1.5">
                       <div className="flex items-start gap-3">
-                        {exam.cover_image && (
-                          <img 
-                            src={exam.cover_image} 
-                            alt={exam.exam_name}
-                            className="w-12 h-12 object-contain flex-shrink-0 rounded"
-                          />
-                        )}
+                        {exam.cover_image &&
+                    <img
+                      src={exam.cover_image}
+                      alt={exam.exam_name}
+                      className="w-12 h-12 object-contain flex-shrink-0 rounded" />
+
+                    }
                         <CardTitle className="text-base text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </CardTitle>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-2">
+                    <CardContent className="bg-slate-900 pt-0 p-6 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Building className="w-4 h-4 flex-shrink-0" />
                         <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
@@ -344,13 +344,13 @@ export default function Exams() {
               viewMode === 'list' ?
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-4 flex items-center justify-between gap-3">
-                      {exam.cover_image && (
-                        <img 
-                          src={exam.cover_image} 
-                          alt={exam.exam_name}
-                          className="w-16 h-16 object-contain flex-shrink-0 rounded"
-                        />
-                      )}
+                      {exam.cover_image &&
+                  <img
+                    src={exam.cover_image}
+                    alt={exam.exam_name}
+                    className="w-16 h-16 object-contain flex-shrink-0 rounded" />
+
+                  }
                       <div className="flex-1 min-w-0">
                         <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
                           {exam.exam_name}
@@ -381,13 +381,13 @@ export default function Exams() {
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-3">
                       <div className="flex items-start gap-2 mb-2">
-                        {exam.cover_image && (
-                          <img 
-                            src={exam.cover_image} 
-                            alt={exam.exam_name}
-                            className="w-10 h-10 object-contain flex-shrink-0 rounded"
-                          />
-                        )}
+                        {exam.cover_image &&
+                    <img
+                      src={exam.cover_image}
+                      alt={exam.exam_name}
+                      className="w-10 h-10 object-contain flex-shrink-0 rounded" />
+
+                    }
                         <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </p>
