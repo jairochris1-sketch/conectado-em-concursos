@@ -130,6 +130,8 @@ export default function StudiesPage() {
   // Course State
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [courseTab, setCourseTab] = useState('conteudo');
+  const [contentSubTab, setContentSubTab] = useState('videoaula');
+  const [contentSearch, setContentSearch] = useState('');
   const [forumSubTab, setForumSubTab] = useState('videoaula');
   const [forumFilter, setForumFilter] = useState('todas');
   const [forumScope, setForumScope] = useState('todas_perguntas');
