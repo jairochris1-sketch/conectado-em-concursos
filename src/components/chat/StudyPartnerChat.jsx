@@ -13,6 +13,7 @@ import { notificationService } from "@/components/chat/notificationService";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import ChatDebugValidator from "@/components/chat/ChatDebugValidator";
 
 const HEARTBEAT_INTERVAL = 30_000;
 const ONLINE_THRESHOLD_MS = 3 * 60 * 1000;
@@ -65,6 +66,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [lastMessageId, setLastMessageId] = useState(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [hasMoreOlder, setHasMoreOlder] = useState(true);
+  const [showDebug, setShowDebug] = useState(false);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const myStatusRef = useRef("online");
@@ -396,11 +398,31 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
             <Bell className="w-3 h-3" /> Notificações ativas
           </div>
         )}
+
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-white hover:bg-green-600 text-xs px-2 h-7"
+          onClick={() => setShowDebug(!showDebug)}
+        >
+          🔍
+        </Button>
         
         <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
           <X className="w-4 h-4" />
         </Button>
       </div>
+
+      {/* Debug Panel */}
+      {showDebug && (
+        <div className="p-3 bg-gray-900 border-b border-gray-700 max-h-60 overflow-y-auto">
+          <ChatDebugValidator 
+            convKey={convKey}
+            currentUserEmail={currentUser.email}
+            partnerEmail={partner.email}
+          />
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" data-chat-messages>
