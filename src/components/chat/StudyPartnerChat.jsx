@@ -73,7 +73,6 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const visibilityUnsubRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const loadingRef = useRef(false);
-  const [connectionId, setConnectionId] = useState(null);
   const convKey = getConversationKey(currentUser.email, partner.email);
 
   // Initialize notifications
@@ -115,31 +114,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     };
   }, [hasMoreOlder]);
 
-  // Fetch connection_id before subscribing
-  useEffect(() => {
-    const getConnectionId = async () => {
-      try {
-        const connections = await base44.entities.StudyPartnerConnection.filter({});
-        const conn = connections.find(
-          c => c.status === 'accepted' && (
-            (c.user_a === currentUser.email && c.user_b === partner.email) ||
-            (c.user_a === partner.email && c.user_b === currentUser.email)
-          )
-        );
-        if (conn) setConnectionId(conn.id);
-      } catch (error) {
-        console.warn("Failed to get connection_id:", error);
-      }
-    };
-    getConnectionId();
-  }, [currentUser.email, partner.email]);
-
   // Load + subscribe to messages with notifications
   useEffect(() => {
     loadMessages();
     loadPresence();
 
-    // Subscribe to messages for THIS connection only
+    // Subscribe to ALL messages in conversation
     const unsub = base44.entities.StudyPartnerMessage.subscribe((event) => {
       if (event.type === "create") {
         const msg = event.data;
