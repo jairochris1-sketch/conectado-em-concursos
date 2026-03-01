@@ -162,6 +162,30 @@ export default function EditalSimulator() {
     }
   };
 
+  const generateSimulationAdvanced = async ({ discipline_config, total_questions }) => {
+    if (!advancedModalEdital) return;
+    const editalId = advancedModalEdital.id;
+    setGeneratingSimId(editalId);
+    try {
+      const response = await base44.functions.invoke('generateSimulationFromEdital', {
+        edital_id: editalId,
+        discipline_config,
+        question_count: total_questions
+      });
+
+      if (response.data.success) {
+        toast.success(`Simulado criado com ${response.data.questions_count} questões!`);
+        setAdvancedModalEdital(null);
+        navigate(createPageUrl("SolveSimulation") + "?id=" + response.data.simulation_id);
+      }
+    } catch (error) {
+      console.error("Erro ao gerar simulado:", error);
+      toast.error(error.response?.data?.error || "Erro ao gerar simulado avançado");
+    } finally {
+      setGeneratingSimId(null);
+    }
+  };
+
   const deleteEdital = async (editalId) => {
     if (!confirm("Tem certeza que deseja excluir este edital?")) return;
     
