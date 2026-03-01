@@ -363,12 +363,21 @@ export default function CommunityPage() {
                       <p className="text-sm text-gray-500">
                         Por {selectedPost.author_name} • {new Date(selectedPost.created_date).toLocaleDateString()}
                       </p>
-                      <FollowButton 
-                        targetEmail={selectedPost.author_email}
-                        targetName={selectedPost.author_name}
-                        targetPhotoUrl={selectedPost.author_photo_url}
-                        size="sm"
-                      />
+                      <div className="flex gap-2">
+                        <FollowButton 
+                          targetEmail={selectedPost.author_email}
+                          targetName={selectedPost.author_name}
+                          targetPhotoUrl={selectedPost.author_photo_url}
+                          size="sm"
+                        />
+                        <ConnectButton
+                          currentUser={user}
+                          targetEmail={selectedPost.author_email}
+                          targetName={selectedPost.author_name}
+                          targetPhoto={selectedPost.author_photo_url}
+                          size="sm"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
