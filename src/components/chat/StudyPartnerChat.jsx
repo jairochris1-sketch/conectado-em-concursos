@@ -181,9 +181,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const loadMessages = async () => {
     const msgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
     setMessages(msgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
-    msgs.filter(m => m.receiver_email === currentUser.email && !m.is_read).forEach(m =>
-      base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {})
-    );
+    const unreadMsgs = msgs.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+    if (unreadMsgs.length > 0) {
+      await Promise.all(
+        unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {}))
+      );
+    }
   };
 
   const loadPresence = async () => {
