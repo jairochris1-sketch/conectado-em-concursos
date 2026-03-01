@@ -118,18 +118,12 @@ Deno.serve(async (req) => {
     }
 
     // 8. Ensure is_read defaults to false
-    const sanitizedMessage = {
-      ...messageData,
-      sender_email: user.email, // Force to authenticated user
-      is_read: false, // Always false on creation
-      sender_name: user.full_name, // Use actual user name
-      sender_photo: user.profile_photo_url || "" // Use actual user photo
-    };
+    messageData.is_read = false;
 
-    // All checks passed
+    // All checks passed - return the sanitized message
     return Response.json({ 
       allowed: true,
-      sanitizedMessage 
+      message: messageData 
     });
 
   } catch (error) {
