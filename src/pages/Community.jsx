@@ -21,18 +21,18 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
 const defaultCategories = [
-  { value: "depoimentos", label: "Depoimentos de Aprovação" },
-  { value: "dicas_estudos", label: "Dicas de Estudos" },
-  { value: "motivacao", label: "Motivação" },
-  { value: "organizacao", label: "Organização e Rotina" },
-  { value: "portugues", label: "Português" },
-  { value: "matematica", label: "Matemática" },
-  { value: "direito_constitucional", label: "Direito Constitucional" },
-  { value: "direito_administrativo", label: "Direito Administrativo" },
-  { value: "informatica", label: "Informática" },
-  { value: "conhecimentos_gerais", label: "Conhecimentos Gerais" },
-  { value: "outros", label: "Outros Assuntos" }
-];
+{ value: "depoimentos", label: "Depoimentos de Aprovação" },
+{ value: "dicas_estudos", label: "Dicas de Estudos" },
+{ value: "motivacao", label: "Motivação" },
+{ value: "organizacao", label: "Organização e Rotina" },
+{ value: "portugues", label: "Português" },
+{ value: "matematica", label: "Matemática" },
+{ value: "direito_constitucional", label: "Direito Constitucional" },
+{ value: "direito_administrativo", label: "Direito Administrativo" },
+{ value: "informatica", label: "Informática" },
+{ value: "conhecimentos_gerais", label: "Conhecimentos Gerais" },
+{ value: "outros", label: "Outros Assuntos" }];
+
 
 export default function CommunityPage() {
   const [categories, setCategories] = useState(defaultCategories);
@@ -77,7 +77,7 @@ export default function CommunityPage() {
 
       const allCategories = await base44.entities.ForumCategory.list('order');
       if (allCategories && allCategories.length > 0) {
-        setCategories(allCategories.filter(c => c.is_active));
+        setCategories(allCategories.filter((c) => c.is_active));
       }
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
@@ -89,13 +89,13 @@ export default function CommunityPage() {
     let filtered = posts;
 
     if (selectedSubject !== "all") {
-      filtered = filtered.filter(p => p.subject === selectedSubject);
+      filtered = filtered.filter((p) => p.subject === selectedSubject);
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(p => 
-        p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.content.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter((p) =>
+      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -131,9 +131,9 @@ export default function CommunityPage() {
 
     await ForumPost.update(post.id, {
       likes_count: hasLiked ? post.likes_count - 1 : post.likes_count + 1,
-      liked_by: hasLiked 
-        ? liked_by.filter(e => e !== user.email)
-        : [...liked_by, user.email]
+      liked_by: hasLiked ?
+      liked_by.filter((e) => e !== user.email) :
+      [...liked_by, user.email]
     });
 
     if (!hasLiked && post.author_email !== user.email) {
@@ -196,7 +196,7 @@ export default function CommunityPage() {
 
       toast.success("Resposta enviada!");
       setReplyContent("");
-      
+
       const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
       setReplies(updatedReplies);
       loadData();
@@ -211,9 +211,9 @@ export default function CommunityPage() {
 
     await ForumReply.update(reply.id, {
       likes_count: hasLiked ? reply.likes_count - 1 : reply.likes_count + 1,
-      liked_by: hasLiked 
-        ? liked_by.filter(e => e !== user.email)
-        : [...liked_by, user.email]
+      liked_by: hasLiked ?
+      liked_by.filter((e) => e !== user.email) :
+      [...liked_by, user.email]
     });
 
     if (!hasLiked && reply.author_email !== user.email) {
@@ -249,7 +249,7 @@ export default function CommunityPage() {
 
       toast.success("Post atualizado!");
       setEditingPost(null);
-      
+
       if (selectedPost?.id === editingPost.id) {
         setSelectedPost({ ...selectedPost, ...editingPost });
       }
@@ -261,11 +261,11 @@ export default function CommunityPage() {
 
   const handleDeletePost = async () => {
     try {
-      await ForumReply.filter({ post_id: deletePostId }).then(replies => 
-        Promise.all(replies.map(r => ForumReply.delete(r.id)))
+      await ForumReply.filter({ post_id: deletePostId }).then((replies) =>
+      Promise.all(replies.map((r) => ForumReply.delete(r.id)))
       );
       await ForumPost.delete(deletePostId);
-      
+
       toast.success("Post excluído!");
       setDeletePostId(null);
       setSelectedPost(null);
@@ -288,7 +288,7 @@ export default function CommunityPage() {
 
       toast.success("Resposta atualizada!");
       setEditingReply(null);
-      
+
       const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
       setReplies(updatedReplies);
     } catch (error) {
@@ -299,14 +299,14 @@ export default function CommunityPage() {
   const handleDeleteReply = async () => {
     try {
       await ForumReply.delete(deleteReplyId);
-      
+
       await ForumPost.update(selectedPost.id, {
         replies_count: Math.max(0, (selectedPost.replies_count || 0) - 1)
       });
 
       toast.success("Resposta excluída!");
       setDeleteReplyId(null);
-      
+
       const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
       setReplies(updatedReplies);
       loadData();
@@ -319,8 +319,8 @@ export default function CommunityPage() {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <p>Carregando comunidade...</p>
-      </div>
-    );
+      </div>);
+
   }
 
   if (selectedPost) {
@@ -345,33 +345,33 @@ export default function CommunityPage() {
                             <p className="text-sm text-gray-500">
                               Por{" "}
                               <Link
-                                to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
-                                className="font-semibold hover:underline text-blue-600"
-                              >
+                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                          className="font-semibold hover:underline text-blue-600">
+
                                 {selectedPost.author_name}
                               </Link>
                               {" "}• {new Date(selectedPost.created_date).toLocaleDateString()}
                             </p>
-                      <FollowButton 
+                      <FollowButton
                         targetEmail={selectedPost.author_email}
                         targetName={selectedPost.author_name}
                         targetPhotoUrl={selectedPost.author_photo_url}
-                        size="sm"
-                      />
+                        size="sm" />
+
                       <StudyPartnerButton
                         currentUser={user}
                         targetEmail={selectedPost.author_email}
                         targetName={selectedPost.author_name}
-                        targetPhoto={selectedPost.author_photo_url}
-                      />
+                        targetPhoto={selectedPost.author_photo_url} />
+
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-2 items-center">
-                  <Badge>{categories.find(s => s.value === selectedPost.subject)?.label}</Badge>
+                  <Badge>{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
-                  {selectedPost.author_email === user.email && (
-                    <DropdownMenu>
+                  {selectedPost.author_email === user.email &&
+                  <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
                           <MoreVertical className="w-4 h-4" />
@@ -388,7 +388,7 @@ export default function CommunityPage() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  )}
+                  }
                 </div>
               </div>
             </CardHeader>
@@ -399,8 +399,8 @@ export default function CommunityPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleLikePost(selectedPost)}
-                  className={selectedPost.liked_by?.includes(user.email) ? "text-blue-600" : ""}
-                >
+                  className={selectedPost.liked_by?.includes(user.email) ? "text-blue-600" : ""}>
+
                   <ThumbsUp className="w-4 h-4 mr-1" />
                   {selectedPost.likes_count || 0}
                 </Button>
@@ -422,8 +422,8 @@ export default function CommunityPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {replies.map(reply => (
-                  <div key={reply.id} className="border-l-2 border-gray-200 pl-4 py-2">
+                {replies.map((reply) =>
+                <div key={reply.id} className="border-l-2 border-gray-200 pl-4 py-2">
                     <div className="flex items-start gap-3">
                       <Avatar className="w-8 h-8">
                         <AvatarImage src={reply.author_photo_url} />
@@ -432,19 +432,19 @@ export default function CommunityPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Link
-                              to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
-                              className="font-semibold text-sm hover:underline text-blue-600"
-                            >
+                          to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
+                          className="font-semibold text-sm hover:underline text-blue-600">
+
                               {reply.author_name}
                             </Link>
                           <span className="text-xs text-gray-500">
                             {new Date(reply.created_date).toLocaleDateString()}
                           </span>
-                          {reply.is_best_answer && (
-                            <Badge variant="outline" className="text-green-600">Melhor Resposta</Badge>
-                          )}
-                          {reply.author_email === user.email && (
-                            <DropdownMenu>
+                          {reply.is_best_answer &&
+                        <Badge variant="outline" className="text-green-600">Melhor Resposta</Badge>
+                        }
+                          {reply.author_email === user.email &&
+                        <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
                                   <MoreVertical className="w-3 h-3" />
@@ -461,38 +461,38 @@ export default function CommunityPage() {
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
-                          )}
+                        }
                         </div>
-                        {editingReply?.id === reply.id ? (
-                          <div className="space-y-2">
+                        {editingReply?.id === reply.id ?
+                      <div className="space-y-2">
                             <Textarea
-                              value={editingReply.content}
-                              onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
-                              rows={3}
-                            />
+                          value={editingReply.content}
+                          onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
+                          rows={3} />
+
                             <div className="flex gap-2">
                               <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
                               <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
                             </div>
-                          </div>
-                        ) : (
-                          <>
+                          </div> :
+
+                      <>
                             <p className="text-sm whitespace-pre-wrap mb-2">{reply.content}</p>
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleLikeReply(reply)}
-                              className={reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}
-                            >
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleLikeReply(reply)}
+                          className={reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}>
+
                               <ThumbsUp className="w-3 h-3 mr-1" />
                               {reply.likes_count || 0}
                             </Button>
                           </>
-                        )}
+                      }
                       </div>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="mt-6 flex gap-2">
@@ -500,8 +500,8 @@ export default function CommunityPage() {
                   placeholder="Digite sua resposta..."
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  rows={3}
-                />
+                  rows={3} />
+
                 <Button onClick={handleReply} className="self-end">
                   <Send className="w-4 h-4" />
                 </Button>
@@ -515,14 +515,14 @@ export default function CommunityPage() {
             <DialogHeader>
               <DialogTitle>Editar Discussão</DialogTitle>
             </DialogHeader>
-            {editingPost && (
-              <div className="space-y-4">
+            {editingPost &&
+            <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Título</label>
                   <Input
-                    value={editingPost.title}
-                    onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
-                  />
+                  value={editingPost.title}
+                  onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} />
+
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Categoria</label>
@@ -531,30 +531,30 @@ export default function CommunityPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(s => (
-                        <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                      ))}
+                      {categories.map((s) =>
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    )}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
                   <Input
-                    value={editingPost.topic || ""}
-                    onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })}
-                  />
+                  value={editingPost.topic || ""}
+                  onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })} />
+
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Conteúdo</label>
                   <Textarea
-                    value={editingPost.content}
-                    onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
-                    rows={6}
-                  />
+                  value={editingPost.content}
+                  onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                  rows={6} />
+
                 </div>
                 <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
               </div>
-            )}
+            }
           </DialogContent>
         </Dialog>
 
@@ -591,8 +591,8 @@ export default function CommunityPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -622,8 +622,8 @@ export default function CommunityPage() {
                   <Input
                     placeholder="Digite o título da discussão"
                     value={newPost.title}
-                    onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                  />
+                    onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} />
+
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Categoria</label>
@@ -632,9 +632,9 @@ export default function CommunityPage() {
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(s => (
-                        <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                      ))}
+                      {categories.map((s) =>
+                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -643,8 +643,8 @@ export default function CommunityPage() {
                   <Input
                     placeholder="Ex: Concordância verbal"
                     value={newPost.topic}
-                    onChange={(e) => setNewPost({ ...newPost, topic: e.target.value })}
-                  />
+                    onChange={(e) => setNewPost({ ...newPost, topic: e.target.value })} />
+
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Conteúdo</label>
@@ -652,8 +652,8 @@ export default function CommunityPage() {
                     placeholder="Descreva sua dúvida ou compartilhe conhecimento..."
                     value={newPost.content}
                     onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                    rows={6}
-                  />
+                    rows={6} />
+
                 </div>
                 <Button onClick={handleCreatePost} className="w-full">Publicar</Button>
               </div>
@@ -666,29 +666,29 @@ export default function CommunityPage() {
             placeholder="Buscar discussões..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1"
-          />
+            className="flex-1" />
+
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
             <SelectTrigger className="w-64">
               <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as categorias</SelectItem>
-              {categories.map(s => (
-                <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-              ))}
+              {categories.map((s) =>
+              <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-4">
-          {filteredPosts.map(post => (
-            <Card
-              key={post.id}
-              className="hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => handleViewPost(post)}
-            >
-              <CardContent className="p-6">
+          {filteredPosts.map((post) =>
+          <Card
+            key={post.id}
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => handleViewPost(post)}>
+
+              <CardContent className="bg-slate-800 p-6">
                 <div className="flex items-start gap-4">
                   <Avatar>
                     <AvatarImage src={post.author_photo_url} />
@@ -706,16 +706,16 @@ export default function CommunityPage() {
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Badge>{categories.find(s => s.value === post.subject)?.label}</Badge>
+                        <Badge>{categories.find((s) => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <Link
-                        to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
-                        className="font-semibold hover:underline text-blue-600"
-                        onClick={e => e.stopPropagation()}
-                      >
+                      to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
+                      className="font-semibold hover:underline text-blue-600"
+                      onClick={(e) => e.stopPropagation()}>
+
                         {post.author_name}
                       </Link>
                       <span>•</span>
@@ -738,18 +738,18 @@ export default function CommunityPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )}
 
-          {filteredPosts.length === 0 && (
-            <Card>
+          {filteredPosts.length === 0 &&
+          <Card>
               <CardContent className="p-12 text-center">
                 <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600">Nenhuma discussão encontrada</p>
               </CardContent>
             </Card>
-          )}
+          }
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
