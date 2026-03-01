@@ -225,10 +225,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   };
 
   const loadOlderMessages = async () => {
-    if (loadingOlder || !hasMoreOlder) return;
+    if (loadingRef.current || !hasMoreOlder) return;
+    loadingRef.current = true;
     setLoadingOlder(true);
     await loadMessages(messages.length);
     setLoadingOlder(false);
+    loadingRef.current = false;
   };
 
   const loadPresence = async () => {
