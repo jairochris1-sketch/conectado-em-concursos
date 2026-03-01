@@ -159,23 +159,26 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
       });
     }
 
-    // Buscar questões compatíveis
-    const allQuestions = await base44.entities.Question.list();
+    // Buscar questões compatíveis (limit alto para pegar todas)
+    const allQuestions = await base44.entities.Question.list('created_date', 5000);
+    const questionsArray = Array.isArray(allQuestions) ? allQuestions : (allQuestions?.items || allQuestions?.data || []);
     let compatibleCount = 0;
+    const seenIds = new Set();
 
     if (extractedData.disciplinas) {
       extractedData.disciplinas.forEach(disc => {
         const subjectName = disc.nome.toLowerCase();
         const keywords = disc.palavras_chave || [];
         
-        allQuestions.forEach(q => {
+        questionsArray.forEach(q => {
+          if (seenIds.has(q.id)) return;
           const qSubject = (q.subject || '').toLowerCase();
           const qTopic = (q.topic || '').toLowerCase();
           
-          // Check if question matches subject or keywords
           if (qSubject.includes(subjectName) || 
               keywords.some(kw => qTopic.includes(kw.toLowerCase()))) {
             compatibleCount++;
+            seenIds.add(q.id);
           }
         });
       });
@@ -203,19 +206,6 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
 
   } catch (error) {
     console.error('Erro ao processar edital:', error);
-    
-    // Atualizar status para failed se tiver edital_id
-    try {
-      const { edital_id } = await req.json();
-      if (edital_id) {
-        await base44.entities.Edital.update(edital_id, {
-          processing_status: 'failed'
-        });
-      }
-    } catch (e) {
-      console.error('Erro ao atualizar status:', e);
-    }
-
     return Response.json({
       error: 'Erro ao processar edital',
       details: error.message
