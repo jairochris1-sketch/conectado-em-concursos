@@ -180,6 +180,46 @@ export default function WelcomePage() {
              <p className="mt-4" style={{ fontFamily: getFontStyle(content.secondary_text_font) }}>
                {content.secondary_text}
              </p>
+
+             {/* Cidade de Sergipe */}
+             <div className="mt-6 text-left relative">
+               <label className="flex items-center gap-1.5 text-sm font-semibold mb-2 text-white/90">
+                 <MapPin className="w-4 h-4" /> De qual cidade de Sergipe você é?
+               </label>
+               <div className="relative">
+                 <Input
+                   value={city || citySearch}
+                   onChange={(e) => {
+                     setCitySearch(e.target.value);
+                     setCity("");
+                     setShowCityDropdown(true);
+                   }}
+                   onFocus={() => setShowCityDropdown(true)}
+                   placeholder="Digite ou selecione sua cidade..."
+                   className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20"
+                 />
+                 {showCityDropdown && citySearch && (
+                   <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto border">
+                     {filteredCities.map(c => (
+                       <button
+                         key={c}
+                         type="button"
+                         onClick={() => { setCity(c); setCitySearch(c); setShowCityDropdown(false); }}
+                         className="w-full text-left px-3 py-2 text-sm text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                       >
+                         {c}
+                       </button>
+                     ))}
+                     {filteredCities.length === 0 && (
+                       <p className="px-3 py-2 text-sm text-gray-500">Nenhuma cidade encontrada</p>
+                     )}
+                   </div>
+                 )}
+               </div>
+               {city && (
+                 <p className="text-xs text-green-300 mt-1">✓ {city}, Sergipe selecionada</p>
+               )}
+             </div>
            </CardContent>
           <CardFooter className="p-6 flex justify-center">
             <Button
