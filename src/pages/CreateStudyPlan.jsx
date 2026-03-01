@@ -209,8 +209,8 @@ export default function CreateStudyPlanPage() {
                   <Input
                     type="date"
                     value={formData.start_date}
-                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} className="bg-slate-600 px-3 py-1 text-base rounded-md flex h-9 w-full border border-input shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
 
                 </div>
                 <div>
@@ -218,8 +218,8 @@ export default function CreateStudyPlanPage() {
                   <Input
                     type="date"
                     value={formData.end_date}
-                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} className="bg-slate-600 px-3 py-1 text-base rounded-md flex h-9 w-full border border-input shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
 
                 </div>
               </div>
@@ -370,7 +370,7 @@ export default function CreateStudyPlanPage() {
           {/* Botões de Ação */}
           <div className="flex gap-3">
             <Link to={createPageUrl('StudyPlans')} className="flex-1">
-              <Button variant="outline" className="w-full dark:border-gray-600 dark:text-white">
+              <Button variant="outline" className="bg-zinc-400 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-full dark:border-gray-600 dark:text-white">
                 Cancelar
               </Button>
             </Link>
