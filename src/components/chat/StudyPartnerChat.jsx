@@ -117,20 +117,36 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     loadMessages();
     loadPresence();
 
+    // Subscribe to ALL messages in conversation
     const unsub = base44.entities.StudyPartnerMessage.subscribe((event) => {
       if (event.type === "create") {
         const msg = event.data;
-        // Verify message belongs to THIS conversation
-        if (msg?.conversation_key !== convKey) return;
-        // Avoid duplicates
-        if (messages.some(m => m.id === msg.id)) return;
+        
+        // CRITICAL: Verify message belongs to THIS conversation
+        if (!msg || !msg.conversation_key) {
+          console.warn("Invalid message structure:", msg);
+          return;
+        }
+        
+        if (msg.conversation_key !== convKey) {
+          console.log(`Message for different conversation: ${msg.conversation_key} vs ${convKey}`);
+          return;
+        }
+        
+        // Avoid duplicates (message might be added optimistically)
+        if (messages.some(m => m.id === msg.id)) {
+          console.log(`Duplicate message ignored: ${msg.id}`);
+          return;
+        }
+        
+        console.log(`New message received: ${msg.id} from ${msg.sender_email}`);
         
         // Add message to chat
         setMessages((prev) => [...prev, msg]);
         setLastMessageId(msg.id);
 
         // If I'm receiving this message, mark as read
-        if (msg.receiver_email === currentUser.email) {
+        if (msg.receiver_email === currentUser.email && !msg.is_read) {
           base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true }).catch((err) => {
             console.warn("Failed to mark message as read:", err);
           });
