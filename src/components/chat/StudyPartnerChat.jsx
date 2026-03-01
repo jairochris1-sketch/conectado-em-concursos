@@ -182,6 +182,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           // Show scroll-to-bottom indicator
           if (!isScrolledToBottom()) {
             setShowNewMessageIndicator(true);
+            setUnreadCount(prev => prev + 1);
           }
         }
       }
@@ -300,6 +301,23 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     }
   };
 
+  const togglePref = (key) => {
+    const newPrefs = { ...prefs, [key]: !prefs[key] };
+    setPrefs(newPrefs);
+    notificationService.setPreferences(newPrefs);
+    if (key === 'push' && newPrefs.push && !notificationsEnabled) {
+      notificationService.requestNotificationPermission().then(granted => {
+        setNotificationsEnabled(granted);
+        if (!granted) {
+          toast.error("Permissão para notificações negada pelo navegador.");
+          const fallback = { ...newPrefs, push: false };
+          setPrefs(fallback);
+          notificationService.setPreferences(fallback);
+        }
+      });
+    }
+  };
+
   const changeMyStatus = async (newStatus) => {
     setMyStatus(newStatus);
     myStatusRef.current = newStatus;
@@ -362,15 +380,22 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
           )}
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm truncate">{partner.name}</p>
-          <PresenceDot presence={partnerPresence} />
+        <div className="flex-1 min-w-0 flex items-center gap-2">
+          <div>
+            <p className="font-semibold text-sm truncate">{partner.name}</p>
+            <PresenceDot presence={partnerPresence} />
+          </div>
+          {unreadCount > 0 && (
+            <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse shadow-sm border border-red-400">
+              {unreadCount} nova{unreadCount > 1 ? 's' : ''}
+            </span>
+          )}
         </div>
 
         {/* My status selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2">
+            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2 h-7">
               {currentStatusOption.label} <ChevronDown className="w-3 h-3" />
             </Button>
           </DropdownMenuTrigger>
@@ -383,20 +408,30 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {notificationsEnabled && (
-          <div className="flex items-center gap-1 text-green-100 text-xs px-2 py-1 rounded bg-green-700">
-            <Bell className="w-3 h-3" /> Notificações ativas
-          </div>
-        )}
-
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-white hover:bg-green-600 text-xs px-2 h-7"
-          onClick={() => setShowDebug(!showDebug)}
-        >
-          🔍
-        </Button>
+        {/* Settings */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs px-2 h-7 gap-1">
+              <Settings className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer py-3">
+              <span className="flex items-center gap-2 font-medium">
+                {prefs.push ? <BellRing className="w-4 h-4 text-green-600" /> : <BellOff className="w-4 h-4 text-gray-400" />}
+                Notificações Push
+              </span>
+              <span className="text-xs text-gray-500">{prefs.push ? 'Ativo' : 'Inativo'}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-3">
+              <span className="flex items-center gap-2 font-medium">
+                {prefs.sound ? <Volume2 className="w-4 h-4 text-green-600" /> : <VolumeX className="w-4 h-4 text-gray-400" />}
+                Som no Chat
+              </span>
+              <span className="text-xs text-gray-500">{prefs.sound ? 'Ativo' : 'Inativo'}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
           <X className="w-4 h-4" />
