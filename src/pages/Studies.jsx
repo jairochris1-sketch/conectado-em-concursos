@@ -679,56 +679,20 @@ ${videoNotes}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center text-center mb-10 gap-6 mt-4">
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
 
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 flex items-center justify-center gap-3">
-              <BookUser className="w-8 h-8 text-indigo-600" /> Área de Estudos
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+              <BookUser className="w-8 h-8" /> Área de Estudos
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
-              Organize seus materiais, resumos e flashcards em um só lugar.
+            <p className="text-gray-600 dark:text-gray-400">
+              Seus materiais, resumos e flashcards, tudo em um só lugar.
             </p>
           </div>
-
-          <div className="w-full max-w-3xl flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="relative flex-1">
-              <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setArticleSearchTerm(e.target.value);
-                  setVideoSearchTerm(e.target.value);
-                }}
-                placeholder="Busque por materiais, artigos, aulas..."
-                className="pl-12 border-0 bg-transparent shadow-none focus-visible:ring-0 text-base" />
-            </div>
-            
-            <div className="hidden md:block h-8 w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
-            
-            <Select value={selectedCargo} onValueChange={setSelectedCargo}>
-              <SelectTrigger className="hidden md:flex w-auto min-w-[160px] border-0 bg-transparent shadow-none focus:ring-0 text-gray-600 dark:text-gray-300 font-medium">
-                <SelectValue placeholder="Filtrar por cargo" />
-              </SelectTrigger>
-              <SelectContent>
-                {cargoOptions.map((cargo) =>
-                <SelectItem key={cargo.value} value={cargo.value}>
-                    {cargo.label}
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-
-            <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-700 mr-1">
-              <Filter className="w-5 h-5" />
-            </Button>
-          </div>
-
           {isAdmin &&
           <Button
             onClick={() => setShowUploader(!showUploader)}
-            variant="outline"
-            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50">
+            className="bg-indigo-600 hover:bg-indigo-700">
 
               <Upload className="w-4 h-4 mr-2" />
               Adicionar Material
@@ -826,10 +790,35 @@ ${videoNotes}
                   </motion.div>
                 }
                 
-                <div className="mb-4 flex justify-end">
-                  {/* View Controls */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 border rounded-lg p-1 bg-white dark:bg-gray-800">
+                <Card className="mb-4">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      {/* Search Bar */}
+                      <div className="relative flex-1 w-full sm:w-auto">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Input
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder="Buscar em Materiais..."
+                          className="pl-10 w-full" />
+                      </div>
+
+                      {/* View Controls */}
+                      <div className="flex items-center gap-2">
+                        <Select value={selectedCargo} onValueChange={setSelectedCargo}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Filtrar por cargo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cargoOptions.map((cargo) =>
+                            <SelectItem key={cargo.value} value={cargo.value}>
+                                {cargo.label}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex items-center gap-1 border rounded-lg p-1">
                           <Button
                             variant={materialViewMode === 'grid' ? 'default' : 'ghost'}
                             size="sm"
@@ -854,6 +843,8 @@ ${videoNotes}
                         </div>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
 
             {/* Materials List */}
                 <div>
@@ -1053,7 +1044,20 @@ ${videoNotes}
                </div>
               </div>
               
-              <div className="flex justify-end mb-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={articleSearchTerm}
+                    onChange={(e) => {
+                      setArticleSearchTerm(e.target.value);
+                      setCurrentArticlePage(1);
+                    }}
+                    placeholder="Buscar artigos por título, assunto..."
+                    className="pl-10" />
+
+                </div>
+                
                 <Badge variant="secondary" className="text-sm">
                   {filteredArticles.length} {filteredArticles.length === 1 ? 'artigo' : 'artigos'}
                 </Badge>
@@ -1263,7 +1267,20 @@ ${videoNotes}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vídeo-Aulas</h2>
               
-              <div className="flex justify-end mb-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={videoSearchTerm}
+                    onChange={(e) => {
+                      setVideoSearchTerm(e.target.value);
+                      setCurrentVideoPage(1);
+                    }}
+                    placeholder="Buscar vídeos por título, professor..."
+                    className="pl-10" />
+
+                </div>
+                
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-sm">
                     {filteredVideos.length} {filteredVideos.length === 1 ? 'vídeo' : 'vídeos'}
