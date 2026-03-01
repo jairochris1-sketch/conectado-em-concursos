@@ -276,13 +276,19 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {notificationsEnabled && (
+          <div className="flex items-center gap-1 text-green-100 text-xs px-2 py-1 rounded bg-green-700">
+            <Bell className="w-3 h-3" /> Notificações ativas
+          </div>
+        )}
+        
         <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
           <X className="w-4 h-4" />
         </Button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative">
         {messages.length === 0 && (
           <p className="text-center text-gray-400 text-sm mt-8">Nenhuma mensagem ainda. Diga olá! 👋</p>
         )}
