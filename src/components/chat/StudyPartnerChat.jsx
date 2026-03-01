@@ -79,6 +79,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   // Initialize notifications
   useEffect(() => {
     const initNotifications = async () => {
+      await notificationService.initSound();
       const hasPermission = await notificationService.requestNotificationPermission();
       setNotificationsEnabled(hasPermission);
       if (hasPermission) {
