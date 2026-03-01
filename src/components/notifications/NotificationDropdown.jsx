@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, CheckCheck, MessageSquare, Heart, UserPlus, Activity, Target, CalendarClock, BookOpenCheck, PlayCircle } from 'lucide-react';
+import { Bell, CheckCheck, MessageSquare, Heart, UserPlus, Activity, Target, CalendarClock, BookOpenCheck, PlayCircle, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -7,17 +7,26 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
-// AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
-// Not used in this component, but kept as existing import.
+import NotificationPreferences from './NotificationPreferences';
 
 export default function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false); // Added for dropdown state
+  const [isOpen, setIsOpen] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
+  const [preferences, setPreferences] = useState({
+    messages: true,
+    partnerships: true,
+    replies: true,
+    likes: true,
+    activities: true
+  });
 
   // Removed `readNotifications` state and its associated `useEffect` logic
   // as the new approach focuses on `notification.read_by` stored in the database.
@@ -54,10 +63,19 @@ export default function NotificationDropdown() {
       );
 
       setNotifications(userNotifications);
+      
+      if (userData.notification_preferences) {
+        setPreferences(userData.notification_preferences);
+      }
     } catch (error) {
       console.error('Erro ao carregar notificações:', error);
     }
     setIsLoading(false);
+  };
+
+  const handlePreferencesChange = async (newPreferences) => {
+    setPreferences(newPreferences);
+    setShowPreferences(false);
   };
 
   // Replaced old `markAsRead` and `handleNotificationClick` with the new combined function.
@@ -155,17 +173,28 @@ export default function NotificationDropdown() {
         <div className="p-4 border-b bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">Notificações</h3>
-            {unreadCount > 0 && (
+            <div className="flex gap-1">
+              {unreadCount > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={markAllAsRead}
+                  className="text-xs dark:text-blue-400 dark:hover:bg-gray-800"
+                  title="Marcar todas como lidas"
+                >
+                  <CheckCheck className="w-4 h-4" />
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={markAllAsRead}
-                className="text-xs dark:text-blue-400 dark:hover:bg-gray-800"
+                onClick={() => setShowPreferences(true)}
+                className="text-xs dark:text-gray-400 dark:hover:bg-gray-800"
+                title="Preferências de notificações"
               >
-                <CheckCheck className="w-4 h-4 mr-1" />
-                Marcar todas como lidas
+                <Settings className="w-4 h-4" />
               </Button>
-            )}
+            </div>
           </div>
         </div>
 
@@ -221,5 +250,20 @@ export default function NotificationDropdown() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Preferences Dialog */}
+    <Dialog open={showPreferences} onOpenChange={setShowPreferences}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Preferências de Notificações</DialogTitle>
+        </DialogHeader>
+        {user && (
+          <NotificationPreferences 
+            preferences={preferences}
+            onPreferencesChange={handlePreferencesChange}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
