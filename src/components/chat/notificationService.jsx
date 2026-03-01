@@ -3,7 +3,26 @@
  * Gerencia Web Push API, Notification API e notificações visuais
  */
 
+import { base44 } from '@/api/base44Client';
+
 export const notificationService = {
+  _customSoundUrl: undefined,
+
+  async initSound() {
+    if (this._customSoundUrl === undefined) {
+      try {
+        const settings = await base44.entities.SiteSettings.filter({ key: 'notification_sound' });
+        if (settings.length > 0 && settings[0].notification_sound_url) {
+          this._customSoundUrl = settings[0].notification_sound_url;
+        } else {
+          this._customSoundUrl = null;
+        }
+      } catch (e) {
+        this._customSoundUrl = null;
+      }
+    }
+  },
+
   getPreferences() {
     try {
       const prefs = localStorage.getItem('chat_prefs');
