@@ -185,9 +185,15 @@ export default function EditalSimulator() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            📄 Simulados Baseados no Edital
-          </h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              📄 Simulados Baseados no Edital
+            </h1>
+            <Button variant="outline" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
+              <ClipboardList className="w-4 h-4 mr-2" />
+              Histórico
+            </Button>
+          </div>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Envie o edital do seu concurso e gere simulados personalizados automaticamente
           </p>
