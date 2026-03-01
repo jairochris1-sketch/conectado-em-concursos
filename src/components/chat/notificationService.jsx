@@ -4,6 +4,19 @@
  */
 
 export const notificationService = {
+  getPreferences() {
+    try {
+      const prefs = localStorage.getItem('chat_prefs');
+      return prefs ? JSON.parse(prefs) : { push: true, sound: true };
+    } catch {
+      return { push: true, sound: true };
+    }
+  },
+
+  setPreferences(prefs) {
+    localStorage.setItem('chat_prefs', JSON.stringify(prefs));
+  },
+
   // Registrar Service Worker para push notifications
   async registerServiceWorker() {
     if (!("serviceWorker" in navigator) || !("Notification" in window)) {
@@ -49,12 +62,15 @@ export const notificationService = {
       return;
     }
 
+    const prefs = this.getPreferences();
+    if (!prefs.push) return;
+
     const registration = await navigator.serviceWorker.ready;
     if (registration.showNotification) {
       await registration.showNotification(title, {
         icon: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png",
         badge: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png",
-        tag: "chat-notification",
+        tag: "chat-message", // Use a tag unificada para mensagens novas
         requireInteraction: false,
         ...options
       });
@@ -63,15 +79,20 @@ export const notificationService = {
 
   // Notificação visual (toast-like) quando app está em foreground
   showVisualNotification(message, senderName) {
+    const prefs = this.getPreferences();
     if (document.hidden) {
       // App em background - enviar push
-      this.sendPushNotification(`Nova mensagem de ${senderName}`, {
-        body: message,
-        tag: "chat-message"
-      });
+      if (prefs.push) {
+        this.sendPushNotification(`Nova mensagem de ${senderName}`, {
+          body: message,
+          tag: "chat-message"
+        });
+      }
     } else {
       // App em foreground - notificação visual discreta no chat
-      this.playNotificationSound();
+      if (prefs.sound) {
+        this.playNotificationSound();
+      }
     }
   },
 
