@@ -38,6 +38,7 @@ export default function CommunityPage() {
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [replies, setReplies] = useState([]);
+  const [connections, setConnections] = useState([]); // accepted connections emails
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
@@ -64,6 +65,8 @@ export default function CommunityPage() {
     filterPosts();
   }, [posts, searchTerm, selectedSubject]);
 
+  const isAdmin = (u) => u?.email === 'conectadoemconcursos@gmail.com' || u?.email === 'jairochris1@gmail.com' || u?.role === 'admin';
+
   const loadData = async () => {
     try {
       const userData = await User.me();
@@ -71,6 +74,17 @@ export default function CommunityPage() {
 
       const allPosts = await ForumPost.list("-created_date");
       setPosts(allPosts);
+
+      // Load accepted connections
+      const [asReq, asTarget] = await Promise.all([
+        base44.entities.Connection.filter({ requester_email: userData.email, status: "accepted" }),
+        base44.entities.Connection.filter({ target_email: userData.email, status: "accepted" }),
+      ]);
+      const connectedEmails = [
+        ...asReq.map(c => c.target_email),
+        ...asTarget.map(c => c.requester_email),
+      ];
+      setConnections(connectedEmails);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     }
