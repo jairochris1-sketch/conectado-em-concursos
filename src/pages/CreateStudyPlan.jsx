@@ -10,18 +10,18 @@ import { createPageUrl } from '@/utils';
 import { addWeeks, format, eachWeekOfInterval } from 'date-fns';
 
 const SUBJECT_OPTIONS = [
-  'portugues',
-  'matematica',
-  'direito_constitucional',
-  'direito_administrativo',
-  'direito_penal',
-  'direito_civil',
-  'informatica',
-  'conhecimentos_gerais',
-  'raciocinio_logico',
-  'contabilidade',
-  'pedagogia'
-];
+'portugues',
+'matematica',
+'direito_constitucional',
+'direito_administrativo',
+'direito_penal',
+'direito_civil',
+'informatica',
+'conhecimentos_gerais',
+'raciocinio_logico',
+'contabilidade',
+'pedagogia'];
+
 
 const SUBJECT_LABELS = {
   portugues: 'Português',
@@ -61,9 +61,9 @@ export default function CreateStudyPlanPage() {
       try {
         const userData = await User.me();
         setUser(userData);
-        
+
         const userExamDates = await UserExamDate.filter({}, '-exam_date', 50);
-        const filteredDates = userExamDates.filter(d => d.created_by === userData.email && new Date(d.exam_date) >= new Date());
+        const filteredDates = userExamDates.filter((d) => d.created_by === userData.email && new Date(d.exam_date) >= new Date());
         setExamDates(filteredDates);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
@@ -107,20 +107,20 @@ export default function CreateStudyPlanPage() {
   };
 
   const handleSubjectToggle = (subject) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      subjects: prev.subjects.includes(subject)
-        ? prev.subjects.filter(s => s !== subject)
-        : [...prev.subjects, subject]
+      subjects: prev.subjects.includes(subject) ?
+      prev.subjects.filter((s) => s !== subject) :
+      [...prev.subjects, subject]
     }));
   };
 
   const handleExamDateToggle = (dateId) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      target_exam_dates: prev.target_exam_dates.includes(dateId)
-        ? prev.target_exam_dates.filter(d => d !== dateId)
-        : [...prev.target_exam_dates, dateId]
+      target_exam_dates: prev.target_exam_dates.includes(dateId) ?
+      prev.target_exam_dates.filter((d) => d !== dateId) :
+      [...prev.target_exam_dates, dateId]
     }));
   };
 
@@ -159,8 +159,8 @@ export default function CreateStudyPlanPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -191,8 +191,8 @@ export default function CreateStudyPlanPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: Preparação ENEM 2024"
-                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                />
+                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
               </div>
             </CardContent>
           </Card>
@@ -210,8 +210,8 @@ export default function CreateStudyPlanPage() {
                     type="date"
                     value={formData.start_date}
                     onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  />
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-gray-300">Data de Término</label>
@@ -219,8 +219,8 @@ export default function CreateStudyPlanPage() {
                     type="date"
                     value={formData.end_date}
                     onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  />
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
                 </div>
               </div>
             </CardContent>
@@ -233,19 +233,19 @@ export default function CreateStudyPlanPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {SUBJECT_OPTIONS.map((subject) => (
-                  <button
-                    key={subject}
-                    onClick={() => handleSubjectToggle(subject)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      formData.subjects.includes(subject)
-                        ? 'bg-indigo-600 border-indigo-600 text-white'
-                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:border-indigo-400'
-                    }`}
-                  >
+                {SUBJECT_OPTIONS.map((subject) =>
+                <button
+                  key={subject}
+                  onClick={() => handleSubjectToggle(subject)}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                  formData.subjects.includes(subject) ?
+                  'bg-indigo-600 border-indigo-600 text-white' :
+                  'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:border-indigo-400'}`
+                  }>
+
                     {SUBJECT_LABELS[subject]}
                   </button>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -255,7 +255,7 @@ export default function CreateStudyPlanPage() {
             <CardHeader>
               <CardTitle>Metas Semanais</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="bg-slate-600 text-[#110e0e] pt-0 p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-gray-300">Questões por Semana</label>
@@ -270,8 +270,8 @@ export default function CreateStudyPlanPage() {
                         questions_per_week: parseInt(e.target.value) || 0
                       }
                     })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  />
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 dark:text-gray-300">Horas de Estudo por Semana</label>
@@ -287,29 +287,29 @@ export default function CreateStudyPlanPage() {
                         study_hours_per_week: parseFloat(e.target.value) || 0
                       }
                     })}
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  />
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600" />
+
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Datas de Provas */}
-          {examDates.length > 0 && (
-            <Card className="dark:bg-gray-800">
+          {examDates.length > 0 &&
+          <Card className="dark:bg-gray-800">
               <CardHeader>
                 <CardTitle>Datas de Provas (Opcional)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {examDates.map((date) => (
-                    <label key={date.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-300 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                  {examDates.map((date) =>
+                <label key={date.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-300 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                       <input
-                        type="checkbox"
-                        checked={formData.target_exam_dates.includes(date.id)}
-                        onChange={() => handleExamDateToggle(date.id)}
-                        className="rounded"
-                      />
+                    type="checkbox"
+                    checked={formData.target_exam_dates.includes(date.id)}
+                    onChange={() => handleExamDateToggle(date.id)}
+                    className="rounded" />
+
                       <div className="flex-1">
                         <p className="font-medium text-gray-900 dark:text-white">{date.exam_name}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -317,31 +317,31 @@ export default function CreateStudyPlanPage() {
                         </p>
                       </div>
                     </label>
-                  ))}
+                )}
                 </div>
               </CardContent>
             </Card>
-          )}
+          }
 
           {/* Gerar Cronograma */}
           <Button
             onClick={generateSchedule}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg gap-2"
-          >
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg gap-2">
+
             <Plus className="w-5 h-5" />
             Gerar Cronograma
           </Button>
 
           {/* Preview do Cronograma */}
-          {schedule.length > 0 && (
-            <Card className="dark:bg-gray-800">
+          {schedule.length > 0 &&
+          <Card className="dark:bg-gray-800">
               <CardHeader>
                 <CardTitle>Cronograma Sugerido ({schedule.length} semanas)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {schedule.map((week) => (
-                    <div key={week.week} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                  {schedule.map((week) =>
+                <div key={week.week} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-semibold text-gray-900 dark:text-white">Semana {week.week}</h4>
                         <span className="text-xs text-gray-600 dark:text-gray-400">
@@ -353,19 +353,19 @@ export default function CreateStudyPlanPage() {
                           📚 <strong>{week.target_questions} questões</strong> | ⏱️ <strong>{week.target_hours}h de estudo</strong>
                         </p>
                         <div className="flex flex-wrap gap-1">
-                          {week.subjects_focus.map((subject) => (
-                            <Badge key={subject} variant="secondary" className="dark:bg-gray-600 dark:text-white">
+                          {week.subjects_focus.map((subject) =>
+                      <Badge key={subject} variant="secondary" className="dark:bg-gray-600 dark:text-white">
                               {SUBJECT_LABELS[subject]}
                             </Badge>
-                          ))}
+                      )}
                         </div>
                       </div>
                     </div>
-                  ))}
+                )}
                 </div>
               </CardContent>
             </Card>
-          )}
+          }
 
           {/* Botões de Ação */}
           <div className="flex gap-3">
@@ -377,13 +377,13 @@ export default function CreateStudyPlanPage() {
             <Button
               onClick={handleSavePlan}
               disabled={schedule.length === 0}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50"
-            >
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-50">
+
               Criar Plano
             </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
