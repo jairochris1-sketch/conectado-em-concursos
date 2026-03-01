@@ -180,6 +180,11 @@ const moreMenuItems = [
   icon: ClipboardList
 },
 {
+  title: "Histórico de Simulações",
+  url: createPageUrl("SimulationHistory"),
+  icon: ClipboardList
+},
+{
   title: "Meu Perfil",
   url: createPageUrl("Profile"),
   icon: Shield
