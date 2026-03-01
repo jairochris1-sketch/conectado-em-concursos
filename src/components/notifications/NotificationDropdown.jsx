@@ -32,6 +32,15 @@ export default function NotificationDropdown() {
     const unsubscribe = base44.entities.Notification.subscribe((event) => {
       if (event.type === 'create' && event.data.user_email === user.email) {
         setNotifications(prev => [event.data, ...prev]);
+        
+        // Show a toast for new notifications if it's a chat message
+        if (event.data.type === 'chat_message') {
+          import('sonner').then(({ toast }) => {
+            toast.info(event.data.title, {
+              description: event.data.message
+            });
+          });
+        }
       } else if (event.type === 'update') {
         setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
       } else if (event.type === 'delete') {
