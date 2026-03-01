@@ -59,7 +59,6 @@ import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
-import EditalSimulator from './pages/EditalSimulator';
 import EditalViewer from './pages/EditalViewer';
 import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
@@ -95,6 +94,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import EditalSimulator from './pages/EditalSimulator';
 import __Layout from './Layout.jsx';
 
 
@@ -111,7 +111,6 @@ export const PAGES = {
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
-    "EditalSimulator": EditalSimulator,
     "EditalViewer": EditalViewer,
     "EnglishCourse": EnglishCourse,
     "ExamView": ExamView,
@@ -147,6 +146,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
+    "EditalSimulator": EditalSimulator,
 }
 
 export const pagesConfig = {

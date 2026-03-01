@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Upload,
   FileText,
@@ -20,7 +19,11 @@ import {
   RefreshCw,
   AlertCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Sparkles,
+  ListChecks,
+  Database,
+  ClipboardList
 } from "lucide-react";
 import { toast } from "sonner";
 import EditalDashboard from "../components/edital/EditalDashboard";
@@ -170,17 +173,39 @@ export default function EditalSimulator() {
     }
   };
 
+  const steps = [
+    { icon: Sparkles, label: "Resumo estratégico do edital", color: "text-yellow-500", bg: "bg-yellow-50 dark:bg-yellow-900/20", border: "border-yellow-200 dark:border-yellow-800" },
+    { icon: ListChecks, label: "Identifica disciplinas e tópicos", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-200 dark:border-blue-800" },
+    { icon: Database, label: "Cruza com banco de questões", color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-900/20", border: "border-purple-200 dark:border-purple-800" },
+    { icon: ClipboardList, label: "Gera simulado personalizado", color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/20", border: "border-green-200 dark:border-green-800" },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
             📄 Simulados Baseados no Edital
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             Envie o edital do seu concurso e gere simulados personalizados automaticamente
           </p>
+
+          {/* Steps */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
+            {steps.map((step, i) => (
+              <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${step.bg} ${step.border}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm`}>
+                  <span className="text-xs font-bold text-gray-500">{i + 1}</span>
+                </div>
+                <div className="flex items-center gap-2 min-w-0">
+                  <step.icon className={`w-4 h-4 flex-shrink-0 ${step.color}`} />
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">{step.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Upload Form */}
