@@ -129,9 +129,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     visibilityUnsubRef.current = notificationService.onVisibilityChange(() => {
       // App came back to foreground - mark all messages as read
       if (!document.hidden) {
-        messages.filter(m => m.receiver_email === currentUser.email && !m.is_read).forEach(m =>
-          base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {})
-        );
+        const unreadMsgs = messages.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+        if (unreadMsgs.length > 0) {
+          Promise.all(
+            unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {}))
+          );
+        }
       }
     });
 
