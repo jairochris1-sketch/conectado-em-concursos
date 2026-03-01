@@ -8,8 +8,8 @@ import {
   FileText,
   Plus,
   Minus,
-  Clock
-} from "lucide-react";
+  Clock } from
+"lucide-react";
 import { motion } from "framer-motion";
 
 import QuestionFilters from "../components/questions/QuestionFilters";
@@ -23,12 +23,12 @@ import StudyTimer from "../components/questions/StudyTimer";
 import ExamCalendar from "../components/questions/ExamCalendar";
 
 const shuffleArray = (array) => {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length,randomIndex;
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+    array[randomIndex], array[currentIndex]];
   }
   return array;
 };
@@ -48,7 +48,7 @@ export default function Questions() {
     return localStorage.getItem('questions-layout') || 'classic';
   });
   const [fontSize, setFontSize] = useState(1);
-  
+
   const { isBlocked, questionsAnsweredToday, dailyLimit, incrementCount, remainingQuestions } = useQuestionLimit();
 
   const questionsPerPage = 20;
@@ -56,38 +56,38 @@ export default function Questions() {
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
     if (!currentUser) {
-        setIsLoading(false);
-        return;
+      setIsLoading(false);
+      return;
     }
     try {
       const questionsData = await Question.list("-created_date", 100000);
       const shuffledQuestions = shuffleArray([...questionsData]);
       setAllQuestions(shuffledQuestions);
-      
+
       // Aplicar filtros iniciais com base nas preferências do usuário
       let initialFiltered = shuffledQuestions;
       if (currentUser) {
         if (currentUser.preferred_subjects && currentUser.preferred_subjects.length > 0) {
-            initialFiltered = initialFiltered.filter(q => currentUser.preferred_subjects.includes(q.subject));
+          initialFiltered = initialFiltered.filter((q) => currentUser.preferred_subjects.includes(q.subject));
         }
         if (currentUser.target_position) {
-            initialFiltered = initialFiltered.filter(q => q.cargo === currentUser.target_position);
+          initialFiltered = initialFiltered.filter((q) => q.cargo === currentUser.target_position);
         }
       }
       setFilteredQuestions(initialFiltered);
-      
+
       setCurrentPage(1);
 
       const historyData = await ResponseHistory.filter({ created_by: currentUser.email }, "-created_date", 200);
       const historyByQuestion = {};
-      
-      historyData.forEach(response => {
-        if (!historyByQuestion[response.question_id] || 
-            new Date(response.created_date) > new Date(historyByQuestion[response.question_id].created_date)) {
+
+      historyData.forEach((response) => {
+        if (!historyByQuestion[response.question_id] ||
+        new Date(response.created_date) > new Date(historyByQuestion[response.question_id].created_date)) {
           historyByQuestion[response.question_id] = response;
         }
       });
-      
+
       setResponseHistory(historyByQuestion);
     } catch (error) {
       console.error("Erro ao carregar questões:", error);
@@ -101,8 +101,8 @@ export default function Questions() {
     try {
       const userAnswersData = await UserAnswer.filter({ created_by: currentUser.email }, "-created_date", 500);
       const submitted = userAnswersData.length;
-      const correct = userAnswersData.filter(a => a.is_correct).length;
-      const accuracy = submitted > 0 ? Math.round((correct / submitted) * 100) : 0;
+      const correct = userAnswersData.filter((a) => a.is_correct).length;
+      const accuracy = submitted > 0 ? Math.round(correct / submitted * 100) : 0;
 
       return { submitted, correct, accuracy };
     } catch (error) {
@@ -149,37 +149,37 @@ export default function Questions() {
       // Busca por texto no enunciado, comando e texto associado
       if (filters.keyword) {
         const lowercasedKeyword = filters.keyword.toLowerCase();
-        tempFiltered = tempFiltered.filter(q => 
-          (q.statement?.toLowerCase().includes(lowercasedKeyword)) ||
-          (q.command?.toLowerCase().includes(lowercasedKeyword)) ||
-          (q.associated_text?.toLowerCase().includes(lowercasedKeyword))
+        tempFiltered = tempFiltered.filter((q) =>
+        q.statement?.toLowerCase().includes(lowercasedKeyword) ||
+        q.command?.toLowerCase().includes(lowercasedKeyword) ||
+        q.associated_text?.toLowerCase().includes(lowercasedKeyword)
         );
       }
 
       // Múltiplos filtros simultâneos
       if (filters.subjects && filters.subjects.length > 0) {
-        tempFiltered = tempFiltered.filter(q => filters.subjects.includes(q.subject));
+        tempFiltered = tempFiltered.filter((q) => filters.subjects.includes(q.subject));
       }
       if (filters.topics && filters.topics.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.topic && filters.topics.includes(q.topic));
+        tempFiltered = tempFiltered.filter((q) => q.topic && filters.topics.includes(q.topic));
       }
       if (filters.institutions && filters.institutions.length > 0) {
-        tempFiltered = tempFiltered.filter(q => filters.institutions.includes(q.institution));
+        tempFiltered = tempFiltered.filter((q) => filters.institutions.includes(q.institution));
       }
       if (filters.carreiras && filters.carreiras.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.carreira && filters.carreiras.includes(q.carreira));
+        tempFiltered = tempFiltered.filter((q) => q.carreira && filters.carreiras.includes(q.carreira));
       }
       if (filters.cargos && filters.cargos.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.cargo && filters.cargos.includes(q.cargo));
+        tempFiltered = tempFiltered.filter((q) => q.cargo && filters.cargos.includes(q.cargo));
       }
       if (filters.years && filters.years.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.year && filters.years.includes(q.year.toString()));
+        tempFiltered = tempFiltered.filter((q) => q.year && filters.years.includes(q.year.toString()));
       }
       if (filters.educationLevels && filters.educationLevels.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.education_level && filters.educationLevels.includes(q.education_level));
+        tempFiltered = tempFiltered.filter((q) => q.education_level && filters.educationLevels.includes(q.education_level));
       }
       if (filters.difficulties && filters.difficulties.length > 0) {
-        tempFiltered = tempFiltered.filter(q => q.difficulty && filters.difficulties.includes(q.difficulty));
+        tempFiltered = tempFiltered.filter((q) => q.difficulty && filters.difficulties.includes(q.difficulty));
       }
 
       console.log("Questões filtradas:", tempFiltered.length);
@@ -197,13 +197,13 @@ export default function Questions() {
     setLayoutMode(newLayout);
     localStorage.setItem('questions-layout', newLayout);
   };
-  
+
   const increaseFontSize = () => {
-    setFontSize(prev => Math.min(prev + 0.1, 1.5));
+    setFontSize((prev) => Math.min(prev + 0.1, 1.5));
   };
 
   const decreaseFontSize = () => {
-    setFontSize(prev => Math.max(prev - 0.1, 0.8));
+    setFontSize((prev) => Math.max(prev - 0.1, 0.8));
   };
 
   const totalPages = Math.ceil(filteredQuestions.length / questionsPerPage);
@@ -212,7 +212,7 @@ export default function Questions() {
   const currentQuestions = filteredQuestions.slice(startIndex, endIndex);
 
   const handleAnswerChange = (questionId, answer) => {
-    setUserAnswers(prev => ({
+    setUserAnswers((prev) => ({
       ...prev,
       [questionId]: answer
     }));
@@ -227,10 +227,10 @@ export default function Questions() {
     }
 
     const isCorrect = userAnswer === question.correct_answer;
-    
-    const previousAttempts = await ResponseHistory.filter({ 
-      question_id: question.id, 
-      created_by: currentUser.email 
+
+    const previousAttempts = await ResponseHistory.filter({
+      question_id: question.id,
+      created_by: currentUser.email
     });
     const attemptNumber = previousAttempts.length + 1;
 
@@ -246,8 +246,8 @@ export default function Questions() {
 
     try {
       const savedHistory = await ResponseHistory.create(historyData);
-      
-      setResponseHistory(prev => ({
+
+      setResponseHistory((prev) => ({
         ...prev,
         [question.id]: savedHistory
       }));
@@ -261,7 +261,7 @@ export default function Questions() {
       };
 
       await UserAnswer.create(answerData);
-      setSubmittedAnswers(prev => ({
+      setSubmittedAnswers((prev) => ({
         ...prev,
         [question.id]: {
           userAnswer,
@@ -269,7 +269,7 @@ export default function Questions() {
           submitted: true
         }
       }));
-      
+
       incrementCount();
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
@@ -283,19 +283,19 @@ export default function Questions() {
           <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
           <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando questões...</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-3 md:p-8">
+    <div className="bg-slate-900 p-3 min-h-screen dark:bg-gray-900 md:p-8">
       <Toaster richColors position="top-center" />
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-4 mb-6 md:mb-8"
-        >
+          className="flex flex-col gap-4 mb-6 md:mb-8">
+
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Questões de Concursos Públicos
@@ -316,16 +316,16 @@ export default function Questions() {
                 variant="outline"
                 size="sm"
                 onClick={decreaseFontSize}
-                className="rounded-r-none"
-              >
+                className="rounded-r-none">
+
                 <Minus className="w-4 h-4 mr-1" /> A
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={increaseFontSize}
-                className="rounded-l-none border-l-0"
-              >
+                className="rounded-l-none border-l-0">
+
                 A <Plus className="w-4 h-4 ml-1" />
               </Button>
             </div>
@@ -339,43 +339,43 @@ export default function Questions() {
           <QuestionFilters onFilterSubmit={handleFilterSubmit} />
 
           <div className="space-y-4 md:space-y-6">
-            <DailyLimitBanner 
+            <DailyLimitBanner
               questionsAnsweredToday={questionsAnsweredToday}
               dailyLimit={dailyLimit}
-              remainingQuestions={remainingQuestions}
-            />
-            {isLoading && allQuestions.length > 0 ? (
-               <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+              remainingQuestions={remainingQuestions} />
+
+            {isLoading && allQuestions.length > 0 ?
+            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
                   <RefreshCw className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
                   <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Filtrando questões...</p>
-               </div>
-            ) : currentQuestions.length > 0 ? (
-              <>
+               </div> :
+            currentQuestions.length > 0 ?
+            <>
                 <QuestionList
-                  questions={currentQuestions}
-                  userAnswers={userAnswers}
-                  submittedAnswers={submittedAnswers}
-                  responseHistory={responseHistory}
-                  onAnswerChange={handleAnswerChange}
-                  onSubmitAnswer={handleSubmitAnswer}
-                  currentPage={currentPage}
-                  questionsPerPage={questionsPerPage}
-                  layoutMode={layoutMode}
-                  fontSize={fontSize}
-                  isBlocked={isBlocked}
-                />
-                {totalPages > 1 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    totalItems={filteredQuestions.length}
-                    itemsPerPage={questionsPerPage}
-                  />
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg mx-3">
+                questions={currentQuestions}
+                userAnswers={userAnswers}
+                submittedAnswers={submittedAnswers}
+                responseHistory={responseHistory}
+                onAnswerChange={handleAnswerChange}
+                onSubmitAnswer={handleSubmitAnswer}
+                currentPage={currentPage}
+                questionsPerPage={questionsPerPage}
+                layoutMode={layoutMode}
+                fontSize={fontSize}
+                isBlocked={isBlocked} />
+
+                {totalPages > 1 &&
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredQuestions.length}
+                itemsPerPage={questionsPerPage} />
+
+              }
+              </> :
+
+            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg mx-3">
                 <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Nenhuma questão encontrada
@@ -384,10 +384,10 @@ export default function Questions() {
                   Tente ajustar os filtros para encontrar o que procura.
                 </p>
               </div>
-            )}
+            }
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
