@@ -21,8 +21,11 @@ const subjectLabels = {
   raciocinio_logico: "Raciocínio Lógico", contabilidade: "Contabilidade", pedagogia: "Pedagogia"
 };
 
+import { useLocation } from "react-router-dom";
+
 export default function UserProfilePage() {
-  const urlParams = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
   const targetEmail = urlParams.get("email");
 
   const [currentUser, setCurrentUser] = useState(null);
