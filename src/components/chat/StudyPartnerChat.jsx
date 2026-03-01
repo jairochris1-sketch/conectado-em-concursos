@@ -186,15 +186,27 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     }
   };
 
-  const loadMessages = async () => {
-    const msgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
-    setMessages(msgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)));
-    const unreadMsgs = msgs.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+  const loadMessages = async (skipCount = 0) => {
+    const allMsgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
+    const sorted = allMsgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+    const paginated = sorted.slice(Math.max(0, sorted.length - MESSAGES_PER_PAGE - skipCount), sorted.length - skipCount || undefined);
+    
+    setMessages(skipCount === 0 ? paginated : prev => [...paginated, ...prev]);
+    setHasMoreOlder(sorted.length > MESSAGES_PER_PAGE + skipCount);
+    
+    const unreadMsgs = paginated.filter(m => m.receiver_email === currentUser.email && !m.is_read);
     if (unreadMsgs.length > 0) {
       await Promise.all(
         unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {}))
       );
     }
+  };
+
+  const loadOlderMessages = async () => {
+    if (loadingOlder || !hasMoreOlder) return;
+    setLoadingOlder(true);
+    await loadMessages(messages.length);
+    setLoadingOlder(false);
   };
 
   const loadPresence = async () => {
