@@ -39,14 +39,10 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // 1. Verify sender is the authenticated user (prevent impersonation)
-    if (messageData.sender_email !== user.email) {
-      console.error(`SECURITY: User ${user.email} tried to send message as ${messageData.sender_email}`);
-      return Response.json({ 
-        error: 'Sender mismatch - impersonation attempt',
-        allowed: false 
-      }, { status: 403 });
-    }
+    // 1. Verify sender is the authenticated user (force correct sender)
+    messageData.sender_email = user.email;
+    messageData.sender_name = user.full_name;
+    messageData.sender_photo = user.profile_photo_url || "";
 
     // 2. Verify receiver email is valid
     if (!messageData.receiver_email || !messageData.receiver_email.includes('@')) {
