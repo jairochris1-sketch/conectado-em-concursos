@@ -288,7 +288,7 @@ export default function Questions() {
   }
 
   return (
-    <div className="bg-slate-900 p-3 min-h-screen dark:bg-gray-900 md:p-8">
+    <div className="bg-slate-300 p-3 min-h-screen dark:bg-gray-900 md:p-8">
       <Toaster richColors position="top-center" />
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -297,14 +297,14 @@ export default function Questions() {
           className="flex flex-col gap-4 mb-6 md:mb-8">
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Questões de Concursos Públicos
+            <h1 className="text-blue-900 mb-2 text-2xl font-bold md:text-3xl dark:text-white">Questões de Concursos Públicos
+
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
-              <span>
+              <span className="text-blue-950">
                 {allQuestions.length} questões disponíveis
               </span>
-              <span className="flex items-center gap-1">
+              <span className="bg-transparent text-blue-950 flex items-center gap-1">
                 <Award className="w-4 h-4" />
                 {stats.accuracy}% de acerto ({stats.correct}/{stats.submitted})
               </span>
