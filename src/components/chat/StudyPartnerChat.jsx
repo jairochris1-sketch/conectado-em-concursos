@@ -274,6 +274,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       }
 
       setText("");
+      
+      // Backend will validate everything before creation
       const newMsg = await base44.entities.StudyPartnerMessage.create({
         sender_email: currentUser.email,
         sender_name: currentUser.full_name,
@@ -284,8 +286,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         is_read: false
       });
       
-      if (newMsg) {
+      if (newMsg?.id) {
         toast.success("Mensagem enviada!");
+      } else {
+        throw new Error("Falha ao criar mensagem");
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
