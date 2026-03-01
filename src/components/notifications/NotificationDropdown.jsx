@@ -106,6 +106,7 @@ export default function NotificationDropdown() {
 
   const getNotificationIcon = (type) => {
     switch(type) {
+      case 'chat_message': return <MessageSquare className="w-4 h-4" />;
       case 'reply': return <MessageSquare className="w-4 h-4" />;
       case 'like': return <Heart className="w-4 h-4" />;
       case 'follow': return <UserPlus className="w-4 h-4" />;
@@ -120,6 +121,7 @@ export default function NotificationDropdown() {
 
   const getIconColors = (type) => {
     switch(type) {
+      case 'chat_message': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
       case 'simulation_ready': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
       case 'simulation_incomplete': return 'bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300';
       case 'contest_deadline': return 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300';
