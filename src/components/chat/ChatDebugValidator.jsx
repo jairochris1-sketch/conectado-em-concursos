@@ -84,62 +84,85 @@ export default function ChatDebugValidator({ convKey, currentUserEmail, partnerE
 
       // 3. Testar criação de mensagem
       addTestResult("→ Criando mensagem de teste...");
-      const testMsg = await base44.entities.StudyPartnerMessage.create({
-        sender_email: currentUserEmail,
-        sender_name: "Debug Test",
-        sender_photo: "",
-        receiver_email: partnerEmail,
-        content: `[DEBUG TEST ${new Date().getTime()}]`,
-        conversation_key: convKey,
-        is_read: false
-      });
+      let testMsg = null;
+      
+      try {
+        testMsg = await base44.entities.StudyPartnerMessage.create({
+          sender_email: currentUserEmail,
+          sender_name: "Debug Test",
+          sender_photo: "",
+          receiver_email: partnerEmail,
+          content: `[DEBUG TEST ${new Date().getTime()}]`,
+          conversation_key: convKey,
+          is_read: false
+        });
 
-      if (testMsg?.id) {
-        addTestResult(`✓ MENSAGEM CRIADA: ID=${testMsg.id}`);
+        if (testMsg?.id) {
+          addTestResult(`✓ MENSAGEM CRIADA: ID=${testMsg.id}`);
+          setChecks(p => ({
+            ...p,
+            messageCreation: { status: "success", detail: `Mensagem criada: ${testMsg.id}` }
+          }));
+        } else {
+          addTestResult("✗ ERRO: Mensagem criada mas sem ID retornado");
+          setChecks(p => ({
+            ...p,
+            messageCreation: { status: "error", detail: "Criação retornou sem ID" }
+          }));
+        }
+      } catch (err) {
+        addTestResult(`✗ ERRO NA CRIAÇÃO: ${err.message}`);
         setChecks(p => ({
           ...p,
-          messageCreation: { status: "success", detail: `Mensagem criada: ${testMsg.id}` }
+          messageCreation: { status: "error", detail: err.message }
         }));
       }
 
-      // 4. Aguardar evento
-      addTestResult("⏳ Aguardando evento em tempo real (3s)...");
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // 4. Aguardar evento (em paralelo com criação)
+      addTestResult("⏳ Aguardando evento em tempo real (4s)...");
+      await new Promise(resolve => setTimeout(resolve, 4000));
 
       if (eventReceived) {
         addTestResult("✓ EVENTO DETECTADO! Real-time está funcionando.");
         setChecks(p => ({
           ...p,
-          realTimeDelivery: { status: "success", detail: "Real-time delivery confirmado" }
+          realTimeDelivery: { status: "success", detail: "Real-time delivery confirmado ✓✓" }
         }));
       } else {
-        addTestResult("✗ EVENTO NÃO RECEBIDO - Possível problema com real-time");
+        addTestResult("✗ EVENTO NÃO RECEBIDO APÓS 4s");
+        addTestResult("→ Possíveis causas: RLS bloqueando, subscription não ativa, ou evento não disparado");
         setChecks(p => ({
           ...p,
-          realTimeDelivery: { status: "error", detail: "Evento não recebido após 3s" }
+          realTimeDelivery: { status: "error", detail: "Evento não recebido - verifique RLS e subscription" }
         }));
       }
 
-      // 5. Verificar mensagem no DB
-      addTestResult("→ Verificando mensagem no banco...");
-      const savedMsg = await base44.entities.StudyPartnerMessage.filter({
-        conversation_key: convKey,
-        content: { $regex: "DEBUG TEST" }
-      });
-
-      if (savedMsg.length > 0) {
-        addTestResult(`✓ MENSAGEM PERSISTIDA: ${savedMsg[0].id}`);
-      } else {
-        addTestResult("✗ MENSAGEM NÃO ENCONTRADA NO BANCO");
+      // 5. Verificar persistência no DB
+      if (testMsg?.id) {
+        addTestResult("→ Verificando persistência...");
+        try {
+          const allMsgs = await base44.entities.StudyPartnerMessage.filter({
+            conversation_key: convKey
+          });
+          const found = allMsgs.find(m => m.id === testMsg.id);
+          
+          if (found) {
+            addTestResult(`✓ MENSAGEM PERSISTIDA: ${found.id}`);
+          } else {
+            addTestResult(`✗ MENSAGEM CRIADA MAS NÃO ENCONTRADA NA QUERY`);
+            addTestResult(`  Mensagens encontradas na conversa: ${allMsgs.length}`);
+          }
+        } catch (err) {
+          addTestResult(`✗ ERRO AO BUSCAR: ${err.message}`);
+        }
       }
 
       // Cleanup
       unsubscribe();
 
-      // Deletar mensagem de teste
+      // NÃO deletar - deixar para análise manual
       if (testMsg?.id) {
-        await base44.entities.StudyPartnerMessage.delete(testMsg.id);
-        addTestResult("→ Mensagem de teste deletada");
+        addTestResult(`→ Mensagem deixada no DB para análise: ${testMsg.id}`);
       }
 
     } catch (error) {
