@@ -51,21 +51,54 @@ Deno.serve(async (req) => {
 
   // ── SEND MESSAGE ─────────────────────────────────────────────────────────────
   if (action === 'check_message') {
-    if (!targetEmail || !content?.trim()) {
-      return Response.json({ allowed: false, reason: 'Mensagem inválida.' });
+    // Strict validation - no trust in frontend data
+    if (!targetEmail || typeof targetEmail !== 'string' || !targetEmail.includes('@')) {
+      return Response.json({ allowed: false, reason: 'Email de destino inválido.' });
     }
 
-    // Check partnership - single efficient query
-    const partnership = await base44.entities.StudyPartner.filter();
+    if (!content || typeof content !== 'string' || !content.trim() || content.length > 5000) {
+      return Response.json({ allowed: false, reason: 'Mensagem inválida ou muito longa.' });
+    }
+
+    // Prevent self-messaging
+    if (user.email === targetEmail) {
+      return Response.json({ allowed: false, reason: 'Não é possível enviar mensagem para si mesmo.' });
+    }
+
+    // Strict partnership validation - backend enforces "accepted" status
+    const partnerships = await base44.entities.StudyPartner.filter();
     
-    const validPartnership = partnership.find(p => 
-      (p.requester_email === user.email && p.target_email === targetEmail) ||
-      (p.requester_email === targetEmail && p.target_email === user.email)
+    const validPartnership = partnerships.find(p => {
+      const isRequester = p.requester_email === user.email && p.target_email === targetEmail;
+      const isTarget = p.requester_email === targetEmail && p.target_email === user.email;
+      return (isRequester || isTarget) && p.status === 'accepted';
+    });
+    
+    // MUST be "accepted" - no other status allowed
+    if (!validPartnership) {
+      return Response.json({ 
+        allowed: false, 
+        reason: 'Sem parceria aceita para enviar mensagens.',
+        debug: {
+          userEmail: user.email,
+          targetEmail,
+          status: partnerships.find(p => 
+            (p.requester_email === user.email && p.target_email === targetEmail) ||
+            (p.requester_email === targetEmail && p.target_email === user.email)
+          )?.status || 'none'
+        }
+      });
+    }
+
+    // Extra security: Verify neither party is blocked
+    const isBlocked = partnerships.some(p => 
+      ((p.requester_email === user.email && p.target_email === targetEmail) ||
+       (p.requester_email === targetEmail && p.target_email === user.email)) &&
+      p.status === 'blocked'
     );
-    
-    // Must exist and be accepted
-    if (!validPartnership || validPartnership.status !== 'accepted') {
-      return Response.json({ allowed: false, reason: 'Sem parceria aceita para enviar mensagens.' });
+
+    if (isBlocked) {
+      return Response.json({ allowed: false, reason: 'Esta conexão foi bloqueada.' });
     }
 
     return Response.json({ allowed: true });
