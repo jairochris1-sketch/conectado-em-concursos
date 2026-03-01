@@ -265,18 +265,19 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     const content = text.trim();
 
     try {
-      // Security check via backend
-      const res = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
-      if (!res.data?.allowed) {
-        toast.error(res.data?.reason || "Não foi possível enviar a mensagem.");
+      // Step 1: Pre-flight security check (catches obvious issues early)
+      const securityRes = await studyPartnerSecurity({ action: "check_message", targetEmail: partner.email, content });
+      if (!securityRes.data?.allowed) {
+        toast.error(securityRes.data?.reason || "Não foi possível enviar a mensagem.");
         setSending(false);
         return;
       }
 
       setText("");
       
-      // Backend will validate everything before creation
-      const newMsg = await base44.entities.StudyPartnerMessage.create({
+      // Step 2: Backend guard validates and sanitizes BEFORE creation
+      // This ensures RLS + security rules are enforced
+      const guardRes = await base44.functions.invoke('studyPartnerMessageCreateGuard', {
         sender_email: currentUser.email,
         sender_name: currentUser.full_name,
         sender_photo: currentUser.profile_photo_url || "",
@@ -285,15 +286,26 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         conversation_key: convKey,
         is_read: false
       });
+
+      if (!guardRes.data?.allowed) {
+        toast.error(guardRes.data?.error || "Falha na validação.");
+        setSending(false);
+        return;
+      }
+
+      // Step 3: Create message with sanitized data from guard
+      const newMsg = await base44.entities.StudyPartnerMessage.create(guardRes.data.message);
       
       if (newMsg?.id) {
+        setLastMessageId(newMsg.id);
         toast.success("Mensagem enviada!");
       } else {
-        throw new Error("Falha ao criar mensagem");
+        throw new Error("Falha ao criar mensagem - sem ID retornado");
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       toast.error("Erro ao enviar mensagem. Tente novamente.");
+      setText(content); // Restore text on error
     } finally {
       setSending(false);
     }
