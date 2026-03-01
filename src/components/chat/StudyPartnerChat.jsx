@@ -86,9 +86,23 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   // Scroll to latest message
   useEffect(() => { 
     messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
-    // Hide indicator when scrolled into view
     setShowNewMessageIndicator(false);
   }, [messages]);
+
+  // Infinite scroll - load older messages
+  useEffect(() => {
+    const container = document.querySelector('[data-chat-messages]');
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (container.scrollTop < 100 && !loadingOlder && hasMoreOlder) {
+        loadOlderMessages();
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [loadingOlder, hasMoreOlder]);
 
   // Load + subscribe to messages with notifications
   useEffect(() => {
