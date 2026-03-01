@@ -85,16 +85,36 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
     setShowNewMessageIndicator(false);
   }, [messages]);
 
-  // Load + subscribe
+  // Load + subscribe to messages with notifications
   useEffect(() => {
     loadMessages();
     loadPresence();
 
     const unsub = base44.entities.StudyPartnerMessage.subscribe((event) => {
       if (event.data?.conversation_key === convKey && event.type === "create") {
-        setMessages((prev) => prev.some(m => m.id === event.data.id) ? prev : [...prev, event.data]);
-        if (event.data.receiver_email === currentUser.email) {
-          base44.entities.StudyPartnerMessage.update(event.data.id, { is_read: true }).catch(() => {});
+        const isNewMessage = !messages.some(m => m.id === event.data.id);
+        
+        if (isNewMessage) {
+          setMessages((prev) => [...prev, event.data]);
+          setLastMessageId(event.data.id);
+
+          // Handle notifications
+          if (event.data.receiver_email === currentUser.email) {
+            base44.entities.StudyPartnerMessage.update(event.data.id, { is_read: true }).catch(() => {});
+
+            // Show notification if app is in background
+            if (notificationsEnabled) {
+              notificationService.showVisualNotification(
+                event.data.content.substring(0, 50),
+                event.data.sender_name
+              );
+            }
+
+            // Show indicator if not scrolled to bottom
+            if (!isScrolledToBottom()) {
+              setShowNewMessageIndicator(true);
+            }
+          }
         }
       }
     });
@@ -105,8 +125,22 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
       }
     });
 
-    return () => { unsub(); unsubPresence(); };
-  }, [convKey, partner.email]);
+    // Listen for visibility changes
+    visibilityUnsubRef.current = notificationService.onVisibilityChange(() => {
+      // App came back to foreground - mark all messages as read
+      if (!document.hidden) {
+        messages.filter(m => m.receiver_email === currentUser.email && !m.is_read).forEach(m =>
+          base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {})
+        );
+      }
+    });
+
+    return () => { 
+      unsub(); 
+      unsubPresence();
+      visibilityUnsubRef.current?.();
+    };
+  }, [convKey, partner.email, notificationsEnabled, messages]);
 
   // Heartbeat
   useEffect(() => {
