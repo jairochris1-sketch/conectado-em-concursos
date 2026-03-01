@@ -230,18 +230,35 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   };
 
   const loadMessages = async (skipCount = 0) => {
-    const allMsgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
-    const sorted = allMsgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
-    const paginated = sorted.slice(Math.max(0, sorted.length - MESSAGES_PER_PAGE - skipCount), sorted.length - skipCount || undefined);
-    
-    setMessages(skipCount === 0 ? paginated : prev => [...paginated, ...prev]);
-    setHasMoreOlder(sorted.length > MESSAGES_PER_PAGE + skipCount);
-    
-    const unreadMsgs = paginated.filter(m => m.receiver_email === currentUser.email && !m.is_read);
-    if (unreadMsgs.length > 0) {
-      await Promise.all(
-        unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(() => {}))
-      );
+    try {
+      const allMsgs = await base44.entities.StudyPartnerMessage.filter({ conversation_key: convKey });
+      
+      if (!allMsgs || allMsgs.length === 0) {
+        console.log("No messages found for conversation:", convKey);
+        setMessages([]);
+        setHasMoreOlder(false);
+        return;
+      }
+      
+      const sorted = allMsgs.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+      const paginated = sorted.slice(Math.max(0, sorted.length - MESSAGES_PER_PAGE - skipCount), sorted.length - skipCount || undefined);
+      
+      console.log(`Loaded ${paginated.length} messages for conversation ${convKey}`);
+      setMessages(skipCount === 0 ? paginated : prev => [...paginated, ...prev]);
+      setHasMoreOlder(sorted.length > MESSAGES_PER_PAGE + skipCount);
+      
+      // Mark unread messages as read
+      const unreadMsgs = paginated.filter(m => m.receiver_email === currentUser.email && !m.is_read);
+      if (unreadMsgs.length > 0) {
+        console.log(`Marking ${unreadMsgs.length} messages as read`);
+        await Promise.all(
+          unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true }).catch(err => {
+            console.warn("Failed to mark message as read:", m.id, err);
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error loading messages:", error);
     }
   };
 
