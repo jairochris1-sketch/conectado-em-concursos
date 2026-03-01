@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Save, User as UserIcon, Loader2, Users } from "lucide-react";
+import ConnectionManager from "@/components/social/ConnectionManager";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
