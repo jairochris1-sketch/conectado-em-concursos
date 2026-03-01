@@ -810,7 +810,7 @@ ${videoNotes}
                     {contentSubTab === 'videoaula' && (
                       <Accordion type="multiple" className="w-full space-y-3">
                         {Object.entries(
-                          filteredVideos.filter(v => !contentSearch.trim() || v.title.toLowerCase().includes(contentSearch.toLowerCase()) || v.instructor?.toLowerCase().includes(contentSearch.toLowerCase()))
+                          filteredVideos.filter(v => !contentSearch.trim() || v.title?.toLowerCase().includes(contentSearch.toLowerCase()) || v.instructor?.toLowerCase().includes(contentSearch.toLowerCase()))
                           .reduce((acc, v) => {
                             const subj = subjectNames[v.subject] || v.subject || 'Outros';
                             if (!acc[subj]) acc[subj] = [];
