@@ -68,7 +68,10 @@ export default function UserProfilePage() {
         base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: me.email }),
       ]);
       const all = [...asSender, ...asReceiver];
-      if (all.length > 0) setPartnershipStatus(all[0].status);
+      if (all.length > 0) {
+        setPartnershipStatus(all[0].status);
+        setIsPartner(all[0].status === "accepted");
+      }
     } catch (err) {
       console.error(err);
     }
