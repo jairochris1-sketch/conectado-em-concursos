@@ -163,29 +163,42 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
         console.log(`New message received: ${msg.id} from ${msg.sender_email}`);
         
         // Add message to chat
-        setMessages((prev) => [...prev, msg]);
+        setMessages((prev) => {
+          const isFirstMessage = prev.length === 0;
+
+          // If I'm receiving this message, mark as read and update status
+          if (msg.receiver_email === currentUser.email && !msg.is_read) {
+            base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
+              console.warn("Failed to mark message as read:", err);
+            });
+
+            // Tocar som em todas as novas mensagens
+            if (notificationService.getPreferences().sound) {
+              notificationService.playNotificationSound();
+            }
+
+            // Exibir notificação apenas se for a primeira mensagem da conversa
+            if (isFirstMessage && !document.hidden) {
+              toast.info(`Nova conversa com ${msg.sender_name}`, {
+                description: msg.content.substring(0, 50) + (msg.content.length > 50 ? '...' : '')
+              });
+            }
+
+            // Show push notification if app in background
+            if (notificationsEnabled && document.hidden) {
+              notificationService.sendPushNotification(`Nova mensagem de ${msg.sender_name}`, { body: msg.content.substring(0, 50) });
+            }
+
+            // Show scroll-to-bottom indicator
+            if (!isScrolledToBottom()) {
+              setShowNewMessageIndicator(true);
+              setUnreadCount(count => count + 1);
+            }
+          }
+
+          return [...prev, msg];
+        });
         setLastMessageId(msg.id);
-
-        // If I'm receiving this message, mark as read and update status
-        if (msg.receiver_email === currentUser.email && !msg.is_read) {
-          base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
-            console.warn("Failed to mark message as read:", err);
-          });
-
-          // Show notification if app in background
-          if (notificationsEnabled && document.hidden) {
-            notificationService.showVisualNotification(
-              msg.content.substring(0, 50),
-              msg.sender_name
-            );
-          }
-
-          // Show scroll-to-bottom indicator
-          if (!isScrolledToBottom()) {
-            setShowNewMessageIndicator(true);
-            setUnreadCount(prev => prev + 1);
-          }
-        }
       }
     });
 
