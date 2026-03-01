@@ -136,6 +136,9 @@ export default function ChatWidget() {
             tag: `chat-reply-${event.data.message_id}`
           });
         }
+
+        // Abrir chat automaticamente quando suporte responder
+        setIsOpen(true);
       }
     });
 
