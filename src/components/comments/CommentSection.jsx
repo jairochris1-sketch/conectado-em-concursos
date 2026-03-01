@@ -68,7 +68,7 @@ export default function CommentSection({ questionId, onCommentChange }) {
         user_name: currentUser.full_name || currentUser.email,
         user_email: currentUser.email,
         user_city: currentUser.city || null,
-        user_photo: currentUser.profile_photo_url || null,
+        user_photo: currentUser.profile_photo_url || null
       });
 
       setNewComment('');
@@ -84,14 +84,14 @@ export default function CommentSection({ questionId, onCommentChange }) {
     if (!currentUser) return;
 
     try {
-      const comment = comments.find(c => c.id === commentId);
+      const comment = comments.find((c) => c.id === commentId);
       const userHasLiked = comment.liked_by_users?.includes(currentUser.email) || false;
 
       let updatedLikedUsers;
       let updatedLikesCount;
 
       if (userHasLiked) {
-        updatedLikedUsers = (comment.liked_by_users || []).filter(email => email !== currentUser.email);
+        updatedLikedUsers = (comment.liked_by_users || []).filter((email) => email !== currentUser.email);
         updatedLikesCount = Math.max(0, (comment.likes_count || 0) - 1);
       } else {
         updatedLikedUsers = [...(comment.liked_by_users || []), currentUser.email];
@@ -176,9 +176,9 @@ export default function CommentSection({ questionId, onCommentChange }) {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      
+
       const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-      
+
       if (diffInMinutes < 1) {
         return 'agora';
       } else if (diffInMinutes < 60) {
@@ -198,76 +198,76 @@ export default function CommentSection({ questionId, onCommentChange }) {
         <CardContent className="p-6">
           <p className="text-gray-500">Carregando comentários...</p>
         </CardContent>
-      </Card>
-    );
+      </Card>);
+
   }
 
   return (
     <>
-      <Card className="mt-6">
-        <CardHeader>
+      <Card className="bg-card text-card-foreground mt-6 rounded border shadow">
+        <CardHeader className="bg-slate-800 p-6 rounded-none flex flex-col space-y-1.5">
           <div className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-gray-600" />
-            <h3 className="text-lg font-semibold">Comentários ({comments.length})</h3>
+            <h3 className="text-slate-200 text-lg font-semibold">Comentários ({comments.length})</h3>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {isCommentingBlocked ? (
-            <div className="p-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+        <CardContent className="bg-slate-300 pt-0 p-6 space-y-6">
+          {isCommentingBlocked ?
+          <div className="p-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5" />
               <p className="text-sm">Você atingiu o limite diário de 20 questões para o plano gratuito. Assine para continuar respondendo e comentando!</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
+            </div> :
+
+          <div className="space-y-3">
               <ReactQuill
-                theme="snow"
-                value={newComment}
-                onChange={setNewComment}
-                placeholder="Adicione um comentário sobre esta questão..."
-                modules={{
-                  toolbar: [
-                    [{ 'header': [1, 2, false] }],
-                    ['bold', 'italic', 'underline','strike', 'blockquote'],
-                    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-                    ['link'],
-                    ['clean']
-                  ],
-                }}
-              />
+              theme="snow"
+              value={newComment}
+              onChange={setNewComment}
+              placeholder="Adicione um comentário sobre esta questão..."
+              modules={{
+                toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                ['link'],
+                ['clean']]
+
+              }} />
+
               <div className="flex justify-end">
                 <Button
-                  onClick={handleSubmitComment}
-                  disabled={!newComment.replace(/<(.|\n)*?>/g, '').trim() || isSubmitting}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {isSubmitting ? 'Enviando...' : (
-                    <>
+                onClick={handleSubmitComment}
+                disabled={!newComment.replace(/<(.|\n)*?>/g, '').trim() || isSubmitting} className="bg-blue-600 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-blue-700">
+
+
+                  {isSubmitting ? 'Enviando...' :
+                <>
                       <Send className="w-4 h-4 mr-2" />
                       Comentar
                     </>
-                  )}
+                }
                 </Button>
               </div>
             </div>
-          )}
+          }
 
           <div className="space-y-4">
-            {comments.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
+            {comments.length === 0 ?
+            <p className="text-gray-500 text-center py-8">
                 Seja o primeiro a comentar esta questão!
-              </p>
-            ) : (
-              comments.map((comment) => {
-                const isOwnComment = currentUser && comment.user_email === currentUser.email;
-                const userHasLiked = comment.liked_by_users?.includes(currentUser?.email) || false;
+              </p> :
 
-                return (
-                  <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
+            comments.map((comment) => {
+              const isOwnComment = currentUser && comment.user_email === currentUser.email;
+              const userHasLiked = comment.liked_by_users?.includes(currentUser?.email) || false;
+
+              return (
+                <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <Avatar className="w-8 h-8">
-                        {comment.user_photo ? (
-                          <AvatarImage src={comment.user_photo} alt={comment.user_name} />
-                        ) : null}
+                        {comment.user_photo ?
+                      <AvatarImage src={comment.user_photo} alt={comment.user_name} /> :
+                      null}
                         <AvatarFallback className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold">
                           {comment.user_name?.charAt(0).toUpperCase() || 'U'}
                         </AvatarFallback>
@@ -275,124 +275,124 @@ export default function CommentSection({ questionId, onCommentChange }) {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-gray-900">
+                          <span className="text-slate-200 font-medium">
                             {comment.user_name}
                           </span>
-                          {comment.user_city && (
-                            <>
+                          {comment.user_city &&
+                        <>
                               <span className="text-gray-400">•</span>
                               <div className="flex items-center gap-1 text-sm text-gray-600">
                                 <MapPin className="w-3 h-3" />
-                                <span>{comment.user_city}</span>
+                                <span className="text-slate-200">{comment.user_city}</span>
                               </div>
                             </>
-                          )}
+                        }
                           <span className="text-gray-400">•</span>
                           <span className="text-sm text-gray-500">
                             {getTimeAgo(comment.created_date)}
                           </span>
 
-                          {isOwnComment && (
-                            <div className="flex items-center gap-1 ml-auto">
-                              {editingComment !== comment.id && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleStartEdit(comment)}
-                                  className="h-6 px-2 text-xs text-gray-500 hover:text-blue-600"
-                                >
+                          {isOwnComment &&
+                        <div className="flex items-center gap-1 ml-auto">
+                              {editingComment !== comment.id &&
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleStartEdit(comment)}
+                            className="h-6 px-2 text-xs text-gray-500 hover:text-blue-600">
+
                                   <Edit3 className="w-3 h-3 mr-1" />
                                   Editar
                                 </Button>
-                              )}
+                          }
                               <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteRequest(comment.id)}
-                                className="h-6 px-2 text-xs text-gray-500 hover:text-red-600"
-                              >
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteRequest(comment.id)}
+                            className="h-6 px-2 text-xs text-gray-500 hover:text-red-600">
+
                                 <Trash2 className="w-3 h-3 mr-1" />
                                 Excluir
                               </Button>
                             </div>
-                          )}
+                        }
                         </div>
 
-                        {editingComment === comment.id ? (
-                          <div className="space-y-2 mb-3">
+                        {editingComment === comment.id ?
+                      <div className="space-y-2 mb-3">
                             <ReactQuill
-                              theme="snow"
-                              value={editText}
-                              onChange={setEditText}
-                              modules={{
-                                toolbar: [
-                                  ['bold', 'italic', 'underline'],
-                                  [{'list': 'ordered'}, {'list': 'bullet'}],
-                                  ['clean']
-                                ],
-                              }}
-                            />
+                          theme="snow"
+                          value={editText}
+                          onChange={setEditText}
+                          modules={{
+                            toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            ['clean']]
+
+                          }} />
+
                             <div className="flex items-center gap-2">
                               <Button
-                                size="sm"
-                                onClick={() => handleSaveEdit(comment.id)}
-                                disabled={!editText.replace(/<(.|\n)*?>/g, '').trim()}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
+                            size="sm"
+                            onClick={() => handleSaveEdit(comment.id)}
+                            disabled={!editText.replace(/<(.|\n)*?>/g, '').trim()}
+                            className="bg-green-600 hover:bg-green-700">
+
                                 <Check className="w-4 h-4 mr-1" />
                                 Salvar
                               </Button>
                               <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={handleCancelEdit}
-                              >
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancelEdit}>
+
                                 <X className="w-4 h-4 mr-1" />
                                 Cancelar
                               </Button>
                             </div>
-                          </div>
-                        ) : (
-                          <div
-                            className="prose prose-sm max-w-none text-gray-800 mb-3 leading-relaxed"
-                            dangerouslySetInnerHTML={{ __html: comment.comment_text }}
-                          />
-                        )}
+                          </div> :
 
-                        {editingComment !== comment.id && (
-                          <div className="flex items-center gap-4 text-sm">
+                      <div
+                        className="prose prose-sm max-w-none text-gray-800 mb-3 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: comment.comment_text }} />
+
+                      }
+
+                        {editingComment !== comment.id &&
+                      <div className="flex items-center gap-4 text-sm">
                             <button
-                              onClick={() => !isOwnComment && handleLike(comment.id)}
-                              className={`flex items-center gap-1 transition-colors ${
-                                isOwnComment
-                                  ? 'text-gray-500 cursor-default'
-                                  : userHasLiked
-                                    ? 'text-blue-600 hover:text-blue-700'
-                                    : 'text-gray-500 hover:text-gray-700'
-                              }`}
-                              disabled={isOwnComment}
-                            >
+                          onClick={() => !isOwnComment && handleLike(comment.id)}
+                          className={`flex items-center gap-1 transition-colors ${
+                          isOwnComment ?
+                          'text-gray-500 cursor-default' :
+                          userHasLiked ?
+                          'text-blue-600 hover:text-blue-700' :
+                          'text-gray-500 hover:text-gray-700'}`
+                          }
+                          disabled={isOwnComment}>
+
                               <ThumbsUp className={`w-4 h-4 ${userHasLiked ? 'fill-current' : ''}`} />
                               Gostei ({comment.likes_count || 0})
                             </button>
 
-                            {!isOwnComment && (
-                              <button
-                                onClick={() => handleReport(comment)}
-                                className="flex items-center gap-1 text-gray-500 hover:text-red-600 transition-colors"
-                              >
+                            {!isOwnComment &&
+                        <button
+                          onClick={() => handleReport(comment)}
+                          className="flex items-center gap-1 text-gray-500 hover:text-red-600 transition-colors">
+
                                 <Flag className="w-4 h-4" />
                                 Reportar abuso
                               </button>
-                            )}
+                        }
                           </div>
-                        )}
+                      }
                       </div>
                     </div>
-                  </div>
-                );
-              })
-            )}
+                  </div>);
+
+            })
+            }
           </div>
         </CardContent>
       </Card>
@@ -402,11 +402,11 @@ export default function CommentSection({ questionId, onCommentChange }) {
         onClose={() => setReportModal({ isOpen: false, comment: null })}
         comment={reportModal.comment}
         currentUser={currentUser}
-        onReportSuccess={handleReportSuccess}
-      />
+        onReportSuccess={handleReportSuccess} />
 
-      {confirmDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+
+      {confirmDeleteModal &&
+      <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-200 dark:border-gray-700 transform transition-all scale-100 opacity-100">
             <div className="text-center">
                 <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/50 mb-4">
@@ -421,22 +421,22 @@ export default function CommentSection({ questionId, onCommentChange }) {
             </div>
             <div className="flex justify-center gap-4 mt-8">
               <Button
-                variant="outline"
-                onClick={() => setConfirmDeleteModal(null)}
-                className="w-full"
-              >
+              variant="outline"
+              onClick={() => setConfirmDeleteModal(null)}
+              className="w-full">
+
                 Cancelar
               </Button>
               <Button
-                onClick={executeDelete}
-                className="bg-red-600 hover:bg-red-700 text-white w-full"
-              >
+              onClick={executeDelete}
+              className="bg-red-600 hover:bg-red-700 text-white w-full">
+
                 Sim, Excluir
               </Button>
             </div>
           </div>
         </div>
-      )}
-    </>
-  );
+      }
+    </>);
+
 }
