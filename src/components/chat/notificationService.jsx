@@ -118,6 +118,12 @@ export const notificationService = {
   // Reproduzir som de notificação
   playNotificationSound() {
     try {
+      if (this._customSoundUrl) {
+        const audio = new Audio(this._customSoundUrl);
+        audio.play().catch(e => console.warn("Erro ao reproduzir som customizado:", e));
+        return;
+      }
+
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
