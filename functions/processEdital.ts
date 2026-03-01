@@ -30,36 +30,44 @@ Deno.serve(async (req) => {
 
     // Extrair texto do PDF usando IA
     const llmPrompt = `
-Analise este edital de concurso público e extraia as informações estruturadas de forma DETALHADA:
+Analise este edital de concurso público e extraia as informações estruturadas de forma DETALHADA e PRECISA:
 
 1. Liste TODAS as disciplinas/matérias mencionadas
-2. Para cada disciplina, liste os tópicos E SUB-TÓPICOS de forma granular e hierárquica
-3. Identifique palavras-chave relevantes para buscar questões
-4. Extraia os REQUISITOS de formação e experiência profissional para o cargo
-5. Identifique as FASES do concurso (provas objetivas, discursivas, TAF, títulos, etc.)
+2. Para cada disciplina, extraia:
+   - O número EXATO de questões (se mencionado no edital)
+   - O peso ou pontuação total da disciplina (se mencionado)
+   - Os tópicos E SUB-TÓPICOS de forma granular e hierárquica
+   - Palavras-chave relevantes para buscar questões
+3. Extraia os REQUISITOS de formação e experiência
+4. Identifique as FASES do concurso
+
+IMPORTANTE: Se o edital especificar o número de questões por disciplina (ex: "10 questões de Português", "5 questões de Matemática"), capture isso com precisão. Se especificar pesos (ex: "Português: peso 3", "Matemática: 40 pontos"), capture também. Esses dados são essenciais para gerar simulados balanceados.
 
 Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
 {
   "disciplinas": [
     {
       "nome": "Nome da Disciplina",
+      "numero_questoes": 10,
+      "peso": 2.0,
+      "pontuacao_total": 20.0,
       "topicos": [
         {
           "nome": "Tópico Principal",
-          "subtopicos": ["Sub-tópico 1", "Sub-tópico 2", ...]
+          "subtopicos": ["Sub-tópico 1", "Sub-tópico 2"]
         }
       ],
-      "palavras_chave": ["palavra1", "palavra2", ...]
+      "palavras_chave": ["palavra1", "palavra2"]
     }
   ],
   "requisitos": {
-    "formacao": "Descrição da formação exigida (ex: Ensino médio completo, Graduação em X, etc.)",
-    "experiencia": "Descrição da experiência exigida (ex: 2 anos na área, não exige experiência, etc.)",
-    "outros": ["Outros requisitos como CNH, registro profissional, etc."]
+    "formacao": "Descrição da formação exigida",
+    "experiencia": "Descrição da experiência exigida",
+    "outros": ["Outros requisitos"]
   },
   "fases": [
     {
-      "nome": "Nome da fase (ex: Prova Objetiva, Prova Discursiva, etc.)",
+      "nome": "Nome da fase",
       "tipo": "objetiva/discursiva/pratica/taf/titulos/investigacao",
       "carater": "eliminatoria/classificatoria/eliminatoria_e_classificatoria",
       "peso": "peso ou pontuação se mencionado"
@@ -72,8 +80,8 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
     "salario": "salário se mencionado",
     "inscricoes": "período de inscrições se mencionado",
     "data_prova": "data da prova se mencionado (formato DD/MM/AAAA)",
-    "tipo_questoes": "tipo das questões: múltipla escolha, certo/errado, misto, ou não especificado",
-    "numero_questoes": "número total de questões da prova se mencionado"
+    "tipo_questoes": "múltipla escolha, certo/errado, misto, ou não especificado",
+    "numero_questoes": 60
   }
 }
 `;
@@ -90,6 +98,9 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
               type: "object",
               properties: {
                 nome: { type: "string" },
+                numero_questoes: { type: "number" },
+                peso: { type: "number" },
+                pontuacao_total: { type: "number" },
                 topicos: {
                   type: "array",
                   items: {
@@ -134,7 +145,7 @@ Formate a resposta EXATAMENTE neste JSON (sem texto adicional):
               inscricoes: { type: "string" },
               data_prova: { type: "string" },
               tipo_questoes: { type: "string" },
-              numero_questoes: { type: "string" }
+              numero_questoes: { type: "number" }
             }
           }
         }
