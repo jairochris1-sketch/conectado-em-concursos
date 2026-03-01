@@ -261,14 +261,14 @@ export default function StudiesPage() {
 
   useEffect(() => {
     loadAllData();
-    
+
     // Check URL parameters for tab
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
     if (tab === 'english') {
+
       // Tab will be handled by Tabs component defaultValue
-    }
-  }, []);
+    }}, []);
 
   useEffect(() => {
     const filterMaterials = () => {
@@ -330,8 +330,8 @@ export default function StudiesPage() {
   };
 
   // Get unique subjects and types from materials
-  const availableSubjects = [...new Set(materials.map(m => m.subject))].filter(Boolean);
-  const availableTypes = [...new Set(materials.map(m => m.type))].filter(Boolean);
+  const availableSubjects = [...new Set(materials.map((m) => m.subject))].filter(Boolean);
+  const availableTypes = [...new Set(materials.map((m) => m.type))].filter(Boolean);
 
   useEffect(() => {
     let filtered = [...articles];
@@ -607,7 +607,7 @@ ${videoNotes}
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="bg-gray-300 p-4 min-h-screen dark:bg-gray-900 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -677,8 +677,8 @@ ${videoNotes}
                     <button
                       onClick={handleNavigateToRoot}
                       className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-                        currentView === 'root' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                      }`}>
+                      currentView === 'root' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
+                      }>
                       <BookOpen className="w-4 h-4" />
                       Todos os Materiais
                     </button>
@@ -688,34 +688,34 @@ ${videoNotes}
                         Disciplinas
                       </p>
                     </div>
-                    {availableSubjects.map((subject) => (
-                      <button
-                        key={subject}
-                        onClick={() => handleNavigateToSubject(subject)}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
-                          selectedSubject === subject ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                        }`}>
+                    {availableSubjects.map((subject) =>
+                    <button
+                      key={subject}
+                      onClick={() => handleNavigateToSubject(subject)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                      selectedSubject === subject ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
+                      }>
                         <FileText className="w-4 h-4" />
                         {subjectNames[subject] || subject}
                       </button>
-                    ))}
+                    )}
 
                     <div className="pt-3 pb-2 px-3">
                       <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Tipos de Material
                       </p>
                     </div>
-                    {availableTypes.map((type) => (
-                      <button
-                        key={type}
-                        onClick={() => handleNavigateToType(type)}
-                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
-                          selectedType === type ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                        }`}>
+                    {availableTypes.map((type) =>
+                    <button
+                      key={type}
+                      onClick={() => handleNavigateToType(type)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                      selectedType === type ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
+                      }>
                         <FileText className="w-4 h-4" />
                         {typeNames[type]}
                       </button>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -727,20 +727,20 @@ ${videoNotes}
                   <CardContent className="p-4">
                     {/* Breadcrumbs */}
                     <div className="flex items-center gap-2 text-sm mb-4">
-                      {navigationPath.map((path, index) => (
-                        <div key={index} className="flex items-center gap-2">
+                      {navigationPath.map((path, index) =>
+                      <div key={index} className="flex items-center gap-2">
                           <button
-                            onClick={() => handleBreadcrumbClick(index)}
-                            className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
-                              index === navigationPath.length - 1 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
-                            }`}>
+                          onClick={() => handleBreadcrumbClick(index)}
+                          className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
+                          index === navigationPath.length - 1 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`
+                          }>
                             {path}
                           </button>
-                          {index < navigationPath.length - 1 && (
-                            <span className="text-gray-400">/</span>
-                          )}
+                          {index < navigationPath.length - 1 &&
+                        <span className="text-gray-400">/</span>
+                        }
                         </div>
-                      ))}
+                      )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -798,12 +798,12 @@ ${videoNotes}
                 </Card>
 
             {/* Root View - Folders */}
-            {currentView === 'root' && !searchTerm && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {currentView === 'root' && !searchTerm &&
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   Disciplinas
                 </h3>
-                {availableSubjects.map((subject) => (
+                {availableSubjects.map((subject) =>
                   <motion.div
                     key={subject}
                     initial={{ opacity: 0, y: 20 }}
@@ -820,17 +820,17 @@ ${videoNotes}
                           {subjectNames[subject]}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter(m => m.subject === subject).length} materiais
+                          {materials.filter((m) => m.subject === subject).length} materiais
                         </p>
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+                  )}
 
                 <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2 mt-6">
                   Tipos de Material
                 </h3>
-                {availableTypes.map((type) => (
+                {availableTypes.map((type) =>
                   <motion.div
                     key={type}
                     initial={{ opacity: 0, y: 20 }}
@@ -847,20 +847,20 @@ ${videoNotes}
                           {typeNames[type]}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter(m => m.type === type).length} materiais
+                          {materials.filter((m) => m.type === type).length} materiais
                         </p>
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+                  )}
               </div>
-            )}
+                }
 
             {/* Materials List - Shown when filtering or in subject/type view */}
-            {(currentView !== 'root' || searchTerm) && (
-              <div>
+            {(currentView !== 'root' || searchTerm) &&
+                <div>
               {filteredMaterials.length === 0 ?
-              <Card className="text-center py-12">
+                  <Card className="text-center py-12">
                   <CardContent className="space-y-4">
                     <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -872,30 +872,30 @@ ${videoNotes}
                   </CardContent>
                 </Card> :
 
-              <div className={
-              materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
-              materialViewMode === 'list' ? 'space-y-4' :
-              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
-              }>
+                  <div className={
+                  materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
+                  materialViewMode === 'list' ? 'space-y-4' :
+                  'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
+                  }>
                   {filteredMaterials.map((material, index) =>
-                <motion.div
-                  key={material.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="min-w-0 overflow-hidden">
+                    <motion.div
+                      key={material.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="min-w-0 overflow-hidden">
 
                       {materialViewMode === 'list' ?
-                  <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
-                  onClick={() => handleMaterialClick(material)}>
+                      <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
+                      onClick={() => handleMaterialClick(material)}>
                           <CardContent className="p-4">
                             <div className="flex items-center gap-4 overflow-hidden">
                               <div className="flex-shrink-0">
                                 {material.file_type === 'pdf' ?
-                          <FileText className="w-12 h-12 text-red-500" /> :
+                              <FileText className="w-12 h-12 text-red-500" /> :
 
-                          <Eye className="w-12 h-12 text-blue-500" />
-                          }
+                              <Eye className="w-12 h-12 text-blue-500" />
+                              }
                               </div>
                               <div className="flex-1 min-w-0 overflow-hidden">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
@@ -915,21 +915,21 @@ ${videoNotes}
                               </div>
                               <div className="flex items-center gap-1 flex-shrink-0">
                                 {isAdmin &&
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => handleDeleteMaterial(e, material.id)}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => handleDeleteMaterial(e, material.id)}>
 
                                     <Trash2 className="w-4 h-4 text-red-500" />
                                   </Button>
-                          }
+                              }
                                 <Button
-                            size="sm"
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleMaterialClick(material);
-                            }}>
+                                size="sm"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMaterialClick(material);
+                                }}>
 
                                   Ver
                                 </Button>
@@ -938,8 +938,8 @@ ${videoNotes}
                           </CardContent>
                         </Card> :
 
-                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
-                  onClick={() => handleMaterialClick(material)}>
+                      <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
+                      onClick={() => handleMaterialClick(material)}>
                           <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
                             <div className="flex justify-between items-start gap-1 min-w-0">
                               <div className="flex-1 min-w-0 overflow-hidden">
@@ -947,17 +947,17 @@ ${videoNotes}
                                   {material.title}
                                 </CardTitle>
                                 {materialViewMode === 'grid' && material.description &&
-                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
+                              <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
                                     {material.description}
                                   </p>
-                          }
+                              }
                               </div>
                               <div className="flex-shrink-0">
                                 {material.file_type === 'pdf' ?
-                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
+                              <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
 
-                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
-                          }
+                              <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
+                              }
                               </div>
                             </div>
                           </CardHeader>
@@ -968,41 +968,41 @@ ${videoNotes}
                                   {typeNames[material.type]}
                                 </Badge>
                                 {materialViewMode !== 'compact' &&
-                                <Badge variant="outline" className="text-xs truncate max-w-full">
+                              <Badge variant="outline" className="text-xs truncate max-w-full">
                                   {subjectNames[material.subject]}
                                 </Badge>
-                                }
+                              }
                               </div>
                               {materialViewMode !== 'compact' &&
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                   <span className="font-medium">
                                     {cargoOptions.find((c) => c.value === material.cargo)?.label}
                                   </span>
                                 </div>
-                        }
+                            }
                               <div className={`flex items-center pt-1 min-w-0 ${materialViewMode === 'compact' ? 'justify-center' : 'justify-between'}`}>
                                 {materialViewMode !== 'compact' &&
-                          <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
+                              <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
                                     {material.file_name}
                                   </span>
-                          }
+                              }
                                 <div className={`flex items-center gap-1 flex-shrink-0 ${materialViewMode === 'compact' ? 'w-full justify-center' : ''}`}>
                                   {isAdmin && materialViewMode !== 'compact' &&
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => handleDeleteMaterial(e, material.id)}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => handleDeleteMaterial(e, material.id)}>
 
                                       <Trash2 className="w-3 h-3 text-red-500" />
                                     </Button>
-                            }
+                                }
                                   <Button
-                              size="sm"
-                              className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleMaterialClick(material);
-                              }}>
+                                  size="sm"
+                                  className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMaterialClick(material);
+                                  }}>
 
                                     <Eye className={`${materialViewMode === 'compact' ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'}`} />
                                     {materialViewMode !== 'compact' && 'Ver'}
@@ -1012,13 +1012,13 @@ ${videoNotes}
                             </div>
                           </CardContent>
                         </Card>
-                  }
+                      }
                     </motion.div>
-                )}
+                    )}
                 </div>
-              }
+                  }
               </div>
-            )}
+                }
               </div>
             </div>
           </TabsContent>
@@ -1838,8 +1838,8 @@ ${videoNotes}
         <EnhancedArticleReader
           article={selectedArticle}
           isOpen={!!selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-        />
+          onClose={() => setSelectedArticle(null)} />
+
       </div>
     </div>);
 
