@@ -22,18 +22,18 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
 
   const loadStatus = async () => {
     const [asSender, asReceiver] = await Promise.all([
-      base44.entities.StudyPartner.filter({ requester_email: currentUser.email, target_email: targetEmail }),
-      base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: currentUser.email }),
-    ]);
+    base44.entities.StudyPartner.filter({ requester_email: currentUser.email, target_email: targetEmail }),
+    base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: currentUser.email })]
+    );
     const all = [...asSender, ...asReceiver];
-    if (all.length === 0) { setStatus("not_connected"); setPartnerId(null); return; }
+    if (all.length === 0) {setStatus("not_connected");setPartnerId(null);return;}
     const record = all[0];
     setPartnerId(record.id);
-    if (record.status === "accepted") setStatus("accepted");
-    else if (record.status === "blocked") setStatus("blocked");
-    else if (record.status === "pending")
-      setStatus(record.requester_email === currentUser.email ? "pending_sent" : "pending_received");
-    else setStatus("not_connected");
+    if (record.status === "accepted") setStatus("accepted");else
+    if (record.status === "blocked") setStatus("blocked");else
+    if (record.status === "pending")
+    setStatus(record.requester_email === currentUser.email ? "pending_sent" : "pending_received");else
+    setStatus("not_connected");
   };
 
   const notify = async (toEmail, title, message) => {
@@ -41,7 +41,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
       user_email: toEmail, title, message, type: "follow",
       action_url: createPageUrl("Community"),
       related_user_name: currentUser.full_name,
-      related_user_photo: currentUser.profile_photo_url || "",
+      related_user_photo: currentUser.profile_photo_url || ""
     });
   };
 
@@ -52,7 +52,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
       requester_email: currentUser.email, requester_name: currentUser.full_name,
       requester_photo: currentUser.profile_photo_url || "",
       target_email: targetEmail, target_name: targetName, target_photo: targetPhoto || "",
-      status: "pending",
+      status: "pending"
     });
     setPartnerId(record.id);
     await notify(targetEmail, "📚 Convite de Parceria de Estudos", `${currentUser.full_name} te convidou para ser parceiro(a) de estudos!`);
@@ -64,7 +64,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     if (!partnerId) return;
     setLoading(true);
     await base44.entities.StudyPartner.delete(partnerId);
-    setStatus("not_connected"); setPartnerId(null);
+    setStatus("not_connected");setPartnerId(null);
     toast.success("Convite cancelado");
     setLoading(false);
   };
@@ -83,7 +83,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     if (!partnerId) return;
     setLoading(true);
     await base44.entities.StudyPartner.delete(partnerId);
-    setStatus("not_connected"); setPartnerId(null);
+    setStatus("not_connected");setPartnerId(null);
     toast.success("Convite recusado");
     setLoading(false);
   };
@@ -98,7 +98,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
         requester_email: currentUser.email, requester_name: currentUser.full_name,
         requester_photo: currentUser.profile_photo_url || "",
         target_email: targetEmail, target_name: targetName, target_photo: targetPhoto || "",
-        status: "blocked",
+        status: "blocked"
       });
       setPartnerId(record.id);
     }
@@ -112,7 +112,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     if (!partnerId) return;
     setLoading(true);
     await base44.entities.StudyPartner.delete(partnerId);
-    setStatus("not_connected"); setPartnerId(null);
+    setStatus("not_connected");setPartnerId(null);
     toast.success("Parceria desfeita");
     setLoading(false);
   };
@@ -126,14 +126,14 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   return (
     <>
       <div className="flex gap-2 flex-wrap items-center">
-        {status === "not_connected" && (
-          <Button size="sm" onClick={sendInvite} disabled={loading} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
+        {status === "not_connected" &&
+        <Button size="sm" onClick={sendInvite} disabled={loading} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
             <BookOpen className="w-3.5 h-3.5" /> Convidar para Estudar
           </Button>
-        )}
+        }
 
-        {status === "pending_sent" && (
-          <>
+        {status === "pending_sent" &&
+        <>
             <span className="flex items-center gap-1 text-xs text-yellow-700 bg-yellow-50 border border-yellow-300 px-2.5 py-1.5 rounded-md font-medium">
               <Clock className="w-3.5 h-3.5" /> Solicitação enviada
             </span>
@@ -141,10 +141,10 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
               <X className="w-3 h-3" /> Cancelar
             </Button>
           </>
-        )}
+        }
 
-        {status === "pending_received" && (
-          <>
+        {status === "pending_received" &&
+        <>
             <Button size="sm" onClick={accept} disabled={loading} className="gap-1 bg-green-600 hover:bg-green-700 text-white text-xs">
               <Check className="w-3.5 h-3.5" /> Aceitar
             </Button>
@@ -155,24 +155,24 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
               <Ban className="w-3.5 h-3.5" /> Bloquear
             </Button>
           </>
-        )}
+        }
 
-        {status === "accepted" && (
-          <>
-            <span className="flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-300 px-2.5 py-1.5 rounded-md font-medium">
-              <Users className="w-3.5 h-3.5" /> Parceiros de Estudo
-            </span>
-            <Button size="sm" onClick={() => setChatOpen(true)} variant="outline" className="gap-1 text-xs text-blue-600 border-blue-300">
+        {status === "accepted" &&
+        <>
+            <span className="bg-blue-600 text-slate-50 px-2.5 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 border border-green-300">Parceiros de Estudo
+
+          </span>
+            <Button size="sm" onClick={() => setChatOpen(true)} variant="outline" className="bg-blue-600 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-blue-300">
               <MessageSquare className="w-3.5 h-3.5" /> Chat
             </Button>
-            <Button size="sm" onClick={undoPartnership} disabled={loading} variant="outline" className="gap-1 text-xs text-red-500 border-red-200">
+            <Button size="sm" onClick={undoPartnership} disabled={loading} variant="outline" className="bg-blue-500 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-red-200">
               <UserMinus className="w-3.5 h-3.5" /> Desfazer
             </Button>
-            <Button size="sm" onClick={block} disabled={loading} variant="outline" className="gap-1 text-xs text-gray-500">
+            <Button size="sm" onClick={block} disabled={loading} variant="outline" className="bg-blue-600 text-gray-100 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1">
               <Ban className="w-3.5 h-3.5" /> Bloquear
             </Button>
           </>
-        )}
+        }
 
         {/* Report button always visible (except self) */}
         <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
@@ -181,17 +181,17 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
       </div>
 
       {/* Chat Dialog */}
-      {status === "accepted" && (
-        <Dialog open={chatOpen} onOpenChange={setChatOpen}>
+      {status === "accepted" &&
+      <Dialog open={chatOpen} onOpenChange={setChatOpen}>
           <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
             <StudyPartnerChat
-              currentUser={currentUser}
-              partner={partner}
-              onClose={() => setChatOpen(false)}
-            />
+            currentUser={currentUser}
+            partner={partner}
+            onClose={() => setChatOpen(false)} />
+
           </DialogContent>
         </Dialog>
-      )}
+      }
 
       {/* Report Modal */}
       <ReportUserModal
@@ -199,8 +199,8 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
         reportedEmail={targetEmail}
         reportedName={targetName}
         open={reportOpen}
-        onClose={() => setReportOpen(false)}
-      />
-    </>
-  );
+        onClose={() => setReportOpen(false)} />
+
+    </>);
+
 }
