@@ -606,6 +606,10 @@ export default function AdminPage() {
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
           </TabsContent>
+
+          <TabsContent value="connections" className="mt-6">
+            <ConnectionsAdmin />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
