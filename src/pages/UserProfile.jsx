@@ -140,11 +140,6 @@ export default function UserProfilePage() {
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
                     />
-                    {partnershipStatus === "accepted" && (
-                      <Button size="sm" onClick={() => setChatOpen(true)} className="bg-blue-600 text-white gap-1">
-                        💬 Enviar Mensagem
-                      </Button>
-                    )}
                   </div>
                 )}
                 {isOwnProfile && (
