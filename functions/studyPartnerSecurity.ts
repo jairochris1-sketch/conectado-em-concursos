@@ -55,31 +55,17 @@ Deno.serve(async (req) => {
       return Response.json({ allowed: false, reason: 'Mensagem inválida.' });
     }
 
-    // Verify accepted partnership exists - check both directions
-    const convKey = [user.email, targetEmail].sort().join('|');
-    const partnerships = await base44.entities.StudyPartner.filter({
-      status: 'accepted'
-    });
+    // Check partnership - single efficient query
+    const partnership = await base44.entities.StudyPartner.filter();
     
-    const hasAcceptedPartnership = partnerships.some(p => 
+    const validPartnership = partnership.find(p => 
       (p.requester_email === user.email && p.target_email === targetEmail) ||
       (p.requester_email === targetEmail && p.target_email === user.email)
     );
     
-    if (!hasAcceptedPartnership) {
+    // Must exist and be accepted
+    if (!validPartnership || validPartnership.status !== 'accepted') {
       return Response.json({ allowed: false, reason: 'Sem parceria aceita para enviar mensagens.' });
-    }
-
-    // Check if blocked
-    const isBlocked = partnerships.some(p =>
-      p.status === 'blocked' && (
-        (p.requester_email === targetEmail && p.target_email === user.email) ||
-        (p.requester_email === user.email && p.target_email === targetEmail)
-      )
-    );
-    
-    if (isBlocked) {
-      return Response.json({ allowed: false, reason: 'Não é possível enviar mensagens para este usuário.' });
     }
 
     return Response.json({ allowed: true });
