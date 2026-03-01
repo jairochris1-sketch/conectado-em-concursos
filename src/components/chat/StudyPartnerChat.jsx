@@ -234,8 +234,12 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   };
 
   const loadPresence = async () => {
-    const records = await base44.entities.UserPresence.filter({ user_email: partner.email });
-    if (records.length > 0) setPartnerPresence(resolvePresence(records[0]));
+    try {
+      const records = await base44.entities.UserPresence.filter({ user_email: partner.email });
+      if (records.length > 0) setPartnerPresence(resolvePresence(records[0]));
+    } catch (error) {
+      console.warn("Failed to load presence:", error);
+    }
   };
 
   const changeMyStatus = async (newStatus) => {
