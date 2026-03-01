@@ -142,7 +142,8 @@ Deno.serve(async (req) => {
       institutions: [...new Set(selectedQuestions.map(q => q.institution).filter(Boolean))],
       question_count: selectedQuestions.length,
       question_ids: selectedQuestions.map(q => q.id),
-      status: 'nao_iniciado'
+      status: 'nao_iniciado',
+      edital_id: edital_id
     });
 
     // Atualizar edital com o ID do simulado
