@@ -47,7 +47,6 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import Calendar from './pages/Calendar';
@@ -103,7 +102,6 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "ActivityFeed": ActivityFeed,
     "Admin": Admin,
     "AssistirAula": AssistirAula,
     "Calendar": Calendar,

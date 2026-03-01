@@ -29,7 +29,8 @@ import {
   MessageSquare,
   Brain,
   Target,
-  HelpCircle } from
+  HelpCircle,
+  Users } from
 "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -61,6 +62,11 @@ const navigationItems = [
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
   icon: Home
+},
+{
+  title: "Pessoas",
+  url: createPageUrl("People"),
+  icon: Users
 },
 {
   title: "Questões",
