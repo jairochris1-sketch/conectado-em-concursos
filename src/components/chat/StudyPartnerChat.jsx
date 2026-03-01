@@ -429,9 +429,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
                   : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm shadow-sm"
               }`}>
                 <p>{msg.content}</p>
-                <p className={`text-xs mt-0.5 ${isMe ? "text-green-100" : "text-gray-400"}`}>
+                <p className={`text-xs mt-0.5 flex items-center gap-1 ${isMe ? "text-green-100" : "text-gray-400"}`}>
                   {new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                  {isMe && msg.is_read && " ✓✓"}
+                  {isMe && (
+                    msg.is_read 
+                      ? <span title="Lido">✓✓</span> 
+                      : <span title="Entregue">✓</span>
+                  )}
                 </p>
               </div>
             </div>
