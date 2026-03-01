@@ -36,10 +36,8 @@ export default function NotificationDropdown() {
         
         // Show a toast for new notifications if it's a chat message
         if (event.data.type === 'chat_message') {
-          import('sonner').then(({ toast }) => {
-            toast.info(event.data.title, {
-              description: event.data.message
-            });
+          toast.info(event.data.title, {
+            description: event.data.message
           });
         }
       } else if (event.type === 'update') {
