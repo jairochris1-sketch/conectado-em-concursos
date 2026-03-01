@@ -65,11 +65,6 @@ const navigationItems = [
   icon: Home
 },
 {
-  title: "Pessoas",
-  url: createPageUrl("People"),
-  icon: Users
-},
-{
   title: "Questões",
   url: createPageUrl("Questions"),
   icon: FileText
@@ -123,6 +118,7 @@ const moreMenuCategories = [
   {
     title: "Comunidade",
     items: [
+      { title: "Pessoas", url: createPageUrl("People"), icon: Users },
       { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare },
       { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen },
     ]
