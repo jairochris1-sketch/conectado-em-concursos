@@ -73,6 +73,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const visibilityUnsubRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const loadingRef = useRef(false);
+  const [connectionId, setConnectionId] = useState(null);
   const convKey = getConversationKey(currentUser.email, partner.email);
 
   // Initialize notifications
