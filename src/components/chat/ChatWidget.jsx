@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { optimizeImageFile, getImageStats } from '@/components/imageOptimizer';
 import { NotificationManager } from '@/components/NotificationManager';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
