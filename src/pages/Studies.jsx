@@ -1763,10 +1763,6 @@ ${videoNotes}
             </Tabs>
           </TabsContent>
         </Tabs>
-              </TabsContent>
-            </Tabs>
-          </div>
-        )}
         
         {/* Viewer Modal */}
         {selectedMaterial &&
