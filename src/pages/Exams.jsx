@@ -159,7 +159,7 @@ export default function Exams() {
   const toggleFavorite = async (e, examId) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     try {
       if (favorites.includes(examId)) {
         const toDelete = await base44.entities.FavoriteExam.filter({ exam_id: examId });
@@ -199,7 +199,7 @@ export default function Exams() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
+      <div className="bg-gray-300 text-stone-200 mx-auto p-4 max-w-7xl md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -215,7 +215,7 @@ export default function Exams() {
 
         {/* Filtros e Busca */}
         <Card className="mb-6 shadow-sm">
-          <CardHeader className="bg-slate-900 p-6 flex flex-col space-y-1.5">
+          <CardHeader className="bg-transparent p-6 flex flex-col space-y-1.5">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
@@ -253,7 +253,7 @@ export default function Exams() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="bg-slate-900 pt-0 p-6">
+          <CardContent className="bg-transparent p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -317,8 +317,8 @@ export default function Exams() {
                   variant={filters.favoritesOnly ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilters((prev) => ({ ...prev, favoritesOnly: !prev.favoritesOnly }))}
-                  className={filters.favoritesOnly ? "bg-amber-500 hover:bg-amber-600 text-white border-none" : "text-gray-600"}
-                >
+                  className={filters.favoritesOnly ? "bg-amber-500 hover:bg-amber-600 text-white border-none" : "text-gray-600"}>
+
                   <Star className={`w-4 h-4 mr-2 ${filters.favoritesOnly ? 'fill-current' : ''}`} />
                   Apenas Favoritos
                 </Button>
@@ -354,7 +354,7 @@ export default function Exams() {
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
-                    <CardHeader className="bg-slate-800 p-6 flex flex-col space-y-1.5">
+                    <CardHeader className="bg-transparent p-6 flex flex-col space-y-1.5">
                       <div className="flex items-start gap-3">
                         {exam.cover_image &&
                     <img
@@ -363,18 +363,18 @@ export default function Exams() {
                       className="w-12 h-12 object-contain flex-shrink-0 rounded" />
 
                     }
-                        <CardTitle className="text-base text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
+                        <CardTitle className="text-lime-500 text-base font-semibold tracking-tight dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </CardTitle>
-                        <button 
-                          onClick={(e) => toggleFavorite(e, exam.id)}
-                          className="text-gray-400 hover:text-amber-500 transition-colors shrink-0"
-                        >
+                        <button
+                      onClick={(e) => toggleFavorite(e, exam.id)}
+                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
+
                           <Star className={`w-5 h-5 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
                         </button>
                       </div>
                     </CardHeader>
-                    <CardContent className="bg-slate-800 p-6 space-y-2">
+                    <CardContent className="bg-transparent p-6 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Building className="w-4 h-4 flex-shrink-0" />
                         <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
@@ -397,7 +397,7 @@ export default function Exams() {
                   </Card> :
               viewMode === 'list' ?
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
-                    <CardContent className="bg-slate-800 p-4 flex items-center justify-between gap-3">
+                    <CardContent className="bg-transparent p-4 flex items-center justify-between gap-3">
                       {exam.cover_image &&
                   <img
                     src={exam.cover_image}
@@ -429,10 +429,10 @@ export default function Exams() {
                         </div>
                       </div>
                       <div className="flex flex-col items-center gap-2">
-                        <button 
-                          onClick={(e) => toggleFavorite(e, exam.id)}
-                          className="text-gray-400 hover:text-amber-500 transition-colors shrink-0"
-                        >
+                        <button
+                      onClick={(e) => toggleFavorite(e, exam.id)}
+                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
+
                           <Star className={`w-5 h-5 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
                         </button>
                         <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
@@ -453,10 +453,10 @@ export default function Exams() {
                         <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </p>
-                        <button 
-                          onClick={(e) => toggleFavorite(e, exam.id)}
-                          className="text-gray-400 hover:text-amber-500 transition-colors shrink-0"
-                        >
+                        <button
+                      onClick={(e) => toggleFavorite(e, exam.id)}
+                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
+
                           <Star className={`w-4 h-4 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
                         </button>
                       </div>
@@ -490,27 +490,27 @@ export default function Exams() {
           </div>
         }
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8 gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
+        {totalPages > 1 &&
+        <div className="flex justify-center mt-8 gap-2">
+            <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}>
+
               Anterior
             </Button>
             <span className="flex items-center px-4 text-sm font-medium text-gray-600 dark:text-gray-400">
               Página {currentPage} de {totalPages}
             </span>
-            <Button 
-              variant="outline" 
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
+            <Button
+            variant="outline"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}>
+
               Próxima
             </Button>
           </div>
-        )}
+        }
       </div>
     </div>);
 
