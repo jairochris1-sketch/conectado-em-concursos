@@ -75,6 +75,11 @@ const navigationItems = [
   icon: BookCopy
 },
 {
+  title: "Simulado por Edital",
+  url: createPageUrl("EditalSimulator"),
+  icon: Target
+},
+{
   title: "Resumos",
   url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
   icon: BookOpenIcon
