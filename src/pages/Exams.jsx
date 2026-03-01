@@ -67,7 +67,7 @@ export default function Exams() {
   const [searchTerm, setSearchTerm] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 50;
   const [filters, setFilters] = useState({
     institution: "all",
     year: "all",
