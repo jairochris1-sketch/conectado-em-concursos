@@ -138,19 +138,9 @@ const moreMenuItems = [
   icon: BookOpen
 },
 {
-  title: "Favoritas",
-  url: createPageUrl("FavoriteQuestions"),
-  icon: Star
-},
-{
   title: "Relatórios",
   url: createPageUrl("PerformanceReports"),
   icon: BarChart3
-},
-{
-  title: "ChatGPT",
-  url: createPageUrl("ChatGPT"),
-  icon: Bot
 },
 {
   title: "Cronograma de Estudos",
@@ -166,11 +156,6 @@ const moreMenuItems = [
   title: "Ranking de Usuários",
   url: createPageUrl("Ranking"),
   icon: Trophy
-},
-{
-  title: "Lousa Digital",
-  url: createPageUrl("DigitalWhiteboard"),
-  icon: Pencil
 },
 {
   title: "Minhas Anotações",
