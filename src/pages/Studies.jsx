@@ -723,7 +723,7 @@ ${videoNotes}
                           placeholder="Filtrar por disciplina ou professor(a)" 
                           value={forumSearch}
                           onChange={(e) => setForumSearch(e.target.value)}
-                          className="pl-9 h-9 w-full sm:w-[300px] bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-1"
+                          className="pl-9 h-9 w-full sm:w-[300px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-1"
                         />
                       </div>
                       <Button className="h-9 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 shrink-0">
