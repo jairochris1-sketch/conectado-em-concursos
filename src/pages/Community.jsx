@@ -168,9 +168,21 @@ export default function CommunityPage() {
     setReplies(postReplies);
   };
 
+  const canMessage = (targetEmail) => {
+    if (!user) return false;
+    if (targetEmail === user.email) return true;
+    if (isAdmin(user)) return true;
+    return connections.includes(targetEmail);
+  };
+
   const handleReply = async () => {
     if (!replyContent.trim()) {
       toast.error("Digite uma resposta");
+      return;
+    }
+
+    if (!canMessage(selectedPost.author_email)) {
+      toast.error("Você precisa estar conectado ao autor para responder neste post.");
       return;
     }
 
