@@ -455,9 +455,14 @@ export default function EditalSimulator() {
                     {edital.processing_status === 'failed' && (
                       <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-start gap-2">
                         <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-red-800 dark:text-red-300">
-                          Falha no processamento. Verifique se o arquivo é um edital válido e tente novamente.
-                        </p>
+                        <div>
+                          <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                            Falha no processamento {edital.retry_count > 1 ? `(tentativa ${edital.retry_count})` : ''}
+                          </p>
+                          <p className="text-sm text-red-700 dark:text-red-400 mt-0.5">
+                            {edital.error_message || 'Verifique se o arquivo é um edital válido com conteúdo programático e tente novamente.'}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </CardContent>
