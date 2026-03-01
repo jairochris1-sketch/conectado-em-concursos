@@ -135,11 +135,12 @@ export default function StudiesPage() {
     return localStorage.getItem('materialViewMode') || 'grid';
   });
 
-  // New Windows 11 Explorer-style navigation
+  // New Layered Navigation
   const [navigationPath, setNavigationPath] = useState(['Área de Estudos']);
-  const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
+  const [currentView, setCurrentView] = useState('subjects'); // 'subjects', 'types', 'content'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
+  const [selectedTypeLabel, setSelectedTypeLabel] = useState(null);
 
   // State for Flashcards
   const [flashcards, setFlashcards] = useState([]);
@@ -282,7 +283,7 @@ export default function StudiesPage() {
         filtered = filtered.filter((material) => material.subject === selectedSubject);
       }
 
-      if (selectedType) {
+      if (selectedType && selectedType !== 'articles' && selectedType !== 'videos' && selectedType !== 'flashcards') {
         filtered = filtered.filter((material) => material.type === selectedType);
       }
 
@@ -305,38 +306,102 @@ export default function StudiesPage() {
   const handleNavigateToSubject = (subject) => {
     setSelectedSubject(subject);
     setSelectedType(null);
-    setCurrentView('subject');
-    setNavigationPath(['Área de Estudos', subjectNames[subject]]);
+    setSelectedTypeLabel(null);
+    setCurrentView('types');
+    setNavigationPath(['Área de Estudos', subjectNames[subject] || subject]);
   };
 
-  const handleNavigateToType = (type) => {
-    setSelectedType(type);
-    setSelectedSubject(null);
-    setCurrentView('type');
-    setNavigationPath(['Área de Estudos', typeNames[type]]);
+  const handleNavigateToType = (typeId, typeLabel) => {
+    setSelectedType(typeId);
+    setSelectedTypeLabel(typeLabel);
+    setCurrentView('content');
+    setNavigationPath(['Área de Estudos', subjectNames[selectedSubject] || selectedSubject, typeLabel]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
-    setCurrentView('root');
+    setSelectedTypeLabel(null);
+    setCurrentView('subjects');
     setNavigationPath(['Área de Estudos']);
   };
 
   const handleBreadcrumbClick = (index) => {
     if (index === 0) {
       handleNavigateToRoot();
+    } else if (index === 1) {
+      setSelectedType(null);
+      setSelectedTypeLabel(null);
+      setCurrentView('types');
+      setNavigationPath(['Área de Estudos', subjectNames[selectedSubject] || selectedSubject]);
     }
   };
 
-  // Get unique subjects and types from materials
-  const availableSubjects = [...new Set(materials.map((m) => m.subject))].filter(Boolean);
-  const availableTypes = [...new Set(materials.map((m) => m.type))].filter(Boolean);
+  const allSubjects = [
+    ...materials.map(m => m.subject),
+    ...articles.map(a => a.subject),
+    ...videos.map(v => v.subject),
+    ...flashcards.map(f => f.subject)
+  ].filter(Boolean);
+  const availableSubjects = [...new Set(allSubjects)];
+
+  const getAvailableTypesForSubject = (subject) => {
+    const types = [];
+    const subjectMaterials = materials.filter(m => m.subject === subject);
+    const materialTypes = [...new Set(subjectMaterials.map(m => m.type))].filter(Boolean);
+    
+    materialTypes.forEach(type => {
+      types.push({
+        id: type,
+        label: typeNames[type] || type,
+        count: subjectMaterials.filter(m => m.type === type).length,
+        icon: FileText,
+        color: 'from-blue-400 to-blue-500'
+      });
+    });
+
+    const subjectArticles = articles.filter(a => a.subject === subject);
+    if (subjectArticles.length > 0) {
+      types.push({
+        id: 'articles',
+        label: 'Artigos',
+        count: subjectArticles.length,
+        icon: BookOpen,
+        color: 'from-indigo-400 to-indigo-500'
+      });
+    }
+
+    const subjectVideos = videos.filter(v => v.subject === subject);
+    if (subjectVideos.length > 0) {
+      types.push({
+        id: 'videos',
+        label: 'Vídeo-Aulas',
+        count: subjectVideos.length,
+        icon: Play,
+        color: 'from-red-400 to-red-500'
+      });
+    }
+
+    const subjectFlashcards = flashcards.filter(f => f.subject === subject);
+    if (subjectFlashcards.length > 0) {
+      types.push({
+        id: 'flashcards',
+        label: 'Flashcards',
+        count: subjectFlashcards.length,
+        icon: Brain,
+        color: 'from-pink-400 to-pink-500'
+      });
+    }
+
+    return types;
+  };
 
   useEffect(() => {
     let filtered = [...articles];
 
-    if (selectedArticleSubject !== 'all') {
+    if (selectedSubject) {
+      filtered = filtered.filter((article) => article.subject === selectedSubject);
+    } else if (selectedArticleSubject !== 'all') {
       filtered = filtered.filter((article) => article.subject === selectedArticleSubject);
     }
 
@@ -357,7 +422,9 @@ export default function StudiesPage() {
   useEffect(() => {
     let filtered = [...videos];
 
-    if (selectedVideoSubject !== 'all') {
+    if (selectedSubject) {
+      filtered = filtered.filter((video) => video.subject === selectedSubject);
+    } else if (selectedVideoSubject !== 'all') {
       filtered = filtered.filter((video) => video.subject === selectedVideoSubject);
     }
 
@@ -633,116 +700,98 @@ ${videoNotes}
           }
         </motion.div>
 
-        <Tabs defaultValue="materials" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="materials" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Materiais
-            </TabsTrigger>
-            <TabsTrigger value="articles" className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Artigos
-            </TabsTrigger>
-            <TabsTrigger value="videos" className="flex items-center gap-2">
-              <Play className="w-4 h-4" />
-              Vídeo-Aulas
-            </TabsTrigger>
-            <TabsTrigger value="flashcards" className="flex items-center gap-2">
-              <Brain className="w-4 h-4" />
-              Flashcards
-            </TabsTrigger>
-          </TabsList>
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-sm">
+              {navigationPath.map((path, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleBreadcrumbClick(index)}
+                    className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
+                      index === navigationPath.length - 1 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    {path}
+                  </button>
+                  {index < navigationPath.length - 1 && <span className="text-gray-400">/</span>}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="materials" className="mt-6">
-            {/* Uploader - apenas para admin */}
-            {showUploader && isAdmin &&
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8">
-
-                <StudyMaterialUploader
-                onMaterialUploaded={loadAllData}
-                onCancel={() => setShowUploader(false)} />
-
+        {currentView === 'subjects' && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {availableSubjects.map((subject) => (
+              <motion.div
+                key={subject}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.05 }}
+                className="cursor-pointer"
+                onClick={() => handleNavigateToSubject(subject)}
+              >
+                <Card className="hover:shadow-lg transition-shadow h-full">
+                  <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                      <BookOpen className="w-8 h-8 text-white" />
+                    </div>
+                    <p className="text-base font-bold text-gray-900 dark:text-white line-clamp-2">
+                      {subjectNames[subject] || subject}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
-            }
+            ))}
+          </div>
+        )}
 
-            {/* Windows 11 Explorer Style */}
-            <div className="flex flex-col lg:flex-row gap-4 mb-6">
-              {/* Sidebar - Estilo Windows 11 */}
-              <Card className="lg:w-64 flex-shrink-0">
-                <CardContent className="p-4">
-                  <div className="space-y-1">
-                    <button
-                      onClick={handleNavigateToRoot}
-                      className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
-                      currentView === 'root' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
-                      }>
-                      <BookOpen className="w-4 h-4" />
-                      Todos os Materiais
-                    </button>
-
-                    <div className="pt-3 pb-2 px-3">
-                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Disciplinas
-                      </p>
+        {currentView === 'types' && selectedSubject && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {getAvailableTypesForSubject(selectedSubject).map((type) => (
+              <motion.div
+                key={type.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.05 }}
+                className="cursor-pointer"
+                onClick={() => handleNavigateToType(type.id, type.label)}
+              >
+                <Card className="hover:shadow-lg transition-shadow h-full">
+                  <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${type.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                      <type.icon className="w-8 h-8 text-white" />
                     </div>
-                    {availableSubjects.map((subject) =>
-                    <button
-                      key={subject}
-                      onClick={() => handleNavigateToSubject(subject)}
-                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
-                      selectedSubject === subject ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
-                      }>
-                        <FileText className="w-4 h-4" />
-                        {subjectNames[subject] || subject}
-                      </button>
-                    )}
+                    <p className="text-base font-bold text-gray-900 dark:text-white line-clamp-2">
+                      {type.label}
+                    </p>
+                    <Badge variant="secondary" className="mt-2">
+                      {type.count} {type.count === 1 ? 'item' : 'itens'}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
-                    <div className="pt-3 pb-2 px-3">
-                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Tipos de Material
-                      </p>
-                    </div>
-                    {availableTypes.map((type) =>
-                    <button
-                      key={type}
-                      onClick={() => handleNavigateToType(type)}
-                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
-                      selectedType === type ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`
-                      }>
-                        <FileText className="w-4 h-4" />
-                        {typeNames[type]}
-                      </button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Main Content Area */}
-              <div className="flex-1">
-                {/* Top Bar com Breadcrumbs e Controles */}
+        {currentView === 'content' && selectedType && (
+          <div className="w-full">
+            {selectedType !== 'articles' && selectedType !== 'videos' && selectedType !== 'flashcards' && (
+              <>
+                {showUploader && isAdmin &&
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-8">
+                    <StudyMaterialUploader
+                    onMaterialUploaded={loadAllData}
+                    onCancel={() => setShowUploader(false)} />
+                  </motion.div>
+                }
+                
                 <Card className="mb-4">
                   <CardContent className="p-4">
-                    {/* Breadcrumbs */}
-                    <div className="flex items-center gap-2 text-sm mb-4">
-                      {navigationPath.map((path, index) =>
-                      <div key={index} className="flex items-center gap-2">
-                          <button
-                          onClick={() => handleBreadcrumbClick(index)}
-                          className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
-                          index === navigationPath.length - 1 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`
-                          }>
-                            {path}
-                          </button>
-                          {index < navigationPath.length - 1 &&
-                        <span className="text-gray-400">/</span>
-                        }
-                        </div>
-                      )}
-                    </div>
-
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       {/* Search Bar */}
                       <div className="relative flex-1 w-full sm:w-auto">
@@ -797,67 +846,7 @@ ${videoNotes}
                   </CardContent>
                 </Card>
 
-            {/* Root View - Folders */}
-            {currentView === 'root' && !searchTerm &&
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Disciplinas
-                </h3>
-                {availableSubjects.map((subject) =>
-                  <motion.div
-                    key={subject}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="cursor-pointer"
-                    onClick={() => handleNavigateToSubject(subject)}>
-                    <Card className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
-                          <FileText className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
-                          {subjectNames[subject]}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter((m) => m.subject === subject).length} materiais
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                  )}
-
-                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2 mt-6">
-                  Tipos de Material
-                </h3>
-                {availableTypes.map((type) =>
-                  <motion.div
-                    key={type}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="cursor-pointer"
-                    onClick={() => handleNavigateToType(type)}>
-                    <Card className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center shadow-md">
-                          <FileText className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
-                          {typeNames[type]}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter((m) => m.type === type).length} materiais
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                  )}
-              </div>
-                }
-
-            {/* Materials List - Shown when filtering or in subject/type view */}
-            {(currentView !== 'root' || searchTerm) &&
+            {/* Materials List */}
                 <div>
               {filteredMaterials.length === 0 ?
                   <Card className="text-center py-12">
@@ -1017,13 +1006,11 @@ ${videoNotes}
                     )}
                 </div>
                   }
-              </div>
-                }
-              </div>
-            </div>
-          </TabsContent>
+                </div>
+              </>
+            )}
 
-          <TabsContent value="articles" className="mt-6">
+            {selectedType === 'articles' && (
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
@@ -1057,21 +1044,6 @@ ${videoNotes}
               </div>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
-                <Select value={selectedArticleSubject} onValueChange={(value) => {
-                  setSelectedArticleSubject(value);
-                  setCurrentArticlePage(1);
-                }}>
-                  <SelectTrigger className="w-full md:w-64">
-                    <SelectValue placeholder="Filtrar por disciplina" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as Disciplinas</SelectItem>
-                    {Object.entries(subjectNames).map(([key, label]) =>
-                    <SelectItem key={key} value={key}>{label}</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                
                 <div className="relative flex-1 w-full">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
@@ -1286,28 +1258,13 @@ ${videoNotes}
                 </div>
               </>
             }
-          </TabsContent>
+            )}
 
-          <TabsContent value="videos" className="mt-6">
+            {selectedType === 'videos' && (
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vídeo-Aulas</h2>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
-                <Select value={selectedVideoSubject} onValueChange={(value) => {
-                  setSelectedVideoSubject(value);
-                  setCurrentVideoPage(1); // Reset page on filter change
-                }}>
-                  <SelectTrigger className="w-full md:w-64">
-                    <SelectValue placeholder="Filtrar por disciplina" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as Disciplinas</SelectItem>
-                    {Object.entries(subjectNames).map(([key, label]) =>
-                    <SelectItem key={key} value={key}>{label}</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                
                 <div className="relative flex-1 w-full">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
@@ -1536,9 +1493,10 @@ ${videoNotes}
                 </div>
               </>
             }
-          </TabsContent>
+            )}
 
-          <TabsContent value="flashcards" className="mt-6">
+            {selectedType === 'flashcards' && (
+            <div className="mt-6">
               {/* Cards de estatísticas */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
               <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
@@ -1632,8 +1590,10 @@ ${videoNotes}
 
               </TabsContent>
             </Tabs>
-          </TabsContent>
-        </Tabs>
+            </div>
+            )}
+          </div>
+        )}
         
         {/* Viewer Modal */}
         {selectedMaterial &&
