@@ -341,6 +341,19 @@ export default function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
+                        <div ref={messagesStartRef} />
+                        
+                        {messages.length === messagesOffset && messages.length > 0 && (
+                          <div className="flex justify-center my-2">
+                            <button
+                              onClick={loadMoreMessages}
+                              disabled={isLoadingMore || messages.length === 0}
+                              className="text-xs text-blue-600 hover:text-blue-700 disabled:text-gray-400 font-medium px-3 py-1 rounded hover:bg-blue-50 transition-colors">
+                              {isLoadingMore ? '⏳ Carregando...' : '📜 Carregar mensagens antigas'}
+                            </button>
+                          </div>
+                        )}
+
                         {hasUserInfo && (
                           <div className="text-center text-blue-600 text-sm font-semibold mt-4 mb-4">
                             👋 Olá, Sr(a) {visitorName}!
