@@ -71,7 +71,7 @@ export default function Pagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 border-0">
+    <div className="bg-slate-300 p-4 rounded-xl shadow-lg md:p-6 border-0">
       <div className="flex flex-col gap-4">
         {/* Info dos itens */}
         <div className="text-sm text-gray-700 text-center md:text-left">
