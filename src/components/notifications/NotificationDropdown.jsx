@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, CheckCheck, MessageSquare, Heart, UserPlus, Activity, Target, CalendarClock, BookOpenCheck, PlayCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
