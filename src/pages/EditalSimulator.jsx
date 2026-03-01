@@ -534,6 +534,17 @@ export default function EditalSimulator() {
           )}
         </div>
       </div>
+
+      {/* Advanced Simulation Modal */}
+      {advancedModalEdital && (
+        <AdvancedSimulationModal
+          isOpen={!!advancedModalEdital}
+          onClose={() => setAdvancedModalEdital(null)}
+          edital={advancedModalEdital}
+          onGenerate={generateSimulationAdvanced}
+          isGenerating={generatingSimId === advancedModalEdital?.id}
+        />
+      )}
     </div>
   );
 }
