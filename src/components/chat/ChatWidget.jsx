@@ -137,8 +137,17 @@ export default function ChatWidget() {
           });
         }
 
-        // Abrir chat automaticamente quando suporte responder
-        setIsOpen(true);
+        // Buscar a mensagem original para obter o visitante
+        base44.entities.ChatMessage.list(50).then((allMessages) => {
+          const originalMessage = allMessages.find(m => m.id === event.data.message_id);
+          if (originalMessage && originalMessage.visitor_name) {
+            setVisitorName(originalMessage.visitor_name);
+            setHasUserInfo(true);
+          }
+          setIsOpen(true);
+        }).catch(() => {
+          setIsOpen(true);
+        });
       }
     });
 
