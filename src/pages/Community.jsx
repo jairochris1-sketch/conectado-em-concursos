@@ -472,8 +472,8 @@ export default function CommunityPage() {
                             <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <Link
-                                to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
-                                className="font-semibold hover:underline text-blue-600 ml-1">
+                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                          className="font-semibold hover:underline text-blue-600 ml-1">
 
                                 {selectedPost.author_name}
                               </Link>
@@ -679,7 +679,7 @@ export default function CommunityPage() {
           </div>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="bg-blue-600 text-slate-200 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9">
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Discussão
               </Button>
@@ -771,14 +771,14 @@ export default function CommunityPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {post.is_pinned && <Pin className="w-4 h-4 text-yellow-600" />}
-                          <h3 className="font-semibold text-lg">{post.title}</h3>
+                          <h3 className="text-slate-300 text-lg font-semibold">{post.title}</h3>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                        <p className="text-slate-300 mb-2 text-sm dark:text-gray-400 line-clamp-2">
                           {post.content}
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Badge>{categories.find((s) => s.value === post.subject)?.label}</Badge>
+                        <Badge className="bg-blue-600 text-slate-200 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
