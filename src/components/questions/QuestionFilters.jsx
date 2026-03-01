@@ -473,7 +473,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
       <Card className="shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
         <CardContent className="bg-slate-300 text-slate-300 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-blue-900 text-lg font-semibold dark:text-white">Filtros de Questões</h2>
+            <h2 className="text-gray-900 text-lg font-semibold dark:text-white">Filtros de Questões</h2>
             {getAllSelectedCount() > 0 &&
             <Badge variant="secondary" className="text-white dark:text-white" style={{ backgroundColor: 'var(--primary-color)' }}>
                 {getAllSelectedCount()} filtros ativos
@@ -483,7 +483,7 @@ export default function QuestionFilters({ onFilterSubmit }) {
 
           {/* Palavra-chave */}
           <div className="mb-6">
-            <label className="text-blue-900 mb-2 text-sm font-medium dark:text-gray-300 block">Pesquisar por palavra-chave
+            <label className="text-gray-900 mb-2 text-sm font-medium dark:text-gray-300 block">Pesquisar por palavra-chave
 
             </label>
             <div className="relative">
