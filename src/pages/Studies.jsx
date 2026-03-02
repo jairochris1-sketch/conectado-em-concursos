@@ -702,11 +702,7 @@ ${videoNotes}
               </TabsContent>
 
               <TabsContent value="cronograma" className="p-6 min-h-[400px]">
-                <div className="bg-gray-50 dark:bg-gray-800/50 p-8 rounded-xl border border-gray-200 dark:border-gray-700 text-center flex flex-col items-center justify-center h-64">
-                   <Timer className="w-12 h-12 text-gray-400 mb-4" />
-                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Cronograma</h3>
-                   <p className="text-gray-500 dark:text-gray-400 max-w-md">O cronograma focado neste curso será disponibilizado em breve.</p>
-                </div>
+                <ScheduleAIGenerator course={selectedCourse} />
               </TabsContent>
 
               <TabsContent value="forum" className="mt-0 min-h-[500px]">
