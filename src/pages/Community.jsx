@@ -561,7 +561,7 @@ export default function CommunityPage({ embedded = false }) {
                             {selectedPost.is_pinned ? "Desfixar" : "Fixar"}
                           </DropdownMenuItem>
                         )}
-                        {selectedPost.author_email === user.email && (
+                        {user && selectedPost.author_email === user.email && (
                           <>
                             <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
                               <Edit2 className="w-4 h-4 mr-2" />
