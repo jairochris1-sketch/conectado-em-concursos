@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 
-export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
+export default function FollowButton({ targetEmail, targetId, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
   const [user, setUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followId, setFollowId] = useState(null);
