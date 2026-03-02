@@ -290,7 +290,7 @@ export default function UserProfilePage() {
         )}
 
         {/* Disciplinas preferidas - only for partners/self */}
-        {canSeeDetails && profileUser.preferred_subjects?.length > 0 && (
+        {canSeeDetails && Array.isArray(profileUser.preferred_subjects) && profileUser.preferred_subjects.length > 0 && (
           <Card className="mb-5">
             <CardContent className="p-5">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Preferidas</h2>
