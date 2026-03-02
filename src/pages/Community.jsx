@@ -668,15 +668,17 @@ export default function CommunityPage({ embedded = false }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className={embedded ? "w-full" : "min-h-screen bg-gray-50 dark:bg-gray-900 p-6"}>
       <div className="max-w-6xl mx-auto">
-        <StudyPartnerRequests currentUser={user} />
+        {!embedded && <StudyPartnerRequests currentUser={user} />}
 
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
-            <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
-          </div>
+        <div className={`flex items-center justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
+          {!embedded && (
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
+              <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
+            </div>
+          )}
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button className="bg-blue-600 text-slate-200 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9">
