@@ -60,6 +60,8 @@ export default function CommunityPage({ embedded = false }) {
   });
 
   const [replyContent, setReplyContent] = useState("");
+  
+  const isAdmin = user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com');
 
   useEffect(() => {
     loadData();
