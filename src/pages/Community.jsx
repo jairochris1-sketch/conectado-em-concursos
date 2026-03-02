@@ -547,7 +547,7 @@ export default function CommunityPage({ embedded = false }) {
                 <div className="flex gap-2 items-center">
                   <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
-                  {(selectedPost.author_email === user.email || isAdmin) &&
+                  {(selectedPost.author_email === user?.email || isAdmin) &&
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
