@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Check, X, Users, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { createPageUrl } from "@/utils";
+import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function StudyPartnerRequests({ currentUser }) {
   const navigate = useNavigate();
@@ -34,14 +35,14 @@ export default function StudyPartnerRequests({ currentUser }) {
       title: "✅ Parceria aceita!",
       message: `${currentUser.full_name} aceitou seu convite de Parceria de Estudos!`,
       type: "follow",
-      action_url: createPageUrl("UserProfile") + `?u=${btoa(currentUser.email)}&openChat=true`,
+      action_url: createPageUrl("UserProfile") + `?u=${encryptEmail(currentUser.email)}&openChat=true`,
       related_user_name: currentUser.full_name,
       related_user_photo: currentUser.profile_photo_url || "",
     });
     toast.success(`Parceria com ${record.requester_name} aceita!`);
     setRequests(prev => prev.filter(r => r.id !== record.id));
     setLoading(prev => ({ ...prev, [record.id]: false }));
-    navigate(createPageUrl("UserProfile") + `?u=${btoa(record.requester_email)}&openChat=true`);
+    navigate(createPageUrl("UserProfile") + `?u=${encryptEmail(record.requester_email)}&openChat=true`);
   };
 
   const decline = async (record) => {

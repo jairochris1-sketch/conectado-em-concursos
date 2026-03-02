@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag } from "lucide-react";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
+import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin }) {
   const [status, setStatus] = useState("loading");
@@ -42,7 +43,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
         title, 
         message, 
         type,
-        actionUrl: createPageUrl("UserProfile") + "?u=" + btoa(currentUser.email),
+        actionUrl: createPageUrl("UserProfile") + "?u=" + encryptEmail(currentUser.email),
         relatedUserName: currentUser.full_name,
         relatedUserPhoto: currentUser.profile_photo_url || ""
       });
