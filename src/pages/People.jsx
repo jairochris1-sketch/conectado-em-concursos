@@ -64,7 +64,7 @@ export default function PeoplePage() {
             {filteredUsers.map(person => (
               <Card key={person.email} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-5 flex flex-col items-center text-center">
-                  <Link to={`${createPageUrl('UserProfile')}?email=${encodeURIComponent(person.email)}`} className="mb-3">
+                  <Link to={`${createPageUrl('UserProfile')}?u=${btoa(person.email)}`} className="mb-3">
                     <Avatar className="w-20 h-20 border-2 border-gray-100">
                       <AvatarImage src={person.photo} />
                       <AvatarFallback>{person.name?.charAt(0)}</AvatarFallback>
