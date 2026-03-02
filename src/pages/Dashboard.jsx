@@ -21,6 +21,7 @@ import StatsCards from "../components/dashboard/StatsCards";
 import PerformanceChart from "../components/dashboard/PerformanceChart";
 import SubjectBreakdown from "../components/dashboard/SubjectBreakdown";
 import StudySuggestions from "../components/dashboard/StudySuggestions";
+import SmartRecommendations from "../components/dashboard/SmartRecommendations";
 import AppearanceSettings from "../components/dashboard/AppearanceSettings"; // Importar o novo componente
 
 // Array com as frases motivacionais
