@@ -13,6 +13,7 @@ import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import { StaffBadge } from "@/components/ui/staff-badge";
+import { decryptEmail } from "@/components/security/emailCrypto";
 
 const subjectLabels = {
   portugues: "Português", matematica: "Matemática",
@@ -31,7 +32,7 @@ export default function UserProfilePage() {
   let urlEmail = urlParams.get("email");
   const encodedEmail = urlParams.get("u");
   if (encodedEmail && !urlEmail) {
-    try { urlEmail = atob(encodedEmail); } catch(e) {}
+    try { urlEmail = decryptEmail(encodedEmail); } catch(e) {}
   }
 
   const [currentUser, setCurrentUser] = useState(null);
