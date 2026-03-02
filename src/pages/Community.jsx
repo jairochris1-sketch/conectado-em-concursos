@@ -422,7 +422,7 @@ export default function CommunityPage({ embedded = false }) {
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
                 <Link
-                to={createPageUrl("UserProfile") + `?u=${btoa(reply.author_email)}`}
+                to={createPageUrl("UserProfile") + `?u=${btoa(reply.author_email || '')}`}
                 className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
 
                   {reply.author_name}
