@@ -431,7 +431,7 @@ export default function CommunityPage({ embedded = false }) {
                 {reply.is_best_answer &&
               <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
               }
-                {reply.author_email === user.email &&
+                {(reply.author_email === user?.email || selectedPost?.author_email === user?.email) &&
               <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
@@ -439,12 +439,22 @@ export default function CommunityPage({ embedded = false }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => setEditingReply(reply)}>
-                        <Edit2 className="w-3 h-3 mr-2" /> Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
-                        <Trash2 className="w-3 h-3 mr-2" /> Excluir
-                      </DropdownMenuItem>
+                      {selectedPost?.author_email === user?.email && (
+                        <DropdownMenuItem onClick={() => handleMarkBestAnswer(reply)}>
+                          <CheckCircle className="w-3 h-3 mr-2 text-green-600" />
+                          {reply.is_best_answer ? "Remover Melhor Resposta" : "Marcar como Melhor Resposta"}
+                        </DropdownMenuItem>
+                      )}
+                      {reply.author_email === user?.email && (
+                        <>
+                          <DropdownMenuItem onClick={() => setEditingReply(reply)}>
+                            <Edit2 className="w-3 h-3 mr-2" /> Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
+                            <Trash2 className="w-3 h-3 mr-2" /> Excluir
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
               }
