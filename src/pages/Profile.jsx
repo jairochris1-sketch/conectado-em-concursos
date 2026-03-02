@@ -5,6 +5,7 @@ import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -121,6 +122,8 @@ export default function ProfilePage() {
     target_position: "",
     study_hours_per_day: 0,
     preferred_subjects: [],
+    favorite_subjects: "",
+    learning_goals: "",
     profile_photo_url: "",
     instagram_url: "",
     linkedin_url: "",
@@ -153,6 +156,8 @@ export default function ProfilePage() {
         target_position: userData.target_position || "",
         study_hours_per_day: userData.study_hours_per_day || 0,
         preferred_subjects: userData.preferred_subjects || [],
+        favorite_subjects: userData.favorite_subjects || "",
+        learning_goals: userData.learning_goals || "",
         profile_photo_url: userData.profile_photo_url || "",
         instagram_url: userData.instagram_url || "",
         linkedin_url: userData.linkedin_url || "",
@@ -501,6 +506,29 @@ export default function ProfilePage() {
                           </label>
                         ))}
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="favorite_subjects">Outras Disciplinas Favoritas</Label>
+                      <Input
+                        id="favorite_subjects"
+                        value={formData.favorite_subjects}
+                        onChange={(e) => handleInputChange('favorite_subjects', e.target.value)}
+                        placeholder="Especifique outras disciplinas..."
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="learning_goals">Objetivos de Aprendizado</Label>
+                      <Textarea
+                        id="learning_goals"
+                        value={formData.learning_goals}
+                        onChange={(e) => handleInputChange('learning_goals', e.target.value)}
+                        placeholder="Quais são seus principais objetivos de estudo?"
+                        className="mt-1"
+                        rows={3}
+                      />
                     </div>
                   </div>
                 </CardContent>

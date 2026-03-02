@@ -296,15 +296,32 @@ export default function UserProfilePage() {
           </Card>
         )}
 
-        {/* Disciplinas preferidas - only for partners/self */}
-        {canSeeDetails && profileUser.preferred_subjects?.length > 0 && (
+        {/* Objetivos de Aprendizado - only for partners/self */}
+        {canSeeDetails && profileUser.learning_goals && (
           <Card className="mb-5">
             <CardContent className="p-5">
-              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Preferidas</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <Target className="w-4 h-4" /> Objetivos de Aprendizado
+              </h2>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{profileUser.learning_goals}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Disciplinas preferidas - only for partners/self */}
+        {canSeeDetails && (profileUser.preferred_subjects?.length > 0 || profileUser.favorite_subjects) && (
+          <Card className="mb-5">
+            <CardContent className="p-5">
+              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Favoritas</h2>
               <div className="flex flex-wrap gap-2">
-                {profileUser.preferred_subjects.map(s => (
+                {profileUser.preferred_subjects?.map(s => (
                   <Badge key={s} variant="outline">{subjectLabels[s] || s}</Badge>
                 ))}
+                {profileUser.favorite_subjects && (
+                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
+                    {profileUser.favorite_subjects}
+                  </Badge>
+                )}
               </div>
             </CardContent>
           </Card>
