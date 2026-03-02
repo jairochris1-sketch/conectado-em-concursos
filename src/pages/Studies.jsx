@@ -855,7 +855,7 @@ ${videoNotes}
                     {contentSubTab === 'pdf' && (
                       <Accordion type="multiple" className="w-full space-y-3">
                         {Object.entries(
-                          filteredMaterials.filter(m => (m.file_type === 'pdf' || m.type === 'resumo') && (!contentSearch.trim() || m.title.toLowerCase().includes(contentSearch.toLowerCase())))
+                          filteredMaterials.filter(m => (m.file_type === 'pdf' || m.type === 'resumo') && (!contentSearch.trim() || m.title?.toLowerCase().includes(contentSearch.toLowerCase())))
                           .reduce((acc, m) => {
                             const subj = subjectNames[m.subject] || m.subject || 'Outros';
                             if (!acc[subj]) acc[subj] = [];
