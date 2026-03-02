@@ -60,8 +60,6 @@ export default function CommunityPage({ embedded = false }) {
   });
 
   const [replyContent, setReplyContent] = useState("");
-  
-  const isAdmin = user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com');
 
   useEffect(() => {
     loadData();
@@ -102,12 +100,6 @@ export default function CommunityPage({ embedded = false }) {
       p.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
-    filtered.sort((a, b) => {
-      if (a.is_pinned && !b.is_pinned) return -1;
-      if (!a.is_pinned && b.is_pinned) return 1;
-      return 0;
-    });
 
     setFilteredPosts(filtered);
   };
@@ -340,47 +332,6 @@ export default function CommunityPage({ embedded = false }) {
     }
   };
 
-  const handleTogglePin = async (post) => {
-    try {
-      await ForumPost.update(post.id, {
-        is_pinned: !post.is_pinned
-      });
-      toast.success(post.is_pinned ? "Discussão desfixada!" : "Discussão fixada com sucesso!");
-      
-      if (selectedPost?.id === post.id) {
-        setSelectedPost({ ...selectedPost, is_pinned: !post.is_pinned });
-      }
-      loadData();
-    } catch (error) {
-      toast.error("Erro ao fixar/desfixar discussão");
-    }
-  };
-
-  const handleMarkBestAnswer = async (reply) => {
-    try {
-      const isAlreadyBest = reply.is_best_answer;
-      
-      await ForumReply.update(reply.id, {
-        is_best_answer: !isAlreadyBest
-      });
-      
-      if (!isAlreadyBest) {
-        await ForumPost.update(selectedPost.id, {
-          is_resolved: true
-        });
-        setSelectedPost({ ...selectedPost, is_resolved: true });
-        loadData();
-      }
-
-      toast.success(isAlreadyBest ? "Marcação de melhor resposta removida!" : "Marcada como melhor resposta!");
-      
-      const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
-      setReplies(updatedReplies);
-    } catch (error) {
-      toast.error("Erro ao marcar melhor resposta");
-    }
-  };
-
   const buildReplyTree = (flatReplies) => {
     const replyMap = {};
     const roots = [];
@@ -422,7 +373,7 @@ export default function CommunityPage({ embedded = false }) {
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
                 <Link
-                to={createPageUrl("UserProfile") + `?u=${btoa(reply.author_email)}`}
+                to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
                 className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
 
                   {reply.author_name}
@@ -521,7 +472,7 @@ export default function CommunityPage({ embedded = false }) {
                             <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <Link
-                          to={createPageUrl("UserProfile") + `?u=${btoa(selectedPost.author_email)}`}
+                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
                           className="font-semibold hover:underline text-blue-600 ml-1">
 
                                 {selectedPost.author_name}
@@ -547,7 +498,7 @@ export default function CommunityPage({ embedded = false }) {
                 <div className="flex gap-2 items-center">
                   <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
-                  {(selectedPost.author_email === user.email || isAdmin) &&
+                  {selectedPost.author_email === user.email &&
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -555,24 +506,14 @@ export default function CommunityPage({ embedded = false }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        {isAdmin && (
-                          <DropdownMenuItem onClick={() => handleTogglePin(selectedPost)}>
-                            <Pin className="w-4 h-4 mr-2" />
-                            {selectedPost.is_pinned ? "Desfixar" : "Fixar"}
-                          </DropdownMenuItem>
-                        )}
-                        {user && selectedPost.author_email === user.email && (
-                          <>
-                            <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
-                              <Edit2 className="w-4 h-4 mr-2" />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setDeletePostId(selectedPost.id)} className="text-red-600">
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Excluir
-                            </DropdownMenuItem>
-                          </>
-                        )}
+                        <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
+                          <Edit2 className="w-4 h-4 mr-2" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setDeletePostId(selectedPost.id)} className="text-red-600">
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Excluir
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   }
@@ -846,7 +787,7 @@ export default function CommunityPage({ embedded = false }) {
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
                         <Link
-                        to={createPageUrl("UserProfile") + `?u=${btoa(post.author_email)}`}
+                        to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
                         className="font-semibold hover:underline text-blue-600"
                         onClick={(e) => e.stopPropagation()}>
 

@@ -27,16 +27,7 @@ import { useLocation } from "react-router-dom";
 export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  
-  // Backward compatibility with ?email=... or obfuscated ?u=...
-  let targetEmail = urlParams.get("email");
-  if (!targetEmail && urlParams.get("u")) {
-    try {
-      targetEmail = atob(urlParams.get("u"));
-    } catch (e) {
-      console.error("Invalid user parameter");
-    }
-  }
+  const targetEmail = urlParams.get("email");
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
@@ -290,7 +281,7 @@ export default function UserProfilePage() {
         )}
 
         {/* Disciplinas preferidas - only for partners/self */}
-        {canSeeDetails && Array.isArray(profileUser.preferred_subjects) && profileUser.preferred_subjects.length > 0 && (
+        {canSeeDetails && profileUser.preferred_subjects?.length > 0 && (
           <Card className="mb-5">
             <CardContent className="p-5">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Preferidas</h2>
