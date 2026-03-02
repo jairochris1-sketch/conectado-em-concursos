@@ -20,6 +20,7 @@ import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { StaffBadge } from "@/components/ui/staff-badge";
+import { encryptEmail } from "@/components/security/emailCrypto";
 
 const defaultCategories = [
 { value: "depoimentos", label: "Depoimentos de Aprovação" },
