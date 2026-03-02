@@ -787,7 +787,7 @@ export default function CommunityPage({ embedded = false }) {
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
                         <Link
-                        to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
+                        to={createPageUrl("UserProfile") + `?u=${btoa(post.author_email)}`}
                         className="font-semibold hover:underline text-blue-600"
                         onClick={(e) => e.stopPropagation()}>
 
