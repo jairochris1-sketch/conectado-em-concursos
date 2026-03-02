@@ -27,7 +27,16 @@ import { useLocation } from "react-router-dom";
 export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const targetEmail = urlParams.get("email");
+  
+  // Backward compatibility with ?email=... or obfuscated ?u=...
+  let targetEmail = urlParams.get("email");
+  if (!targetEmail && urlParams.get("u")) {
+    try {
+      targetEmail = atob(urlParams.get("u"));
+    } catch (e) {
+      console.error("Invalid user parameter");
+    }
+  }
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
