@@ -88,7 +88,7 @@ export default function ActivityFeedPage() {
              <Card key={activity.id}>
               <CardContent className="p-3 md:p-4">
                 <div className="flex items-start gap-2 md:gap-3">
-                  <Link to={`${createPageUrl("UserProfile")}?email=${encodeURIComponent(activity.user_email)}`} className="shrink-0">
+                  <Link to={`${createPageUrl("UserProfile")}?u=${btoa(activity.user_email)}`} className="shrink-0">
                     <Avatar className="w-8 h-8 md:w-10 md:h-10 hover:opacity-80 transition-opacity">
                       <AvatarImage src={activity.user_photo} />
                       <AvatarFallback>{activity.user_name?.charAt(0)}</AvatarFallback>
