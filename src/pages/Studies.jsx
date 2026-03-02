@@ -48,6 +48,7 @@ import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
 import EnhancedArticleReader from '../components/reading/EnhancedArticleReader';
 import CommunityPage from './Community';
+import ScheduleAIGenerator from '../components/studies/ScheduleAIGenerator';
 
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
