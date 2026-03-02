@@ -27,7 +27,8 @@ import { useLocation } from "react-router-dom";
 export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const targetEmail = urlParams.get("email");
+  const targetId = urlParams.get("id");
+  const urlEmail = urlParams.get("email");
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
@@ -41,13 +42,13 @@ export default function UserProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!targetEmail) return;
+    if (!targetId && !urlEmail) return;
     loadData();
-  }, [targetEmail]);
+  }, [targetId, urlEmail]);
 
   useEffect(() => {
     if (!isLoading && isPartner && urlParams.get("openChat") === "true" && profileUser) {
-      const partner = { email: targetEmail, name: profileUser.full_name, photo: profileUser.profile_photo_url };
+      const partner = { email: profileUser.email, name: profileUser.full_name, photo: profileUser.profile_photo_url };
       window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
       
       // Clean up URL to prevent reopening on reload
@@ -55,13 +56,24 @@ export default function UserProfilePage() {
       newUrl.searchParams.delete('openChat');
       window.history.replaceState({}, '', newUrl);
     }
-  }, [isLoading, isPartner, location.search, profileUser, targetEmail]);
+  }, [isLoading, isPartner, location.search, profileUser]);
 
   const loadData = async () => {
     setIsLoading(true);
     try {
       const me = await User.me();
       setCurrentUser(me);
+
+      // Get profile user via backend function (User entity is restricted by RLS)
+      const profileUserResult = await base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
+      let targetEmail = urlEmail;
+      if (profileUserResult.data && !profileUserResult.data.error) {
+        setProfileUser(profileUserResult.data);
+        targetEmail = profileUserResult.data.email;
+      } else {
+        setIsLoading(false);
+        return;
+      }
 
       const [stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
         base44.entities.UserStats.filter({ user_email: targetEmail }),
@@ -71,9 +83,6 @@ export default function UserProfilePage() {
         base44.entities.UserFollow.filter({ following_email: targetEmail }),
       ]);
 
-      // Get profile user via backend function (User entity is restricted by RLS)
-      const profileUserResult = await base44.functions.invoke('getUserProfile', { email: targetEmail });
-      if (profileUserResult.data) setProfileUser(profileUserResult.data);
       if (stats.length > 0) setUserStats(stats[0]);
       if (ranking.length > 0) setUserRanking(ranking[0]);
       setPartners([...partnersSent, ...partnersReceived]);
