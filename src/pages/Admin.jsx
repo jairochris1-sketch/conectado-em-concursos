@@ -30,6 +30,7 @@ import FeedbackManager from '../components/admin/FeedbackManager';
 import InstitutionManager from '../components/admin/InstitutionManager';
 import ChatAdmin from '../components/admin/ChatAdmin';
 import QuickResponseManager from '../components/admin/QuickResponseManager';
+import BannerManager from '../components/admin/BannerManager';
 import AutoResponseManager from '../components/admin/AutoResponseManager';
 import SpecialUserManager from '../components/admin/SpecialUserManager';
 import SubscriptionManager from '../components/admin/SubscriptionManager';

@@ -47,9 +47,11 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import Calendar from './pages/Calendar';
+import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
@@ -71,6 +73,7 @@ import NotebookStats from './pages/NotebookStats';
 import Notebooks from './pages/Notebooks';
 import Notes from './pages/Notes';
 import PaymentHistory from './pages/PaymentHistory';
+import People from './pages/People';
 import PerformanceReports from './pages/PerformanceReports';
 import Profile from './pages/Profile';
 import Questions from './pages/Questions';
@@ -88,21 +91,20 @@ import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
+import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import ActivityFeed from './pages/ActivityFeed';
-import UserProfile from './pages/UserProfile';
-import People from './pages/People';
-import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "ActivityFeed": ActivityFeed,
     "Admin": Admin,
     "AssistirAula": AssistirAula,
     "Calendar": Calendar,
+    "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
@@ -124,6 +126,7 @@ export const PAGES = {
     "Notebooks": Notebooks,
     "Notes": Notes,
     "PaymentHistory": PaymentHistory,
+    "People": People,
     "PerformanceReports": PerformanceReports,
     "Profile": Profile,
     "Questions": Questions,
@@ -141,14 +144,11 @@ export const PAGES = {
     "Studies": Studies,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
+    "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
-    "ActivityFeed": ActivityFeed,
-    "UserProfile": UserProfile,
-    "People": People,
-    "Community": Community,
 }
 
 export const pagesConfig = {
