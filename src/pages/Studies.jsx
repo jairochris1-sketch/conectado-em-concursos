@@ -1026,7 +1026,7 @@ ${videoNotes}
                     <div className="flex-1 overflow-y-auto">
                       <div className="p-2">
                         {filteredVideos.map((video, idx) => {
-                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                      const videoId = getSafeVideoId(video);
                       const isActive = video.id === playingVideo.id;
                       return (
                         <button
