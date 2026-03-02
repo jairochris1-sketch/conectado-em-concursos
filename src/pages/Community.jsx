@@ -340,6 +340,47 @@ export default function CommunityPage({ embedded = false }) {
     }
   };
 
+  const handleTogglePin = async (post) => {
+    try {
+      await ForumPost.update(post.id, {
+        is_pinned: !post.is_pinned
+      });
+      toast.success(post.is_pinned ? "Discussão desfixada!" : "Discussão fixada com sucesso!");
+      
+      if (selectedPost?.id === post.id) {
+        setSelectedPost({ ...selectedPost, is_pinned: !post.is_pinned });
+      }
+      loadData();
+    } catch (error) {
+      toast.error("Erro ao fixar/desfixar discussão");
+    }
+  };
+
+  const handleMarkBestAnswer = async (reply) => {
+    try {
+      const isAlreadyBest = reply.is_best_answer;
+      
+      await ForumReply.update(reply.id, {
+        is_best_answer: !isAlreadyBest
+      });
+      
+      if (!isAlreadyBest) {
+        await ForumPost.update(selectedPost.id, {
+          is_resolved: true
+        });
+        setSelectedPost({ ...selectedPost, is_resolved: true });
+        loadData();
+      }
+
+      toast.success(isAlreadyBest ? "Marcação de melhor resposta removida!" : "Marcada como melhor resposta!");
+      
+      const updatedReplies = await ForumReply.filter({ post_id: selectedPost.id });
+      setReplies(updatedReplies);
+    } catch (error) {
+      toast.error("Erro ao marcar melhor resposta");
+    }
+  };
+
   const buildReplyTree = (flatReplies) => {
     const replyMap = {};
     const roots = [];
