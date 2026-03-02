@@ -120,7 +120,7 @@ export default function UserProfilePage() {
     );
   }
 
-  const isOwnProfile = currentUser?.email === targetEmail;
+  const isOwnProfile = currentUser?.email === profileUser?.email;
   // Only accepted partners or own profile can see full stats/details
   const targetIsAdmin = profileUser?.role === 'admin' || ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'].includes(profileUser?.email);
   const canSeeDetails = isOwnProfile || isPartner || targetIsAdmin;
@@ -182,13 +182,15 @@ export default function UserProfilePage() {
                 {!isOwnProfile && currentUser && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     <FollowButton
-                      targetEmail={targetEmail}
+                      targetEmail={profileUser.email}
+                      targetId={profileUser.id}
                       targetName={profileUser.full_name}
                       targetPhotoUrl={profileUser.profile_photo_url}
                     />
                     <StudyPartnerButton
                       currentUser={currentUser}
-                      targetEmail={targetEmail}
+                      targetEmail={profileUser.email}
+                      targetId={profileUser.id}
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
                       targetIsAdmin={targetIsAdmin}
