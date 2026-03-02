@@ -4,10 +4,40 @@ import { createPageUrl } from '@/utils';
 import { X, BookOpen, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
 
 export default function PlanAdvantagesBlock() {
   const [isVisible, setIsVisible] = useState(true);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [settings, setSettings] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await base44.entities.BannerSettings.filter({});
+        if (data && data.length > 0) {
+          setSettings(data[0]);
+        } else {
+          // Default settings if not configured
+          setSettings({
+            is_active: true,
+            tag_text: 'Planos',
+            title: 'Planos Premium: conheça todas as vantagens',
+            description: 'Questões ilimitadas, área de estudos completa, provas, resumos e muito mais. Acelere sua aprovação!',
+            button_text: 'Conhecer Planos',
+            button_link: 'Subscription',
+            bg_color: 'bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700'
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching banner settings:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const dismissed = localStorage.getItem('planAdvantagesDismissed');
@@ -18,14 +48,14 @@ export default function PlanAdvantagesBlock() {
   }, []);
 
   useEffect(() => {
-    if (!isVisible || isDismissed) return;
+    if (!isVisible || isDismissed || !settings?.is_active) return;
     
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 3 * 60 * 1000); // 3 minutos
 
     return () => clearTimeout(timer);
-  }, [isVisible, isDismissed]);
+  }, [isVisible, isDismissed, settings]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -33,7 +63,7 @@ export default function PlanAdvantagesBlock() {
     setIsDismissed(true);
   };
 
-  if (isDismissed) return null;
+  if (isDismissed || isLoading || !settings || !settings.is_active) return null;
 
   return (
     <AnimatePresence>
@@ -44,7 +74,7 @@ export default function PlanAdvantagesBlock() {
           exit={{ opacity: 0, y: -20 }}
           className="relative w-full"
         >
-          <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white px-4 py-3 md:px-6 md:py-4 relative overflow-hidden">
+          <div className={`${settings.bg_color || 'bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700'} text-white px-4 py-3 md:px-6 md:py-4 relative overflow-hidden`}>
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16"></div>
               <div className="absolute bottom-0 right-0 w-40 h-40 bg-white rounded-full translate-x-20 translate-y-20"></div>
@@ -56,7 +86,7 @@ export default function PlanAdvantagesBlock() {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
                     <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded whitespace-nowrap">
-                      Planos
+                      {settings.tag_text || 'Aviso'}
                     </span>
                   </div>
                   <Button
@@ -70,19 +100,19 @@ export default function PlanAdvantagesBlock() {
                 </div>
                 
                 <h3 className="text-base font-bold mb-1.5 leading-tight">
-                  Planos Premium: conheça todas as vantagens
+                  {settings.title}
                 </h3>
                 
                 <p className="text-xs text-blue-100 mb-3 leading-relaxed">
-                  Questões ilimitadas, área de estudos completa, provas, resumos e muito mais.
+                  {settings.description}
                 </p>
                 
-                <Link to={createPageUrl('Subscription')} className="block">
+                <Link to={createPageUrl(settings.button_link || 'Subscription')} className="block">
                   <Button 
                     size="sm"
                     className="w-full bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow-lg text-sm"
                   >
-                    Conhecer Planos
+                    {settings.button_text}
                   </Button>
                 </Link>
               </div>
@@ -100,25 +130,25 @@ export default function PlanAdvantagesBlock() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                        Planos
+                        {settings.tag_text || 'Aviso'}
                       </span>
                     </div>
                     <h3 className="text-xl font-bold mb-1">
-                      Planos Premium: conheça todas as vantagens
+                      {settings.title}
                     </h3>
                     <p className="text-base text-blue-100">
-                      Questões ilimitadas, área de estudos completa, provas, resumos e muito mais. Acelere sua aprovação!
+                      {settings.description}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <Link to={createPageUrl('Subscription')}>
+                  <Link to={createPageUrl(settings.button_link || 'Subscription')}>
                     <Button 
                       size="sm"
                       className="bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow-lg"
                     >
-                      Conhecer Planos
+                      {settings.button_text}
                     </Button>
                   </Link>
 
