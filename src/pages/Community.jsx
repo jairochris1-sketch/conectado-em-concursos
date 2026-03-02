@@ -102,6 +102,12 @@ export default function CommunityPage({ embedded = false }) {
       p.content.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
+    
+    filtered.sort((a, b) => {
+      if (a.is_pinned && !b.is_pinned) return -1;
+      if (!a.is_pinned && b.is_pinned) return 1;
+      return 0;
+    });
 
     setFilteredPosts(filtered);
   };
