@@ -472,7 +472,7 @@ export default function CommunityPage({ embedded = false }) {
                             <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <Link
-                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                          to={createPageUrl("UserProfile") + `?u=${btoa(selectedPost.author_email)}`}
                           className="font-semibold hover:underline text-blue-600 ml-1">
 
                                 {selectedPost.author_name}
