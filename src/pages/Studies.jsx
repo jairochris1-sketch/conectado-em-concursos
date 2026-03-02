@@ -709,60 +709,7 @@ ${videoNotes}
               </TabsContent>
 
               <TabsContent value="forum" className="mt-0 min-h-[500px]">
-                <div className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 px-6 py-3 border-b border-gray-100 dark:border-gray-800">
-                    <div className="flex items-center gap-6">
-                      <button onClick={() => setForumSubTab('videoaula')} className={`flex items-center gap-2 pb-3 -mb-[13px] border-b-2 text-sm font-medium ${forumSubTab === 'videoaula' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}>
-                        <Play className="w-4 h-4" fill={forumSubTab === 'videoaula' ? 'currentColor' : 'none'} /> Videoaula
-                      </button>
-                      <button onClick={() => setForumSubTab('pdf')} className={`flex items-center gap-2 pb-3 -mb-[13px] border-b-2 text-sm font-medium ${forumSubTab === 'pdf' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}>
-                        PDF
-                      </button>
-                    </div>
-                    
-                    <div className="sm:ml-auto w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                      <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        <Input 
-                          placeholder="Filtrar por disciplina ou professor(a)" 
-                          value={forumSearch}
-                          onChange={(e) => setForumSearch(e.target.value)}
-                          className="pl-9 h-9 w-full sm:w-[300px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-visible:ring-1"
-                        />
-                      </div>
-                      <Button className="h-9 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 shrink-0">
-                        Fazer uma pergunta <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Visualizar por:</span>
-                      <div className="flex p-1 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <button onClick={() => setForumFilter('todas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'todas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Todas</button>
-                        <button onClick={() => setForumFilter('respondidas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'respondidas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Respondidas</button>
-                        <button onClick={() => setForumFilter('nao_respondidas')} className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-colors ${forumFilter === 'nao_respondidas' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Não respondidas</button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex bg-gray-50 dark:bg-gray-800 rounded-full p-1 self-stretch md:self-auto">
-                      <button onClick={() => setForumScope('todas_perguntas')} className={`px-4 py-1.5 text-xs sm:text-sm rounded-full transition-colors flex-1 ${forumScope === 'todas_perguntas' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Todas as perguntas</button>
-                      <button onClick={() => setForumScope('minhas_perguntas')} className={`px-4 py-1.5 text-xs sm:text-sm rounded-full transition-colors flex-1 ${forumScope === 'minhas_perguntas' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}>Minhas perguntas</button>
-                    </div>
-                  </div>
-                  
-                  <div className="px-6 pb-8 space-y-1 mt-2">
-                    {Object.values(subjectNames).slice(0, 5).map((subject) => (
-                      <div key={subject} className="border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900 border-b">
-                        <button className="w-full flex items-center justify-between px-2 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                          <span className="font-semibold text-gray-700 dark:text-gray-300 text-sm">{subject}</span>
-                          <ChevronDown className="w-4 h-4 text-gray-400" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <CommunityPage embedded={true} />
               </TabsContent>
               
               <TabsContent value="conteudo" className="p-6">
