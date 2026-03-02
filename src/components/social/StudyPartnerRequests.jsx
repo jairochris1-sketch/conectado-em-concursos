@@ -41,7 +41,7 @@ export default function StudyPartnerRequests({ currentUser }) {
     toast.success(`Parceria com ${record.requester_name} aceita!`);
     setRequests(prev => prev.filter(r => r.id !== record.id));
     setLoading(prev => ({ ...prev, [record.id]: false }));
-    navigate(createPageUrl("UserProfile") + `?email=${record.requester_email}&openChat=true`);
+    navigate(createPageUrl("UserProfile") + `?u=${btoa(record.requester_email)}&openChat=true`);
   };
 
   const decline = async (record) => {
