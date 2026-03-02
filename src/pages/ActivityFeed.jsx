@@ -96,7 +96,7 @@ export default function ActivityFeedPage() {
                   </Link>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <Link to={`${createPageUrl("UserProfile")}?email=${encodeURIComponent(activity.user_email)}`}>
+                      <Link to={`${createPageUrl("UserProfile")}?u=${btoa(activity.user_email)}`}>
                         <span className="font-semibold text-sm md:text-base text-gray-900 dark:text-white truncate hover:underline">
                           {activity.user_name}
                         </span>
