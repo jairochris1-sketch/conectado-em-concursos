@@ -438,9 +438,16 @@ export default function StudiesPage() {
   const isAdmin = currentUser && currentUser.email === 'conectadoemconcursos@gmail.com';
 
   const extractYouTubeId = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    if (!url) return null;
+    if (url.length === 11 && !url.includes('youtube') && !url.includes('youtu.be')) return url;
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
     const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
+    return match ? match[1] : null;
+  };
+
+  const getSafeVideoId = (video) => {
+    if (!video) return null;
+    return extractYouTubeId(video.video_id) || extractYouTubeId(video.youtube_url) || video.video_id;
   };
 
   const handlePlayVideo = (video) => {
