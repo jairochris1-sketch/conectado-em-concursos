@@ -554,6 +554,10 @@ export default function AdminPage() {
             />
           </TabsContent>
 
+          <TabsContent value="banner">
+            <BannerManager />
+          </TabsContent>
+
           <TabsContent value="assuntos">
             <TopicManager />
           </TabsContent>
