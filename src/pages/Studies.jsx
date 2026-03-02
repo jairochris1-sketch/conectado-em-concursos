@@ -302,7 +302,7 @@ export default function StudiesPage() {
       if (searchTerm.trim()) {
         const search = searchTerm.toLowerCase();
         filtered = filtered.filter((material) =>
-        material.title.toLowerCase().includes(search) ||
+        material.title?.toLowerCase().includes(search) ||
         material.description?.toLowerCase().includes(search) ||
         subjectNames[material.subject]?.toLowerCase().includes(search)
         );
