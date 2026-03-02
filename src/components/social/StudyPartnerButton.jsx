@@ -42,7 +42,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
         title, 
         message, 
         type,
-        actionUrl: createPageUrl("UserProfile") + "?email=" + encodeURIComponent(currentUser.email),
+        actionUrl: createPageUrl("UserProfile") + "?u=" + btoa(currentUser.email),
         relatedUserName: currentUser.full_name,
         relatedUserPhoto: currentUser.profile_photo_url || ""
       });
