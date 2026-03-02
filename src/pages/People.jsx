@@ -70,7 +70,7 @@ export default function PeoplePage() {
                       <AvatarFallback>{person.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Link>
-                  <Link to={`${createPageUrl('UserProfile')}?email=${encodeURIComponent(person.email)}`}>
+                  <Link to={`${createPageUrl('UserProfile')}?u=${btoa(person.email)}`}>
                     <h3 className="font-semibold text-lg text-gray-900 dark:text-white hover:text-blue-600 transition-colors">
                       {person.name || 'Usuário sem nome'}
                     </h3>
