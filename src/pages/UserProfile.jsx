@@ -27,7 +27,15 @@ import { useLocation } from "react-router-dom";
 export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const targetEmail = urlParams.get("email");
+  let targetEmail = urlParams.get("email");
+  const uParam = urlParams.get("u");
+  if (uParam) {
+    try {
+      targetEmail = atob(uParam);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
