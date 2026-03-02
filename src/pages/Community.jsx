@@ -103,13 +103,13 @@ export default function CommunityPage({ embedded = false }) {
       );
     }
     
-    filtered.sort((a, b) => {
+    const sortedFiltered = [...filtered].sort((a, b) => {
       if (a.is_pinned && !b.is_pinned) return -1;
       if (!a.is_pinned && b.is_pinned) return 1;
       return 0;
     });
 
-    setFilteredPosts(filtered);
+    setFilteredPosts(sortedFiltered);
   };
 
   const handleCreatePost = async () => {
