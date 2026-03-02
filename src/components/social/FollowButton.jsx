@@ -67,7 +67,7 @@ export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, 
           title: "Novo seguidor",
           message: `${user.full_name} começou a seguir você`,
           type: "follow",
-          actionUrl: createPageUrl("UserProfile") + "?email=" + encodeURIComponent(user.email),
+          actionUrl: createPageUrl("UserProfile") + "?u=" + btoa(user.email || ''),
           relatedUserName: user.full_name,
           relatedUserPhoto: user.profile_photo_url
         });
