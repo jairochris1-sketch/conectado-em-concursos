@@ -377,7 +377,7 @@ export default function StudiesPage() {
     if (videoSearchTerm.trim()) {
       const search = videoSearchTerm.toLowerCase();
       filtered = filtered.filter((video) =>
-      video.title.toLowerCase().includes(search) ||
+      video.title?.toLowerCase().includes(search) ||
       video.description?.toLowerCase().includes(search) ||
       video.instructor?.toLowerCase().includes(search) ||
       video.topic?.toLowerCase().includes(search)
