@@ -443,6 +443,10 @@ export default function AdminPage() {
               <FileText className="w-4 h-4 mr-2" />
               Conteúdo
             </TabsTrigger>
+            <TabsTrigger value="banner">
+              <FileText className="w-4 h-4 mr-2" />
+              Banner
+            </TabsTrigger>
             <TabsTrigger value="videos">
               <Play className="w-4 h-4 mr-2" />
               Vídeos
