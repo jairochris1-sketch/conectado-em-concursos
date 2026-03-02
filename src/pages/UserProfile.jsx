@@ -28,7 +28,11 @@ export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const targetId = urlParams.get("id");
-  const urlEmail = urlParams.get("email");
+  let urlEmail = urlParams.get("email");
+  const encodedEmail = urlParams.get("u");
+  if (encodedEmail && !urlEmail) {
+    try { urlEmail = atob(encodedEmail); } catch(e) {}
+  }
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
