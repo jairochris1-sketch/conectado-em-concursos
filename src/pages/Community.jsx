@@ -35,7 +35,7 @@ const defaultCategories = [
 { value: "outros", label: "Outros Assuntos" }];
 
 
-export default function CommunityPage() {
+export default function CommunityPage({ embedded = false }) {
   const [categories, setCategories] = useState(defaultCategories);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
