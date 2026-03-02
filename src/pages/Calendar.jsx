@@ -20,6 +20,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { User, UserExamDate } from '@/entities/all';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import StudySessions from '@/components/calendar/StudySessions';
 
 export default function CalendarPage() {
   const [user, setUser] = useState(null);
@@ -259,10 +261,21 @@ export default function CalendarPage() {
           <p className="text-gray-600 dark:text-gray-400">Gerencie suas datas de provas e concursos</p>
         </div>
 
-        {/* Próximas Provas */}
-        {upcomingDates.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Próximas Provas</h2>
+        <Tabs defaultValue="sessions" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="sessions">Sessões de Estudo</TabsTrigger>
+            <TabsTrigger value="exams">Datas de Provas</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="sessions">
+            <StudySessions user={user} />
+          </TabsContent>
+
+          <TabsContent value="exams" className="space-y-8">
+            {/* Próximas Provas */}
+            {upcomingDates.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Próximas Provas</h2>
             <div className="space-y-3">
               {upcomingDates.map((date) => {
                 const days = daysUntil(date.exam_date);
@@ -355,18 +368,20 @@ export default function CalendarPage() {
           </div>
         )}
 
-        {/* Vazio */}
-        {dates.length === 0 && (
-          <Card className="dark:bg-gray-800 dark:border-gray-700">
-            <CardContent className="p-12 text-center">
-              <CalendarIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Nenhuma data registrada ainda</p>
-              <Button onClick={() => setOpenDialog(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                Adicionar Primeira Data
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+            {/* Vazio */}
+            {dates.length === 0 && (
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
+                <CardContent className="p-12 text-center">
+                  <CalendarIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">Nenhuma data registrada ainda</p>
+                  <Button onClick={() => setOpenDialog(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    Adicionar Primeira Data
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
