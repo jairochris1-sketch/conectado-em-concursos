@@ -34,7 +34,7 @@ export default function StudyPartnerRequests({ currentUser }) {
       title: "✅ Parceria aceita!",
       message: `${currentUser.full_name} aceitou seu convite de Parceria de Estudos!`,
       type: "follow",
-      action_url: createPageUrl("UserProfile") + `?email=${currentUser.email}&openChat=true`,
+      action_url: createPageUrl("UserProfile") + `?u=${btoa(currentUser.email)}&openChat=true`,
       related_user_name: currentUser.full_name,
       related_user_photo: currentUser.profile_photo_url || "",
     });
