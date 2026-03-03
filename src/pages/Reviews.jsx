@@ -550,8 +550,8 @@ export default function Reviews() {
             <DialogTitle>Registrar Estudo</DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-4">
+            <div className="space-y-2 md:col-span-4">
               <label className="text-sm font-medium text-gray-700">Data do estudo</label>
               <Input
                 type="date"
@@ -559,7 +559,7 @@ export default function Reviews() {
                 onChange={(e) => setStudyForm({ ...studyForm, study_date: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-4">
               <label className="text-sm font-medium text-gray-700">Matéria</label>
               <Input
                 placeholder="Matéria..."
@@ -567,7 +567,7 @@ export default function Reviews() {
                 onChange={(e) => setStudyForm({ ...studyForm, subject: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-4">
               <label className="text-sm font-medium text-gray-700">Conteúdo</label>
               <Input
                 placeholder="Conteúdo..."
@@ -576,7 +576,7 @@ export default function Reviews() {
               />
             </div>
 
-            <div className="space-y-2 md:col-span-3">
+            <div className="space-y-2 md:col-span-12">
               <label className="text-sm font-medium text-gray-700">Assunto abordado</label>
               <Textarea
                 placeholder=""
@@ -586,7 +586,7 @@ export default function Reviews() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-3">
               <label className="text-sm font-medium text-gray-700">Tipo do estudo</label>
               <Select value={studyForm.study_type} onValueChange={(val) => setStudyForm({ ...studyForm, study_type: val })}>
                 <SelectTrigger className="w-full">
@@ -601,7 +601,7 @@ export default function Reviews() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-3">
               <label className="text-sm font-medium text-gray-700">Tempo líquido</label>
               <Input
                 placeholder="HH:MM:SS"
@@ -609,7 +609,7 @@ export default function Reviews() {
                 onChange={(e) => setStudyForm({ ...studyForm, duration: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-3">
               <label className="text-sm font-medium text-gray-700">Questões</label>
               <Input
                 type="number"
@@ -628,7 +628,7 @@ export default function Reviews() {
               />
             </div>
 
-            <div className="md:col-span-3 border rounded-lg p-4 mt-2 bg-white flex items-center justify-between">
+            <div className="md:col-span-12 border rounded-lg p-4 mt-2 bg-white flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="text-sm font-semibold text-gray-900">Concluir conteúdo</div>
                 <div className="text-sm text-gray-500">Marque o conteúdo como concluído, caso você tenha estudado toda a teoria.</div>
