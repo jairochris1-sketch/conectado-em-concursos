@@ -96,6 +96,74 @@ export default function Reviews() {
     }
   };
 
+  const handleSaveStudy = async () => {
+    if (!studyForm.study_date || !studyForm.subject || !studyForm.content) {
+      toast.error("Preencha a data, matéria e conteúdo.");
+      return;
+    }
+
+    try {
+      await base44.entities.StudyLog.create({
+        user_email: user.email,
+        study_date: studyForm.study_date,
+        subject: studyForm.subject,
+        content: studyForm.content,
+        topic: studyForm.topic,
+        study_type: studyForm.study_type,
+        duration: studyForm.duration,
+        questions_count: parseInt(studyForm.questions_count) || 0,
+        errors_count: parseInt(studyForm.errors_count) || 0,
+        completed: studyForm.completed,
+        schedule_reviews: studyForm.schedule_reviews
+      });
+
+      if (studyForm.schedule_reviews) {
+        const baseDate = new Date(studyForm.study_date);
+        const intervals = [
+          { days: 1, type: "24h" },
+          { days: 7, type: "7 dias" },
+          { days: 30, type: "30 dias" }
+        ];
+
+        for (const interval of intervals) {
+          const reviewDate = new Date(baseDate);
+          reviewDate.setDate(reviewDate.getDate() + interval.days);
+          
+          await base44.entities.StudyReview.create({
+            user_email: user.email,
+            subject: studyForm.subject,
+            content: studyForm.content,
+            description: `Revisão automática de ${interval.type} referente ao estudo: ${studyForm.topic}`,
+            due_date: reviewDate.toISOString().split('T')[0],
+            review_type: interval.type,
+            status: "pending"
+          });
+        }
+        toast.success("Estudo registrado e revisões programadas!");
+        loadData();
+      } else {
+        toast.success("Estudo registrado!");
+      }
+
+      setShowStudyDialog(false);
+      setStudyForm({
+        study_date: new Date().toISOString().split('T')[0],
+        subject: "",
+        content: "",
+        topic: "",
+        study_type: "Teoria",
+        duration: "",
+        questions_count: "",
+        errors_count: "",
+        completed: false,
+        schedule_reviews: false
+      });
+    } catch (error) {
+      console.error("Erro ao salvar estudo:", error);
+      toast.error("Erro ao registrar estudo");
+    }
+  };
+
   const handleSave = async () => {
     if (!form.subject || !form.content || !form.due_date) {
       toast.error("Preencha matéria, conteúdo e data de vencimento.");
