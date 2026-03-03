@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavBar from "./components/navigation/BottomNavBar";
 import ProvaUploader from "./components/upload/ProvaUploader";
+import { RefreshCcw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
