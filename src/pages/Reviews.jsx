@@ -12,7 +12,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 
@@ -33,24 +32,9 @@ export default function Reviews() {
   // Modal states
   const [showDialog, setShowDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showStudyDialog, setShowStudyDialog] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   
-  // Study Form State
-  const [studyForm, setStudyForm] = useState({
-    study_date: new Date().toISOString().split('T')[0],
-    subject: "",
-    content: "",
-    topic: "",
-    study_type: "Teoria",
-    duration: "",
-    questions_count: "",
-    errors_count: "",
-    completed: false,
-    schedule_reviews: false
-  });
-
   // Form State
   const [form, setForm] = useState({
     subject: "",
@@ -93,74 +77,6 @@ export default function Reviews() {
       toast.error("Erro ao carregar revisões");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSaveStudy = async () => {
-    if (!studyForm.study_date || !studyForm.subject || !studyForm.content) {
-      toast.error("Preencha a data, matéria e conteúdo.");
-      return;
-    }
-
-    try {
-      await base44.entities.StudyLog.create({
-        user_email: user.email,
-        study_date: studyForm.study_date,
-        subject: studyForm.subject,
-        content: studyForm.content,
-        topic: studyForm.topic,
-        study_type: studyForm.study_type,
-        duration: studyForm.duration,
-        questions_count: parseInt(studyForm.questions_count) || 0,
-        errors_count: parseInt(studyForm.errors_count) || 0,
-        completed: studyForm.completed,
-        schedule_reviews: studyForm.schedule_reviews
-      });
-
-      if (studyForm.schedule_reviews) {
-        const baseDate = new Date(studyForm.study_date);
-        const intervals = [
-          { days: 1, type: "24h" },
-          { days: 7, type: "7 dias" },
-          { days: 30, type: "30 dias" }
-        ];
-
-        for (const interval of intervals) {
-          const reviewDate = new Date(baseDate);
-          reviewDate.setDate(reviewDate.getDate() + interval.days);
-          
-          await base44.entities.StudyReview.create({
-            user_email: user.email,
-            subject: studyForm.subject,
-            content: studyForm.content,
-            description: `Revisão automática de ${interval.type} referente ao estudo: ${studyForm.topic}`,
-            due_date: reviewDate.toISOString().split('T')[0],
-            review_type: interval.type,
-            status: "pending"
-          });
-        }
-        toast.success("Estudo registrado e revisões programadas!");
-        loadData();
-      } else {
-        toast.success("Estudo registrado!");
-      }
-
-      setShowStudyDialog(false);
-      setStudyForm({
-        study_date: new Date().toISOString().split('T')[0],
-        subject: "",
-        content: "",
-        topic: "",
-        study_type: "Teoria",
-        duration: "",
-        questions_count: "",
-        errors_count: "",
-        completed: false,
-        schedule_reviews: false
-      });
-    } catch (error) {
-      console.error("Erro ao salvar estudo:", error);
-      toast.error("Erro ao registrar estudo");
     }
   };
 
@@ -328,7 +244,7 @@ export default function Reviews() {
             <Button variant="outline" className="gap-2 bg-white text-gray-700 hover:bg-gray-50 border-gray-200" onClick={openNewReview}>
               <Plus className="w-4 h-4" /> Revisão
             </Button>
-            <Button className="gap-2 bg-red-500 hover:bg-red-600 text-white" onClick={() => setShowStudyDialog(true)}>
+            <Button className="gap-2 bg-red-500 hover:bg-red-600 text-white" onClick={openNewReview}>
               <Plus className="w-4 h-4" /> Registrar estudo
             </Button>
           </div>
@@ -542,122 +458,6 @@ export default function Reviews() {
         </div>
 
       </div>
-
-      {/* Study Dialog */}
-      <Dialog open={showStudyDialog} onOpenChange={setShowStudyDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Registrar Estudo</DialogTitle>
-          </DialogHeader>
-          
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 py-4">
-            <div className="space-y-2 md:col-span-4">
-              <label className="text-sm font-medium text-gray-700">Data do estudo</label>
-              <Input
-                type="date"
-                value={studyForm.study_date}
-                onChange={(e) => setStudyForm({ ...studyForm, study_date: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-4">
-              <label className="text-sm font-medium text-gray-700">Matéria</label>
-              <Input
-                placeholder="Matéria..."
-                value={studyForm.subject}
-                onChange={(e) => setStudyForm({ ...studyForm, subject: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-4">
-              <label className="text-sm font-medium text-gray-700">Conteúdo</label>
-              <Input
-                placeholder="Conteúdo..."
-                value={studyForm.content}
-                onChange={(e) => setStudyForm({ ...studyForm, content: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2 md:col-span-12">
-              <label className="text-sm font-medium text-gray-700">Assunto abordado</label>
-              <Textarea
-                placeholder=""
-                value={studyForm.topic}
-                onChange={(e) => setStudyForm({ ...studyForm, topic: e.target.value })}
-                className="min-h-[80px]"
-              />
-            </div>
-
-            <div className="space-y-2 md:col-span-3">
-              <label className="text-sm font-medium text-gray-700">Tipo do estudo</label>
-              <Select value={studyForm.study_type} onValueChange={(val) => setStudyForm({ ...studyForm, study_type: val })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Teoria">Teoria</SelectItem>
-                  <SelectItem value="Revisão">Revisão</SelectItem>
-                  <SelectItem value="Questões">Questões</SelectItem>
-                  <SelectItem value="Resumo">Resumo</SelectItem>
-                  <SelectItem value="Videoaula">Videoaula</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2 md:col-span-3">
-              <label className="text-sm font-medium text-gray-700">Tempo líquido</label>
-              <Input
-                placeholder="HH:MM:SS"
-                value={studyForm.duration}
-                onChange={(e) => setStudyForm({ ...studyForm, duration: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-3">
-              <label className="text-sm font-medium text-gray-700">Questões</label>
-              <Input
-                type="number"
-                placeholder=""
-                value={studyForm.questions_count}
-                onChange={(e) => setStudyForm({ ...studyForm, questions_count: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-3">
-              <label className="text-sm font-medium text-gray-700">Erros</label>
-              <Input
-                type="number"
-                placeholder=""
-                value={studyForm.errors_count}
-                onChange={(e) => setStudyForm({ ...studyForm, errors_count: e.target.value })}
-              />
-            </div>
-
-            <div className="md:col-span-12 border rounded-lg p-4 mt-2 bg-white flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="text-sm font-semibold text-gray-900">Concluir conteúdo</div>
-                <div className="text-sm text-gray-500">Marque o conteúdo como concluído, caso você tenha estudado toda a teoria.</div>
-              </div>
-              <Switch
-                checked={studyForm.completed}
-                onCheckedChange={(checked) => setStudyForm({ ...studyForm, completed: checked })}
-              />
-            </div>
-
-            <div className="md:col-span-3 border rounded-lg p-4 mt-2 bg-white flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="text-sm font-semibold text-gray-900">Programar revisões</div>
-                <div className="text-sm text-gray-500">Programe revisões de forma automática. Contagem em dias, a partir da data do estudo.</div>
-              </div>
-              <Switch
-                checked={studyForm.schedule_reviews}
-                onCheckedChange={(checked) => setStudyForm({ ...studyForm, schedule_reviews: checked })}
-              />
-            </div>
-          </div>
-          
-          <div className="flex justify-end gap-3 mt-2">
-            <Button onClick={handleSaveStudy} className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold">
-              Salvar Estudo
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Form Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
