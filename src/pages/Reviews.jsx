@@ -34,6 +34,7 @@ export default function Reviews() {
   // Modal states
   const [showDialog, setShowDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showStudyDialog, setShowStudyDialog] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   
