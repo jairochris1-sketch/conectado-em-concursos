@@ -214,7 +214,8 @@ const featureAccess = {
   'Minhas Estatísticas': ['gratuito', 'padrao', 'avancado'],
   'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
   'Feed de Atividades': ['padrao', 'avancado'],
-  'Minhas Dúvidas': ['avancado']
+  'Minhas Dúvidas': ['avancado'],
+  'Painel de Assinaturas': ['gratuito', 'padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
