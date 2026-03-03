@@ -154,6 +154,42 @@ export default function Reviews() {
     }
   };
 
+  const openNewStudy = () => {
+    setStudyForm({
+      study_date: new Date().toISOString().split('T')[0],
+      subject: "",
+      content: "",
+      description: "",
+      study_type: "Teoria",
+      time_spent: "",
+      questions_count: "",
+      errors_count: "",
+      completed_content: false,
+      schedule_revisions: false
+    });
+    setShowStudyDialog(true);
+  };
+
+  const handleSaveStudy = async () => {
+    if (!studyForm.subject || !studyForm.content) {
+      toast.error("Preencha a matéria e o conteúdo.");
+      return;
+    }
+    try {
+      await base44.entities.StudyRecord.create({
+        user_email: user.email,
+        ...studyForm,
+        questions_count: Number(studyForm.questions_count) || 0,
+        errors_count: Number(studyForm.errors_count) || 0
+      });
+      toast.success("Estudo registrado!");
+      setShowStudyDialog(false);
+    } catch (error) {
+      console.error("Erro ao salvar estudo:", error);
+      toast.error("Erro ao salvar estudo");
+    }
+  };
+
   const openNewReview = () => {
     setEditingReview(null);
     setForm({
