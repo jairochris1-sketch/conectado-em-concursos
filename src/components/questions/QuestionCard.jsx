@@ -139,26 +139,25 @@ export default function QuestionCard({
         <CardContent className="p-6 space-y-6">
           {question.associated_text && (
             <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-              <AlertDescription className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
-                {question.associated_text}
-              </AlertDescription>
+              <AlertDescription 
+                className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed [&_b]:!font-medium [&_strong]:!font-medium"
+                dangerouslySetInnerHTML={{ __html: question.associated_text }}
+              />
             </Alert>
           )}
 
           {question.statement && (
-            <div>
-              <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">
-                {question.statement}
-              </p>
-            </div>
+            <div 
+              className="font-medium text-gray-900 dark:text-gray-100 mb-2 whitespace-pre-wrap [&_b]:!font-medium [&_strong]:!font-medium"
+              dangerouslySetInnerHTML={{ __html: question.statement }}
+            />
           )}
 
           {question.command && (
-            <div>
-              <p className="font-semibold text-indigo-700 dark:text-indigo-400 mb-4">
-                {question.command}
-              </p>
-            </div>
+            <div 
+              className="font-medium text-indigo-700 dark:text-indigo-400 mb-4 whitespace-pre-wrap [&_b]:!font-medium [&_strong]:!font-medium"
+              dangerouslySetInnerHTML={{ __html: question.command }}
+            />
           )}
 
           <RadioGroup
