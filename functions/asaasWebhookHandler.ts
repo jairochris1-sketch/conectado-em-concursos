@@ -130,6 +130,10 @@ Deno.serve(async (req) => {
             // Preparar dados de atualização da subscription
             const updateData = { status: newStatus };
             
+            if (newStatus === 'cancelled') {
+                updateData.end_date = moment().format('YYYY-MM-DD');
+            }
+            
             if (newStatus === 'active' && payment?.dueDate) {
                 let nextPayment = moment(payment.dueDate);
                 let endDate = moment(payment.dueDate);
