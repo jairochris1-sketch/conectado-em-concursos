@@ -177,6 +177,7 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
+  Reviews: "Revisões",
   ComoEstudarPrimeiroLugar: "Como Estudar",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
