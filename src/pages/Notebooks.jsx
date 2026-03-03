@@ -612,8 +612,6 @@ export default function Notebooks() {
           </TabsContent>
         </Tabs>
 
-      </Tabs>
-
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent>
             <DialogHeader>
