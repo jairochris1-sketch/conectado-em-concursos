@@ -197,6 +197,7 @@ const featureAccess = {
   'Questões': ['gratuito', 'padrao', 'avancado'],
   'Meus Cursos': ['avancado'],
   'Cronograma de Estudos': ['avancado'],
+  'Revisões': ['padrao', 'avancado'],
   'Planos de Estudo': ['avancado'],
   'Criar Simulado': ['avancado'],
   'Concursos Abertos': ['avancado'],
