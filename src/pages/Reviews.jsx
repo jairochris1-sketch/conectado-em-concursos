@@ -33,9 +33,24 @@ export default function Reviews() {
   // Modal states
   const [showDialog, setShowDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showStudyDialog, setShowStudyDialog] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   
+  // Study Form State
+  const [studyForm, setStudyForm] = useState({
+    study_date: new Date().toISOString().split('T')[0],
+    subject: "",
+    content: "",
+    topic: "",
+    study_type: "Teoria",
+    duration: "",
+    questions_count: "",
+    errors_count: "",
+    completed: false,
+    schedule_reviews: false
+  });
+
   // Form State
   const [form, setForm] = useState({
     subject: "",
