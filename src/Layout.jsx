@@ -151,6 +151,7 @@ const moreMenuItems = moreMenuCategories.flatMap(c => c.items);
 
 
 const pageNameTranslations = {
+  SubscriptionsDashboard: "Painel de Assinaturas",
   Dashboard: "Meu Painel",
   People: "Pessoas",
   Questions: "Questões",
