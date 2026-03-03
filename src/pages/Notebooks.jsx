@@ -49,6 +49,19 @@ export default function Notebooks() {
   const [user, setUser] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [notebookToDelete, setNotebookToDelete] = useState(null);
+  
+  const [activeTab, setActiveTab] = useState("cadernos");
+  
+  // Caderno de Erros states
+  const [errorRecords, setErrorRecords] = useState([]);
+  const [errorSearchTerm, setErrorSearchTerm] = useState("");
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [editingError, setEditingError] = useState(null);
+  const [errorForm, setErrorForm] = useState({ subject: "", content: "", note: "" });
+  const [errorPage, setErrorPage] = useState(1);
+  const [errorItemsPerPage, setErrorItemsPerPage] = useState(10);
+  const [showDeleteErrorDialog, setShowDeleteErrorDialog] = useState(false);
+  const [errorToDelete, setErrorToDelete] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -59,10 +72,12 @@ export default function Notebooks() {
       const userData = await base44.auth.me();
       setUser(userData);
 
-      const [myNotebooks, attempts] = await Promise.all([
+      const [myNotebooks, attempts, errors] = await Promise.all([
         base44.entities.Notebook.filter({ created_by: userData.email }),
-        base44.entities.NotebookAttempt.filter({ created_by: userData.email })
+        base44.entities.NotebookAttempt.filter({ created_by: userData.email }),
+        base44.entities.ErrorRecord.filter({ user_email: userData.email })
       ]);
+      setErrorRecords(errors || []);
 
       // Adiciona informações de tentativas aos cadernos
       const notebooksWithAttempts = myNotebooks.map(notebook => {
