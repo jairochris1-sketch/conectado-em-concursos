@@ -169,8 +169,9 @@ export default function QuestionCard({
             {question.options?.map((option, index) => (
               <div
                 key={index}
+                onClick={() => !isSubmitted && handleAnswerSelect(option.letter)}
                 className={cn(
-                  "flex items-start space-x-3 p-4 rounded-lg border-2 transition-all duration-200",
+                  "flex items-start space-x-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer",
                   "bg-white dark:bg-gray-800",
                   userAnswer === option.letter && !isSubmitted && "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20",
                   isSubmitted && option.letter === question.correct_answer && "border-green-500 bg-green-50 dark:bg-green-900/20",
@@ -178,14 +179,14 @@ export default function QuestionCard({
                   !userAnswer && !isSubmitted && "border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                 )}
               >
-                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} />
-                <Label
-                  htmlFor={`q${question.id}-${option.letter}`}
-                  className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200"
-                >
-                  <span className="font-semibold mr-2">{option.letter})</span>
-                  {option.text}
-                </Label>
+                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} onClick={(e) => e.stopPropagation()} />
+                <div className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200 flex items-start">
+                  <span className="font-medium mr-2">{option.letter})</span>
+                  <span 
+                    className="[&_b]:!font-medium [&_strong]:!font-medium"
+                    dangerouslySetInnerHTML={{ __html: option.text }}
+                  />
+                </div>
                 {isSubmitted && option.letter === question.correct_answer && (
                   <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                 )}
