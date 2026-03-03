@@ -235,38 +235,69 @@ export default function Notebooks() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <BookOpen className="w-8 h-8 text-blue-600" />
-              Meus Cadernos de Questões
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Organize e resolva suas questões de forma personalizada
-            </p>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <BookOpen className="w-8 h-8 text-blue-600" />
+                {activeTab === "cadernos" ? "Meus Cadernos de Questões" : "Caderno de Erros"}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                {activeTab === "cadernos" 
+                  ? "Organize e resolva suas questões de forma personalizada" 
+                  : "Registre seus erros para revisão e aprimoramento"}
+              </p>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
+              <TabsList className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-1 shadow-sm">
+                <TabsTrigger value="cadernos" className="data-[state=active]:bg-white data-[state=active]:text-blue-600 dark:data-[state=active]:bg-gray-700">
+                  Cadernos
+                </TabsTrigger>
+                <TabsTrigger value="erros" className="data-[state=active]:bg-white data-[state=active]:text-blue-600 dark:data-[state=active]:bg-gray-700">
+                  Caderno de Erros
+                </TabsTrigger>
+              </TabsList>
+              
+              {activeTab === "cadernos" ? (
+                <Button
+                  onClick={() => navigate(createPageUrl("CreateNotebook"))}
+                  className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Criar Caderno
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setEditingError(null);
+                    setErrorForm({ subject: "", content: "", note: "" });
+                    setShowErrorDialog(true);
+                  }}
+                  variant="outline"
+                  className="bg-white hover:bg-gray-50 text-gray-800 border-gray-300 whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Registrar Erro
+                </Button>
+              )}
+            </div>
           </div>
-          <Button
-            onClick={() => navigate(createPageUrl("CreateNotebook"))}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Criar Caderno
-          </Button>
-        </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Buscar cadernos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white dark:bg-gray-800"
-            />
-          </div>
-        </div>
+          <TabsContent value="cadernos" className="mt-0 outline-none">
+            <div className="mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  placeholder="Buscar cadernos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white dark:bg-gray-800"
+                />
+              </div>
+            </div>
 
-        {filteredNotebooks.length === 0 ? (
+            {filteredNotebooks.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
