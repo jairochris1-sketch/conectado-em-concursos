@@ -446,6 +446,171 @@ export default function Notebooks() {
             ))}
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="erros" className="mt-0 outline-none">
+            <Card className="bg-white dark:bg-gray-800 border-none shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Pesquisar erros..."
+                      value={errorSearchTerm}
+                      onChange={(e) => {
+                        setErrorSearchTerm(e.target.value);
+                        setErrorPage(1);
+                      }}
+                      className="pl-9 bg-white dark:bg-gray-900 border-gray-200"
+                    />
+                  </div>
+                  <Button variant="outline" size="icon" className="text-gray-500 hover:text-gray-700 hidden sm:flex">
+                    <Maximize className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600 hidden sm:flex">
+                    <HelpCircle className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                <div className="overflow-x-auto rounded-lg border border-gray-100 dark:border-gray-700">
+                  <Table>
+                    <TableHeader className="bg-gray-50/50 dark:bg-gray-900/50">
+                      <TableRow className="hover:bg-transparent border-gray-100 dark:border-gray-700">
+                        <TableHead className="font-medium text-gray-500 w-[120px]">Criado em</TableHead>
+                        <TableHead className="font-medium text-gray-500 w-[180px]">Matéria</TableHead>
+                        <TableHead className="font-medium text-gray-500 min-w-[200px]">Conteúdo</TableHead>
+                        <TableHead className="font-medium text-gray-500 min-w-[200px]">Anotação</TableHead>
+                        <TableHead className="font-medium text-gray-500 w-[100px] text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {currentErrorItems.length === 0 ? (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={5} className="h-32 text-center text-gray-500">
+                            {errorSearchTerm ? "Nenhum erro encontrado." : "Você ainda não tem registros na sua caderno de erros."}
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        currentErrorItems.map((err) => (
+                          <TableRow key={err.id} className="border-gray-100 dark:border-gray-700">
+                            <TableCell className="text-sm text-gray-600">
+                              {err.created_date ? format(new Date(err.created_date), 'dd/MM/yyyy') : '-'}
+                            </TableCell>
+                            <TableCell className="text-sm font-medium text-gray-700">
+                              {err.subject}
+                            </TableCell>
+                            <TableCell className="text-sm text-gray-600">
+                              <div className="line-clamp-2" title={err.content}>{err.content}</div>
+                            </TableCell>
+                            <TableCell className="text-sm text-gray-600">
+                              <div className="line-clamp-2" title={err.note}>{err.note || "-"}</div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => openEditError(err)}
+                                  className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    setErrorToDelete(err);
+                                    setShowDeleteErrorDialog(true);
+                                  }}
+                                  className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4 mt-4 gap-4">
+                  <div className="flex w-full sm:w-1/2 text-sm text-gray-500 px-4">
+                    <span className="flex-1">Total</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{filteredErrors.length} erros</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 text-sm text-gray-600 w-full sm:w-auto justify-center sm:justify-end">
+                    <div className="flex items-center gap-2">
+                      <span>Exibir</span>
+                      <Select 
+                        value={errorItemsPerPage.toString()} 
+                        onValueChange={(val) => {
+                          setErrorItemsPerPage(Number(val));
+                          setErrorPage(1);
+                        }}
+                      >
+                        <SelectTrigger className="h-8 w-[70px] bg-white border-gray-200">
+                          <SelectValue placeholder="10" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">5</SelectItem>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="20">20</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="font-medium">
+                      Pag. {totalErrorPages === 0 ? 0 : errorPage} de {totalErrorPages}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8" 
+                        onClick={() => setErrorPage(1)}
+                        disabled={errorPage <= 1}
+                      >
+                        <ChevronsLeft className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => setErrorPage(prev => Math.max(1, prev - 1))}
+                        disabled={errorPage <= 1}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => setErrorPage(prev => Math.min(totalErrorPages, prev + 1))}
+                        disabled={errorPage >= totalErrorPages || totalErrorPages === 0}
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => setErrorPage(totalErrorPages)}
+                        disabled={errorPage >= totalErrorPages || totalErrorPages === 0}
+                      >
+                        <ChevronsRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent>
@@ -465,6 +630,75 @@ export default function Notebooks() {
                 onClick={handleDelete}
               >
                 Excluir
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showDeleteErrorDialog} onOpenChange={setShowDeleteErrorDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar Exclusão</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja excluir este registro de erro? Esta ação não pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="outline" onClick={() => setShowDeleteErrorDialog(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteError}
+              >
+                Excluir
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{editingError ? "Editar Erro" : "Registrar Novo Erro"}</DialogTitle>
+              <DialogDescription>
+                Preencha os dados abaixo para registrar a questão ou assunto que você teve dificuldade.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Matéria *</label>
+                <Input
+                  placeholder="Ex: Direito Constitucional"
+                  value={errorForm.subject}
+                  onChange={(e) => setErrorForm({ ...errorForm, subject: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Conteúdo do Erro *</label>
+                <Textarea
+                  placeholder="Descreva a questão ou o conceito que você errou..."
+                  value={errorForm.content}
+                  onChange={(e) => setErrorForm({ ...errorForm, content: e.target.value })}
+                  className="min-h-[100px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Anotação (Opcional)</label>
+                <Textarea
+                  placeholder="Qual foi o motivo do erro? O que você deve lembrar na próxima vez?"
+                  value={errorForm.note}
+                  onChange={(e) => setErrorForm({ ...errorForm, note: e.target.value })}
+                  className="min-h-[80px]"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowErrorDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSaveError} className="bg-blue-600 hover:bg-blue-700 text-white">
+                {editingError ? "Atualizar" : "Salvar"}
               </Button>
             </div>
           </DialogContent>
