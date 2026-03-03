@@ -143,6 +143,7 @@ const moreMenuCategories = [
     title: "Conta",
     items: [
       { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield },
+      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard },
     ]
   }
 ];
