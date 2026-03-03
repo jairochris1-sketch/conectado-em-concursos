@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-import moment from 'npm:moment';
 
 // Rate limiting simples em memória
 const rateLimitMap = new Map();
@@ -130,27 +129,40 @@ Deno.serve(async (req) => {
             // Preparar dados de atualização da subscription
             const updateData = { status: newStatus };
             
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
             if (newStatus === 'cancelled') {
-                updateData.end_date = moment().format('YYYY-MM-DD');
+                updateData.end_date = formatDate(new Date());
             }
             
             if (newStatus === 'active' && payment?.dueDate) {
-                let nextPayment = moment(payment.dueDate);
-                let endDate = moment(payment.dueDate);
+                const dueDateParts = payment.dueDate.split('-');
+                const baseDate = new Date(dueDateParts[0], dueDateParts[1] - 1, dueDateParts[2]);
+                
+                let nextPayment = new Date(baseDate);
+                let endDate = new Date(baseDate);
 
                 if (subscription.cycle === 'monthly') {
-                    nextPayment.add(1, 'month');
-                    endDate.add(1, 'month').subtract(1, 'day');
+                    nextPayment.setMonth(nextPayment.getMonth() + 1);
+                    endDate.setMonth(endDate.getMonth() + 1);
+                    endDate.setDate(endDate.getDate() - 1);
                 } else if (subscription.cycle === 'semiannual') {
-                    nextPayment.add(6, 'months');
-                    endDate.add(6, 'months').subtract(1, 'day');
+                    nextPayment.setMonth(nextPayment.getMonth() + 6);
+                    endDate.setMonth(endDate.getMonth() + 6);
+                    endDate.setDate(endDate.getDate() - 1);
                 } else if (subscription.cycle === 'annual') {
-                    nextPayment.add(1, 'year');
-                    endDate.add(1, 'year').subtract(1, 'day');
+                    nextPayment.setFullYear(nextPayment.getFullYear() + 1);
+                    endDate.setFullYear(endDate.getFullYear() + 1);
+                    endDate.setDate(endDate.getDate() - 1);
                 }
 
-                updateData.next_payment_date = nextPayment.format('YYYY-MM-DD');
-                updateData.end_date = endDate.format('YYYY-MM-DD');
+                updateData.next_payment_date = formatDate(nextPayment);
+                updateData.end_date = formatDate(endDate);
             }
 
             await base44.asServiceRole.entities.Subscription.update(subscription.id, updateData);
