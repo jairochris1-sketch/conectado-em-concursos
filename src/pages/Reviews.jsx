@@ -48,6 +48,19 @@ export default function Reviews() {
     status: "pending"
   });
 
+  const [studyForm, setStudyForm] = useState({
+    study_date: new Date().toISOString().split('T')[0],
+    subject: "",
+    content: "",
+    description: "",
+    study_type: "Teoria",
+    time_spent: "",
+    questions_count: "",
+    errors_count: "",
+    completed_content: false,
+    schedule_revisions: false
+  });
+
   useEffect(() => {
     loadData();
   }, []);
