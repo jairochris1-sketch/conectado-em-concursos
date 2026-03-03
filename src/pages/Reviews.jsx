@@ -580,6 +580,147 @@ export default function Reviews() {
         </DialogContent>
       </Dialog>
 
+      {/* Study Form Dialog */}
+      <Dialog open={showStudyDialog} onOpenChange={setShowStudyDialog}>
+        <DialogContent className="max-w-3xl bg-white border-0 shadow-lg">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold text-gray-900">
+              Registrar Estudo
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Data do estudo</label>
+              <Input
+                type="date"
+                value={studyForm.study_date}
+                onChange={(e) => setStudyForm({ ...studyForm, study_date: e.target.value })}
+                className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Matéria</label>
+              <Select value={studyForm.subject} onValueChange={(val) => setStudyForm({ ...studyForm, subject: val })}>
+                <SelectTrigger className="w-full bg-white border-gray-200">
+                  <SelectValue placeholder="Matéria..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="portugues">Português</SelectItem>
+                  <SelectItem value="matematica">Matemática</SelectItem>
+                  <SelectItem value="direito_constitucional">Direito Constitucional</SelectItem>
+                  <SelectItem value="direito_administrativo">Direito Administrativo</SelectItem>
+                  <SelectItem value="informatica">Informática</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Conteúdo</label>
+              <Select value={studyForm.content} onValueChange={(val) => setStudyForm({ ...studyForm, content: val })}>
+                <SelectTrigger className="w-full bg-white border-gray-200">
+                  <SelectValue placeholder="Conteúdo..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="teoria_geral">Teoria Geral</SelectItem>
+                  <SelectItem value="exercicios">Exercícios</SelectItem>
+                  <SelectItem value="revisao">Revisão</SelectItem>
+                  <SelectItem value="leitura_lei">Leitura de Lei Seca</SelectItem>
+                  <SelectItem value="simulado">Simulado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2 md:col-span-3">
+              <label className="text-sm font-semibold text-gray-900">Assunto abordado</label>
+              <Textarea
+                value={studyForm.description}
+                onChange={(e) => setStudyForm({ ...studyForm, description: e.target.value })}
+                className="min-h-[100px] resize-none bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Tipo do estudo</label>
+              <Select value={studyForm.study_type} onValueChange={(val) => setStudyForm({ ...studyForm, study_type: val })}>
+                <SelectTrigger className="w-full bg-white border-gray-200">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Teoria">Teoria</SelectItem>
+                  <SelectItem value="Questões">Questões</SelectItem>
+                  <SelectItem value="Revisão">Revisão</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Tempo líquido</label>
+              <Input
+                placeholder="HH:MM:SS"
+                value={studyForm.time_spent}
+                onChange={(e) => setStudyForm({ ...studyForm, time_spent: e.target.value })}
+                className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+
+            <div className="space-y-2 flex gap-4 md:col-span-1">
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-semibold text-gray-900">Questões</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={studyForm.questions_count}
+                  onChange={(e) => setStudyForm({ ...studyForm, questions_count: e.target.value })}
+                  className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+                />
+              </div>
+              <div className="flex-1 space-y-2">
+                <label className="text-sm font-semibold text-gray-900">Erros</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={studyForm.errors_count}
+                  onChange={(e) => setStudyForm({ ...studyForm, errors_count: e.target.value })}
+                  className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-3 border border-gray-200 rounded-lg p-4 flex items-center justify-between mt-2">
+              <div className="space-y-0.5">
+                <h4 className="text-sm font-bold text-gray-900">Concluir conteúdo</h4>
+                <p className="text-sm text-gray-500">Marque o conteúdo como concluído, caso você tenha estudado toda a teoria.</p>
+              </div>
+              <Switch 
+                checked={studyForm.completed_content} 
+                onCheckedChange={(checked) => setStudyForm({...studyForm, completed_content: checked})} 
+                className="data-[state=checked]:bg-[#de4b40]"
+              />
+            </div>
+
+            <div className="md:col-span-3 border border-gray-200 rounded-lg p-4 flex items-center justify-between mt-2">
+              <div className="space-y-0.5">
+                <h4 className="text-sm font-bold text-gray-900">Programar revisões</h4>
+                <p className="text-sm text-gray-500">Programe revisões de forma automática. Contagem em dias, a partir da data do estudo.</p>
+              </div>
+              <Switch 
+                checked={studyForm.schedule_revisions} 
+                onCheckedChange={(checked) => setStudyForm({...studyForm, schedule_revisions: checked})} 
+                className="data-[state=checked]:bg-[#de4b40]"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-between pt-4 mt-2 border-t">
+            <Button variant="outline" onClick={() => setShowStudyDialog(false)} className="px-6 border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold">
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveStudy} className="bg-[#de4b40] hover:bg-[#c94137] text-white px-8 font-semibold">
+              Salvar estudo
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
