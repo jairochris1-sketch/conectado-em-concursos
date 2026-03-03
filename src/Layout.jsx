@@ -238,7 +238,7 @@ const planStyles = {
     style: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
   },
   avancado: {
-    label: "Plano Avançado",
+    label: "Plano Premium",
     icon: Shield,
     style: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
   }
