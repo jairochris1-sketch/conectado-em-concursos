@@ -106,6 +106,7 @@ const moreMenuCategories = [
       { title: "Cronograma de Estudos", url: createPageUrl("Schedule"), icon: Calendar },
       { title: "Planos de Estudo", url: createPageUrl("StudyPlans"), icon: Target },
       { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle },
+      { title: "Revisões", url: createPageUrl("Reviews"), icon: RefreshCcw },
     ]
   },
   {
