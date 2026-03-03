@@ -296,7 +296,7 @@ export default function Reviews() {
             <Button variant="outline" className="gap-2 bg-white text-gray-700 hover:bg-gray-50 border-gray-200" onClick={openNewReview}>
               <Plus className="w-4 h-4" /> Revisão
             </Button>
-            <Button className="gap-2 bg-red-500 hover:bg-red-600 text-white" onClick={openNewReview}>
+            <Button className="gap-2 bg-red-500 hover:bg-red-600 text-white" onClick={openNewStudy}>
               <Plus className="w-4 h-4" /> Registrar estudo
             </Button>
           </div>
