@@ -462,75 +462,68 @@ export default function Reviews() {
 
       {/* Form Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingReview ? "Editar Revisão" : "Nova Revisão"}</DialogTitle>
-            <DialogDescription>
-              Preencha os dados abaixo para organizar sua revisão.
-            </DialogDescription>
+        <DialogContent className="max-w-2xl bg-white border-0 shadow-lg">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold text-gray-900">
+              {editingReview ? "Editar Revisão Programada" : "Criar Revisão Programada"}
+            </DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Matéria *</label>
-              <Input
-                placeholder="Ex: Direito Constitucional"
-                value={form.subject}
-                onChange={(e) => setForm({ ...form, subject: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Revisão de (Tipo)</label>
-              <Input
-                placeholder="Ex: 24h, 7 dias, etc"
-                value={form.review_type}
-                onChange={(e) => setForm({ ...form, review_type: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">Conteúdo *</label>
-              <Input
-                placeholder="Qual assunto você vai revisar?"
-                value={form.content}
-                onChange={(e) => setForm({ ...form, content: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">Descrição (Opcional)</label>
-              <Textarea
-                placeholder="Observações adicionais..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="min-h-[80px]"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Vencimento *</label>
+              <label className="text-sm font-semibold text-gray-900">Data agendada</label>
               <Input
                 type="date"
                 value={form.due_date}
                 onChange={(e) => setForm({ ...form, due_date: e.target.value })}
+                className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Situação</label>
-              <Select value={form.status} onValueChange={(val) => setForm({ ...form, status: val })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pendente</SelectItem>
-                  <SelectItem value="completed">Concluída</SelectItem>
-                  <SelectItem value="overdue">Atrasada</SelectItem>
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-semibold text-gray-900">Matéria</label>
+              <Input
+                placeholder="Matéria..."
+                value={form.subject}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-900">Conteúdo</label>
+              <Input
+                placeholder="Conteúdo..."
+                value={form.content}
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
+                className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+            
+            <div className="space-y-2 md:col-span-3">
+              <label className="text-sm font-semibold text-gray-900">Assunto abordado</label>
+              <Textarea
+                placeholder="Direitos fundamentais..."
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="min-h-[100px] resize-none bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-3 flex items-center pt-2">
+              <label className="text-sm font-semibold text-gray-900 cursor-pointer flex items-center gap-3">
+                Concluída
+                <Checkbox 
+                  checked={form.status === 'completed'}
+                  onCheckedChange={(checked) => setForm({...form, status: checked ? 'completed' : 'pending'})}
+                  className="border-red-500 data-[state=checked]:bg-[#de4b40] data-[state=checked]:border-[#de4b40] w-5 h-5"
+                />
+              </label>
             </div>
           </div>
-          <div className="flex justify-end gap-3 mt-4">
-            <Button variant="outline" onClick={() => setShowDialog(false)}>
+          <div className="flex justify-between pt-4 mt-2">
+            <Button variant="outline" onClick={() => setShowDialog(false)} className="px-6 border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold">
               Cancelar
             </Button>
-            <Button onClick={handleSave} className="bg-red-500 hover:bg-red-600 text-white">
-              {editingReview ? "Atualizar" : "Salvar Revisão"}
+            <Button onClick={handleSave} className="bg-[#de4b40] hover:bg-[#c94137] text-white px-8 font-semibold">
+              Salvar
             </Button>
           </div>
         </DialogContent>
