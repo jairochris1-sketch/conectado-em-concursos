@@ -159,9 +159,70 @@ export default function Notebooks() {
     }
   };
 
+  const handleSaveError = async () => {
+    if (!errorForm.subject || !errorForm.content) {
+      toast.error("Preencha matéria e conteúdo");
+      return;
+    }
+    
+    try {
+      if (editingError) {
+        await base44.entities.ErrorRecord.update(editingError.id, {
+          subject: errorForm.subject,
+          content: errorForm.content,
+          note: errorForm.note
+        });
+        toast.success("Erro atualizado com sucesso");
+      } else {
+        await base44.entities.ErrorRecord.create({
+          user_email: user.email,
+          subject: errorForm.subject,
+          content: errorForm.content,
+          note: errorForm.note
+        });
+        toast.success("Erro registrado com sucesso");
+      }
+      setShowErrorDialog(false);
+      setEditingError(null);
+      setErrorForm({ subject: "", content: "", note: "" });
+      loadData();
+    } catch (error) {
+      console.error("Erro ao salvar registro de erro:", error);
+      toast.error("Erro ao salvar");
+    }
+  };
+
+  const handleDeleteError = async () => {
+    try {
+      await base44.entities.ErrorRecord.delete(errorToDelete.id);
+      toast.success("Erro excluído com sucesso");
+      setShowDeleteErrorDialog(false);
+      setErrorToDelete(null);
+      loadData();
+    } catch (error) {
+      console.error("Erro ao excluir erro:", error);
+      toast.error("Erro ao excluir");
+    }
+  };
+
+  const openEditError = (err) => {
+    setEditingError(err);
+    setErrorForm({ subject: err.subject, content: err.content, note: err.note || "" });
+    setShowErrorDialog(true);
+  };
+
   const filteredNotebooks = notebooks.filter(n => 
     n.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const filteredErrors = errorRecords.filter(e => 
+    (e.subject || "").toLowerCase().includes(errorSearchTerm.toLowerCase()) ||
+    (e.content || "").toLowerCase().includes(errorSearchTerm.toLowerCase()) ||
+    (e.note || "").toLowerCase().includes(errorSearchTerm.toLowerCase())
+  );
+  
+  const totalErrorPages = Math.ceil(filteredErrors.length / errorItemsPerPage);
+  const currentErrorItems = filteredErrors.slice((errorPage - 1) * errorItemsPerPage, errorPage * errorItemsPerPage);
 
   if (loading) {
     return (
