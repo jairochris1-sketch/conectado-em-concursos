@@ -151,7 +151,7 @@ const plans = [
   highlight: false
 },
 {
-  name: 'Avançado',
+  name: 'Premium',
   key: 'avancado',
   monthly: { price: '79,80', cycle: 'MONTHLY' },
   semiannual: { price: '399,00', cycle: 'SEMIANNUALLY', originalPrice: '478,80', savings: '79,80', installments: '6x R$ 66,50' },
