@@ -141,6 +141,8 @@ export default function StudiesPage() {
   const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false });
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [selectedFolderIds, setSelectedFolderIds] = useState([]);
   const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
   const [isUploading, setIsUploading] = useState(false);
 
