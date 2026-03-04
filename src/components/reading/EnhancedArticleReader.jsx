@@ -175,10 +175,10 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
   if (!isOpen || !article) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 overflow-hidden">
-      <div className="h-[100dvh] flex w-full">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col">
+      <div className="flex-1 flex w-full overflow-hidden">
         {/* Main Content */}
-        <div className={`flex-1 flex flex-col ${showNotes ? '' : 'mr-0'}`}>
+        <div className={`flex-1 flex flex-col min-w-0 ${showNotes ? '' : 'mr-0'}`}>
           {/* Header com controles */}
           {!readingMode && (
             <div className={`border-b ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
