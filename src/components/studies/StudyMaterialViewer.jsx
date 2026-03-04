@@ -101,16 +101,16 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
     <div className="fixed inset-0 z-50 flex flex-col">
       <div className={`flex-1 flex flex-col lg:flex-row ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="flex-1 flex flex-col min-w-0">
-          <div className={`flex justify-between items-center p-4 md:p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-            <div className="flex-1 min-w-0 pr-4">
-              <h2 className={`text-lg md:text-xl font-bold mb-1 truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 p-4 md:p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="flex-1 min-w-0">
+              <h2 className={`text-lg md:text-xl font-bold mb-1 line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 {material.title}
               </h2>
-              <p className={`text-xs md:text-sm truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-xs md:text-sm line-clamp-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {material.description}
               </p>
             </div>
-            <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 self-end sm:self-auto">
               <Button
                 variant={isOfflineReady ? 'default' : 'outline'}
                 size="icon"
