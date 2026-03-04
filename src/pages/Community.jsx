@@ -461,15 +461,15 @@ export default function CommunityPage({ embedded = false }) {
 
           <Card className="mb-6">
             <CardHeader className="bg-slate-800 p-6 rounded flex flex-col space-y-1.5">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
                   <Avatar>
                     <AvatarImage src={selectedPost.author_photo_url} />
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
-                          <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
-                          <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
+                          <CardTitle className="text-xl break-words">{selectedPost.title}</CardTitle>
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <Link
@@ -496,7 +496,7 @@ export default function CommunityPage({ embedded = false }) {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2 items-center">
+                <div className="flex flex-wrap gap-2 items-center">
                   <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
                   {selectedPost.author_email === user.email &&
