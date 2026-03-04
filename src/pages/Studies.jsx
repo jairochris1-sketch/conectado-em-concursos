@@ -1096,50 +1096,67 @@ ${videoNotes}
               
               <TabsContent value="conteudo" className="p-6">
                 {selectedCourse.isCustom ? (
-                  <div className="space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiais do Curso</h3>
-                      {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                        <div className="flex flex-wrap gap-2">
-                          <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                            <Plus className="w-4 h-4 mr-2" /> Adicionar Material
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+          <div className="space-y-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 md:p-8 shadow-sm">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-100 dark:border-gray-800">
+               <div className="flex items-center gap-4">
+                 <div>
+                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                     <Folder className="w-6 h-6 text-blue-600 shrink-0" fill="currentColor" />
+                     {selectedCourse.label}
+                   </h2>
+                   {selectedCourse.description && <p className="text-gray-500 text-sm mt-1">{selectedCourse.description}</p>}
+                 </div>
+               </div>
+               {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                 <div className="flex items-center gap-2">
+                   <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                     <Plus className="w-4 h-4 mr-2" /> Adicionar Material
+                   </Button>
+                 </div>
+               )}
+            </div>
 
-                    <div className="space-y-3">
-                      {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
-                        <div className="py-12 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                          <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
-                          <p className="text-gray-500 font-medium">Nenhum material adicionado a este curso ainda.</p>
-                          <Button onClick={() => setShowAddItemModal(true)} variant="link" className="text-blue-600 mt-2">Clique aqui para adicionar</Button>
-                        </div>
-                      ) : (
-                        userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
-                          <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm gap-4 hover:border-blue-300 transition-colors group">
-                            <div className="flex items-center gap-4 flex-1 w-full">
-                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
-                                {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
-                              </button>
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                                {item.type === 'video' ? <Play className="w-4 h-4 ml-0.5" fill="currentColor" /> : <FileText className="w-4 h-4" />}
-                              </div>
-                              <div className="flex-1 min-w-0" onClick={() => handleOpenCustomItem(item)}>
-                                <h4 className="font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">{item.title}</h4>
-                                {item.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{item.description}</p>}
-                              </div>
-                            </div>
-                            {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                              <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        ))
-                      )}
+            <div className="space-y-3">
+              {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
+                <div className="py-16 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                  <Folder className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Pasta Vazia</h3>
+                  <p className="text-gray-500">Nenhum material foi adicionado a esta pasta ainda.</p>
+                  {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                    <Button onClick={() => setShowAddItemModal(true)} variant="outline" className="mt-4 border-blue-200 text-blue-600 hover:bg-blue-50">
+                      <Plus className="w-4 h-4 mr-2" /> Adicionar Primeiro Material
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
+                  <div key={item.id} className="flex flex-col p-5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group relative">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm ${item.type === 'video' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                        {item.type === 'video' ? <Play className="w-6 h-6 ml-1" fill="currentColor" /> : <FileText className="w-6 h-6" />}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); toggleItemCompletion(item); }} className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`} title="Marcar como concluído">
+                          {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
+                        </button>
+                        {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleDeleteCourseItem(item.id); }} className="h-7 w-7 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 cursor-pointer" onClick={() => handleOpenCustomItem(item)}>
+                      <h4 className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 mb-1">{item.title}</h4>
+                      {item.description && <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>}
                     </div>
                   </div>
+                ))}
+                </div>
+              )}
+            </div>
+          </div>
                 ) : (
                 <div className="space-y-6">
                 <div className="space-y-6">
