@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, FileText, Image, Moon, Sun, Download, WifiOff, BookOpen, Save, Check } from 'lucide-react';
+import { X, FileText, Image, Moon, Sun, Download, WifiOff, BookOpen, Save, Check, Maximize, Minimize } from 'lucide-react';
 import { User } from '@/entities/User';
 import { Textarea } from '@/components/ui/textarea';
 
