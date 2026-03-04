@@ -98,6 +98,7 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import EditalVerticalizado from './pages/EditalVerticalizado';
 import __Layout from './Layout.jsx';
 
 
@@ -153,6 +154,7 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
+    "EditalVerticalizado": EditalVerticalizado,
 }
 
 export const pagesConfig = {
