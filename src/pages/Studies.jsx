@@ -671,6 +671,14 @@ ${videoNotes}
   };
 
   const handleCreateCourse = async () => {
+    const myCoursesCount = userCourses.filter(c => c.user_email === currentUser?.email).length;
+    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com';
+    
+    if (!isAdminUser && myCoursesCount >= 10) {
+      alert("Você atingiu o limite de 10 pastas personalizadas.");
+      return;
+    }
+
     try {
       const newCourse = await base44.entities.UserCourse.create({
         user_email: currentUser.email,
@@ -810,7 +818,7 @@ ${videoNotes}
         {!selectedCourse ? (
           <div className="space-y-10">
             <div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-2">
                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Pastas de Materiais de Estudo Personalizadas</h2>
                  {canCreateCourse && (
                    <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -818,6 +826,9 @@ ${videoNotes}
                    </Button>
                  )}
               </div>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                Se você aprende melhor com um material próprio ou um professor específico em determinada disciplina, pode reunir tudo em um só lugar — simples, organizado e totalmente personalizado para o seu método de aprendizagem. (Limite de 10 pastas)
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {userCourses.length === 0 ? (
                   <div className="col-span-full py-8 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
@@ -846,7 +857,7 @@ ${videoNotes}
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos Preparatórios</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
                   <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
