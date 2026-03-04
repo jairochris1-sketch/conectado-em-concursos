@@ -188,6 +188,7 @@ export default function StudiesPage() {
   const [selectedVideoSubject, setSelectedVideoSubject] = useState('all');
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
+  const [videoNotesSaveStatus, setVideoNotesSaveStatus] = useState('');
   const [videoPlayerSize, setVideoPlayerSize] = useState(() => {
     return localStorage.getItem('videoPlayerSize') || 'normal';
   }); // normal, medium, large
