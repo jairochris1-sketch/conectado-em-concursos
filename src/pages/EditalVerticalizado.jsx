@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, ArrowLeft, Target, TrendingUp, CheckCircle2, XCircle, BarChart3, Bot, Send } from "lucide-react";
+import { Loader2, ArrowLeft, Target, TrendingUp, CheckCircle2, XCircle, BarChart3, Bot, Send, AlertCircle, ListChecks } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
