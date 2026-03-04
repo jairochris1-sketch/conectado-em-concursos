@@ -52,7 +52,7 @@ export default function EnhancedArticleReader({ article, isOpen, onClose }) {
   const [highlights, setHighlights] = useState([]);
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState('');
-  const [showNotes, setShowNotes] = useState(true);
+  const [showNotes, setShowNotes] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [selectedColor, setSelectedColor] = useState('#ffeb3b');
 
   const highlightColors = [
