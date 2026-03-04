@@ -580,7 +580,6 @@ export default function GuiaEstudos() {
                     <h3 className={`text-lg font-semibold mb-2 break-words break-all sm:break-normal ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                       {a.author && <Badge variant="outline">{a.author}</Badge>}
-                      {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
                       {readingProgress[a.id] && (
                         <Badge className="bg-blue-100 text-blue-800">
                           <BookMarked className="w-3 h-3 mr-1" />
