@@ -496,6 +496,33 @@ export default function StudiesPage() {
     // Carregar anotações salvas no localStorage
     const savedNotes = localStorage.getItem(`video_notes_${video.id}`);
     setVideoNotes(savedNotes || '');
+
+    // Smart preloading next video Se existir
+    let nextVideo;
+    if (video.isCustom) {
+      const customVideos = userCourseItems.filter(i => i.course_id === video.course_id && i.type === 'video');
+      const currentIndex = customVideos.findIndex((v) => v.id === video.id);
+      if (currentIndex !== -1 && currentIndex < customVideos.length - 1) {
+        nextVideo = customVideos[currentIndex + 1];
+      }
+    } else {
+      const currentIndex = filteredVideos.findIndex((v) => v.id === video.id);
+      if (currentIndex !== -1 && currentIndex < filteredVideos.length - 1) {
+        nextVideo = filteredVideos[currentIndex + 1];
+      }
+    }
+
+    if (nextVideo) {
+      const nextId = extractYouTubeId(nextVideo.video_id) || extractYouTubeId(nextVideo.content_url) || nextVideo.video_id;
+      if (nextId) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'document';
+        link.href = `https://www.youtube-nocookie.com/embed/${nextId}?autoplay=1&rel=0`;
+        document.head.appendChild(link);
+        setTimeout(() => document.head.removeChild(link), 10000); // cleanup after 10s
+      }
+    }
   };
 
   const handleCloseVideo = () => {
