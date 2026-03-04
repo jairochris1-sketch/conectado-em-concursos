@@ -8,11 +8,10 @@ import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
 import { createPageUrl } from '@/utils';
 
-const plans = [
+const getPlans = (cycle) => [
   {
     name: 'Gratuito',
     key: 'gratuito',
-    cycle: 'monthly',
     price: '0,00',
     cycleLabel: '/mês',
     description: 'Para conhecer a plataforma',
@@ -43,9 +42,8 @@ const plans = [
     xColor: 'text-gray-400'
   },
   {
-    name: 'Essencial',
+    name: 'Padrão',
     key: 'padrao',
-    cycle: 'monthly',
     price: '59,90',
     cycleLabel: '/mês',
     description: 'Para quem está começando',
@@ -57,8 +55,7 @@ const plans = [
       'Provas completas',
       'Ranking de usuários',
       'Comentários da comunidade',
-      'Fórum e Feed',
-      'Lousa digital'
+      'Fórum e Feed'
     ],
     unavailableFeatures: [
       'Estatísticas avançadas',
@@ -74,66 +71,52 @@ const plans = [
     xColor: 'text-gray-400'
   },
   {
-    name: 'Avançado',
-    key: 'avancado',
-    cycle: 'monthly',
-    price: '119,90',
-    cycleLabel: '/mês',
-    description: 'Para quem leva a preparação a sério',
-    badge: { text: '⭐ MAIS ESCOLHIDO', style: 'bg-[#f59e0b] text-white' },
-    link: 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
-    buttonText: 'Quero Evoluir',
+    name: cycle === 'annual' ? 'Premium' : 'Avançado',
+    key: cycle === 'annual' ? 'premium' : (cycle === 'quarterly' ? 'trimestral' : 'avancado'),
+    pricePrefix: cycle === 'annual' ? '12x' : null,
+    price: cycle === 'annual' ? '139,90' : (cycle === 'quarterly' ? '329,90' : '119,90'),
+    cycleLabel: cycle === 'annual' ? '' : (cycle === 'quarterly' ? '/trimestre' : '/mês'),
+    cashPrice: cycle === 'annual' ? 'ou R$1.397,00 à vista' : (cycle === 'quarterly' ? 'Economize R$29,80' : null),
+    description: cycle === 'annual' ? 'Para uma preparação completa' : 'Para quem leva a preparação a sério',
+    badge: cycle === 'annual' 
+      ? { text: '🔥 MELHOR CUSTO-BENEFÍCIO', style: 'bg-[#10b981] text-white' }
+      : { text: '⭐ MAIS ESCOLHIDO', style: 'bg-[#f59e0b] text-white' },
+    link: cycle === 'annual' ? 'https://www.asaas.com/c/45fatb35qaui9vd9' : 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
+    buttonText: cycle === 'annual' ? 'Quero Preparação Completa' : 'Quero Evoluir',
     features: [
-      'Tudo do Essencial',
+      'Tudo do Padrão',
       'Estatísticas detalhadas',
       'Análise por banca',
       'Simulados personalizados',
       'Flashcards ilimitados',
       'Revisões espaçadas',
       'Resumos e PDFs',
-      'Área de estudos personalizada'
+      'Área de estudos personalizada',
+      ...(cycle === 'annual' ? [
+        'Edital Verticalizado com IA',
+        'Simulado por edital',
+        'Cronograma com IA',
+        'Tutor IA (explicações passo a passo)',
+        'Questões inéditas',
+        'Simulado digital exclusivo',
+        'Cursos inclusos',
+        'Atualizações futuras liberadas'
+      ] : [])
     ],
-    unavailableFeatures: [
+    unavailableFeatures: cycle === 'annual' ? [] : [
       'IA avançada',
       'Edital verticalizado com IA'
     ],
-    cardStyle: 'bg-white border-[#f59e0b] border-2 text-gray-900 relative scale-105 z-10 shadow-xl',
-    headerStyle: 'text-gray-900',
-    priceStyle: 'text-gray-900',
-    buttonStyle: 'bg-[#f59e0b] hover:bg-[#d97706] text-white',
-    checkColor: 'text-[#1e293b]',
-    xColor: 'text-gray-400'
-  },
-  {
-    name: 'Avançado Anual',
-    key: 'avancado_anual',
-    cycle: 'annual',
-    pricePrefix: '12x',
-    price: '139,90',
-    cycleLabel: '',
-    cashPrice: 'ou R$1.397,00 à vista',
-    description: '',
-    badge: { text: '🔥 MELHOR CUSTO-BENEFÍCIO', style: 'bg-[#10b981] text-white' },
-    link: 'https://www.asaas.com/c/45fatb35qaui9vd9',
-    buttonText: 'Quero Preparação Completa',
-    features: [
-      'Tudo do Avançado',
-      'Edital Verticalizado com IA',
-      'Simulado por edital',
-      'Cronograma com IA',
-      'Tutor IA (explicações passo a passo)',
-      'Questões inéditas',
-      'Simulado digital exclusivo',
-      'Cursos inclusos',
-      'Atualizações futuras liberadas'
-    ],
-    unavailableFeatures: [],
-    cardStyle: 'bg-[#0f172a] border-[#0f172a] text-white relative shadow-xl',
-    headerStyle: 'text-white',
-    priceStyle: 'text-white',
-    buttonStyle: 'bg-[#10b981] hover:bg-[#059669] text-white',
-    checkColor: 'text-white',
-    xColor: 'text-gray-500'
+    cardStyle: cycle === 'annual' 
+      ? 'bg-[#0f172a] border-[#0f172a] text-white relative shadow-xl scale-105 z-10'
+      : 'bg-white border-[#f59e0b] border-2 text-gray-900 relative scale-105 z-10 shadow-xl',
+    headerStyle: cycle === 'annual' ? 'text-white' : 'text-gray-900',
+    priceStyle: cycle === 'annual' ? 'text-white' : 'text-gray-900',
+    buttonStyle: cycle === 'annual' 
+      ? 'bg-[#10b981] hover:bg-[#059669] text-white' 
+      : 'bg-[#f59e0b] hover:bg-[#d97706] text-white',
+    checkColor: cycle === 'annual' ? 'text-white' : 'text-[#1e293b]',
+    xColor: cycle === 'annual' ? 'text-gray-500' : 'text-gray-400'
   }
 ];
 
@@ -146,7 +129,6 @@ const PlanCard = ({ plan, userEmail, currentPlanKey }) => {
       return;
     }
     if (plan.link) {
-      // Append email query param if possible, although it's an external Asaas link
       const url = new URL(plan.link);
       if (userEmail) {
         url.searchParams.set('email', userEmail);
@@ -178,7 +160,7 @@ const PlanCard = ({ plan, userEmail, currentPlanKey }) => {
           <p className="text-sm opacity-70 mb-2">{plan.description}</p>
         )}
         {plan.cashPrice && (
-          <p className="text-sm opacity-70 mb-2">{plan.cashPrice}</p>
+          <p className="text-sm font-semibold opacity-90 mb-2 text-green-500">{plan.cashPrice}</p>
         )}
       </div>
 
@@ -214,6 +196,7 @@ const PlanCard = ({ plan, userEmail, currentPlanKey }) => {
 export default function SubscriptionPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [billingCycle, setBillingCycle] = useState('monthly');
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -238,10 +221,12 @@ export default function SubscriptionPage() {
     );
   }
 
+  const currentPlans = getPlans(billingCycle);
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 pt-8">
+        <div className="text-center mb-10 pt-8">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -253,20 +238,63 @@ export default function SubscriptionPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-xl text-gray-600 max-w-2xl mx-auto mb-8"
           >
             Acelere sua aprovação com acesso total à nossa plataforma.
           </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center mb-8"
+          >
+            <div className="bg-gray-200 p-1 rounded-lg flex shadow-inner">
+              <button
+                onClick={() => setBillingCycle('monthly')}
+                className={`px-6 py-2.5 rounded-md transition-all text-sm font-semibold ${
+                billingCycle === 'monthly' ?
+                'bg-white text-gray-900 shadow' :
+                'text-gray-600 hover:text-gray-900'}`
+                }
+              >
+                Mensal
+              </button>
+              <button
+                onClick={() => setBillingCycle('quarterly')}
+                className={`px-6 py-2.5 rounded-md transition-all text-sm font-semibold relative ${
+                billingCycle === 'quarterly' ?
+                'bg-white text-gray-900 shadow' :
+                'text-gray-600 hover:text-gray-900'}`
+                }
+              >
+                Trimestral
+              </button>
+              <button
+                onClick={() => setBillingCycle('annual')}
+                className={`px-6 py-2.5 rounded-md transition-all text-sm font-semibold relative ${
+                billingCycle === 'annual' ?
+                'bg-white text-gray-900 shadow' :
+                'text-gray-600 hover:text-gray-900'}`
+                }
+              >
+                Anual
+                <span className="absolute -top-3 -right-3 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">
+                  Economize
+                </span>
+              </button>
+            </div>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-6 max-w-[90rem] mx-auto items-stretch pt-4 pb-8">
-          {plans.map((plan, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch pt-4 pb-8">
+          {currentPlans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className={`h-full ${plan.highlight ? 'lg:-mt-4' : ''}`}
+              className={`h-full ${plan.key !== 'gratuito' && plan.key !== 'padrao' ? 'lg:-mt-4' : ''}`}
             >
               <PlanCard plan={plan} userEmail={user?.email} currentPlanKey={user?.current_plan} />
             </motion.div>
@@ -274,7 +302,6 @@ export default function SubscriptionPage() {
         </div>
 
         <FAQSection />
-
         <SocialLinks />
 
         <motion.div
