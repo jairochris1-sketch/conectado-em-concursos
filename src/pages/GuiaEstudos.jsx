@@ -305,7 +305,6 @@ export default function GuiaEstudos() {
             </h1>
             <div className="flex items-center gap-2 mb-6">
               {selectedArticle.author && <Badge variant="outline">{selectedArticle.author}</Badge>}
-              {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
             </div>
             <div 
               className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert [&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}`}
