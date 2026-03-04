@@ -31,10 +31,8 @@ export default function SocialLinks() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1.2, duration: 0.5 }}
-      className="mt-16 text-center"
+      className="text-center"
     >
-
-      
       <div className="flex justify-center gap-6">
         {socialLinks.map((social, index) => (
           <motion.a
