@@ -33,12 +33,7 @@ export default function SocialLinks() {
       transition={{ delay: 1.2, duration: 0.5 }}
       className="mt-16 text-center"
     >
-      <h3 className="text-2xl font-bold text-white mb-6">
-        Siga-nos nas redes sociais
-      </h3>
-      <p className="text-gray-300 mb-8">
-        Fique por dentro de todas as novidades e dicas para concursos
-      </p>
+
       
       <div className="flex justify-center gap-6">
         {socialLinks.map((social, index) => (
@@ -65,11 +60,7 @@ export default function SocialLinks() {
         ))}
       </div>
       
-      <div className="mt-8">
-        <p className="text-gray-400 text-sm">
-          💬 Tem dúvidas? Entre no nosso grupo do WhatsApp!
-        </p>
-      </div>
+
     </motion.div>
   );
 }
