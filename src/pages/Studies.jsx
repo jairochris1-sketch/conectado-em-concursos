@@ -220,6 +220,10 @@ export default function StudiesPage() {
   }, [materialViewMode]);
 
   useEffect(() => {
+    localStorage.setItem('courseViewMode', courseViewMode);
+  }, [courseViewMode]);
+
+  useEffect(() => {
     localStorage.setItem('articleViewMode', articleViewMode);
   }, [articleViewMode]);
 
