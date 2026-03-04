@@ -880,10 +880,29 @@ ${videoNotes}
                        <List className="w-4 h-4" />
                      </Button>
                    </div>
-                   {canCreateCourse && (
-                     <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                       <Plus className="w-4 h-4 mr-2" /> Criar Pasta
-                     </Button>
+                   {deleteMode ? (
+                     <>
+                       <Button variant="outline" onClick={() => { setDeleteMode(false); setSelectedFolderIds([]); }}>Cancelar</Button>
+                       <Button variant="destructive" onClick={handleDeleteSelectedFolders} disabled={selectedFolderIds.length === 0}>
+                         Excluir Selecionadas ({selectedFolderIds.length})
+                       </Button>
+                       <Button variant="destructive" onClick={handleDeleteAllFolders}>
+                         Excluir Todas
+                       </Button>
+                     </>
+                   ) : (
+                     <>
+                       {userCourses.length > 0 && (
+                         <Button variant="outline" onClick={() => setDeleteMode(true)}>
+                           <Trash2 className="w-4 h-4 mr-2" /> Excluir
+                         </Button>
+                       )}
+                       {canCreateCourse && (
+                         <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                           <Plus className="w-4 h-4 mr-2" /> Criar Pasta
+                         </Button>
+                       )}
+                     </>
                    )}
                  </div>
               </div>
@@ -899,7 +918,18 @@ ${videoNotes}
                   </div>
                 ) : (
                   userCourses.map(course => (
-                    <Card key={course.id} className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30 ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
+                    <Card key={course.id} className={`relative cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border ${selectedFolderIds.includes(course.id) ? 'border-red-500 ring-2 ring-red-200' : 'border-blue-100 dark:border-blue-900/30'} ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => {
+                      if (deleteMode) {
+                        setSelectedFolderIds(prev => prev.includes(course.id) ? prev.filter(fid => fid !== course.id) : [...prev, course.id]);
+                      } else {
+                        setSelectedCourse({...course, isCustom: true, label: course.title});
+                      }
+                    }}>
+                      {deleteMode && (
+                        <div className="absolute top-4 left-4 z-10" onClick={e => e.stopPropagation()}>
+                          <Checkbox checked={selectedFolderIds.includes(course.id)} onCheckedChange={() => setSelectedFolderIds(prev => prev.includes(course.id) ? prev.filter(fid => fid !== course.id) : [...prev, course.id])} />
+                        </div>
+                      )}
                       {courseViewMode === 'grid' ? (
                         <CardContent className="p-6 flex flex-col items-center text-center relative w-full">
                           <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
@@ -913,7 +943,7 @@ ${videoNotes}
                           <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
                         </CardContent>
                       ) : (
-                        <div className="flex items-center w-full gap-4">
+                        <div className="flex items-center w-full gap-4 pl-8 md:pl-4">
                           <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-400">
                             <Folder className="w-6 h-6" fill="currentColor" />
                           </div>
