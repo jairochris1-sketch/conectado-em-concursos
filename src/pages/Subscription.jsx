@@ -137,8 +137,14 @@ const plans = [
   }
 ];
 
-const PlanCard = ({ plan, userEmail }) => {
+const PlanCard = ({ plan, userEmail, currentPlanKey }) => {
+  const isCurrentPlan = currentPlanKey === plan.key || (!currentPlanKey && plan.key === 'gratuito');
+
   const handleSubscribe = () => {
+    if (plan.key === 'gratuito') {
+      window.location.href = createPageUrl('Dashboard');
+      return;
+    }
     if (plan.link) {
       // Append email query param if possible, although it's an external Asaas link
       const url = new URL(plan.link);
@@ -196,9 +202,10 @@ const PlanCard = ({ plan, userEmail }) => {
       <Button
         size="lg"
         onClick={handleSubscribe}
-        className={`w-full py-6 text-base font-bold rounded-lg transition-transform hover:scale-105 shadow-md ${plan.buttonStyle}`}
+        disabled={isCurrentPlan}
+        className={`w-full py-6 text-base font-bold rounded-lg transition-transform ${isCurrentPlan ? 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300' : `hover:scale-105 shadow-md ${plan.buttonStyle}`}`}
       >
-        {plan.buttonText}
+        {isCurrentPlan ? 'Plano Atual' : plan.buttonText}
       </Button>
     </div>
   );
@@ -252,16 +259,16 @@ export default function SubscriptionPage() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch pt-4 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-6 max-w-[90rem] mx-auto items-stretch pt-4 pb-8">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className={`h-full ${plan.highlight ? 'md:-mt-4' : ''}`}
+              className={`h-full ${plan.highlight ? 'lg:-mt-4' : ''}`}
             >
-              <PlanCard plan={plan} userEmail={user?.email} />
+              <PlanCard plan={plan} userEmail={user?.email} currentPlanKey={user?.current_plan} />
             </motion.div>
           ))}
         </div>
