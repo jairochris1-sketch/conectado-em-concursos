@@ -333,14 +333,24 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
 
         {/* Painel de Notas e Destaques */}
         {showNotes && !readingMode && (
-          <div className={`w-80 lg:w-96 border-l flex-shrink-0 flex flex-col ${
+          <div className={`absolute right-0 top-0 bottom-0 z-40 w-[85%] sm:w-80 lg:static lg:w-96 border-l flex-shrink-0 flex flex-col shadow-2xl lg:shadow-none ${
             darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
           }`}>
-            <div className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className={`p-4 border-b flex-shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Notas e Destaques
-                </h3>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setShowNotes(false)}
+                    className="lg:hidden h-8 w-8"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                  <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Notas e Destaques
+                  </h3>
+                </div>
                 <Button
                   size="sm"
                   variant="outline"
