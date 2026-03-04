@@ -926,7 +926,7 @@ ${videoNotes}
                 <div className="flex-1 relative">
                    <iframe
                   className="w-full h-full"
-                  src={getSafeVideoId(playingVideo) ? `https://www.youtube.com/embed/${getSafeVideoId(playingVideo)}?autoplay=1&rel=0` : ''}
+                  src={getSafeVideoId(playingVideo) ? `https://www.youtube-nocookie.com/embed/${getSafeVideoId(playingVideo)}?autoplay=1&rel=0` : ''}
                   title={playingVideo.title}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
