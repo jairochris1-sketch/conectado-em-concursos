@@ -1095,6 +1095,52 @@ ${videoNotes}
               </TabsContent>
               
               <TabsContent value="conteudo" className="p-6">
+                {selectedCourse.isCustom ? (
+                  <div className="space-y-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiais do Curso</h3>
+                      {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                        <div className="flex flex-wrap gap-2">
+                          <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Plus className="w-4 h-4 mr-2" /> Adicionar Material
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
+                        <div className="py-12 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                          <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
+                          <p className="text-gray-500 font-medium">Nenhum material adicionado a este curso ainda.</p>
+                          <Button onClick={() => setShowAddItemModal(true)} variant="link" className="text-blue-600 mt-2">Clique aqui para adicionar</Button>
+                        </div>
+                      ) : (
+                        userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
+                          <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm gap-4 hover:border-blue-300 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1 w-full">
+                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
+                                {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
+                              </button>
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                {item.type === 'video' ? <Play className="w-4 h-4 ml-0.5" fill="currentColor" /> : <FileText className="w-4 h-4" />}
+                              </div>
+                              <div className="flex-1 min-w-0" onClick={() => handleOpenCustomItem(item)}>
+                                <h4 className="font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">{item.title}</h4>
+                                {item.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{item.description}</p>}
+                              </div>
+                            </div>
+                            {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                              <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : (
                 <div className="space-y-6">
                 <div className="space-y-6">
                   {/* Pills */}
