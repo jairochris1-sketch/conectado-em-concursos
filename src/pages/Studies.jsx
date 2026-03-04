@@ -254,6 +254,12 @@ export default function StudiesPage() {
       setFlashcards(flashcardsData);
       setReviews(reviewsData);
 
+      // Check permissions
+      const isAdmin = user.email === 'conectadoemconcursos@gmail.com';
+      const isPremium = user.current_plan === 'avancado';
+      const creatorPerms = await base44.entities.CourseCreatorPermission.filter({ user_email: user.email });
+      setCanCreateCourse(isAdmin || isPremium || creatorPerms.length > 0);
+
       const allCustomCourses = await base44.entities.UserCourse.list();
       const visibleCourses = allCustomCourses.filter(c => c.user_email === user.email || c.is_public);
       setUserCourses(visibleCourses);
