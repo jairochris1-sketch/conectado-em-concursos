@@ -176,6 +176,7 @@ const pageNameTranslations = {
   SavedContests: "Concursos Abertos",
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
+  EditalVerticalizado: "Edital Verticalizado",
   SDAdmin: "Admin Simulados Digital",
   Reviews: "Revisões",
   ComoEstudarPrimeiroLugar: "Como Estudar",

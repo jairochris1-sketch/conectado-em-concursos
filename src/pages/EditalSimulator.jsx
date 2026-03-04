@@ -512,6 +512,15 @@ export default function EditalSimulator() {
                       </Button>
 
                       <Button
+                        onClick={() => navigate(createPageUrl("EditalVerticalizado") + "?id=" + edital.id)}
+                        variant="outline"
+                        className="border-blue-400 text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:border-blue-600 dark:hover:bg-blue-900/20"
+                      >
+                        <ListChecks className="w-4 h-4 mr-2" />
+                        Edital Verticalizado
+                      </Button>
+
+                      <Button
                         onClick={() => deleteEdital(edital.id)}
                         variant="destructive"
                         size="icon"
