@@ -146,6 +146,9 @@ export default function StudiesPage() {
 
   // Course State
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseViewMode, setCourseViewMode] = useState(() => {
+    return localStorage.getItem('courseViewMode') || 'grid';
+  });
   const [courseTab, setCourseTab] = useState('conteudo');
   const [contentSubTab, setContentSubTab] = useState('videoaula');
   const [contentSearch, setContentSearch] = useState('');
