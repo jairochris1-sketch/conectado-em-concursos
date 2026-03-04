@@ -82,7 +82,7 @@ const navigationItems = [
 },
 {
   title: "Resumos",
-  url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
+  url: createPageUrl("ComoEstudarPrimeiroLugar"),
   icon: BookOpenIcon
 },
 {
