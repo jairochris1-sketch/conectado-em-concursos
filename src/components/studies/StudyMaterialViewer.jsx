@@ -99,6 +99,36 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[60] bg-black flex flex-col">
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 z-10 rounded-full shadow-lg bg-white/90 hover:bg-white text-gray-900"
+            title="Sair da tela cheia"
+          >
+            <Minimize className="w-5 h-5" />
+          </Button>
+          {material.file_type === 'pdf' ? (
+            <iframe
+              src={getPdfViewerUrl(material.file_url)}
+              width="100%"
+              height="100%"
+              className="border-0 flex-1 bg-white"
+              title={material.title}
+            />
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-4">
+              <img
+                src={material.file_url}
+                alt={material.title}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+          )}
+        </div>
+      )}
       <div className={`flex-1 flex flex-col lg:flex-row ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="flex-1 flex flex-col min-w-0">
           <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 p-4 md:p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
