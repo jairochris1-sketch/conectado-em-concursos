@@ -826,38 +826,76 @@ ${videoNotes}
         {!selectedCourse ? (
           <div className="space-y-10">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Pastas de Materiais de Estudo Personalizadas</h2>
-                 {canCreateCourse && (
-                   <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                     <Plus className="w-4 h-4 mr-2" /> Criar Pasta
-                   </Button>
-                 )}
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-2 gap-4">
+                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Folder className="w-5 h-5 text-blue-600" fill="currentColor" /> Pastas de Materiais de Estudo Personalizadas</h2>
+                 <div className="flex items-center gap-3">
+                   <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                     <Button
+                       variant="ghost"
+                       size="sm"
+                       onClick={() => setCourseViewMode('grid')}
+                       className={`px-2 py-1 h-auto ${courseViewMode === 'grid' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}
+                     >
+                       <LayoutGrid className="w-4 h-4" />
+                     </Button>
+                     <Button
+                       variant="ghost"
+                       size="sm"
+                       onClick={() => setCourseViewMode('list')}
+                       className={`px-2 py-1 h-auto ${courseViewMode === 'list' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}
+                     >
+                       <List className="w-4 h-4" />
+                     </Button>
+                   </div>
+                   {canCreateCourse && (
+                     <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                       <Plus className="w-4 h-4 mr-2" /> Criar Pasta
+                     </Button>
+                   )}
+                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
                 Se você aprende melhor com um material próprio ou um professor específico em determinada disciplina, pode reunir tudo em um só lugar — simples, organizado e totalmente personalizado para o seu método de aprendizagem. (Limite de 10 pastas)
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className={courseViewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
                 {userCourses.length === 0 ? (
                   <div className="col-span-full py-8 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                    <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
+                    <Folder className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
                     <p className="text-gray-500 font-medium">Você ainda não criou nenhuma pasta.</p>
                     <p className="text-sm text-gray-400 mt-1">Crie uma pasta para organizar seus próprios materiais.</p>
                   </div>
                 ) : (
                   userCourses.map(course => (
-                    <Card key={course.id} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30" onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
-                      <CardContent className="p-6 flex flex-col items-center text-center relative">
-                        <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
-                          {Math.round(getCourseProgress(course.id))}%
+                    <Card key={course.id} className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30 ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
+                      {courseViewMode === 'grid' ? (
+                        <CardContent className="p-6 flex flex-col items-center text-center relative w-full">
+                          <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
+                            {Math.round(getCourseProgress(course.id))}%
+                          </div>
+                          <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                            <Folder className="w-8 h-8" fill="currentColor" />
+                          </div>
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
+                          {course.is_public && <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700 hover:bg-blue-100">Público</Badge>}
+                          <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
+                        </CardContent>
+                      ) : (
+                        <div className="flex items-center w-full gap-4">
+                          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-400">
+                            <Folder className="w-6 h-6" fill="currentColor" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{course.title}</h3>
+                              {course.is_public && <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100 h-5 text-[10px] px-1.5">Público</Badge>}
+                            </div>
+                            <p className="text-sm text-gray-500 truncate">{course.description || "Pasta de materiais personalizada"}</p>
+                          </div>
+                          <div className="flex-shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-3 py-1.5 rounded-full">
+                            {Math.round(getCourseProgress(course.id))}% concluído
+                          </div>
                         </div>
-                        <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                          <BookOpen className="w-8 h-8" />
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
-                        {course.is_public && <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700 hover:bg-blue-100">Público</Badge>}
-                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
-                      </CardContent>
+                      )}
                     </Card>
                   ))
                 )}
