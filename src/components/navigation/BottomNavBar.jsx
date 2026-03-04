@@ -4,6 +4,7 @@ import { Home, FileText, User, BookCopy, BookOpen, Lock, Trophy, MessageSquare, 
 import { cn } from "@/lib/utils";
 
 const navItems = [
+  { name: 'Planos', url: createPageUrl('Subscription'), icon: CreditCard, feature: null },
   { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null },
   { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
   { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
@@ -11,8 +12,7 @@ const navItems = [
   { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos' },
   { name: 'Ranking', url: createPageUrl('Ranking'), icon: Trophy, feature: 'Ranking de Usuários' },
   { name: 'Fórum', url: createPageUrl('Community'), icon: MessageSquare, feature: null },
-  { name: 'Relatórios', url: createPageUrl('PerformanceReports'), icon: BarChart3, feature: null },
-  { name: 'Planos', url: createPageUrl('Subscription'), icon: CreditCard, feature: null }
+  { name: 'Relatórios', url: createPageUrl('PerformanceReports'), icon: BarChart3, feature: null }
 ];
 
 export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className }) {
