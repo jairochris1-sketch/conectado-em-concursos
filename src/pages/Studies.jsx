@@ -1365,7 +1365,7 @@ ${videoNotes}
                       variant="outline"
                       size="sm"
                       onClick={handlePreviousVideo}
-                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === 0}
+                      disabled={playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').findIndex(v => v.id === playingVideo.id) === 0 : filteredVideos.findIndex((v) => v.id === playingVideo.id) === 0}
                       className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2">
 
                         ← Anterior
@@ -1374,7 +1374,7 @@ ${videoNotes}
                       variant="default"
                       size="sm"
                       onClick={handleNextVideo}
-                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === filteredVideos.length - 1}
+                      disabled={playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').findIndex(v => v.id === playingVideo.id) === (userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').length - 1) : filteredVideos.findIndex((v) => v.id === playingVideo.id) === filteredVideos.length - 1}
                       className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2">
 
                         Próximo →
