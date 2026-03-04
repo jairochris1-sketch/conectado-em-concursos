@@ -230,6 +230,7 @@ export default function StudiesPage() {
   // General State
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [canCreateCourse, setCanCreateCourse] = useState(false);
 
   const loadAllData = async () => {
     setIsLoading(true);
@@ -678,6 +679,24 @@ ${videoNotes}
   };
 
   const handleCreateCourseItem = async () => {
+    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com';
+    
+    // Check limits if not admin
+    if (!isAdminUser) {
+      const currentItems = userCourseItems.filter(i => i.course_id === selectedCourse.id);
+      const videosCount = currentItems.filter(i => i.type === 'video').length;
+      const pdfsCount = currentItems.filter(i => i.type === 'pdf').length;
+
+      if (newItemForm.type === 'video' && videosCount >= 10) {
+        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por curso.");
+        return;
+      }
+      if (newItemForm.type === 'pdf' && pdfsCount >= 10) {
+        alert("Limite atingido: Você só pode adicionar até 10 PDFs por curso.");
+        return;
+      }
+    }
+
     setIsUploading(true);
     try {
       let finalUrl = newItemForm.content_url;
@@ -787,7 +806,7 @@ ${videoNotes}
             <div>
               <div className="flex items-center justify-between mb-4">
                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Meus Cursos Personalizados</h2>
-                 {isAdmin && (
+                 {canCreateCourse && (
                    <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
                      <Plus className="w-4 h-4 mr-2" /> Criar Curso
                    </Button>
@@ -1341,7 +1360,7 @@ ${videoNotes}
                 <Label>Descrição</Label>
                 <Textarea value={newCourseForm.description} onChange={e => setNewCourseForm({...newCourseForm, description: e.target.value})} placeholder="Breve descrição do seu curso..." />
               </div>
-              {isAdmin && (
+              {currentUser?.email === 'conectadoemconcursos@gmail.com' && (
                 <div className="flex items-center justify-between border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
                   <div className="space-y-0.5">
                     <Label>Curso Público</Label>
