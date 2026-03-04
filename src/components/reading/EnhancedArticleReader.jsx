@@ -300,11 +300,6 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
                         {article.author}
                       </Badge>
                     )}
-                    {article.reading_time && (
-                      <Badge variant="secondary" className="dark:bg-gray-700 dark:text-gray-300">
-                        {article.reading_time} min
-                      </Badge>
-                    )}
                   </div>
 
                   {article.summary && (
