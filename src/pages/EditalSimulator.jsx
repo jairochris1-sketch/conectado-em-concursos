@@ -214,7 +214,7 @@ export default function EditalSimulator() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              📄 Simulados Baseados no Edital
+              📄 Resumo do Edital+Geração de questões+ Verticalização
             </h1>
             <Button variant="outline" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
               <ClipboardList className="w-4 h-4 mr-2" />
