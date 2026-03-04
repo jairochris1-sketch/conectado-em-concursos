@@ -1343,7 +1343,6 @@ ${videoNotes}
                     )}
                   </div>
                 </div>
-                )}
               </TabsContent>
             </Tabs>
           </div>
