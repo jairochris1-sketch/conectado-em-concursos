@@ -351,14 +351,14 @@ export default function SubscriptionPage() {
           </motion.div>
         </div>
 
-        <div className={`grid grid-cols-1 ${currentPlans.length === 1 ? 'place-items-center' : 'md:grid-cols-3'} gap-8 md:gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch pt-4 pb-8`}>
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch pt-4 pb-8 ${currentPlans.length === 1 ? 'md:grid-cols-1 place-items-center' : ''}`}>
           {currentPlans.map((plan, index) => (
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
-              className={`h-full w-full ${currentPlans.length > 1 && plan.key !== 'gratuito' && plan.key !== 'padrao' ? 'lg:-mt-4' : ''}`}
+              className={`h-full w-full max-w-md ${currentPlans.length > 1 && plan.key !== 'gratuito' && plan.key !== 'padrao' ? 'lg:-mt-4' : ''}`}
             >
               <PlanCard plan={plan} userEmail={user?.email} currentPlanKey={user?.current_plan} />
             </motion.div>
