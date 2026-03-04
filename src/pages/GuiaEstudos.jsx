@@ -378,8 +378,8 @@ export default function GuiaEstudos() {
                                 darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'
                               }`}
                             >
-                              <span className="text-[10px] mt-0.5">→</span>
-                              <span className="flex-1">{a.title}</span>
+                              <span className="text-[10px] mt-0.5 flex-shrink-0">→</span>
+                              <span className="flex-1 break-words overflow-hidden text-ellipsis line-clamp-3">{a.title}</span>
                             </a>
                           </li>
                         ))}
