@@ -497,7 +497,7 @@ export default function GuiaEstudos() {
                           allowFullScreen
                         />
                       ) : (
-                        <Card><CardContent className="p-4">{v.title}</CardContent></Card>
+                        <Card><CardContent className="p-4 break-words break-all sm:break-normal">{v.title}</CardContent></Card>
                       )}
                     </div>
                     <div className="mt-2">
