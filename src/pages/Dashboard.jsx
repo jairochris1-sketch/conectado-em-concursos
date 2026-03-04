@@ -238,9 +238,6 @@ export default function Dashboard() {
             <SubjectBreakdown answers={answers} isLoading={isLoading} />
           </div>
           <div className="space-y-6">
-            {/* NOVO: Card de Configurações de Aparência */}
-            <AppearanceSettings />
-
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 md:p-6">
               <h3 className="font-bold text-lg mb-4 text-gray-900">Links Rápidos</h3>
               <div className="space-y-3">
