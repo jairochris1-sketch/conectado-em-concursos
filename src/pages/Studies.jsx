@@ -1594,7 +1594,7 @@ ${videoNotes}
             </div>
             <DialogFooter className="mt-6">
               <Button variant="outline" onClick={() => setShowCreateCourseModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
+              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title || (!newCourseForm.term1 && !newCourseForm.term2)} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
