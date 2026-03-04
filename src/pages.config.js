@@ -79,6 +79,7 @@ import Profile from './pages/Profile';
 import Questions from './pages/Questions';
 import Ranking from './pages/Ranking';
 import ResetPassword from './pages/ResetPassword';
+import Reviews from './pages/Reviews';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
 import Schedule from './pages/Schedule';
@@ -97,7 +98,6 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Reviews from './pages/Reviews';
 import __Layout from './Layout.jsx';
 
 
@@ -134,6 +134,7 @@ export const PAGES = {
     "Questions": Questions,
     "Ranking": Ranking,
     "ResetPassword": ResetPassword,
+    "Reviews": Reviews,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
     "Schedule": Schedule,
@@ -152,7 +153,6 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
-    "Reviews": Reviews,
 }
 
 export const pagesConfig = {

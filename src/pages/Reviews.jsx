@@ -58,7 +58,11 @@ export default function Reviews() {
     questions_count: "",
     errors_count: "",
     completed_content: false,
-    schedule_revisions: false
+    schedule_revisions: false,
+    revision_type: "automatic",
+    custom_start_date: "",
+    recurrence: "none",
+    recurrence_end_date: ""
   });
 
   useEffect(() => {
@@ -165,7 +169,11 @@ export default function Reviews() {
       questions_count: "",
       errors_count: "",
       completed_content: false,
-      schedule_revisions: false
+      schedule_revisions: false,
+      revision_type: "automatic",
+      custom_start_date: "",
+      recurrence: "none",
+      recurrence_end_date: ""
     });
     setShowStudyDialog(true);
   };
@@ -697,16 +705,76 @@ export default function Reviews() {
               />
             </div>
 
-            <div className="md:col-span-3 border border-gray-200 rounded-lg p-4 flex items-center justify-between mt-2">
-              <div className="space-y-0.5">
-                <h4 className="text-sm font-bold text-gray-900">Programar revisões</h4>
-                <p className="text-sm text-gray-500">Programe revisões de forma automática. Contagem em dias, a partir da data do estudo.</p>
+            <div className="md:col-span-3 border border-gray-200 rounded-lg p-4 flex flex-col mt-2">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <h4 className="text-sm font-bold text-gray-900">Programar revisões</h4>
+                  <p className="text-sm text-gray-500">Crie revisões para este estudo.</p>
+                </div>
+                <Switch 
+                  checked={studyForm.schedule_revisions} 
+                  onCheckedChange={(checked) => setStudyForm({...studyForm, schedule_revisions: checked})} 
+                  className="data-[state=checked]:bg-[#de4b40]"
+                />
               </div>
-              <Switch 
-                checked={studyForm.schedule_revisions} 
-                onCheckedChange={(checked) => setStudyForm({...studyForm, schedule_revisions: checked})} 
-                className="data-[state=checked]:bg-[#de4b40]"
-              />
+
+              {studyForm.schedule_revisions && (
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-900">Tipo de Agendamento</label>
+                    <Select value={studyForm.revision_type} onValueChange={(val) => setStudyForm({...studyForm, revision_type: val})}>
+                      <SelectTrigger className="w-full bg-white border-gray-200">
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="automatic">Automático (24h, 7d, 30d)</SelectItem>
+                        <SelectItem value="custom">Personalizado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {studyForm.revision_type === 'custom' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-900">Data e Hora Inicial</label>
+                        <Input
+                          type="datetime-local"
+                          value={studyForm.custom_start_date}
+                          onChange={(e) => setStudyForm({...studyForm, custom_start_date: e.target.value})}
+                          className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-900">Recorrência</label>
+                        <Select value={studyForm.recurrence} onValueChange={(val) => setStudyForm({...studyForm, recurrence: val})}>
+                          <SelectTrigger className="w-full bg-white border-gray-200">
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Sem recorrência</SelectItem>
+                            <SelectItem value="daily">Diária</SelectItem>
+                            <SelectItem value="weekly">Semanal</SelectItem>
+                            <SelectItem value="monthly">Mensal</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {studyForm.recurrence !== 'none' && (
+                        <div className="space-y-2 md:col-span-2">
+                          <label className="text-sm font-semibold text-gray-900">Data de Término da Recorrência</label>
+                          <Input
+                            type="date"
+                            value={studyForm.recurrence_end_date}
+                            onChange={(e) => setStudyForm({...studyForm, recurrence_end_date: e.target.value})}
+                            className="bg-white border-gray-200 focus:border-red-500 focus:ring-red-500"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
