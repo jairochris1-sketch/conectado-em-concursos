@@ -176,7 +176,7 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 overflow-hidden">
-      <div className="h-full flex">
+      <div className="h-[100dvh] flex w-full">
         {/* Main Content */}
         <div className={`flex-1 flex flex-col ${showNotes ? '' : 'mr-0'}`}>
           {/* Header com controles */}
