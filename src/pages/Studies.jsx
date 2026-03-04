@@ -141,7 +141,7 @@ export default function StudiesPage() {
   const [userCourseItems, setUserCourseItems] = useState([]);
   const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false });
+  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false, term1: false, term2: false });
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedFolderIds, setSelectedFolderIds] = useState([]);
   const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
@@ -172,7 +172,7 @@ export default function StudiesPage() {
   });
 
   // New Windows 11 Explorer-style navigation
-  const [navigationPath, setNavigationPath] = useState(['Meus Cursos']);
+  const [navigationPath, setNavigationPath] = useState(['Áreas de Estudo']);
   const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -362,21 +362,21 @@ export default function StudiesPage() {
     setSelectedSubject(subject);
     setSelectedType(null);
     setCurrentView('subject');
-    setNavigationPath(['Meus Cursos', subjectNames[subject]]);
+    setNavigationPath(['Áreas de Estudo', subjectNames[subject]]);
   };
 
   const handleNavigateToType = (type) => {
     setSelectedType(type);
     setSelectedSubject(null);
     setCurrentView('type');
-    setNavigationPath(['Meus Cursos', typeNames[type]]);
+    setNavigationPath(['Áreas de Estudo', typeNames[type]]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
     setCurrentView('root');
-    setNavigationPath(['Meus Cursos']);
+    setNavigationPath(['Áreas de Estudo']);
   };
 
   const handleBreadcrumbClick = (index) => {
@@ -743,7 +743,7 @@ ${videoNotes}
       });
       setUserCourses([...userCourses, newCourse]);
       setShowCreateCourseModal(false);
-      setNewCourseForm({ title: '', description: '', is_public: false });
+      setNewCourseForm({ title: '', description: '', is_public: false, term1: false, term2: false });
     } catch (e) { console.error(e); }
   };
 
@@ -870,7 +870,7 @@ ${videoNotes}
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando seus cursos...</p>
+            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando suas áreas de estudo...</p>
           </div>
         </div>);
 
@@ -886,7 +886,7 @@ ${videoNotes}
 
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Meus Cursos
+              <BookUser className="w-8 h-8" /> Áreas de Estudo
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Seus materiais, resumos e videoaulas organizados por curso.
@@ -1013,7 +1013,7 @@ ${videoNotes}
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Áreas de Estudo</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
                   <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
@@ -1555,6 +1555,22 @@ ${videoNotes}
               <DialogTitle>Criar Nova Pasta de Materiais</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-4">
+              <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                <p className="text-sm text-amber-800 dark:text-amber-300 font-medium mb-2">Antes de continuar, confirme:</p>
+                <p className="text-xs text-amber-700 dark:text-amber-400 mb-3">
+                  Ao criar uma pasta, você concorda que é o único responsável pelo conteúdo adicionado, respeitando os direitos autorais de terceiros. Lembre-se: a violação de direitos autorais é de sua inteira responsabilidade.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Checkbox id="term1" checked={newCourseForm.term1} onCheckedChange={c => setNewCourseForm({...newCourseForm, term1: c})} />
+                    <Label htmlFor="term1" className="text-xs leading-tight cursor-pointer text-amber-900 dark:text-amber-200">O material que vou adicionar foi criado por mim.</Label>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Checkbox id="term2" checked={newCourseForm.term2} onCheckedChange={c => setNewCourseForm({...newCourseForm, term2: c})} />
+                    <Label htmlFor="term2" className="text-xs leading-tight cursor-pointer text-amber-900 dark:text-amber-200">Tenho autorização expressa do autor para usar este conteúdo.</Label>
+                  </div>
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label>Título da Pasta</Label>
                 <Input value={newCourseForm.title} onChange={e => setNewCourseForm({...newCourseForm, title: e.target.value})} placeholder="Ex: Materiais de Informática" />
