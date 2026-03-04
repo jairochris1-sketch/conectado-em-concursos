@@ -276,40 +276,40 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
             </div>
           }
         </CardHeader>
-        <CardContent className="p-5 md:p-8">
-          <div className="text-center mb-6 md:mb-8">
+        <CardContent className="p-4 md:p-8">
+          <div className="text-center mb-4 md:mb-8">
             {(billingCycle === 'semiannual' || billingCycle === 'annual') && currentPricing.originalPrice &&
-            <div className="mb-2">
-                <span className="text-sm line-through opacity-60">
+            <div className="mb-1 md:mb-2">
+                <span className="text-xs md:text-sm line-through opacity-60">
                   De R${currentPricing.originalPrice}
                 </span>
               </div>
             }
             
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-5xl font-extrabold">R${currentPricing.price}</span>
-              <span className="text-lg opacity-70">{priceDetail}</span>
+              <span className="text-3xl md:text-5xl font-extrabold">R${currentPricing.price}</span>
+              <span className="text-sm md:text-lg opacity-70">{priceDetail}</span>
             </div>
             
             {billingCycle === 'semiannual' && currentPricing.installments &&
-            <div className="text-center mt-2">
-                <span className="text-lg font-semibold text-yellow-300">
+            <div className="text-center mt-1 md:mt-2">
+                <span className="text-sm md:text-lg font-semibold text-yellow-300">
                   {currentPricing.installments}
                 </span>
               </div>
             }
           </div>
-          <ul className="space-y-4">
+          <ul className="space-y-2 md:space-y-4">
             {getFeatures().map((feature, index) =>
-            <li key={index} className="flex items-center gap-3">
-                <Check className="w-5 h-5 text-teal-400" />
-                <span className="text-base">{feature}</span>
+            <li key={index} className="flex items-center gap-2 md:gap-3">
+                <Check className="w-4 h-4 md:w-5 md:h-5 text-teal-400 flex-shrink-0" />
+                <span className="text-xs md:text-base leading-tight">{feature}</span>
               </li>
             )}
             {getUnavailableFeatures() && getUnavailableFeatures().map((feature, index) =>
-            <li key={index} className="flex items-center gap-3 opacity-50">
-                <X className="w-5 h-5 text-gray-400" />
-                <span className="text-base line-through">{feature}</span>
+            <li key={index} className="flex items-center gap-2 md:gap-3 opacity-50">
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-400 flex-shrink-0" />
+                <span className="text-xs md:text-base leading-tight line-through">{feature}</span>
               </li>
             )}
           </ul>
