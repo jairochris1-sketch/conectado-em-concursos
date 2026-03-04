@@ -787,9 +787,11 @@ ${videoNotes}
             <div>
               <div className="flex items-center justify-between mb-4">
                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Meus Cursos Personalizados</h2>
-                 <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                   <Plus className="w-4 h-4 mr-2" /> Criar Curso
-                 </Button>
+                 {isAdmin && (
+                   <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                     <Plus className="w-4 h-4 mr-2" /> Criar Curso
+                   </Button>
+                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {userCourses.length === 0 ? (
@@ -803,12 +805,13 @@ ${videoNotes}
                     <Card key={course.id} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30" onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
                       <CardContent className="p-6 flex flex-col items-center text-center relative">
                         <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
-                          {Math.round(course.progress || 0)}%
+                          {Math.round(getCourseProgress(course.id))}%
                         </div>
                         <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
                           <BookOpen className="w-8 h-8" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
+                        {course.is_public && <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700 hover:bg-blue-100">Público</Badge>}
                         <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Curso personalizado"}</p>
                       </CardContent>
                     </Card>
@@ -886,14 +889,16 @@ ${videoNotes}
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiais do Curso</h3>
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => handleDeleteCourse(selectedCourse.id)}>
-                          <Trash2 className="w-4 h-4 mr-2" /> Excluir Curso
-                        </Button>
-                        <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                          <Plus className="w-4 h-4 mr-2" /> Adicionar Material
-                        </Button>
-                      </div>
+                      {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                        <div className="flex flex-wrap gap-2">
+                          <Button variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => handleDeleteCourse(selectedCourse.id)}>
+                            <Trash2 className="w-4 h-4 mr-2" /> Excluir Curso
+                          </Button>
+                          <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Plus className="w-4 h-4 mr-2" /> Adicionar Material
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -907,8 +912,8 @@ ${videoNotes}
                         userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
                           <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm gap-4 hover:border-blue-300 transition-colors group">
                             <div className="flex items-center gap-4 flex-1 w-full">
-                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.is_completed ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
-                                {item.is_completed && <Check className="w-4 h-4" />}
+                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
+                                {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
                               </button>
                               <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                 {item.type === 'video' ? <Play className="w-4 h-4 ml-0.5" fill="currentColor" /> : <FileText className="w-4 h-4" />}
@@ -918,9 +923,11 @@ ${videoNotes}
                                 {item.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{item.description}</p>}
                               </div>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                              <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
                           </div>
                         ))
                       )}
@@ -1334,6 +1341,18 @@ ${videoNotes}
                 <Label>Descrição</Label>
                 <Textarea value={newCourseForm.description} onChange={e => setNewCourseForm({...newCourseForm, description: e.target.value})} placeholder="Breve descrição do seu curso..." />
               </div>
+              {isAdmin && (
+                <div className="flex items-center justify-between border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                  <div className="space-y-0.5">
+                    <Label>Curso Público</Label>
+                    <p className="text-xs text-gray-500">Se ativado, este curso aparecerá para todos os alunos.</p>
+                  </div>
+                  <Switch 
+                    checked={newCourseForm.is_public} 
+                    onCheckedChange={checked => setNewCourseForm({...newCourseForm, is_public: checked})} 
+                  />
+                </div>
+              )}
             </div>
             <DialogFooter className="mt-6">
               <Button variant="outline" onClick={() => setShowCreateCourseModal(false)}>Cancelar</Button>
