@@ -7,7 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, ArrowLeft, Target, TrendingUp, CheckCircle2, XCircle, BarChart3 } from "lucide-react";
+import { Loader2, ArrowLeft, Target, TrendingUp, CheckCircle2, XCircle, BarChart3, Bot, Send } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 // Mapping to normalize subject names for matching with UserAnswer
@@ -39,6 +41,12 @@ export default function EditalVerticalizado() {
   const [progressData, setProgressData] = useState(null);
   const [completedTopics, setCompletedTopics] = useState(new Set());
   const [userAnswers, setUserAnswers] = useState([]);
+  
+  // Chat Tutor IA State
+  const [chatTopic, setChatTopic] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [isChatLoading, setIsChatLoading] = useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const editalId = urlParams.get('id');
@@ -100,6 +108,35 @@ export default function EditalVerticalizado() {
       toast.error("Erro ao carregar dados do edital.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim()) return;
+    const userMsg = { role: "user", content: chatInput };
+    const newMessages = [...chatMessages, userMsg];
+    setChatMessages(newMessages);
+    setChatInput("");
+    setIsChatLoading(true);
+
+    try {
+      const prompt = `Você é um professor particular focado em concursos públicos. O aluno está estudando o tópico: "${chatTopic}".
+Responda de forma clara, didática e direta. Formate bem o texto.
+Histórico da conversa:
+${newMessages.map(m => `${m.role === 'user' ? 'Aluno' : 'Professor'}: ${m.content}`).join('\n')}
+
+Professor:`;
+
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt
+      });
+
+      setChatMessages([...newMessages, { role: "system", content: res }]);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao obter resposta da IA.");
+    } finally {
+      setIsChatLoading(false);
     }
   };
 
@@ -296,6 +333,22 @@ export default function EditalVerticalizado() {
                             >
                               {topico}
                             </label>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 shrink-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChatTopic(topico);
+                                setChatMessages([{
+                                  role: "system",
+                                  content: `Olá! Sou seu Tutor IA. Como posso ajudar com o tópico "${topico}"? Posso criar um resumo, te explicar detalhadamente ou tirar alguma dúvida sobre questões!`
+                                }]);
+                              }}
+                            >
+                              <Bot className="w-4 h-4 mr-1" />
+                              <span className="hidden md:inline">Tutor IA</span>
+                            </Button>
                           </div>
                         );
                       })}
@@ -307,6 +360,55 @@ export default function EditalVerticalizado() {
           </Accordion>
         </div>
       </div>
+
+      {/* Chat Tutor IA Modal */}
+      <Dialog open={!!chatTopic} onOpenChange={(open) => !open && setChatTopic(null)}>
+        <DialogContent className="sm:max-w-[550px] h-[80vh] flex flex-col p-0 overflow-hidden bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+          <DialogHeader className="p-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+            <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <Bot className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className="flex flex-col text-left">
+                <span>Tutor IA</span>
+                <span className="text-xs font-normal text-gray-500 line-clamp-1">{chatTopic}</span>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'}`}>
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            {isChatLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-bl-sm flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                  <span className="text-sm text-gray-500">Digitando...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <div className="flex w-full gap-2">
+              <Input 
+                placeholder="Peça um resumo, explicação ou faça uma pergunta..." 
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                disabled={isChatLoading}
+                className="flex-1"
+              />
+              <Button onClick={handleSendMessage} disabled={isChatLoading || !chatInput.trim()} className="bg-blue-600 hover:bg-blue-700 text-white px-3">
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -43,7 +43,7 @@ export const NotificationManager = {
   },
 
   // Enviar notificação
-  send(title, options = {}) {
+  async send(title, options = {}) {
     if (!this.isEnabled()) return;
 
     const defaultOptions = {
@@ -52,20 +52,23 @@ export const NotificationManager = {
       ...options
     };
 
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-      // Enviar via service worker se disponível
-      navigator.serviceWorker.ready.then((registration) => {
-        if (registration.showNotification) {
-          registration.showNotification(title, defaultOptions);
-        }
-      });
-    } else {
-      // Fallback para Notification API simples
+    if ('serviceWorker' in navigator) {
       try {
-        new Notification(title, defaultOptions);
+        const registration = await navigator.serviceWorker.ready;
+        if (registration && registration.showNotification) {
+          await registration.showNotification(title, defaultOptions);
+          return;
+        }
       } catch (error) {
-        console.log('Erro ao enviar notificação:', error);
+        console.log('Erro ao usar service worker para notificação:', error);
       }
+    }
+    
+    // Fallback para Notification API simples (funciona no desktop, mas pode falhar no Android)
+    try {
+      new Notification(title, defaultOptions);
+    } catch (error) {
+      console.log('Erro ao enviar notificação fallback:', error);
     }
   }
 };

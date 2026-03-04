@@ -58,6 +58,7 @@ import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import EditalSimulator from './pages/EditalSimulator';
+import EditalVerticalizado from './pages/EditalVerticalizado';
 import EditalViewer from './pages/EditalViewer';
 import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
@@ -98,7 +99,6 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import EditalVerticalizado from './pages/EditalVerticalizado';
 import __Layout from './Layout.jsx';
 
 
@@ -114,6 +114,7 @@ export const PAGES = {
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "EditalSimulator": EditalSimulator,
+    "EditalVerticalizado": EditalVerticalizado,
     "EditalViewer": EditalViewer,
     "EnglishCourse": EnglishCourse,
     "ExamView": ExamView,
@@ -154,7 +155,6 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
-    "EditalVerticalizado": EditalVerticalizado,
 }
 
 export const pagesConfig = {
