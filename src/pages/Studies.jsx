@@ -1422,15 +1422,18 @@ ${videoNotes}
               <>
                     <div className="flex-1 overflow-y-auto">
                       <div className="p-2">
-                        {filteredVideos.map((video, idx) => {
-                      const videoId = getSafeVideoId(video);
+                        {(playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video') : filteredVideos).map((video, idx) => {
                       const isActive = video.id === playingVideo.id;
                       return (
                         <button
                           key={video.id}
                           onClick={() => {
                             localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                            handlePlayVideo(video);
+                            if (playingVideo.isCustom) {
+                              handleOpenCustomItem(video);
+                            } else {
+                              handlePlayVideo(video);
+                            }
                           }}
                           className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
                           isActive ?
@@ -1448,7 +1451,7 @@ ${videoNotes}
                                   <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
                                     {video.title}
                                   </div>
-                                  {video.duration &&
+                                  {video.duration && !playingVideo.isCustom &&
                               <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
                                       {video.duration}
                                     </div>
