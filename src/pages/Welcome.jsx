@@ -84,29 +84,34 @@ export default function WelcomePage() {
     setIsLoading(false);
   };
   
-  const getBackgroundImage = () => {
+  const [bgImage, setBgImage] = useState("");
+
+  useEffect(() => {
+    if (!content) return;
+
     if (isMobile && content.background_image_url_mobile) {
-      return content.background_image_url_mobile;
+      setBgImage(content.background_image_url_mobile);
+      return;
     }
     
     // Desktop: usar rotação de imagens se disponível
     if (!isMobile) {
       const desktopImages = content.background_images_desktop || [];
       if (desktopImages.length > 0) {
-        // Escolher imagem aleatória
+        // Escolher imagem aleatória apenas uma vez no carregamento
         const randomIndex = Math.floor(Math.random() * desktopImages.length);
-        return desktopImages[randomIndex];
+        setBgImage(desktopImages[randomIndex]);
+        return;
       }
       if (content.background_image_url_desktop) {
-        return content.background_image_url_desktop;
+        setBgImage(content.background_image_url_desktop);
+        return;
       }
     }
     
     // Fallback para imagem legada
-    return content.background_image_url || content.background_image_url_desktop || content.background_image_url_mobile;
-  };
-
-  const bgImage = getBackgroundImage();
+    setBgImage(content.background_image_url || content.background_image_url_desktop || content.background_image_url_mobile);
+  }, [content, isMobile]);
   const blurAmount = content.background_blur || 0;
 
   const getFontStyle = (fontType) => {
