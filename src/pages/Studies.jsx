@@ -512,10 +512,18 @@ export default function StudiesPage() {
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
 
-    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
-    if (currentIndex > 0) {
-      const previousVideo = filteredVideos[currentIndex - 1];
-      handlePlayVideo(previousVideo);
+    if (playingVideo.isCustom) {
+      const customVideos = userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video');
+      const currentIndex = customVideos.findIndex((v) => v.id === playingVideo.id);
+      if (currentIndex > 0) {
+        handleOpenCustomItem(customVideos[currentIndex - 1]);
+      }
+    } else {
+      const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
+      if (currentIndex > 0) {
+        const previousVideo = filteredVideos[currentIndex - 1];
+        handlePlayVideo(previousVideo);
+      }
     }
   };
 
@@ -525,10 +533,18 @@ export default function StudiesPage() {
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
 
-    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
-    if (currentIndex < filteredVideos.length - 1) {
-      const nextVideo = filteredVideos[currentIndex + 1];
-      handlePlayVideo(nextVideo);
+    if (playingVideo.isCustom) {
+      const customVideos = userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video');
+      const currentIndex = customVideos.findIndex((v) => v.id === playingVideo.id);
+      if (currentIndex < customVideos.length - 1) {
+        handleOpenCustomItem(customVideos[currentIndex + 1]);
+      }
+    } else {
+      const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
+      if (currentIndex < filteredVideos.length - 1) {
+        const nextVideo = filteredVideos[currentIndex + 1];
+        handlePlayVideo(nextVideo);
+      }
     }
   };
 
