@@ -76,7 +76,7 @@ const navigationItems = [
   icon: BookCopy
 },
 {
-  title: "Simulado por Edital",
+  title: "Meu Edital",
   url: createPageUrl("EditalSimulator"),
   icon: Target
 },
