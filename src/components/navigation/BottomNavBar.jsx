@@ -32,7 +32,7 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
             <Link
               key={item.name}
               to={hasAccess ? item.url : createPageUrl("Subscription")}
-              className={`flex flex-col items-center justify-center min-w-[70px] px-2 transition-colors duration-200 relative ${
+              className={`flex flex-col items-center justify-center min-w-[60px] px-1 transition-colors duration-200 relative ${
                 isCurrentPage
                   ? 'dark:text-blue-400' 
                   : 'text-gray-500 dark:text-gray-400'
@@ -46,8 +46,8 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
               }}
             >
               {!hasAccess && item.feature && <Lock className="absolute top-1 right-3 w-3 h-3 text-yellow-500" />}
-              <item.icon style={{ width: 'var(--icon-size, 1.5rem)', height: 'var(--icon-size, 1.5rem)' }} className="mb-1" />
-              <span className="text-xs font-medium">{item.name}</span>
+              <item.icon style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} className="mb-1" />
+              <span className="text-[10px] font-medium">{item.name}</span>
             </Link>
           );
         })}
