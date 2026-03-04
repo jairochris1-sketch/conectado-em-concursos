@@ -468,9 +468,9 @@ export default function CommunityPage({ embedded = false }) {
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                          <CardTitle className="text-xl break-words">{selectedPost.title}</CardTitle>
+                          <CardTitle className="text-xl break-words text-slate-200">{selectedPost.title}</CardTitle>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <p className="flex items-center text-sm text-gray-500 flex-wrap">
+                            <p className="flex items-center text-sm text-gray-400 flex-wrap">
                               Por{" "}
                               <Link
                           to={createPageUrl("UserProfile") + `?u=${encryptEmail(selectedPost.author_email)}`}
@@ -522,7 +522,7 @@ export default function CommunityPage({ embedded = false }) {
               </div>
             </CardHeader>
             <CardContent className="bg-slate-800 pt-0 p-6">
-              <p className="whitespace-pre-wrap mb-4">{selectedPost.content}</p>
+              <p className="whitespace-pre-wrap mb-4 text-slate-300">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <Button
                   variant="ghost"
@@ -774,7 +774,7 @@ export default function CommunityPage({ embedded = false }) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {post.is_pinned && <Pin className="w-4 h-4 text-yellow-600" />}
-                          <h3 className="text-slate-300 text-lg font-semibold">{post.title}</h3>
+                          <h3 className="text-slate-200 text-lg font-semibold">{post.title}</h3>
                         </div>
                         <p className="text-slate-300 mb-2 text-sm dark:text-gray-400 line-clamp-2">
                           {post.content}
