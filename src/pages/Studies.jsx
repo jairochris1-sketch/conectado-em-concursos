@@ -1513,15 +1513,27 @@ ${videoNotes}
 
                       <Textarea
                     value={videoNotes}
-                    onChange={(e) => setVideoNotes(e.target.value)}
-                    placeholder="Faça suas anotações sobre este vídeo aqui..."
-                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
-                    rows={8} />
+                    onChange={(e) => {
+                      setVideoNotes(e.target.value);
+                      localStorage.setItem(`video_notes_${playingVideo.id}`, e.target.value);
+                      setVideoNotesSaveStatus('Salvo');
+                      setTimeout(() => setVideoNotesSaveStatus(''), 2000);
+                    }}
+                    placeholder="Faça suas anotações avançadas sobre este vídeo aqui... (Salvo automaticamente para leitura offline)"
+                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm flex-1"
+                    rows={12} />
 
 
-                      <p className="text-xs text-gray-500 mt-2">
-                        Salvas automaticamente no navegador.
-                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="text-xs text-gray-500">
+                          Salvas localmente para leitura offline.
+                        </p>
+                        {videoNotesSaveStatus && (
+                          <span className="text-xs text-green-500 flex items-center gap-1">
+                            <Check className="w-3 h-3" /> {videoNotesSaveStatus}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </>
               }
