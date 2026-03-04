@@ -18,7 +18,6 @@ const plans = [
   name: 'Grátis',
   key: 'gratuito',
   monthly: { price: '0,00', cycle: 'MONTHLY' },
-  semiannual: { price: '0,00', cycle: 'SEMIANNUALLY' },
   annual: { price: '0,00', cycle: 'YEARLY' },
   buttonText: 'Plano Atual',
   features: [
@@ -82,39 +81,6 @@ const plans = [
     'Raciocínio Lógico']
 
   },
-  semiannual: {
-    price: '199,00',
-    cycle: 'SEMIANNUALLY',
-    originalPrice: '239,40',
-    savings: '40,40',
-    installments: '6x R$ 33,17',
-    features: [
-    'Questões ilimitadas',
-    'Resumos de disciplinas',
-    'Área de Estudos (PDFs e Materiais)',
-    'Provas completas',
-    'Estatísticas detalhadas',
-    'Criação de Flashcards ilimitados',
-    'Comentários da comunidade',
-    'Simulados personalizados',
-    'Cadernos de Questões',
-    'Cronograma de Estudos',
-    'Planos de Estudo',
-    'Ranking de Usuários',
-    'Meu Edital',
-    'Fórum da Comunidade',
-    'Minhas Dúvidas',
-    'Feed de Atividades'],
-
-    unavailableFeatures: [
-    'ChatGPT',
-    'Lousa Digital',
-    'Questões inéditas',
-    'Curso de Inglês',
-    'Curso de Matemática',
-    'Raciocínio Lógico']
-
-  },
   annual: {
     price: '399,00',
     cycle: 'YEARLY',
@@ -154,7 +120,6 @@ const plans = [
   name: 'Premium',
   key: 'avancado',
   monthly: { price: '79,80', cycle: 'MONTHLY' },
-  semiannual: { price: '399,00', cycle: 'SEMIANNUALLY', originalPrice: '478,80', savings: '79,80', installments: '6x R$ 66,50' },
   annual: { price: '798,00', cycle: 'YEARLY', originalPrice: '957,60', savings: '159,60' },
   buttonText: 'Assinar',
   features: [
@@ -195,7 +160,6 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
 
   const getCurrentPricing = () => {
     switch (billingCycle) {
-      case 'semiannual':return plan.semiannual;
       case 'annual':return plan.annual;
       default:return plan.monthly;
     }
@@ -218,7 +182,6 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
   };
   const getPriceDetail = () => {
     switch (billingCycle) {
-      case 'semiannual':return '/ semestre';
       case 'annual':return '/ ano';
       default:return '/ mês';
     }
@@ -278,7 +241,7 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
         </CardHeader>
         <CardContent className="p-4 md:p-8">
           <div className="text-center mb-4 md:mb-8">
-            {(billingCycle === 'semiannual' || billingCycle === 'annual') && currentPricing.originalPrice &&
+            {billingCycle === 'annual' && currentPricing.originalPrice &&
             <div className="mb-1 md:mb-2">
                 <span className="text-xs md:text-sm line-through opacity-60">
                   De R${currentPricing.originalPrice}
@@ -290,14 +253,6 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
               <span className="text-3xl md:text-5xl font-extrabold">R${currentPricing.price}</span>
               <span className="text-sm md:text-lg opacity-70">{priceDetail}</span>
             </div>
-            
-            {billingCycle === 'semiannual' && currentPricing.installments &&
-            <div className="text-center mt-1 md:mt-2">
-                <span className="text-sm md:text-lg font-semibold text-yellow-300">
-                  {currentPricing.installments}
-                </span>
-              </div>
-            }
           </div>
           <ul className="space-y-2 md:space-y-4">
             {getFeatures().map((feature, index) =>
@@ -367,7 +322,7 @@ export default function SubscriptionPage() {
   const [loadingPlan, setLoadingPlan] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelError, setCancelError] = useState('');
-  const [billingCycle, setBillingCycle] = useState('semiannual');
+  const [billingCycle, setBillingCycle] = useState('monthly');
   const [showQuickForm, setShowQuickForm] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -595,7 +550,6 @@ export default function SubscriptionPage() {
 
     const getCurrentPricingQuickForm = () => {
       switch (selectedPlan.cycle) {
-        case 'semiannual':return plan.semiannual;
         case 'annual':return plan.annual;
         default:return plan.monthly;
       }
@@ -669,16 +623,11 @@ export default function SubscriptionPage() {
                 <div className="pt-4 border-t border-gray-600 mt-6">
                   <div className="text-center mb-4">
                     <div className="text-lg font-bold">
-                      R$ {pricing.price} {selectedPlan.cycle === 'annual' ? '/ ano' : selectedPlan.cycle === 'semiannual' ? '/ semestre' : '/ mês'}
+                      R$ {pricing.price} {selectedPlan.cycle === 'annual' ? '/ ano' : '/ mês'}
                     </div>
                     {pricing.savings &&
                     <div className="text-sm text-green-400">
                         Economize R$ {pricing.savings}
-                      </div>
-                    }
-                    {selectedPlan.cycle === 'semiannual' && pricing.installments &&
-                    <div className="text-sm text-yellow-300">
-                        {pricing.installments}
                       </div>
                     }
                   </div>
@@ -712,7 +661,6 @@ export default function SubscriptionPage() {
 
     const getCurrentPricingPayment = () => {
       switch (selectedPlan.cycle) {
-        case 'semiannual':return plan.semiannual;
         case 'annual':return plan.annual;
         default:return plan.monthly;
       }
