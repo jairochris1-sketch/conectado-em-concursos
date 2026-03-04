@@ -758,6 +758,36 @@ ${videoNotes}
     } catch(e) { console.error(e); }
   };
 
+  const toggleFolderSelection = (id, e) => {
+    e.stopPropagation();
+    setSelectedFolderIds(prev => prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]);
+  };
+
+  const handleDeleteSelectedFolders = async () => {
+    if (!window.confirm(`Tem certeza que deseja excluir ${selectedFolderIds.length} pasta(s)?`)) return;
+    try {
+      for (const id of selectedFolderIds) {
+        await base44.entities.UserCourse.delete(id);
+      }
+      setUserCourses(userCourses.filter(c => !selectedFolderIds.includes(c.id)));
+      setSelectedFolderIds([]);
+      setDeleteMode(false);
+    } catch (e) { console.error(e); }
+  };
+
+  const handleDeleteAllFolders = async () => {
+    if (!window.confirm("Tem certeza que deseja excluir TODAS as suas pastas? Esta ação não pode ser desfeita.")) return;
+    try {
+      const myCourses = userCourses.filter(c => c.user_email === currentUser?.email);
+      for (const c of myCourses) {
+        await base44.entities.UserCourse.delete(c.id);
+      }
+      setUserCourses(userCourses.filter(c => c.user_email !== currentUser?.email));
+      setSelectedFolderIds([]);
+      setDeleteMode(false);
+    } catch (e) { console.error(e); }
+  };
+
   const handleDeleteCourseItem = async (itemId) => {
     if (!window.confirm("Tem certeza que deseja excluir este material?")) return;
     try {
