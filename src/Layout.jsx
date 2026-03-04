@@ -701,6 +701,17 @@ export default function Layout({ children, currentPageName }) {
             <Upload className="w-3 h-3 mr-1" />
             <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
+          {(userPlan === 'gratuito') && (
+            <Link to={createPageUrl("Subscription")}>
+              <Button
+                size="sm"
+                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
+              >
+                <Star className="w-3 h-3 mr-1 fill-current" />
+                Assinar Premium
+              </Button>
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-2 ml-4">
