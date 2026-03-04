@@ -1157,8 +1157,11 @@ ${videoNotes}
                       )}
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-6">
+                </TabsContent>
+              </Tabs>
+            </div>
+          ) : (
+            <div className="space-y-6">
                 <div className="space-y-6">
                   {/* Pills */}
                   <div className="flex flex-wrap items-center gap-2">
