@@ -49,7 +49,7 @@ const getPlans = (cycle) => [
     description: 'Para quem está começando',
     badge: null,
     link: 'https://www.asaas.com/c/l6rj0623rvgpqfw6',
-    buttonText: 'Começar Agora',
+    buttonText: 'Assinar agora',
     features: [
       'Questões ilimitadas',
       'Provas completas',
@@ -82,7 +82,7 @@ const getPlans = (cycle) => [
       ? { text: '🔥 MELHOR CUSTO-BENEFÍCIO', style: 'bg-[#10b981] text-white' }
       : { text: '⭐ MAIS ESCOLHIDO', style: 'bg-[#f59e0b] text-white' },
     link: cycle === 'annual' ? 'https://www.asaas.com/c/45fatb35qaui9vd9' : 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
-    buttonText: cycle === 'annual' ? 'Quero Preparação Completa' : 'Quero Evoluir',
+    buttonText: 'Assinar agora',
     features: [
       'Tudo do Padrão',
       'Estatísticas detalhadas',

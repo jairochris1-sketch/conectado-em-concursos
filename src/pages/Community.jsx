@@ -736,7 +736,7 @@ export default function CommunityPage({ embedded = false }) {
           </Dialog>
         </div>
 
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <Input
             placeholder="Buscar discussões..."
             value={searchTerm}
@@ -744,7 +744,7 @@ export default function CommunityPage({ embedded = false }) {
             className="flex-1" />
 
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-            <SelectTrigger className="w-64">
+            <SelectTrigger className="w-full md:w-64">
               <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
@@ -770,7 +770,7 @@ export default function CommunityPage({ embedded = false }) {
                     <AvatarFallback>{post.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {post.is_pinned && <Pin className="w-4 h-4 text-yellow-600" />}
@@ -780,12 +780,12 @@ export default function CommunityPage({ embedded = false }) {
                           {post.content}
                         </p>
                       </div>
-                      <div className="flex gap-2 ml-4">
+                      <div className="flex flex-wrap gap-2 md:ml-4">
                         <Badge className="bg-blue-600 text-slate-200 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
                         <Link
                         to={createPageUrl("UserProfile") + `?u=${encryptEmail(post.author_email)}`}
