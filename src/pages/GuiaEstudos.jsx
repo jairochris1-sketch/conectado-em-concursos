@@ -576,9 +576,9 @@ export default function GuiaEstudos() {
               paginatedArticles.map((a) => (
               <div key={a.id} id={`art-${a.id}`} className={`relative p-6 rounded-lg mb-6 ${darkMode ? 'bg-gray-700/50' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
-                    <div className="flex items-center gap-2 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`text-lg font-semibold mb-2 break-words break-all sm:break-normal ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
                       {a.author && <Badge variant="outline">{a.author}</Badge>}
                       {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
                       {readingProgress[a.id] && (
