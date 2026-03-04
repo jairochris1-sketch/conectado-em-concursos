@@ -265,7 +265,7 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
 
           {/* Artigo */}
           <div className={`flex-1 overflow-y-auto ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8">
+            <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8 pb-32 md:pb-12">
               {readingMode && (
                 <button
                   onClick={() => setReadingMode(false)}
