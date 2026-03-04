@@ -325,7 +325,6 @@ export default function Layout({ children, currentPageName }) {
     const checkAuthAndLoad = async () => {
       try {
         let userData = await User.me();
-        setUser(userData);
 
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
@@ -333,19 +332,29 @@ export default function Layout({ children, currentPageName }) {
         const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
         let userPlan = userData.current_plan || 'gratuito';
 
+        if (activeSubscriptions.length > 0) {
+          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
+          const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
+          if (hasPremium) {
+            userPlan = 'avancado';
+          } else if (hasStandard) {
+            userPlan = 'padrao';
+          } else {
+            userPlan = activeSubscriptions[0].plan;
+          }
+        }
+
         if (specialUsers.length > 0) {
           const specialUser = specialUsers[0];
           // Verificar se ainda está válido
           if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
             userPlan = specialUser.plan;
-            userData = { ...userData, current_plan: userPlan };
-            setUser(userData);
           }
         }
 
+        userData = { ...userData, current_plan: userPlan };
+        setUser(userData);
 
-
-        userPlan = userData.current_plan || 'gratuito';
         const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
         const currentTitle = pageNameTranslations[currentPageName] || currentPageName;
