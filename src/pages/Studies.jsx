@@ -804,8 +804,11 @@ ${videoNotes}
         id: item.id,
         title: item.title,
         video_id: item.content_url,
+        youtube_url: item.content_url,
         description: item.description,
-        subject: selectedCourse.title
+        subject: selectedCourse.title,
+        isCustom: true,
+        course_id: item.course_id
       });
     } else {
       setSelectedMaterial({
