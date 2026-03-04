@@ -720,20 +720,20 @@ ${videoNotes}
   };
 
   const handleCreateCourseItem = async () => {
-    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com';
+    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com';
     
-    // Check limits if not admin
+    // Check limits
     if (!isAdminUser) {
       const currentItems = userCourseItems.filter(i => i.course_id === selectedCourse.id);
       const videosCount = currentItems.filter(i => i.type === 'video').length;
       const pdfsCount = currentItems.filter(i => i.type === 'pdf').length;
 
       if (newItemForm.type === 'video' && videosCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por curso.");
+        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por pasta.");
         return;
       }
       if (newItemForm.type === 'pdf' && pdfsCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 PDFs por curso.");
+        alert("Limite atingido: Você só pode adicionar até 10 PDFs por pasta.");
         return;
       }
     }
