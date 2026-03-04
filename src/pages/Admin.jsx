@@ -38,6 +38,7 @@ import AuditLogViewer from '../components/admin/AuditLogViewer';
 import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 import AdminInternalChat from '../components/admin/AdminInternalChat';
 import ForumAdmin from '../components/admin/ForumAdmin';
+import CourseCreatorAdmin from '../components/admin/CourseCreatorAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -495,6 +496,10 @@ export default function AdminPage() {
               <Download className="w-4 h-4 mr-2" />
               Exportar
             </TabsTrigger>
+            <TabsTrigger value="criadores-cursos">
+              <UserCheck className="w-4 h-4 mr-2" />
+              Criadores
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -622,6 +627,10 @@ export default function AdminPage() {
 
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
+          </TabsContent>
+
+          <TabsContent value="criadores-cursos" className="mt-6">
+            <CourseCreatorAdmin />
           </TabsContent>
         </Tabs>
       </div>
