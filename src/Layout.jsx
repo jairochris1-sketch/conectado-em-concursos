@@ -815,17 +815,19 @@ export default function Layout({ children, currentPageName }) {
               </div>
               <div className="flex items-center gap-2">
                 <GlobalSearch isMobile />
-                <Link to={createPageUrl("Subscription")}>
-                  <Button
-                  variant="default"
-                  size="sm"
-                  className="text-white"
-                  style={{ backgroundColor: 'var(--primary-color)' }}>
+                {(userPlan === 'gratuito') && (
+                  <Link to={createPageUrl("Subscription")}>
+                    <Button
+                    variant="default"
+                    size="sm"
+                    className="text-white"
+                    style={{ backgroundColor: 'var(--primary-color)' }}>
 
-                    <CreditCard className="w-4 h-4 mr-1" />
-                    Assinar
-                  </Button>
-                </Link>
+                      <CreditCard className="w-4 h-4 mr-1" />
+                      Assinar
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </header>
