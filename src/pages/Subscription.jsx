@@ -10,6 +10,39 @@ import { createPageUrl } from '@/utils';
 
 const plans = [
   {
+    name: 'Gratuito',
+    key: 'gratuito',
+    cycle: 'monthly',
+    price: '0,00',
+    cycleLabel: '/mês',
+    description: 'Para conhecer a plataforma',
+    badge: null,
+    link: null,
+    buttonText: 'Começar Grátis',
+    features: [
+      '20 questões por dia',
+      'Estatísticas básicas',
+      'Acesso ao Meu Painel'
+    ],
+    unavailableFeatures: [
+      'Questões ilimitadas',
+      'Provas completas',
+      'Ranking de usuários',
+      'Comentários da comunidade',
+      'Fórum e Feed',
+      'Estatísticas avançadas',
+      'Simulados personalizados',
+      'Flashcards',
+      'IA e Edital Verticalizado'
+    ],
+    cardStyle: 'bg-white border-gray-200 text-gray-900',
+    headerStyle: 'text-gray-900',
+    priceStyle: 'text-gray-900',
+    buttonStyle: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
+    checkColor: 'text-[#1e293b]',
+    xColor: 'text-gray-400'
+  },
+  {
     name: 'Essencial',
     key: 'padrao',
     cycle: 'monthly',
