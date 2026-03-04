@@ -211,7 +211,7 @@ const featureAccess = {
   'Curso de Matemática': ['avancado'],
   'Raciocínio Lógico': ['avancado'],
   'Cadernos de Questões': ['avancado'],
-  'Simulado por Edital': ['avancado'],
+  'Meu Edital': ['avancado'],
   'Fórum': ['avancado'],
   'Favoritas': ['gratuito', 'padrao', 'avancado'],
   'Relatórios': ['padrao', 'avancado'],
