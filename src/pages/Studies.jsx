@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -138,7 +139,7 @@ export default function StudiesPage() {
   const [userCourseItems, setUserCourseItems] = useState([]);
   const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '' });
+  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false });
   const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -252,10 +253,13 @@ export default function StudiesPage() {
       setFlashcards(flashcardsData);
       setReviews(reviewsData);
 
-      const userCoursesData = await base44.entities.UserCourse.filter({ user_email: user.email });
-      const userCourseItemsData = await base44.entities.UserCourseItem.filter({ user_email: user.email });
-      setUserCourses(userCoursesData);
-      setUserCourseItems(userCourseItemsData);
+      const allCustomCourses = await base44.entities.UserCourse.list();
+      const visibleCourses = allCustomCourses.filter(c => c.user_email === user.email || c.is_public);
+      setUserCourses(visibleCourses);
+      
+      const allCustomItems = await base44.entities.UserCourseItem.list();
+      const visibleItems = allCustomItems.filter(i => visibleCourses.some(c => c.id === i.course_id));
+      setUserCourseItems(visibleItems);
 
       // Process Videos
       setVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0)));
@@ -635,22 +639,28 @@ ${videoNotes}
   const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
   const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
 
-  const updateCourseProgress = async (courseId, items) => {
-    const courseItems = items.filter(i => i.course_id === courseId);
-    if (courseItems.length === 0) return 0;
-    const completed = courseItems.filter(i => i.is_completed).length;
-    const progress = (completed / courseItems.length) * 100;
-    await base44.entities.UserCourse.update(courseId, { progress });
-    setUserCourses(prev => prev.map(c => c.id === courseId ? { ...c, progress } : c));
-    return progress;
+  const getCourseProgress = (courseId) => {
+    const items = userCourseItems.filter(i => i.course_id === courseId);
+    if (items.length === 0) return 0;
+    const completed = items.filter(i => i.completed_by?.includes(currentUser?.email)).length;
+    return (completed / items.length) * 100;
   };
 
   const toggleItemCompletion = async (item) => {
-    const newStatus = !item.is_completed;
-    await base44.entities.UserCourseItem.update(item.id, { is_completed: newStatus });
-    const newItems = userCourseItems.map(i => i.id === item.id ? { ...i, is_completed: newStatus } : i);
+    const completedBy = item.completed_by || [];
+    const isCompleted = completedBy.includes(currentUser.email);
+    let newCompletedBy;
+    
+    if (isCompleted) {
+      newCompletedBy = completedBy.filter(email => email !== currentUser.email);
+    } else {
+      newCompletedBy = [...completedBy, currentUser.email];
+    }
+
+    await base44.entities.UserCourseItem.update(item.id, { completed_by: newCompletedBy });
+    
+    const newItems = userCourseItems.map(i => i.id === item.id ? { ...i, completed_by: newCompletedBy } : i);
     setUserCourseItems(newItems);
-    updateCourseProgress(item.course_id, newItems);
   };
 
   const handleCreateCourse = async () => {
@@ -659,11 +669,11 @@ ${videoNotes}
         user_email: currentUser.email,
         title: newCourseForm.title,
         description: newCourseForm.description,
-        progress: 0
+        is_public: newCourseForm.is_public
       });
       setUserCourses([...userCourses, newCourse]);
       setShowCreateCourseModal(false);
-      setNewCourseForm({ title: '', description: '' });
+      setNewCourseForm({ title: '', description: '', is_public: false });
     } catch (e) { console.error(e); }
   };
 
@@ -682,11 +692,10 @@ ${videoNotes}
         description: newItemForm.description,
         type: newItemForm.type,
         content_url: finalUrl,
-        is_completed: false
+        completed_by: []
       });
       const newItems = [...userCourseItems, newItem];
       setUserCourseItems(newItems);
-      updateCourseProgress(selectedCourse.id, newItems);
       setShowAddItemModal(false);
       setNewItemForm({ title: '', description: '', type: 'video', content_url: '', file: null });
     } catch (e) {
