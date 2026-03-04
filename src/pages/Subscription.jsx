@@ -255,19 +255,19 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -10 }}
-      className={`transform transition-transform duration-300 ${plan.highlight ? 'scale-105 z-10' : ''}`}>
+      className={`transform transition-transform duration-300 ${plan.highlight ? 'md:scale-105 z-10' : ''} mx-auto w-full flex justify-center`}>
 
-      <Card className={`text-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border-2 ${cardColors[plan.color]} relative`}>
+      <Card className={`text-white w-full max-w-[320px] md:max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl border-2 ${cardColors[plan.color]} relative`}>
         {currentPricing.savings &&
-        <div className="absolute -top-3 -right-3 z-10">
-            <Badge className="bg-green-500 text-white shadow-lg text-sm px-3 py-1 rounded-full rotate-6">
+        <div className="absolute top-2 right-2 md:-top-3 md:-right-3 z-10">
+            <Badge className="bg-green-500 text-white shadow-lg text-xs md:text-sm px-2 md:px-3 py-1 rounded-full md:rotate-6">
               Economize R${currentPricing.savings}
             </Badge>
           </div>
         }
 
-        <CardHeader className={`text-center p-6 ${headerColors[plan.color]}`}>
-          <CardTitle className="text-2xl font-bold uppercase tracking-wider">{plan.name}</CardTitle>
+        <CardHeader className={`text-center p-4 md:p-6 ${headerColors[plan.color]}`}>
+          <CardTitle className="text-xl md:text-2xl font-bold uppercase tracking-wider">{plan.name}</CardTitle>
           {(isCurrentPlan || isUserCurrentPlan) &&
           <div className="mt-2">
               <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
@@ -276,8 +276,8 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
             </div>
           }
         </CardHeader>
-        <CardContent className="p-8">
-          <div className="text-center mb-8">
+        <CardContent className="p-5 md:p-8">
+          <div className="text-center mb-6 md:mb-8">
             {(billingCycle === 'semiannual' || billingCycle === 'annual') && currentPricing.originalPrice &&
             <div className="mb-2">
                 <span className="text-sm line-through opacity-60">
