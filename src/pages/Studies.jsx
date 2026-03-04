@@ -41,6 +41,7 @@ import {
   BookUser,
   ChevronRight,
   ChevronDown,
+  Folder,
   Check } from
 'lucide-react';
 import { motion } from 'framer-motion';
