@@ -314,11 +314,11 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
             )}
           </ul>
         </CardContent>
-        <CardFooter className="p-6 bg-black bg-opacity-10 flex flex-col gap-3">
+        <CardFooter className="p-5 md:p-6 bg-black bg-opacity-10 flex flex-col gap-3">
           <Button
             size="lg"
             disabled={isDisabled}
-            className={`w-full text-lg font-semibold rounded-lg shadow-lg transition-transform transform hover:scale-105 ${
+            className={`w-full text-base md:text-lg font-semibold rounded-lg shadow-lg transition-transform transform hover:scale-105 ${
             isDisabled ? 'bg-gray-400 cursor-not-allowed' : buttonColors[plan.color]}`
             }
             onClick={() => onSubscribe(plan.key, billingCycle)}>
