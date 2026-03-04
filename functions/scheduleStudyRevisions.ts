@@ -67,10 +67,14 @@ Deno.serve(async (req) => {
                 // Max iterations to prevent infinite loop
                 const MAX_REVIEWS = 50;
                 
+                const selectedTime = startDate.toISOString().substring(11, 16);
+                const hasTime = data.custom_start_date.includes('T');
+                const timeStr = hasTime ? ` às ${selectedTime}` : '';
+
                 if (recurrence === 'none') {
                     reviewsToCreate.push({
                         ...reviewData,
-                        review_type: "Personalizada",
+                        review_type: `Personalizada${timeStr}`,
                         due_date: startDate.toISOString().split('T')[0]
                     });
                 } else {
@@ -92,7 +96,7 @@ Deno.serve(async (req) => {
                         
                         reviewsToCreate.push({
                             ...reviewData,
-                            review_type: `Personalizada (${recurrence === 'daily' ? 'Diária' : recurrence === 'weekly' ? 'Semanal' : 'Mensal'})`,
+                            review_type: `Personalizada (${recurrence === 'daily' ? 'Diária' : recurrence === 'weekly' ? 'Semanal' : 'Mensal'})${timeStr}`,
                             due_date: currentDate.toISOString().split('T')[0]
                         });
                         
