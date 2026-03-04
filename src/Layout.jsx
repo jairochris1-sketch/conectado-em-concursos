@@ -86,7 +86,7 @@ const navigationItems = [
   icon: BookOpenIcon
 },
 {
-  title: "Meus Cursos",
+  title: "Áreas de Estudo",
   url: createPageUrl("Studies"),
   icon: BookOpen
 },
@@ -159,7 +159,7 @@ const pageNameTranslations = {
   People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
-  Studies: "Meus Cursos",
+  Studies: "Áreas de Estudo",
   Schedule: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
@@ -196,7 +196,7 @@ const featureAccess = {
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
   'Pessoas': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
-  'Meus Cursos': ['avancado'],
+  'Áreas de Estudo': ['avancado'],
   'Cronograma de Estudos': ['avancado'],
   'Revisões': ['padrao', 'avancado'],
   'Planos de Estudo': ['avancado'],
