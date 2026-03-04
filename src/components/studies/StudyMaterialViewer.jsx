@@ -142,6 +142,15 @@ export default function StudyMaterialViewer({ material, isOpen, onClose }) {
               <Button
                 variant="ghost"
                 size="icon"
+                onClick={() => setIsFullscreen(true)}
+                className={darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                title="Tela Cheia"
+              >
+                <Maximize className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setDarkMode(!darkMode)}
                 className={darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
                 title={darkMode ? 'Modo Claro' : 'Modo Escuro'}
