@@ -805,10 +805,10 @@ ${videoNotes}
           <div className="space-y-10">
             <div>
               <div className="flex items-center justify-between mb-4">
-                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Meus Cursos Personalizados</h2>
+                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Pastas de Materiais de Estudo Personalizadas</h2>
                  {canCreateCourse && (
                    <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                     <Plus className="w-4 h-4 mr-2" /> Criar Curso
+                     <Plus className="w-4 h-4 mr-2" /> Criar Pasta
                    </Button>
                  )}
               </div>
@@ -816,8 +816,8 @@ ${videoNotes}
                 {userCourses.length === 0 ? (
                   <div className="col-span-full py-8 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
                     <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
-                    <p className="text-gray-500 font-medium">Você ainda não criou nenhum curso.</p>
-                    <p className="text-sm text-gray-400 mt-1">Crie um curso para organizar seus próprios materiais.</p>
+                    <p className="text-gray-500 font-medium">Você ainda não criou nenhuma pasta.</p>
+                    <p className="text-sm text-gray-400 mt-1">Crie uma pasta para organizar seus próprios materiais.</p>
                   </div>
                 ) : (
                   userCourses.map(course => (
@@ -831,7 +831,7 @@ ${videoNotes}
                         </div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
                         {course.is_public && <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700 hover:bg-blue-100">Público</Badge>}
-                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Curso personalizado"}</p>
+                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
                       </CardContent>
                     </Card>
                   ))
@@ -1349,22 +1349,22 @@ ${videoNotes}
         <Dialog open={showCreateCourseModal} onOpenChange={setShowCreateCourseModal}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Criar Novo Curso</DialogTitle>
+              <DialogTitle>Criar Nova Pasta de Materiais</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label>Título do Curso</Label>
-                <Input value={newCourseForm.title} onChange={e => setNewCourseForm({...newCourseForm, title: e.target.value})} placeholder="Ex: Informática para Concursos" />
+                <Label>Título da Pasta</Label>
+                <Input value={newCourseForm.title} onChange={e => setNewCourseForm({...newCourseForm, title: e.target.value})} placeholder="Ex: Materiais de Informática" />
               </div>
               <div className="space-y-2">
                 <Label>Descrição</Label>
-                <Textarea value={newCourseForm.description} onChange={e => setNewCourseForm({...newCourseForm, description: e.target.value})} placeholder="Breve descrição do seu curso..." />
+                <Textarea value={newCourseForm.description} onChange={e => setNewCourseForm({...newCourseForm, description: e.target.value})} placeholder="Breve descrição dos materiais..." />
               </div>
               {currentUser?.email === 'conectadoemconcursos@gmail.com' && (
                 <div className="flex items-center justify-between border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
                   <div className="space-y-0.5">
-                    <Label>Curso Público</Label>
-                    <p className="text-xs text-gray-500">Se ativado, este curso aparecerá para todos os alunos.</p>
+                    <Label>Pasta Pública</Label>
+                    <p className="text-xs text-gray-500">Se ativado, esta pasta aparecerá para todos os alunos.</p>
                   </div>
                   <Switch 
                     checked={newCourseForm.is_public} 
@@ -1375,7 +1375,7 @@ ${videoNotes}
             </div>
             <DialogFooter className="mt-6">
               <Button variant="outline" onClick={() => setShowCreateCourseModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Curso</Button>
+              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -1383,7 +1383,7 @@ ${videoNotes}
         <Dialog open={showAddItemModal} onOpenChange={setShowAddItemModal}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Adicionar Material ao Curso</DialogTitle>
+              <DialogTitle>Adicionar Material à Pasta</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
