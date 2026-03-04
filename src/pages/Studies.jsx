@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   BookOpen,
   FileText,
@@ -36,7 +39,8 @@ import {
   LayoutGrid,
   BookUser,
   ChevronRight,
-  ChevronDown } from
+  ChevronDown,
+  Check } from
 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -129,6 +133,15 @@ const LAYOUT_MODES = {
 };
 
 export default function StudiesPage() {
+  // Custom Courses State
+  const [userCourses, setUserCourses] = useState([]);
+  const [userCourseItems, setUserCourseItems] = useState([]);
+  const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '' });
+  const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
+  const [isUploading, setIsUploading] = useState(false);
+
   // Course State
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [courseTab, setCourseTab] = useState('conteudo');
@@ -238,6 +251,11 @@ export default function StudiesPage() {
       // Process Flashcards
       setFlashcards(flashcardsData);
       setReviews(reviewsData);
+
+      const userCoursesData = await base44.entities.UserCourse.filter({ user_email: user.email });
+      const userCourseItemsData = await base44.entities.UserCourseItem.filter({ user_email: user.email });
+      setUserCourses(userCoursesData);
+      setUserCourseItems(userCourseItemsData);
 
       // Process Videos
       setVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0)));
@@ -617,6 +635,106 @@ ${videoNotes}
   const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
   const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
 
+  const updateCourseProgress = async (courseId, items) => {
+    const courseItems = items.filter(i => i.course_id === courseId);
+    if (courseItems.length === 0) return 0;
+    const completed = courseItems.filter(i => i.is_completed).length;
+    const progress = (completed / courseItems.length) * 100;
+    await base44.entities.UserCourse.update(courseId, { progress });
+    setUserCourses(prev => prev.map(c => c.id === courseId ? { ...c, progress } : c));
+    return progress;
+  };
+
+  const toggleItemCompletion = async (item) => {
+    const newStatus = !item.is_completed;
+    await base44.entities.UserCourseItem.update(item.id, { is_completed: newStatus });
+    const newItems = userCourseItems.map(i => i.id === item.id ? { ...i, is_completed: newStatus } : i);
+    setUserCourseItems(newItems);
+    updateCourseProgress(item.course_id, newItems);
+  };
+
+  const handleCreateCourse = async () => {
+    try {
+      const newCourse = await base44.entities.UserCourse.create({
+        user_email: currentUser.email,
+        title: newCourseForm.title,
+        description: newCourseForm.description,
+        progress: 0
+      });
+      setUserCourses([...userCourses, newCourse]);
+      setShowCreateCourseModal(false);
+      setNewCourseForm({ title: '', description: '' });
+    } catch (e) { console.error(e); }
+  };
+
+  const handleCreateCourseItem = async () => {
+    setIsUploading(true);
+    try {
+      let finalUrl = newItemForm.content_url;
+      if (newItemForm.type === 'pdf' && newItemForm.file) {
+        const res = await base44.integrations.Core.UploadFile({ file: newItemForm.file });
+        finalUrl = res.file_url;
+      }
+      const newItem = await base44.entities.UserCourseItem.create({
+        course_id: selectedCourse.id,
+        user_email: currentUser.email,
+        title: newItemForm.title,
+        description: newItemForm.description,
+        type: newItemForm.type,
+        content_url: finalUrl,
+        is_completed: false
+      });
+      const newItems = [...userCourseItems, newItem];
+      setUserCourseItems(newItems);
+      updateCourseProgress(selectedCourse.id, newItems);
+      setShowAddItemModal(false);
+      setNewItemForm({ title: '', description: '', type: 'video', content_url: '', file: null });
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao adicionar material.");
+    }
+    setIsUploading(false);
+  };
+
+  const handleDeleteCourse = async (courseId) => {
+    if (!window.confirm("Tem certeza que deseja excluir este curso?")) return;
+    try {
+      await base44.entities.UserCourse.delete(courseId);
+      setUserCourses(userCourses.filter(c => c.id !== courseId));
+      setSelectedCourse(null);
+    } catch(e) { console.error(e); }
+  };
+
+  const handleDeleteCourseItem = async (itemId) => {
+    if (!window.confirm("Tem certeza que deseja excluir este material?")) return;
+    try {
+      await base44.entities.UserCourseItem.delete(itemId);
+      const newItems = userCourseItems.filter(i => i.id !== itemId);
+      setUserCourseItems(newItems);
+      updateCourseProgress(selectedCourse.id, newItems);
+    } catch(e) { console.error(e); }
+  };
+
+  const handleOpenCustomItem = (item) => {
+    if (item.type === 'video') {
+      handlePlayVideo({
+        id: item.id,
+        title: item.title,
+        video_id: item.content_url,
+        description: item.description,
+        subject: selectedCourse.title
+      });
+    } else {
+      setSelectedMaterial({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        file_url: item.content_url,
+        file_type: item.type === 'pdf' ? 'pdf' : 'text'
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
@@ -656,21 +774,59 @@ ${videoNotes}
         </motion.div>
 
         {!selectedCourse ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
-              <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
-                  setSelectedCourse(cargo);
-                  setSelectedCargo(cargo.value);
-              }}>
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-300">
-                    <BookOpen className="w-8 h-8" />
+          <div className="space-y-10">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><BookUser className="w-5 h-5 text-blue-600" /> Meus Cursos Personalizados</h2>
+                 <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                   <Plus className="w-4 h-4 mr-2" /> Criar Curso
+                 </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {userCourses.length === 0 ? (
+                  <div className="col-span-full py-8 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                    <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
+                    <p className="text-gray-500 font-medium">Você ainda não criou nenhum curso.</p>
+                    <p className="text-sm text-gray-400 mt-1">Crie um curso para organizar seus próprios materiais.</p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{cargo.label}</h3>
-                  <p className="text-sm text-gray-500 mt-2">Acessar conteúdo do curso</p>
-                </CardContent>
-              </Card>
-            ))}
+                ) : (
+                  userCourses.map(course => (
+                    <Card key={course.id} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30" onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
+                      <CardContent className="p-6 flex flex-col items-center text-center relative">
+                        <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
+                          {Math.round(course.progress || 0)}%
+                        </div>
+                        <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                          <BookOpen className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
+                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Curso personalizado"}</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos Preparatórios</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
+                  <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
+                      setSelectedCourse(cargo);
+                      setSelectedCargo(cargo.value);
+                  }}>
+                    <CardContent className="p-6 flex flex-col items-center text-center">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mb-4 text-gray-600 dark:text-gray-300">
+                        <BookOpen className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{cargo.label}</h3>
+                      <p className="text-sm text-gray-500 mt-2">Acessar conteúdo do curso</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
