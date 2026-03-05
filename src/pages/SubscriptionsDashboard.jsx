@@ -93,32 +93,30 @@ export default function SubscriptionsDashboard() {
     setIsCancelModalOpen(false);
 
     try {
-      if (selectedSub.asaas_subscription_id) {
-        // Cancelar no Asaas se tiver ID da assinatura
-        const response = await base44.functions.invoke('cancelAsaasSubscription', {
-          subscriptionId: selectedSub.asaas_subscription_id
-        });
-
-        if (response.data?.error) {
-          throw new Error(response.data.error);
-        }
-      }
-
-      // Atualizar no banco local
+      // Registrar a solicitação no banco local (sem cancelar imediatamente)
       await Subscription.update(selectedSub.id, {
-        status: 'cancelled',
-        end_date: new Date().toISOString().split('T')[0]
+        cancel_requested: true
       });
 
       // Enviar notificação para os administradores via banco de dados
       try {
         const user = await User.me();
+        
+        // Criar mensagem no painel de administração (AdminMessage)
+        if (base44.entities.AdminMessage) {
+          await base44.entities.AdminMessage.create({
+            message: `🚨 SOLICITAÇÃO DE CANCELAMENTO 🚨\nO usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do ${planNames[selectedSub.plan] || selectedSub.plan}. Verifique a aba de Assinaturas para prosseguir com o cancelamento manual no Asaas.`,
+            admin_email: user.email,
+            admin_name: user.full_name || 'Sistema',
+          });
+        }
+
         const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
         for (const email of adminEmails) {
           await base44.entities.Notification.create({
             user_email: email,
-            title: "Assinatura Cancelada",
-            message: `O usuário ${user.full_name} (${user.email}) cancelou a assinatura do ${planNames[selectedSub.plan] || selectedSub.plan} para estudos para Concursos Públicos no conectadoemconcursos.`,
+            title: "Solicitação de Cancelamento",
+            message: `O usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do plano ${planNames[selectedSub.plan] || selectedSub.plan}.`,
             type: "warning",
             related_user_name: user.full_name,
             related_user_photo: user.profile_photo_url
@@ -131,11 +129,11 @@ export default function SubscriptionsDashboard() {
       // Atualizar estado local
       setSubscriptions(prev => prev.map(s => 
         s.id === selectedSub.id 
-          ? { ...s, status: 'cancelled', end_date: new Date().toISOString().split('T')[0] } 
+          ? { ...s, cancel_requested: true } 
           : s
       ));
 
-      toast.success("Assinatura cancelada com sucesso!");
+      toast.success("Solicitação de cancelamento enviada com sucesso!");
     } catch (error) {
       console.error("Erro ao cancelar assinatura:", error);
       toast.error(error.message || "Erro ao cancelar assinatura. Tente novamente mais tarde.");
