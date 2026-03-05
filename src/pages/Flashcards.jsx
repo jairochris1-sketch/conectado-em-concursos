@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import FlashcardLibrary from "../components/flashcards/FlashcardLibrary";
 import FlashcardReviewer from "../components/flashcards/FlashcardReviewer";
+import FlashcardCreator from "../components/flashcards/FlashcardCreator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Library } from "lucide-react";
+import { Brain, Library, PlusCircle } from "lucide-react";
 
 export default function FlashcardsPage() {
   const [flashcards, setFlashcards] = useState([]);
@@ -68,12 +69,19 @@ export default function FlashcardsPage() {
             <Library className="w-4 h-4" />
             Biblioteca ({flashcards.length})
           </TabsTrigger>
+          <TabsTrigger value="create" className="flex items-center gap-2">
+            <PlusCircle className="w-4 h-4" />
+            Criar Novo
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="review">
           <FlashcardReviewer cardsDue={reviewsDue} onReviewComplete={loadData} />
         </TabsContent>
         <TabsContent value="library">
           <FlashcardLibrary flashcards={flashcards} onUpdate={loadData} />
+        </TabsContent>
+        <TabsContent value="create">
+          <FlashcardCreator onCreated={loadData} />
         </TabsContent>
       </Tabs>
     </div>

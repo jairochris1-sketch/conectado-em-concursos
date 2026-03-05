@@ -1,229 +1,214 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Flashcard } from '@/entities/Flashcard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Save, X } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import ReactQuill from 'react-quill';
+import { PlusCircle, Save, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 const subjectOptions = [
   { value: "portugues", label: "Português" },
   { value: "matematica", label: "Matemática" },
-  { value: "direito_constitucional", label: "Direito Constitucional" },
-  { value: "direito_administrativo", label: "Direito Administrativo" },
-  { value: "direito_penal", label: "Direito Penal" },
-  { value: "direito_civil", label: "Direito Civil" },
+  { value: "direito_constitucional", label: "D. Constitucional" },
+  { value: "direito_administrativo", label: "D. Administrativo" },
+  { value: "direito_penal", label: "D. Penal" },
+  { value: "direito_civil", label: "D. Civil" },
   { value: "informatica", label: "Informática" },
   { value: "conhecimentos_gerais", label: "Conhecimentos Gerais" },
   { value: "raciocinio_logico", label: "Raciocínio Lógico" },
   { value: "contabilidade", label: "Contabilidade" },
-  { value: "pedagogia", label: "Pedagogia" }
+  { value: "pedagogia", label: "Pedagogia" },
+  { value: "lei_8112", label: "Lei 8.112" },
+  { value: "lei_8666", label: "Lei 8.666" },
+  { value: "lei_14133", label: "Lei 14.133" },
+  { value: "constituicao_federal", label: "Constituição Federal" }
 ];
 
-const difficultyOptions = [
-  { value: "facil", label: "Fácil" },
-  { value: "medio", label: "Médio" },
-  { value: "dificil", label: "Difícil" }
-];
-
-export default function FlashcardCreator({ onFlashcardCreated }) {
+export default function FlashcardCreator({ onCreated, onCancel }) {
   const [formData, setFormData] = useState({
     front: '',
     back: '',
     subject: '',
     topic: '',
-    deck_name: '',
+    deck_name: 'Meus Flashcards',
     difficulty: 'medio',
-    tags: []
+    tags: ''
   });
+  const [loading, setLoading] = useState(false);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tagInput, setTagInput] = useState('');
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tagInput.trim()]
-      }));
-      setTagInput('');
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.front.trim() || !formData.back.trim() || !formData.subject) {
-      alert('Por favor, preencha pelo menos a frente, verso e disciplina do cartão.');
+    
+    if (!formData.front || !formData.back || !formData.subject) {
+      toast.error("Preencha os campos obrigatórios: Frente, Verso e Disciplina.");
       return;
     }
 
-    setIsSubmitting(true);
+    setLoading(true);
     try {
-      await Flashcard.create(formData);
+      const tagsArray = formData.tags
+        ? formData.tags.split(',').map(t => t.trim()).filter(Boolean)
+        : [];
+
+      await Flashcard.create({
+        front: formData.front,
+        back: formData.back,
+        subject: formData.subject,
+        topic: formData.topic,
+        deck_name: formData.deck_name,
+        difficulty: formData.difficulty,
+        tags: tagsArray,
+        is_active: true
+      });
+
+      toast.success("Flashcard criado com sucesso!");
       
-      // Limpar formulário
+      // Limpar formulário ou notificar pai
       setFormData({
         front: '',
         back: '',
         subject: '',
         topic: '',
-        deck_name: '',
+        deck_name: 'Meus Flashcards',
         difficulty: 'medio',
-        tags: []
+        tags: ''
       });
-      
-      onFlashcardCreated();
-      alert('Flashcard criado com sucesso!');
+
+      if (onCreated) onCreated();
     } catch (error) {
-      console.error('Erro ao criar flashcard:', error);
-      alert('Erro ao criar flashcard. Tente novamente.');
+      console.error("Erro ao criar flashcard:", error);
+      toast.error("Erro ao criar flashcard.");
+    } finally {
+      setLoading(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Plus className="w-5 h-5" />
-          Criar Novo Flashcard
+          <PlusCircle className="w-5 h-5 text-blue-600" />
+          Novo Flashcard
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="subject">Disciplina *</Label>
+            <div className="space-y-2">
+              <Label>Disciplina *</Label>
               <Select 
                 value={formData.subject} 
-                onValueChange={(value) => handleInputChange('subject', value)}
+                onValueChange={(val) => handleChange('subject', val)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione a disciplina" />
                 </SelectTrigger>
                 <SelectContent>
-                  {subjectOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {subjectOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="difficulty">Dificuldade</Label>
+            <div className="space-y-2">
+              <Label>Assunto (Tópico)</Label>
+              <Input 
+                value={formData.topic} 
+                onChange={(e) => handleChange('topic', e.target.value)}
+                placeholder="Ex: Crase, Porcentagem, Atos Administrativos..." 
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label>Frente (Pergunta/Conceito) *</Label>
+              <div className="bg-white text-black rounded-md overflow-hidden border">
+                <ReactQuill 
+                  theme="snow"
+                  value={formData.front}
+                  onChange={(val) => handleChange('front', val)}
+                  className="h-40 mb-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Verso (Resposta/Explicação) *</Label>
+              <div className="bg-white text-black rounded-md overflow-hidden border">
+                <ReactQuill 
+                  theme="snow"
+                  value={formData.back}
+                  onChange={(val) => handleChange('back', val)}
+                  className="h-40 mb-10"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Dificuldade</Label>
               <Select 
                 value={formData.difficulty} 
-                onValueChange={(value) => handleInputChange('difficulty', value)}
+                onValueChange={(val) => handleChange('difficulty', val)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {difficultyOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="facil">Fácil</SelectItem>
+                  <SelectItem value="medio">Médio</SelectItem>
+                  <SelectItem value="dificil">Difícil</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="topic">Tópico</Label>
-              <Input
-                id="topic"
-                value={formData.topic}
-                onChange={(e) => handleInputChange('topic', e.target.value)}
-                placeholder="Ex: Morfologia, Sintaxe..."
+            
+            <div className="space-y-2">
+              <Label>Nome do Baralho</Label>
+              <Input 
+                value={formData.deck_name} 
+                onChange={(e) => handleChange('deck_name', e.target.value)}
+                placeholder="Ex: Revisão Geral" 
               />
             </div>
 
-            <div>
-              <Label htmlFor="deck_name">Nome do Baralho</Label>
-              <Input
-                id="deck_name"
-                value={formData.deck_name}
-                onChange={(e) => handleInputChange('deck_name', e.target.value)}
-                placeholder="Ex: Português - Básico"
+            <div className="space-y-2">
+              <Label>Tags (separadas por vírgula)</Label>
+              <Input 
+                value={formData.tags} 
+                onChange={(e) => handleChange('tags', e.target.value)}
+                placeholder="importante, prova_x, revisar..." 
               />
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="front">Frente do Cartão (Pergunta) *</Label>
-            <Textarea
-              id="front"
-              value={formData.front}
-              onChange={(e) => handleInputChange('front', e.target.value)}
-              placeholder="Digite a pergunta ou conceito..."
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="back">Verso do Cartão (Resposta) *</Label>
-            <Textarea
-              id="back"
-              value={formData.back}
-              onChange={(e) => handleInputChange('back', e.target.value)}
-              placeholder="Digite a resposta ou explicação..."
-              rows={4}
-            />
-          </div>
-
-          <div>
-            <Label>Tags</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                placeholder="Digite uma tag..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              />
-              <Button type="button" variant="outline" onClick={handleAddTag}>
-                Adicionar
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            {onCancel && (
+              <Button type="button" variant="ghost" onClick={onCancel}>
+                Cancelar
               </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.tags.map((tag, index) => (
-                <span key={index} className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="hover:bg-indigo-200 rounded-full p-1"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
+            )}
+            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+              {loading ? "Salvando..." : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Salvar Flashcard
+                </>
+              )}
+            </Button>
           </div>
-
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Criando...' : 'Criar Flashcard'}
-            <Save className="w-4 h-4 ml-2" />
-          </Button>
         </form>
       </CardContent>
     </Card>
