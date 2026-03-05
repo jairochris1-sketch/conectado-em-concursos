@@ -445,9 +445,12 @@ export default function Exams() {
 
                   }
                       <div className="flex-1 min-w-0">
-                        <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
-                          {exam.exam_name}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
+                            {exam.exam_name}
+                          </p>
+                          {userPlan === 'gratuito' && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                        </div>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
                           <div className="flex items-center gap-1.5">
                             <Building className="w-4 h-4" />
