@@ -68,43 +68,50 @@ const navigationItems = [
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
   icon: LayoutDashboard,
-  color: "text-blue-300"
+  color: "text-blue-400",
+  fill: "fill-blue-400/20"
 },
 {
   title: "Questões",
   url: createPageUrl("Questions"),
   icon: Files,
-  color: "text-emerald-300"
+  color: "text-emerald-400",
+  fill: "fill-emerald-400/20"
 },
 {
   title: "Provas",
   url: createPageUrl("Exams"),
   icon: ClipboardList,
-  color: "text-amber-300"
+  color: "text-amber-400",
+  fill: "fill-amber-400/20"
 },
 {
   title: "Meu Edital",
   url: createPageUrl("EditalSimulator"),
   icon: FileText,
-  color: "text-purple-300"
+  color: "text-purple-400",
+  fill: "fill-purple-400/20"
 },
 {
   title: "Resumos",
   url: createPageUrl("ComoEstudarPrimeiroLugar"),
   icon: Notebook,
-  color: "text-pink-300"
+  color: "text-pink-400",
+  fill: "fill-pink-400/20"
 },
 {
   title: "Área de Estudos",
   url: createPageUrl("Studies"),
   icon: BookOpen,
-  color: "text-cyan-300"
+  color: "text-cyan-400",
+  fill: "fill-cyan-400/20"
 },
 {
   title: "Planos",
   url: createPageUrl("Subscription"),
   icon: CreditCard,
-  color: "text-yellow-300"
+  color: "text-yellow-400",
+  fill: "fill-yellow-400/20"
 }];
 
 
@@ -112,50 +119,50 @@ const moreMenuCategories = [
   {
     title: "Estudos & Planejamento",
     items: [
-      { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy },
-      { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles },
-      { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList },
-      { title: "Criar Planejamento de Estudos", url: createPageUrl("StudyPlanning"), icon: Calendar },
-      { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle },
+      { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy, color: "text-indigo-400", fill: "fill-indigo-400/20" },
+      { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles, color: "text-yellow-400", fill: "fill-yellow-400/20" },
+      { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList, color: "text-emerald-400", fill: "fill-emerald-400/20" },
+      { title: "Criar Planejamento de Estudos", url: createPageUrl("StudyPlanning"), icon: Calendar, color: "text-blue-400", fill: "fill-blue-400/20" },
+      { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle, color: "text-red-400", fill: "fill-red-400/20" },
     ]
   },
   {
     title: "Desempenho & Estatísticas",
     items: [
-      { title: "Relatórios", url: createPageUrl("PerformanceReports"), icon: BarChart3 },
-      { title: "Minhas Estatísticas", url: createPageUrl("Statistics"), icon: BarChart3 },
-      { title: "Ranking de Usuários", url: createPageUrl("Ranking"), icon: Trophy },
+      { title: "Relatórios", url: createPageUrl("PerformanceReports"), icon: BarChart3, color: "text-blue-400", fill: "fill-blue-400/20" },
+      { title: "Minhas Estatísticas", url: createPageUrl("Statistics"), icon: BarChart3, color: "text-purple-400", fill: "fill-purple-400/20" },
+      { title: "Ranking de Usuários", url: createPageUrl("Ranking"), icon: Trophy, color: "text-amber-400", fill: "fill-amber-400/20" },
     ]
   },
   {
     title: "Comunidade",
     items: [
-      { title: "Pessoas", url: createPageUrl("People"), icon: Users },
-      { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare },
-      { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen },
+      { title: "Pessoas", url: createPageUrl("People"), icon: Users, color: "text-cyan-400", fill: "fill-cyan-400/20" },
+      { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare, color: "text-green-400", fill: "fill-green-400/20" },
+      { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen, color: "text-orange-400", fill: "fill-orange-400/20" },
     ]
   },
   {
     title: "Quizzes",
     items: [
-      { title: "Quiz de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen },
-      { title: "Quiz de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen },
-      { title: "Quiz de Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain },
+      { title: "Quiz de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen, color: "text-blue-400", fill: "fill-blue-400/20" },
+      { title: "Quiz de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen, color: "text-red-400", fill: "fill-red-400/20" },
+      { title: "Quiz de Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain, color: "text-purple-400", fill: "fill-purple-400/20" },
     ]
   },
   {
     title: "Simulados Extras",
     items: [
-      { title: "Simulados Digital", url: createPageUrl("SimuladosDigital"), icon: ClipboardList },
-      { title: "Histórico de Simulações", url: createPageUrl("SimulationHistory"), icon: ClipboardList },
-      { title: "Revisão de Simulados", url: createPageUrl("SimulationReview"), icon: ClipboardList },
+      { title: "Simulados Digital", url: createPageUrl("SimuladosDigital"), icon: ClipboardList, color: "text-indigo-400", fill: "fill-indigo-400/20" },
+      { title: "Histórico de Simulações", url: createPageUrl("SimulationHistory"), icon: ClipboardList, color: "text-teal-400", fill: "fill-teal-400/20" },
+      { title: "Revisão de Simulados", url: createPageUrl("SimulationReview"), icon: ClipboardList, color: "text-rose-400", fill: "fill-rose-400/20" },
     ]
   },
   {
     title: "Conta",
     items: [
-      { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield },
-      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard },
+      { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield, color: "text-slate-400", fill: "fill-slate-400/20" },
+      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard, color: "text-emerald-400", fill: "fill-emerald-400/20" },
     ]
   }
 ];
@@ -544,8 +551,8 @@ export default function Layout({ children, currentPageName }) {
                       onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                         <div className="flex items-center gap-3 min-w-0">
-                          <item.icon className="w-5 h-5 flex-shrink-0" />
-                          <span className="truncate text-sm font-medium">{item.title}</span>
+                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-gray-400 fill-gray-400/20'}`} />
+                          <span className={`truncate text-sm font-bold ${isCurrentPage ? 'text-white' : 'text-gray-300'}`}>{item.title}</span>
                         </div>
                         {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
                       </Link>);
@@ -574,8 +581,8 @@ export default function Layout({ children, currentPageName }) {
                           onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                             <div className="flex items-center gap-3 min-w-0">
-                              <item.icon className="w-5 h-5 flex-shrink-0" />
-                              <span className="truncate text-sm font-medium">{item.title}</span>
+                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-gray-400 fill-gray-400/20'}`} />
+                              <span className={`truncate text-sm font-bold ${isCurrentPage ? 'text-white' : 'text-gray-300'}`}>{item.title}</span>
                             </div>
                             {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
                           </Link>
@@ -651,8 +658,8 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon size={22} strokeWidth={2} className={`flex-shrink-0 transition-colors duration-150 ease-in-out ${isCurrentPage ? item.color : 'text-gray-400 group-hover:text-gray-200'}`} />
-                        <span className="truncate tracking-wide">{item.title}</span>
+                        <item.icon size={22} strokeWidth={2} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-gray-400 fill-gray-400/20 group-hover:text-gray-300 group-hover:fill-gray-300/20'}`} />
+                        <span className={`truncate tracking-wide ${isCurrentPage ? 'font-bold' : 'font-medium text-gray-300 group-hover:text-white'}`}>{item.title}</span>
                         {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute top-1 right-1" />}
                     </Link>);
           })}
@@ -688,8 +695,8 @@ export default function Layout({ children, currentPageName }) {
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
                                     className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 flex-shrink-0" />
-                                        <span className="truncate">{item.title}</span>
+                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-4 h-4 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-gray-400 fill-gray-400/20'}`} />
+                                        <span className={`truncate font-bold ${isCurrentPage ? 'text-white' : 'text-gray-300'}`}>{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
                                   </Link>
