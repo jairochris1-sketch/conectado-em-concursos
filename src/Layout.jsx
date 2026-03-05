@@ -191,7 +191,8 @@ const pageNameTranslations = {
   SolveNotebook: "Resolver Caderno",
   NotebookStats: "Estatísticas do Caderno",
   Flashcards: "Flashcards",
-  StudyPlanning: "Planejamento de Estudos"
+  StudyPlanning: "Planejamento de Estudos",
+  StudyCycle: "Ciclo de Estudos"
 };
 
 const featureAccess = {
@@ -240,6 +241,7 @@ const featureAccess = {
   'Minhas Dúvidas': ['padrao', 'avancado'],
   'Guia de Estudos': ['padrao', 'avancado'],
   'Edital Verticalizado': ['padrao', 'avancado'],
+  'Ciclo de Estudos': ['padrao', 'avancado'],
   'Análise de Vídeos': ['padrao', 'avancado']
 };
 

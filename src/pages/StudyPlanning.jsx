@@ -25,7 +25,7 @@ const options = [
     title: "Ciclo de Estudos",
     description: "Organize suas revisões em ciclos para garantir que todos os assuntos sejam revisados.",
     icon: RefreshCcw,
-    url: createPageUrl("Reviews"),
+    url: createPageUrl("StudyCycle"),
     color: "bg-purple-50 text-purple-600",
     border: "border-purple-200"
   }
