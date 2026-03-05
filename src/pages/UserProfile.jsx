@@ -67,7 +67,22 @@ export default function UserProfilePage() {
     setIsLoading(true);
     try {
       const me = await User.me();
-      setCurrentUser(me);
+      
+      const activeSubs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
+      const specialUsers = await base44.entities.SpecialUser.filter({ email: me.email, is_active: true });
+      let currentPlan = 'gratuito';
+      if (activeSubs.length > 0) {
+        const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
+        const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
+        currentPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
+      }
+      if (specialUsers.length > 0) {
+        const specialUser = specialUsers[0];
+        if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+          currentPlan = specialUser.plan;
+        }
+      }
+      setCurrentUser({...me, current_plan: currentPlan});
 
       // Get profile user via backend function (User entity is restricted by RLS)
       const profileUserResult = await base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
