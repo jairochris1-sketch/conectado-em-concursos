@@ -16,30 +16,34 @@ export function useQuestionLimit() {
     const checkLimit = async () => {
       try {
         const user = await User.me();
-        const plan = user?.current_plan || 'gratuito';
-        setUserPlan(plan);
+        
+        let plan = 'gratuito';
+        let inTrial = false;
 
         // Admin não tem limite de questões
-        if (user?.role === 'admin') {
-          setIsBlocked(false);
-          setLoading(false);
-          return;
+        if (user?.role === 'admin' || user?.email === 'conectadoemconcursos@gmail.com' || user?.email === 'jairochris1@gmail.com' || user?.email === 'juniorgmj2016@gmail.com') {
+          plan = 'avancado';
+        } else {
+          try {
+            const activeSubscriptions = await Subscription.filter({ user_email: user.email, status: 'active' });
+            if (activeSubscriptions.length > 0) {
+              const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado' || sub.plan === 'premium' || sub.plan === 'trimestral');
+              const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
+              plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
+            } else if (user.trial_start_date) {
+              plan = 'avancado';
+              inTrial = true;
+            }
+          } catch (err) {
+            console.error(err);
+          }
         }
-
-        // Verificar se está em teste gratuito (plano avançado sem assinatura ativa)
-        let inTrial = false;
-        if (plan === 'avancado' && user.trial_start_date) {
-          const activeSubscriptions = await Subscription.filter({ 
-            user_email: user.email, 
-            status: 'active' 
-          });
-          inTrial = activeSubscriptions.length === 0;
-        }
+        
+        setUserPlan(plan);
         setIsInTrial(inTrial);
 
         // Planos pagos (não teste) não têm limite
-        // Usuários em teste do Plano Avançado também não têm limite
-        if ((plan === 'padrao' || plan === 'avancado') && !inTrial) {
+        if (plan !== 'gratuito' && plan !== 'inactive' && plan !== 'pending' && !inTrial) {
           setIsBlocked(false);
           setLoading(false);
           return;
