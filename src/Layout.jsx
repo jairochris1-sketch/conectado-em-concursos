@@ -679,7 +679,7 @@ export default function Layout({ children, currentPageName }) {
                           </div>
                         </div>
                     ))}
-                    {isAdmin &&
+                    {isAdmin && (
                         <div className="space-y-2">
                           <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
                             Administração
@@ -703,7 +703,7 @@ export default function Layout({ children, currentPageName }) {
                             </DropdownMenuItem>
                           </div>
                         </div>
-                    }
+                    )}
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -751,9 +751,9 @@ export default function Layout({ children, currentPageName }) {
                   </Avatar>
                   <div className="hidden xl:block">
                     <p className="font-medium text-xs truncate max-w-28">{user.full_name || 'Usuário'}</p>
-                    {user.job_title &&
-                    <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
-                    }
+                    {user.job_title && (
+                      <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
+                    )}
                     <div className={`mt-0.5 inline-flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
                       <PlanInfo.icon className="w-3 h-3" />
                       {PlanInfo.label}
@@ -762,12 +762,12 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
-                {user.job_title &&
-                <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
+                {user.job_title && (
+                  <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
                     <BookOpen className="w-4 h-4" />
                     {user.job_title}
                   </DropdownMenuItem>
-                }
+                )}
                 <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
                   <UserIcon className="w-4 h-4" />
                   Meu Perfil
