@@ -144,6 +144,10 @@ Deno.serve(async (req) => {
                 
                 return Response.json({ success: true, message: "Revisão de fim de semana criada" });
 
+            } else if (revisionType === 'none') {
+                 // Do not schedule any reviews
+                 return Response.json({ success: true, message: "Nenhuma revisão foi agendada." });
+                 
             } else if (revisionType === 'custom' && data.custom_start_date) {
                 // Determine recurrence
                 const startDate = new Date(data.custom_start_date);

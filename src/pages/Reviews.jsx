@@ -731,6 +731,7 @@ export default function Reviews() {
                         <SelectItem value="adaptive">Baseado no Desempenho (Adaptativo)</SelectItem>
                         <SelectItem value="weekend">Final de Semana (Sáb/Dom mais próximo)</SelectItem>
                         <SelectItem value="custom">Personalizado</SelectItem>
+                        <SelectItem value="none">Não agendar revisão</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
