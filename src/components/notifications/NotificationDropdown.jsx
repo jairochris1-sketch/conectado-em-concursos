@@ -70,6 +70,13 @@ export default function NotificationDropdown() {
     setIsLoading(false);
   };
 
+  const handleOpenChange = (open) => {
+    setIsOpen(open);
+    if (open) {
+      markAllAsRead();
+    }
+  };
+
   // Replaced old `markAsRead` and `handleNotificationClick` with the new combined function.
   const handleNotificationClick = async (notification) => {
     if (!user) return;
@@ -166,7 +173,7 @@ export default function NotificationDropdown() {
   const recentNotifications = notifications.slice(0, 10);
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-white hover:bg-black/10">
           <Bell className="w-5 h-5" />

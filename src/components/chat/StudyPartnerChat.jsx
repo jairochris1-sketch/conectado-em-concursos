@@ -71,6 +71,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const containerRef = useRef(null);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
+  const inputRef = useRef(null);
   const myStatusRef = useRef("online");
   const visibilityUnsubRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
@@ -372,6 +373,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       setText(content); // Restore text on error
     } finally {
       setSending(false);
+      setTimeout(() => inputRef.current?.focus(), 10);
     }
   };
 
@@ -571,6 +573,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       {/* Input */}
       <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
         <Input
+          ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
