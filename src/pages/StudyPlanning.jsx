@@ -1,33 +1,33 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, Target, RefreshCcw, ArrowRight } from "lucide-react";
+import { Calendar, Target, RefreshCcw, ArrowRight, Info } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const options = [
   {
     title: "Cronograma de Estudos",
-    description: "Organize seus horários de estudo por dia da semana, horário e disciplina.",
+    description: "Um planejamento fixo que define dias e horários específicos para cada disciplina.",
     icon: Calendar,
     url: createPageUrl("Schedule"),
-    color: "bg-blue-50 text-blue-600",
-    border: "border-blue-200"
-  },
-  {
-    title: "Planos de Estudo",
-    description: "Crie planos personalizados com metas e acompanhamento de progresso.",
-    icon: Target,
-    url: createPageUrl("StudyPlans"),
-    color: "bg-green-50 text-green-600",
-    border: "border-green-200"
+    color: "bg-blue-50 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400",
+    border: "border-blue-200 dark:border-blue-800"
   },
   {
     title: "Ciclo de Estudos",
-    description: "Organize suas revisões em ciclos para garantir que todos os assuntos sejam revisados.",
+    description: "Modelo moderno sem dias fixos, focado no tempo dedicado a sessões em sequência contínua.",
     icon: RefreshCcw,
     url: createPageUrl("StudyCycle"),
-    color: "bg-purple-50 text-purple-600",
-    border: "border-purple-200"
+    color: "bg-purple-50 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400",
+    border: "border-purple-200 dark:border-purple-800"
+  },
+  {
+    title: "Planos de Estudo",
+    description: "Crie planos personalizados com metas semanais de questões e horas.",
+    icon: Target,
+    url: createPageUrl("StudyPlans"),
+    color: "bg-green-50 text-green-600 dark:bg-green-900/50 dark:text-green-400",
+    border: "border-green-200 dark:border-green-800"
   }
 ];
 
