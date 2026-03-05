@@ -782,6 +782,10 @@ export default function Layout({ children, currentPageName }) {
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
+                <CreditCard className="w-4 h-4" />
+                Painel de Assinaturas
+              </DropdownMenuItem>
               <div className="h-px bg-white/20 my-2 mx-2" />
               <div className="px-2 py-2">
                 <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
