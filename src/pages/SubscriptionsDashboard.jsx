@@ -110,22 +110,13 @@ export default function SubscriptionsDashboard() {
         end_date: new Date().toISOString().split('T')[0]
       });
 
-      // Enviar notificação para os administradores
+      // Enviar notificação para os administradores via backend
       try {
-        const user = await User.me();
-        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
-        for (const email of adminEmails) {
-          await base44.entities.Notification.create({
-            user_email: email,
-            title: "Assinatura Cancelada",
-            message: `O usuário ${user.full_name} (${user.email}) cancelou a assinatura do ${planNames[selectedSub.plan] || selectedSub.plan}.`,
-            type: "warning",
-            related_user_name: user.full_name,
-            related_user_photo: user.profile_photo_url
-          });
-        }
+        await base44.functions.invoke('notifyAdminCancellation', {
+          planName: planNames[selectedSub.plan] || selectedSub.plan
+        });
       } catch (notifError) {
-        console.error("Erro ao enviar notificação aos admins:", notifError);
+        console.error("Erro ao notificar admins:", notifError);
       }
 
       // Atualizar estado local
@@ -252,9 +243,11 @@ export default function SubscriptionsDashboard() {
                           {statusInfo.label}
                         </Badge>
                       </CardTitle>
-                      <CardDescription className="mt-1">
-                        Ciclo {cycleNames[sub.cycle] || sub.cycle} • {formatCurrency(sub.price)}
-                      </CardDescription>
+                      {sub.cycle !== 'manual' && (
+                        <CardDescription className="mt-1">
+                          Ciclo {cycleNames[sub.cycle] || sub.cycle} • {formatCurrency(sub.price)}
+                        </CardDescription>
+                      )}
                     </div>
                     
                     {isCancelable && (
