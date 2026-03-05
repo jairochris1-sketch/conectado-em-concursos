@@ -86,15 +86,17 @@ export default function Exams() {
     const checkPlan = async () => {
       try {
         const userData = await User.me();
-        let plan = userData.current_plan || 'gratuito';
+        let plan = 'gratuito';
+        
         const activeSubscriptions = await base44.entities.Subscription.filter({ user_email: userData.email, status: 'active' });
         const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
         
         if (activeSubscriptions.length > 0) {
-          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
+          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado' || sub.plan === 'premium' || sub.plan === 'trimestral');
           const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
           plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
         }
+        
         if (specialUsers.length > 0) {
           const specialUser = specialUsers[0];
           if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
@@ -110,10 +112,14 @@ export default function Exams() {
         setUserPlan(plan);
       } catch (e) {
          console.error(e);
+         // Fallback to allow access if we can't verify, so we don't accidentally block valid users on DB errors
+         setUserPlan('avancado'); 
       }
     };
     checkPlan();
   }, []);
+
+  const hasAccess = userPlan !== 'gratuito' && userPlan !== 'inactive' && userPlan !== 'pending';
 
   useEffect(() => {
     localStorage.setItem('examsViewMode', viewMode);
