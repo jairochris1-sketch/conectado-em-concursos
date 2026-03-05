@@ -38,6 +38,7 @@ const getActivityName = (activity) => {
 };
 
 export default function SchedulePage() {
+  const navigate = useNavigate();
   const [schedules, setSchedules] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState(null);
