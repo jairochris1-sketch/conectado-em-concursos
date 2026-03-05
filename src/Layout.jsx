@@ -641,8 +641,8 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.title}
                 to={hasAccess ? item.url : createPageUrl("Subscription")}
-                className={`group relative flex items-center gap-2 px-3 py-2 rounded-md font-medium transition-all duration-150 ease-in-out min-w-0 ${
-                  isCurrentPage ? 'text-white' : 'text-white/70 hover:text-white'
+                className={`group relative flex items-center gap-2 px-3 py-2 rounded-md font-bold transition-all duration-150 ease-in-out min-w-0 ${
+                  isCurrentPage ? 'text-white' : 'text-gray-300 hover:text-white'
                 }`}
                 style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.15)' } : {}}
                 onMouseEnter={(e) => {
@@ -651,7 +651,7 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon size={22} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out" />
+                        <item.icon size={22} strokeWidth={2} className={`flex-shrink-0 transition-colors duration-150 ease-in-out ${isCurrentPage ? item.color : 'text-gray-400 group-hover:text-gray-200'}`} />
                         <span className="truncate tracking-wide">{item.title}</span>
                         {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute top-1 right-1" />}
                     </Link>);
@@ -661,11 +661,11 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="group relative flex items-center gap-1.5 px-3 py-2 h-auto rounded-md font-medium text-white/70 hover:text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0"
+                className="group relative flex items-center gap-1.5 px-3 py-2 h-auto rounded-md font-bold text-gray-300 hover:text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0"
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                         <span className="truncate tracking-wide">Mais</span>
-                        <ChevronDown size={18} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out" />
+                        <ChevronDown size={18} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-gray-400 group-hover:text-gray-200" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
