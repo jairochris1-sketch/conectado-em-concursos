@@ -110,13 +110,22 @@ export default function SubscriptionsDashboard() {
         end_date: new Date().toISOString().split('T')[0]
       });
 
-      // Enviar notificação para os administradores via backend
+      // Enviar notificação para os administradores via banco de dados
       try {
-        await base44.functions.invoke('notifyAdminCancellation', {
-          planName: planNames[selectedSub.plan] || selectedSub.plan
-        });
+        const user = await User.me();
+        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
+        for (const email of adminEmails) {
+          await base44.entities.Notification.create({
+            user_email: email,
+            title: "Assinatura Cancelada",
+            message: `O usuário ${user.full_name} (${user.email}) cancelou a assinatura do ${planNames[selectedSub.plan] || selectedSub.plan} para estudos para Concursos Públicos no conectadoemconcursos.`,
+            type: "warning",
+            related_user_name: user.full_name,
+            related_user_photo: user.profile_photo_url
+          });
+        }
       } catch (notifError) {
-        console.error("Erro ao notificar admins:", notifError);
+        console.error("Erro ao enviar notificação aos admins:", notifError);
       }
 
       // Atualizar estado local
