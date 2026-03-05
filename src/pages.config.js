@@ -100,6 +100,7 @@ import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import Flashcards from './pages/Flashcards';
+import StudyPlanning from './pages/StudyPlanning';
 import __Layout from './Layout.jsx';
 
 
@@ -157,6 +158,7 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "Flashcards": Flashcards,
+    "StudyPlanning": StudyPlanning,
 }
 
 export const pagesConfig = {

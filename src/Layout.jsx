@@ -105,10 +105,8 @@ const moreMenuCategories = [
       { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy },
       { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles },
       { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList },
-      { title: "Cronograma de Estudos", url: createPageUrl("Schedule"), icon: Calendar },
-      { title: "Planos de Estudo", url: createPageUrl("StudyPlans"), icon: Target },
+      { title: "Criar Planejamento de Estudos", url: createPageUrl("StudyPlanning"), icon: Calendar },
       { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle },
-      { title: "Revisões", url: createPageUrl("Reviews"), icon: RefreshCcw },
     ]
   },
   {
