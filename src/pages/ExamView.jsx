@@ -4,6 +4,7 @@ import { Question } from "@/entities/Question";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { User } from "@/entities/User";
 import QuestionList from "../components/questions/QuestionList";
+import StudyTimer from "../components/questions/StudyTimer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -313,6 +314,7 @@ export default function ExamView() {
             <span className="text-xs">Voltar</span>
           </Button>
           <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+            <StudyTimer defaultMinutes={240} />
             {examInfo.edital_url && (
               <Button 
                 variant="outline" 

@@ -12,11 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-export default function StudyTimer() {
+export default function StudyTimer({ defaultMinutes = 25 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutos padrão
-  const [customMinutes, setCustomMinutes] = useState(25);
+  const [timeLeft, setTimeLeft] = useState(defaultMinutes * 60);
+  const [customMinutes, setCustomMinutes] = useState(defaultMinutes);
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
@@ -26,11 +26,19 @@ export default function StudyTimer() {
       interval = setInterval(() => {
         setTimeLeft((time) => time - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isRunning) {
       setIsRunning(false);
-      // Mostrar notificação de pausa
-      toast.success("⏰ Hora da Pausa!", {
-        description: "É hora de descansar! Que tal tomar uma água, fazer um lanche ou esticar as pernas? 🚶‍♂️💧",
+      
+      try {
+        const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+        audio.play().catch(e => console.log("Áudio bloqueado pelo navegador", e));
+      } catch (e) {
+        console.error("Erro ao tocar som", e);
+      }
+
+      // Mostrar notificação de fim
+      toast.success("⏰ Tempo Esgotado!", {
+        description: "Seu tempo no cronômetro finalizou!",
         duration: 10000,
       });
     }
@@ -63,13 +71,13 @@ export default function StudyTimer() {
   };
 
   const handleSetTime = () => {
-    if (customMinutes > 0 && customMinutes <= 180) {
+    if (customMinutes > 0 && customMinutes <= 360) {
       setTimeLeft(customMinutes * 60);
       setIsRunning(false);
       setShowSettings(false);
       toast.success(`⏱️ Cronômetro ajustado para ${customMinutes} minutos!`);
     } else {
-      toast.error("Por favor, escolha um tempo entre 1 e 180 minutos.");
+      toast.error("Por favor, escolha um tempo entre 1 e 360 minutos.");
     }
   };
 
@@ -110,13 +118,13 @@ export default function StudyTimer() {
                     id="minutes"
                     type="number"
                     min="1"
-                    max="180"
+                    max="360"
                     value={customMinutes}
                     onChange={(e) => setCustomMinutes(parseInt(e.target.value) || 0)}
                     className="mt-1"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Escolha entre 1 e 180 minutos
+                    Escolha entre 1 e 360 minutos
                   </p>
                 </div>
                 <div className="flex gap-2">
