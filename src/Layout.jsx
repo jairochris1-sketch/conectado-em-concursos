@@ -270,6 +270,12 @@ const checkAccess = (featureTitle, plan, isAdmin) => {
   if (!featureAccess[featureTitle]) {
     return true;
   }
+  
+  // Any paid/active plan allows access to premium features
+  if (plan !== 'gratuito' && plan !== 'inactive' && plan !== 'pending' && plan !== 'cancelled' && plan !== 'overdue') {
+    return true;
+  }
+
   return featureAccess[featureTitle].includes(plan);
 };
 
