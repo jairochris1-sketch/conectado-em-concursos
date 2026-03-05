@@ -58,7 +58,23 @@ const getBadges = (points, correct, total) => {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { user_email } = await req.json();
+    const payload = await req.json();
+    
+    let user_email = payload.user_email;
+    
+    // Suporte para a automação de entidade (quando uma nova resposta é criada)
+    if (!user_email && payload.event && payload.event.entity_name) {
+      if (payload.data && payload.data.created_by) {
+        user_email = payload.data.created_by;
+      } else if (payload.payload_too_large) {
+        try {
+          const entityData = await base44.asServiceRole.entities[payload.event.entity_name].get(payload.event.entity_id);
+          if (entityData) user_email = entityData.created_by;
+        } catch (e) {
+          console.error("Erro ao buscar entidade", e);
+        }
+      }
+    }
 
     if (!user_email) {
       return Response.json({ error: 'user_email é obrigatório' }, { status: 400 });
