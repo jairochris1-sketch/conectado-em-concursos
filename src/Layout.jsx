@@ -31,8 +31,11 @@ import {
   Target,
   HelpCircle,
   Users,
-  Sparkles } from
-"lucide-react";
+  Sparkles,
+  LayoutDashboard,
+  Files,
+  Notebook
+} from "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
