@@ -260,16 +260,7 @@ textarea:focus-visible {
   box-shadow: 0 0 0 3px rgba(4, 100, 252, 0.1);
 }
 
-/* Melhorar contraste de texto em backgrounds escuros */
-body {
-  color: #1c2c34;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    color: #f3f4f6;
-  }
-}
+/* Removido o override manual de color do body para respeitar as variáveis do Tailwind (bg-background e text-foreground) */
 
 /* Otimizações para mobile */
 @media (max-width: 768px) {
