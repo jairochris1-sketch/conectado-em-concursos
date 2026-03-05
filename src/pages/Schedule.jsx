@@ -164,13 +164,18 @@ export default function SchedulePage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         >
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Cronograma de Estudos
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Organize seus estudos com horários personalizados
-            </p>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(createPageUrl("StudyPlanning"))} className="text-gray-600 dark:text-gray-300 gap-2 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Cronograma de Estudos
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Organize seus estudos com horários personalizados
+              </p>
+            </div>
           </div>
           <Button
             onClick={() => setShowForm(!showForm)}
