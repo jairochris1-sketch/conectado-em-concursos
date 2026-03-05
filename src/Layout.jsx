@@ -31,8 +31,7 @@ import {
   Target,
   HelpCircle,
   Users,
-  Sparkles,
-  Settings } from
+  Sparkles } from
 "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -608,237 +607,236 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      <header className="hidden md:flex flex-col text-white shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)' }}>
-        {/* Top Row */}
-        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderBottomColor: 'rgba(255,255,255,0.1)' }}>
-          <Link to={createPageUrl("Dashboard")} className="flex items-center gap-3">
+      <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
+        <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
-              alt="Logo Conectado em Concursos"
-              className="w-10 h-10 object-contain shadow-sm drop-shadow-md"
-            />
-            <h1 className="text-white text-xl font-medium tracking-wide">Conectado em Concursos</h1>
-          </Link>
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
+            alt="Logo Conectado em Concursos"
+            className="w-10 h-10 object-contain shadow-lg" />
 
-          <div className="flex items-center gap-4">
-            <GlobalSearch />
-            <Button
-              onClick={() => setShowProvaUploader(true)}
-              className="text-sm px-4 py-2 bg-black/20 hover:bg-black/30 text-white rounded-lg transition-colors border border-white/5"
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Enviar Prova
-            </Button>
-            
-            {/* Top right user info block */}
-            <div className="flex flex-col items-end justify-center">
-               <span className="text-sm font-medium text-white/90">{user.full_name || 'Usuário'}</span>
-               <div className="flex items-center text-xs text-white/50">
-                  {user.job_title || 'dono'} <ChevronDown className="w-3 h-3 ml-1" />
-               </div>
+            <div>
+                <h2 className="text-white text-sm font-semibold text-justify normal-case leading-tight">Conectado em Concursos </h2>
+                <h2 className="font-bold text-white text-sm leading-tight"></h2>
+                
+
+
             </div>
+        </Link>
+
+        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
+            {navigationItems.map((item) => {
+            const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+            const isCurrentPage = location.pathname === item.url;
+            return (
+              <Link
+                key={item.title}
+                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-transparent text-amber-100 px-2 py-2 text-base font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
+
+
+
+                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
+                onMouseEnter={(e) => {
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
+                }}>
+
+                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
+                        {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
+                    </Link>);
+
+          })}
             
-            {(userPlan === 'gratuito') && (
-              <Link to={createPageUrl("Subscription")} className="ml-2">
-                <Button
-                  size="sm"
-                  className="text-xs px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all border-none"
-                >
-                  <Star className="w-3 h-3 mr-1 fill-current" />
-                  Assinar Premium
-                </Button>
-              </Link>
-            )}
-            <ThemeToggle />
-          </div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                variant="ghost"
+                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+
+                        <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        <span>Mais</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+              className="text-white border-black border-opacity-20 w-[700px] max-h-[80vh] overflow-y-auto"
+              style={{ backgroundColor: 'var(--primary-color)' }}
+              align="center">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                    {moreMenuCategories.map((category) => (
+                        <div key={category.title} className="space-y-2">
+                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                            {category.title}
+                          </h3>
+                          <div className="space-y-1">
+                            {category.items.map((item) => {
+                              const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                              const isCurrentPage = location.pathname === item.url;
+                              return (
+                                <DropdownMenuItem key={item.title} asChild>
+                                  <Link
+                                    to={hasAccess ? item.url : createPageUrl("Subscription")}
+                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
+                                    <div className="flex items-center gap-2">
+                                        <item.icon className="w-4 h-4 flex-shrink-0" />
+                                        <span className="truncate">{item.title}</span>
+                                    </div>
+                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
+                                  </Link>
+                                </DropdownMenuItem>
+                              );
+                            })}
+                          </div>
+                        </div>
+                    ))}
+                    {isAdmin &&
+                        <div className="space-y-2">
+                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                            Administração
+                          </h3>
+                          <div className="space-y-1">
+                            <DropdownMenuItem asChild>
+                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <div className="flex items-center gap-2">
+                                        <Shield className="w-4 h-4" />
+                                        <span>Admin Geral</span>
+                                    </div>
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                                    <div className="flex items-center gap-2">
+                                        <Shield className="w-4 h-4" />
+                                        <span>Admin Simulados Digital</span>
+                                    </div>
+                                </Link>
+                            </DropdownMenuItem>
+                          </div>
+                        </div>
+                    }
+                    </div>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </nav>
+
+        <div className="hidden md:flex items-center gap-2">
+          <GlobalSearch />
+          <Button
+            onClick={() => setShowProvaUploader(true)}
+            size="sm"
+            className="text-xs px-3 py-2 text-white hover:text-white"
+            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+
+            <Upload className="w-3 h-3 mr-1" />
+            <span className="hidden 2xl:inline">Enviar Prova</span>
+          </Button>
+          {(userPlan === 'gratuito') && (
+            <Link to={createPageUrl("Subscription")}>
+              <Button
+                size="sm"
+                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
+              >
+                <Star className="w-3 h-3 mr-1 fill-current" />
+                Assinar Premium
+              </Button>
+            </Link>
+          )}
         </div>
 
-        {/* Bottom Row */}
-        <div className="flex items-center justify-between px-6 py-3 bg-black/10">
-          <nav className="flex items-center gap-6" aria-label="Navegação principal">
-            {navigationItems.map((item) => {
-              const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-              const isCurrentPage = location.pathname === item.url;
-              return (
-                <Link
-                  key={item.title}
-                  to={hasAccess ? item.url : createPageUrl("Subscription")} 
-                  className={`flex flex-col items-center gap-1.5 transition-all group relative ${isCurrentPage ? 'text-white' : 'text-white/70 hover:text-white'}`}
-                >
-                  <div className={`p-2 rounded-xl transition-all ${isCurrentPage ? 'bg-white/10 shadow-inner border border-white/30' : 'bg-transparent group-hover:bg-white/5 border border-white/20'}`}>
-                    <item.icon className="w-5 h-5 flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider">{item.title}</span>
-                  {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute -top-1.5 -right-1.5 drop-shadow-md" />}
-                </Link>
-              );
-            })}
+        <div className="flex items-center gap-2 ml-4">
+          <NotificationDropdown />
+          <ThemeToggle />
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex flex-col items-center gap-1.5 transition-all group relative text-white/70 hover:text-white cursor-pointer">
-                  <div className="p-2 rounded-xl transition-all bg-transparent group-hover:bg-white/5 border border-white/20">
-                    <ChevronDown className="w-5 h-5 flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider">Mais</span>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="text-white border-black border-opacity-20 w-[700px] max-h-[80vh] overflow-y-auto mt-4"
-                style={{ backgroundColor: 'var(--primary-color)' }}
-                align="start"
-              >
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-                  {moreMenuCategories.map((category) => (
-                      <div key={category.title} className="space-y-2">
-                        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                          {category.title}
-                        </h3>
-                        <div className="space-y-1">
-                          {category.items.map((item) => {
-                            const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                            const isCurrentPage = location.pathname === item.url;
-                            return (
-                              <DropdownMenuItem key={item.title} asChild>
-                                <Link
-                                  to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                  className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
-                                  <div className="flex items-center gap-2">
-                                      <item.icon className="w-4 h-4 flex-shrink-0" />
-                                      <span className="truncate">{item.title}</span>
-                                  </div>
-                                  {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
-                                </Link>
-                              </DropdownMenuItem>
-                            );
-                          })}
-                        </div>
-                      </div>
-                  ))}
-                  {isAdmin &&
-                      <div className="space-y-2">
-                        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                          Administração
-                        </h3>
-                        <div className="space-y-1">
-                          <DropdownMenuItem asChild>
-                               <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                  <div className="flex items-center gap-2">
-                                      <Shield className="w-4 h-4" />
-                                      <span>Admin Geral</span>
-                                  </div>
-                              </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                               <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                  <div className="flex items-center gap-2">
-                                      <Shield className="w-4 h-4" />
-                                      <span>Admin Simulados Digital</span>
-                                  </div>
-                              </Link>
-                          </DropdownMenuItem>
-                        </div>
-                      </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-black/10">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
+                  <AvatarFallback className="bg-white text-xs">
+                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden xl:block">
+                  <p className="font-medium text-xs truncate max-w-28">{user.full_name || 'Usuário'}</p>
+                  {user.job_title &&
+                  <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
                   }
+                  <div className={`mt-0.5 inline-flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
+                    <PlanInfo.icon className="w-3 h-3" />
+                    {PlanInfo.label}
                   </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </nav>
-
-          {/* User Profile Pill */}
-          <div className="flex items-center bg-black/20 rounded-full pr-4 pl-1 py-1 border border-white/10 gap-3 shadow-inner">
-            <div className="pl-1">
-              <NotificationDropdown />
-            </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-3 cursor-pointer group">
-                  <Avatar className="w-9 h-9 border-2 border-white/20 transition-transform group-hover:scale-105">
-                    <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
-                    <AvatarFallback className="bg-white text-xs text-black font-bold">
-                      {user.full_name?.charAt(0) || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col mr-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-sm text-white/90 truncate max-w-[120px]">{user.full_name?.split(' ')[0] || 'Usuário'}</p>
-                      <Settings className="w-3.5 h-3.5 text-white/50 group-hover:text-white/80 transition-colors" />
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-white/60">
-                      <PlanInfo.icon className="w-3 h-3" />
-                      {PlanInfo.label}
+                </div>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
+              {user.job_title &&
+              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
+                  <BookOpen className="w-4 h-4" />
+                  {user.job_title}
+                </DropdownMenuItem>
+              }
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
+                <UserIcon className="w-4 h-4" />
+                Meu Perfil
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
+                <CreditCard className="w-4 h-4" />
+                Painel de Assinaturas
+              </DropdownMenuItem>
+              <div className="h-px bg-white/20 my-2 mx-2" />
+              <div className="px-2 py-2">
+                <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
+                <div className="space-y-3 px-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-200">Cor Principal</span>
+                    <input
+                      type="color"
+                      value={primaryColor}
+                      onChange={handleColorChange}
+                      className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-200">Tamanho Ícones</span>
+                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        P
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        M
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
+                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        G
+                      </Button>
                     </div>
                   </div>
                 </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="text-white border-black border-opacity-20 w-64 mt-4" style={{ backgroundColor: 'var(--primary-color)' }}>
-                {user.job_title &&
-                <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
-                    <BookOpen className="w-4 h-4" />
-                    {user.job_title}
-                  </DropdownMenuItem>
-                }
-                <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
-                  <UserIcon className="w-4 h-4" />
-                  Meu Perfil
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
-                  <CreditCard className="w-4 h-4" />
-                  Painel de Assinaturas
-                </DropdownMenuItem>
-                <div className="h-px bg-white/20 my-2 mx-2" />
-                <div className="px-2 py-2">
-                  <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
-                  <div className="space-y-3 px-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-200">Cor Principal</span>
-                      <input
-                        type="color"
-                        value={primaryColor}
-                        onChange={handleColorChange}
-                        className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-200">Tamanho Ícones</span>
-                      <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
-                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                        >
-                          P
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
-                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                        >
-                          M
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
-                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                        >
-                          G
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="h-px bg-white/20 my-2 mx-2" />
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
-                  <LogOut className="w-4 h-4" />
-                  Sair
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+              </div>
+              <div className="h-px bg-white/20 my-2 mx-2" />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
+                <LogOut className="w-4 h-4" />
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
