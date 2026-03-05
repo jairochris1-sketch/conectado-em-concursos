@@ -67,27 +67,27 @@ const navigationItems = [
 {
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
-  icon: Home
+  icon: LayoutDashboard
 },
 {
   title: "Questões",
   url: createPageUrl("Questions"),
-  icon: FileText
+  icon: Files
 },
 {
   title: "Provas",
   url: createPageUrl("Exams"),
-  icon: BookCopy
+  icon: ClipboardList
 },
 {
   title: "Meu Edital",
   url: createPageUrl("EditalSimulator"),
-  icon: Target
+  icon: FileText
 },
 {
   title: "Resumos",
   url: createPageUrl("ComoEstudarPrimeiroLugar"),
-  icon: BookOpenIcon
+  icon: Notebook
 },
 {
   title: "Área de Estudos",
@@ -626,42 +626,39 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
+        <nav className="flex items-center justify-center gap-2 flex-grow max-w-6xl" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
             return (
               <Link
                 key={item.title}
-                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-transparent text-amber-100 px-2 py-2 text-base font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
-
-
-
-                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
+                to={hasAccess ? item.url : createPageUrl("Subscription")}
+                className={`group relative flex items-center gap-2 px-3 py-2 rounded-md font-medium text-sm transition-all duration-150 ease-in-out min-w-0 ${
+                  isCurrentPage ? 'text-white' : 'text-white/70 hover:text-white'
+                }`}
+                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.15)' } : {}}
                 onMouseEnter={(e) => {
-                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)';
                 }}
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-
-                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
-                        {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
+                        <item.icon size={22} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out" />
+                        <span className="truncate tracking-wide">{item.title}</span>
+                        {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute top-1 right-1" />}
                     </Link>);
-
           })}
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
+                className="group relative flex items-center gap-1.5 px-3 py-2 h-auto rounded-md font-medium text-sm text-white/70 hover:text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-
-                        <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span>Mais</span>
+                        <span className="truncate tracking-wide text-sm">Mais</span>
+                        <ChevronDown size={18} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
