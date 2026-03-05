@@ -549,7 +549,9 @@ export default function AdminPage() {
           </TabsContent>
 
           <TabsContent value="assinaturas">
-            <SubscriptionManager />
+            <Suspense fallback={<div>Carregando assinaturas...</div>}>
+              <SubscriptionsList />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="conteudo">
