@@ -395,7 +395,11 @@ export default function Layout({ children, currentPageName }) {
         userData = { ...userData, current_plan: userPlan };
         setUser(userData);
 
-        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
+        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com' || userData.email === 'juniorgmj2016@gmail.com' || userData.role === 'admin';
+        
+        if (userIsAdmin) {
+          userPlan = 'avancado'; // Admins always have premium access
+        }
 
         const currentTitle = pageNameTranslations[currentPageName] || currentPageName;
         if (!checkAccess(currentTitle, userPlan, userIsAdmin)) {
