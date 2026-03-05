@@ -18,12 +18,14 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  Star } from
+  Star,
+  Lock } from
 "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import _ from 'lodash';
+import { toast } from "sonner";
 
 const institutionNames = {
   fcc: "FCC",
