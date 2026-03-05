@@ -193,34 +193,49 @@ const pageNameTranslations = {
 };
 
 const featureAccess = {
+  // Free & Paid
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
   'Provas': ['gratuito', 'padrao', 'avancado'],
   'Meu Edital': ['gratuito', 'padrao', 'avancado'],
+  'EditalSimulator': ['gratuito', 'padrao', 'avancado'],
   'Resumos': ['gratuito', 'padrao', 'avancado'],
-  'Planos': ['gratuito', 'padrao', 'avancado'],
+  'Como Estudar': ['gratuito', 'padrao', 'avancado'],
+  'Planos e Assinatura': ['gratuito', 'padrao', 'avancado'],
   'Painel de Assinaturas': ['gratuito', 'padrao', 'avancado'],
   'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
+  'Welcome': ['gratuito', 'padrao', 'avancado'],
+
+  // Blocked for Free
+  'Visualização de Prova': ['padrao', 'avancado'],
   'Pessoas': ['padrao', 'avancado'],
   'Área de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
   'Revisões': ['padrao', 'avancado'],
   'Planos de Estudo': ['padrao', 'avancado'],
+  'Criar Plano de Estudo': ['padrao', 'avancado'],
+  'Detalhes do Plano': ['padrao', 'avancado'],
   'Criar Simulado': ['padrao', 'avancado'],
   'Concursos Abertos': ['padrao', 'avancado'],
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
   'Curso de Inglês': ['padrao', 'avancado'],
-  'Curso de Matemática': ['padrao', 'avancado'],
-  'Raciocínio Lógico': ['padrao', 'avancado'],
+  'Curso de Matemática Básica': ['padrao', 'avancado'],
+  'Raciocínio Lógico para Concursos': ['padrao', 'avancado'],
   'Cadernos de Questões': ['padrao', 'avancado'],
-  'Fórum': ['padrao', 'avancado'],
+  'Criar Caderno': ['padrao', 'avancado'],
+  'Resolver Caderno': ['padrao', 'avancado'],
+  'Estatísticas do Caderno': ['padrao', 'avancado'],
+  'Fórum da Comunidade': ['padrao', 'avancado'],
   'Favoritas': ['padrao', 'avancado'],
   'Relatórios': ['padrao', 'avancado'],
   'Minhas Estatísticas': ['padrao', 'avancado'],
   'Feed de Atividades': ['padrao', 'avancado'],
-  'Minhas Dúvidas': ['padrao', 'avancado']
+  'Minhas Dúvidas': ['padrao', 'avancado'],
+  'Guia de Estudos': ['padrao', 'avancado'],
+  'Edital Verticalizado': ['padrao', 'avancado'],
+  'Análise de Vídeos': ['padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
