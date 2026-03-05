@@ -87,6 +87,26 @@ export default function SubscriptionsDashboard() {
     setIsCancelModalOpen(true);
   };
 
+  const handleClearHistory = async () => {
+    if (!window.confirm("Tem certeza que deseja apagar o histórico de assinaturas inativas/canceladas?")) return;
+    setIsClearingHistory(true);
+    try {
+      const inactiveSubs = subscriptions.filter(s => s.status === 'cancelled' || s.status === 'inactive');
+      for (const sub of inactiveSubs) {
+        if (!sub.is_special) {
+          await Subscription.delete(sub.id);
+        }
+      }
+      toast.success("Histórico limpo com sucesso!");
+      loadSubscriptions();
+    } catch (error) {
+      console.error("Erro ao limpar histórico:", error);
+      toast.error("Erro ao limpar o histórico.");
+    } finally {
+      setIsClearingHistory(false);
+    }
+  };
+
   const confirmCancel = async () => {
     if (!selectedSub) return;
     
@@ -207,11 +227,9 @@ export default function SubscriptionsDashboard() {
               <div>
                 <span className="font-semibold">Início:</span> {formatDateTime(activeSub.start_date || activeSub.created_date)}
               </div>
-              {!(activeSub.cycle === 'manual' || activeSub.is_special) && (
-                <div>
-                  <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "Vitalício / Sem data")}
-                </div>
-              )}
+              <div>
+                <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "—")}
+              </div>
             </div>
           </div>
         </div>
@@ -233,8 +251,23 @@ export default function SubscriptionsDashboard() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6">
-          {subscriptions.map((sub) => {
+        <div className="space-y-4">
+          {subscriptions.some(s => s.status === 'cancelled' || s.status === 'inactive') && (
+            <div className="flex justify-end">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClearHistory} 
+                disabled={isClearingHistory}
+                className="text-gray-500 hover:text-red-600 border-gray-200"
+              >
+                {isClearingHistory ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                Limpar Histórico Cancelado
+              </Button>
+            </div>
+          )}
+          <div className="grid gap-6">
+            {subscriptions.map((sub) => {
             const statusInfo = statusConfig[sub.status] || statusConfig.inactive;
             const StatusIcon = statusInfo.icon;
             const isCancelable = sub.status === 'active' || sub.status === 'pending' || sub.status === 'overdue';
@@ -329,13 +362,9 @@ export default function SubscriptionsDashboard() {
                         <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">
                           {sub.status === 'cancelled' || sub.status === 'inactive' ? 'Fim' : 'Próxima Cobrança'}
                         </p>
-                        {sub.cycle === 'manual' || sub.is_special ? (
-                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Vitalício / Sem data</p>
-                        ) : (
-                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                             {formatDate(sub.status === 'cancelled' || sub.status === 'inactive' ? sub.end_date : sub.next_payment_date)}
-                           </p>
-                        )}
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {formatDate(sub.status === 'cancelled' || sub.status === 'inactive' ? sub.end_date : sub.next_payment_date)}
+                        </p>
                       </div>
                     </div>
 
@@ -367,6 +396,7 @@ export default function SubscriptionsDashboard() {
               </Card>
             );
           })}
+          </div>
         </div>
       )}
 
