@@ -26,22 +26,30 @@ Deno.serve(async (req) => {
       const sessionStart = new Date(session.start_time);
       if (sessionStart > now && sessionStart <= in15Min) {
         updatePromises.push((async () => {
-          await base44.asServiceRole.entities.Notification.create({
-            user_email: session.user_email,
-            title: "📚 Sessão de Estudo em breve!",
-            message: `Sua sessão "${session.title}" começará em breve. Prepare-se!`,
-            type: "info",
-            is_read: false,
-            action_url: "/Calendar"
-          });
-          await base44.asServiceRole.entities.StudySession.update(session.id, { reminder_sent: true });
+          try {
+            await base44.asServiceRole.entities.Notification.create({
+              user_email: session.user_email,
+              title: "📚 Sessão de Estudo em breve!",
+              message: `Sua sessão "${session.title}" começará em breve. Prepare-se!`,
+              type: "info",
+              is_read: false,
+              action_url: "/Calendar"
+            });
+            await base44.asServiceRole.entities.StudySession.update(session.id, { reminder_sent: true });
+          } catch (error) {
+            console.error(`Erro ao processar sessão ${session.id}:`, error);
+          }
         })());
         sentCount++;
       }
     }
     
-    for (let i = 0; i < updatePromises.length; i += 20) {
-      await Promise.all(updatePromises.slice(i, i + 20));
+    // Process in smaller batches with delay to avoid timeouts
+    for (let i = 0; i < updatePromises.length; i += 5) {
+      await Promise.all(updatePromises.slice(i, i + 5));
+      if (i + 5 < updatePromises.length) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay between batches
+      }
     }
     
     return Response.json({ success: true, reminders_sent: sentCount });
