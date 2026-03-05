@@ -64,6 +64,7 @@ import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
 import FavoriteQuestions from './pages/FavoriteQuestions';
+import Flashcards from './pages/Flashcards';
 import ForgotPassword from './pages/ForgotPassword';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
@@ -91,6 +92,8 @@ import SolveNotebook from './pages/SolveNotebook';
 import SolveSimulation from './pages/SolveSimulation';
 import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
+import StudyCycle from './pages/StudyCycle';
+import StudyPlanning from './pages/StudyPlanning';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
 import SubscriptionsDashboard from './pages/SubscriptionsDashboard';
@@ -99,9 +102,6 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Flashcards from './pages/Flashcards';
-import StudyPlanning from './pages/StudyPlanning';
-import StudyCycle from './pages/StudyCycle';
 import __Layout from './Layout.jsx';
 
 
@@ -123,6 +123,7 @@ export const PAGES = {
     "ExamView": ExamView,
     "Exams": Exams,
     "FavoriteQuestions": FavoriteQuestions,
+    "Flashcards": Flashcards,
     "ForgotPassword": ForgotPassword,
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
@@ -150,6 +151,8 @@ export const PAGES = {
     "SolveSimulation": SolveSimulation,
     "Statistics": Statistics,
     "Studies": Studies,
+    "StudyCycle": StudyCycle,
+    "StudyPlanning": StudyPlanning,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
     "SubscriptionsDashboard": SubscriptionsDashboard,
@@ -158,9 +161,6 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
-    "Flashcards": Flashcards,
-    "StudyPlanning": StudyPlanning,
-    "StudyCycle": StudyCycle,
 }
 
 export const pagesConfig = {

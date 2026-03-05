@@ -30,7 +30,10 @@ const getColorForSub = (sub) => {
   return index !== -1 ? subjectColors[index % subjectColors.length] : "#cbd5e1";
 };
 
+import { Trash2, PlusCircle, ArrowLeft } from 'lucide-react';
+
 export default function StudyCyclePage() {
+  const [allCycles, setAllCycles] = useState([]);
   const [cycle, setCycle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showWizard, setShowWizard] = useState(false);
@@ -38,6 +41,7 @@ export default function StudyCyclePage() {
 
   // Wizard state
   const [step, setStep] = useState(1);
+  const [cycleName, setCycleName] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [subjectDetails, setSubjectDetails] = useState({});
   const [weeklyHours, setWeeklyHours] = useState(25);
@@ -48,6 +52,9 @@ export default function StudyCyclePage() {
   // Dialog state for registering time
   const [registerTimeFor, setRegisterTimeFor] = useState(null);
   const [timeInput, setTimeInput] = useState('');
+  
+  // Dialog state for delete
+  const [cycleToDelete, setCycleToDelete] = useState(null);
 
   const loadData = async () => {
     try {
@@ -56,10 +63,14 @@ export default function StudyCyclePage() {
       setUser(currentUser);
       
       const cycles = await base44.entities.StudyCycle.filter({ user_email: currentUser.email });
-      if (cycles.length > 0) {
-        setCycle(cycles[0]);
-      } else {
+      setAllCycles(cycles);
+      
+      if (cycles.length === 0) {
         setShowWizard(true);
+        setCycle(null);
+      } else if (cycle) {
+        const updatedCycle = cycles.find(c => c.id === cycle.id);
+        if (updatedCycle) setCycle(updatedCycle);
       }
     } catch (error) {
       console.error("Erro ao carregar ciclo:", error);
@@ -168,6 +179,7 @@ export default function StudyCyclePage() {
       }
 
       const newCycleData = {
+        name: cycleName || `Planejamento ${allCycles.length + 1}`,
         user_email: user.email,
         subjects: selectedSubjects.map(sub => ({
           name: sub,
@@ -189,7 +201,8 @@ export default function StudyCyclePage() {
         await base44.entities.StudyCycle.update(cycle.id, newCycleData);
         toast.success("Ciclo atualizado com sucesso!");
       } else {
-        await base44.entities.StudyCycle.create(newCycleData);
+        const created = await base44.entities.StudyCycle.create(newCycleData);
+        setCycle(created);
         toast.success("Ciclo criado com sucesso!");
       }
 
@@ -243,6 +256,19 @@ export default function StudyCyclePage() {
     }
   };
 
+  const handleDeleteCycle = async () => {
+    if (!cycleToDelete) return;
+    try {
+      await base44.entities.StudyCycle.delete(cycleToDelete.id);
+      toast.success("Planejamento excluído!");
+      setCycleToDelete(null);
+      if (cycle?.id === cycleToDelete.id) setCycle(null);
+      loadData();
+    } catch (error) {
+      toast.error("Erro ao excluir planejamento.");
+    }
+  };
+
   const formatMins = (totalMins) => {
     const h = Math.floor(totalMins / 60);
     const m = Math.round(totalMins % 60);
@@ -258,11 +284,101 @@ export default function StudyCyclePage() {
     );
   }
 
-  if (showWizard || !cycle) {
+  if (!showWizard && !cycle && allCycles.length > 0) {
+    return (
+      <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Meus Planejamentos</h1>
+          <Button className="bg-[#66d2ba] hover:bg-[#52ba9f] text-white gap-2" onClick={() => {
+            setCycle(null);
+            setCycleName('');
+            setSelectedSubjects([]);
+            setStep(1);
+            setShowWizard(true);
+          }}>
+            <PlusCircle className="w-4 h-4" /> Novo Planejamento
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {allCycles.map(c => {
+            const totMins = c.sequence.reduce((a, b) => a + b.duration_minutes, 0);
+            const totComp = c.sequence.reduce((a, b) => a + b.completed_minutes, 0);
+            const prog = totMins > 0 ? (totComp / totMins) * 100 : 0;
+            return (
+              <Card key={c.id} className="shadow-sm hover:shadow-md transition-shadow cursor-pointer border-gray-200">
+                <CardContent className="p-6 space-y-4" onClick={() => setCycle(c)}>
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-bold text-gray-800">{c.name || "Ciclo de Estudos"}</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="text-red-400 hover:text-red-600 hover:bg-red-50 -mt-2 -mr-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCycleToDelete(c);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs text-gray-500 font-medium">
+                      <span>Progresso ({prog.toFixed(0)}%)</span>
+                      <span>{formatMins(totComp)} / {formatMins(totMins)}</span>
+                    </div>
+                    <Progress value={prog} className="h-2 bg-gray-100 [&>div]:bg-[#66d2ba]" />
+                  </div>
+                  
+                  <div className="pt-4 border-t flex flex-wrap gap-2">
+                    {c.subjects.slice(0, 3).map(s => (
+                      <span key={s.name} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium">
+                        {s.name}
+                      </span>
+                    ))}
+                    {c.subjects.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium">
+                        +{c.subjects.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+        
+        <Dialog open={!!cycleToDelete} onOpenChange={(v) => !v && setCycleToDelete(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Excluir Planejamento</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja excluir o planejamento <strong>{cycleToDelete?.name}</strong>? Esta ação não pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="outline" onClick={() => setCycleToDelete(null)}>Cancelar</Button>
+              <Button variant="destructive" onClick={handleDeleteCycle}>Excluir</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
+  if (showWizard) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white mt-8 rounded-xl shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h2 className="text-2xl font-bold text-gray-800">Criar Planejamento</h2>
+          <div className="flex items-center gap-3">
+            {allCycles.length > 0 && !cycle && (
+              <Button variant="ghost" size="icon" onClick={() => setShowWizard(false)}>
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </Button>
+            )}
+            <h2 className="text-2xl font-bold text-gray-800">{cycle ? "Editar Planejamento" : "Criar Planejamento"}</h2>
+          </div>
           {cycle && (
             <Button variant="ghost" size="icon" onClick={() => setShowWizard(false)}>
               <X className="w-6 h-6 text-gray-400" />
@@ -272,6 +388,16 @@ export default function StudyCyclePage() {
 
         {step === 1 && (
           <div className="space-y-6">
+            <div className="space-y-2 mb-8">
+              <Label className="text-gray-700 font-medium">Nome do Planejamento</Label>
+              <Input 
+                placeholder="Ex: Ciclo Pós-Edital, Ciclo Básico..." 
+                value={cycleName}
+                onChange={(e) => setCycleName(e.target.value)}
+                className="max-w-md h-12"
+              />
+            </div>
+            
             <p className="text-gray-600">
               Selecione as disciplinas que você já quer colocar no seu planejamento. Não se preocupe, você poderá adicionar outras a qualquer momento, ok?
             </p>
