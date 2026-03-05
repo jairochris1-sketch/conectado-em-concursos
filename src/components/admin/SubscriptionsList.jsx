@@ -28,6 +28,20 @@ export default function SubscriptionsList() {
     setIsLoading(false);
   };
 
+  const approveCancellation = async (subscription) => {
+    try {
+      await Subscription.update(subscription.id, {
+        cancel_approved_date: new Date().toISOString()
+      });
+      
+      toast.success('Solicitação de cancelamento confirmada. O usuário será notificado e o botão de assinar será liberado em 24h.');
+      loadSubscriptions();
+    } catch (error) {
+      console.error('Erro ao confirmar cancelamento:', error);
+      toast.error('Erro ao confirmar a solicitação.');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800';
