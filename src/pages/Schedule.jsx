@@ -3,8 +3,10 @@ import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
+import { Plus, Calendar, Printer, BookOpen, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 import ScheduleForm from "../components/schedule/ScheduleForm";
 import ScheduleView from "../components/schedule/ScheduleView";
