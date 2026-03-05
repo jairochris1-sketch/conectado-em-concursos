@@ -155,20 +155,6 @@ export default function SubscriptionsDashboard() {
         </Link>
       </div>
 
-      {activeSub && (
-        <div className="mb-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-3 shadow-sm dark:bg-green-900/20 dark:border-green-800 dark:text-green-300">
-          <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
-          <div>
-            <h3 className="font-bold text-lg">
-              {planNames[activeSub.plan] || activeSub.plan} Ativo
-            </h3>
-            <p className="text-sm opacity-90">
-              Ativado em: {formatDateTime(activeSub.start_date || activeSub.created_date)}
-            </p>
-          </div>
-        </div>
-      )}
-
       {subscriptions.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
