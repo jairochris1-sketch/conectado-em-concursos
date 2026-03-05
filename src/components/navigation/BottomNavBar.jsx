@@ -48,7 +48,7 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
               {!hasAccess && item.feature && <Lock className="absolute top-1 right-3 w-3 h-3 text-yellow-500" />}
               <item.icon 
                 style={{ width: '1.25rem', height: '1.25rem' }} 
-                className={`mb-0.5 transition-all duration-300 ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-gray-400 fill-gray-400/20'}`} 
+                className={`mb-0.5 transition-all duration-300 ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} 
                 strokeWidth={isCurrentPage ? 2 : 1.5}
               />
               <span className={`text-[9px] font-bold leading-tight text-center ${isCurrentPage ? item.color : 'text-gray-500 dark:text-gray-400'}`}>

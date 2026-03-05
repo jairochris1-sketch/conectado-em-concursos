@@ -581,7 +581,7 @@ export default function Layout({ children, currentPageName }) {
                           onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                             <div className="flex items-center gap-3 min-w-0">
-                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-white fill-transparent'}`} />
+                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
                               <span className="truncate text-sm font-bold text-white">{item.title}</span>
                             </div>
                             {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
@@ -656,7 +656,7 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon size={22} strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-white fill-transparent'}`} />
+                        <item.icon size={22} strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
                         <span className="truncate tracking-wide font-bold text-white">{item.title}</span>
                         {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute top-1 right-1" />}
                     </Link>);
@@ -693,7 +693,7 @@ export default function Layout({ children, currentPageName }) {
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
                                     className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-white hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
-                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-4 h-4 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-white fill-transparent'}`} />
+                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-4 h-4 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
                                         <span className="truncate font-bold text-white">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
