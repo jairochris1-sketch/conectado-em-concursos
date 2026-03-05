@@ -88,9 +88,9 @@ export default function GlobalSearch({ isMobile }) {
           <Button 
             variant="ghost" 
             size="icon"
-            className="hidden md:flex text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg"
+            className="hidden md:flex text-white hover:text-white bg-white/10 hover:bg-white/20 rounded-xl"
           >
-            <UserSearch className="w-5 h-5" />
+            <Search className="w-4 h-4" />
           </Button>
         )}
       </DialogTrigger>
