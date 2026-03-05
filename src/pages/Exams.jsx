@@ -492,9 +492,12 @@ export default function Exams() {
                       className="w-10 h-10 object-contain flex-shrink-0 rounded" />
 
                     }
-                        <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
-                          {exam.exam_name}
-                        </p>
+                        <div className="flex-1 flex items-center gap-2">
+                          <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
+                            {exam.exam_name}
+                          </p>
+                          {userPlan === 'gratuito' && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                        </div>
                         <button
                       onClick={(e) => toggleFavorite(e, exam.id)}
                       className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
