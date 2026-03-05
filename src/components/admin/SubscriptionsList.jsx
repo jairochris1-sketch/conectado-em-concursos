@@ -42,6 +42,23 @@ export default function SubscriptionsList() {
     }
   };
 
+  const cancelSubscriptionFinal = async (subscription) => {
+    if (!window.confirm("Tem certeza que deseja cancelar definitivamente esta assinatura?")) return;
+    
+    try {
+      await Subscription.update(subscription.id, {
+        status: 'cancelled',
+        end_date: new Date().toISOString().split('T')[0]
+      });
+      
+      toast.success('Assinatura cancelada definitivamente.');
+      loadSubscriptions();
+    } catch (error) {
+      console.error('Erro ao finalizar cancelamento:', error);
+      toast.error('Erro ao cancelar definitivamente.');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800';
