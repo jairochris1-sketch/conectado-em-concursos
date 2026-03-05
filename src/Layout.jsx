@@ -742,91 +742,92 @@ export default function Layout({ children, currentPageName }) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-black/10">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
-                  <AvatarFallback className="bg-white text-xs">
-                    <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden xl:block">
-                  <p className="font-medium text-xs truncate max-w-28">{user.full_name || 'Usuário'}</p>
-                  {user.job_title &&
-                  <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
-                  }
-                  <div className={`mt-0.5 inline-flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
-                    <PlanInfo.icon className="w-3 h-3" />
-                    {PlanInfo.label}
-                  </div>
-                </div>
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
-              {user.job_title &&
-              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
-                  <BookOpen className="w-4 h-4" />
-                  {user.job_title}
-                </DropdownMenuItem>
-              }
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
-                <UserIcon className="w-4 h-4" />
-                Meu Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
-                <CreditCard className="w-4 h-4" />
-                Painel de Assinaturas
-              </DropdownMenuItem>
-              <div className="h-px bg-white/20 my-2 mx-2" />
-              <div className="px-2 py-2">
-                <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
-                <div className="space-y-3 px-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-200">Cor Principal</span>
-                    <input
-                      type="color"
-                      value={primaryColor}
-                      onChange={handleColorChange}
-                      className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-200">Tamanho Ícones</span>
-                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        P
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        M
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        G
-                      </Button>
+                <div className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-black/10">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
+                    <AvatarFallback className="bg-white text-xs">
+                      <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/89ef29054_LogoConectadoemConcursos.png" alt="Conectado em Concursos" className="w-full h-full object-contain" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden xl:block">
+                    <p className="font-medium text-xs truncate max-w-28">{user.full_name || 'Usuário'}</p>
+                    {user.job_title &&
+                    <p className="text-xs text-gray-200 truncate max-w-28">{user.job_title}</p>
+                    }
+                    <div className={`mt-0.5 inline-flex items-center gap-1.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${PlanInfo.style.replace(/bg-([a-z]+)-[0-9]+/g, 'bg-black/20').replace('text-gray-600', 'text-white/80').replace('text-blue-700', 'text-blue-200').replace('text-yellow-800', 'text-yellow-200')}`}>
+                      <PlanInfo.icon className="w-3 h-3" />
+                      {PlanInfo.label}
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="h-px bg-white/20 my-2 mx-2" />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
-                <LogOut className="w-4 h-4" />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
+                {user.job_title &&
+                <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
+                    <BookOpen className="w-4 h-4" />
+                    {user.job_title}
+                  </DropdownMenuItem>
+                }
+                <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
+                  <UserIcon className="w-4 h-4" />
+                  Meu Perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
+                  <CreditCard className="w-4 h-4" />
+                  Painel de Assinaturas
+                </DropdownMenuItem>
+                <div className="h-px bg-white/20 my-2 mx-2" />
+                <div className="px-2 py-2">
+                  <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
+                  <div className="space-y-3 px-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-200">Cor Principal</span>
+                      <input
+                        type="color"
+                        value={primaryColor}
+                        onChange={handleColorChange}
+                        className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-200">Tamanho Ícones</span>
+                      <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
+                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                        >
+                          P
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
+                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                        >
+                          M
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
+                          className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                        >
+                          G
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="h-px bg-white/20 my-2 mx-2" />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </header>
 
