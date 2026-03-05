@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { StaffBadge } from "@/components/ui/staff-badge";
 import { encryptEmail } from "@/components/security/emailCrypto";
+import ForumOnlineUsers from "@/components/chat/ForumOnlineUsers";
 
 const defaultCategories = [
 { value: "depoimentos", label: "Depoimentos de Aprovação" },
@@ -649,24 +650,26 @@ export default function CommunityPage({ embedded = false }) {
         </AlertDialog>
 
         <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
-                Excluir
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
         </AlertDialog>
-      </div>);
 
-  }
+        <ForumOnlineUsers currentUser={user} />
+        </div>);
+
+        }
 
   return (
     <div className={embedded ? "w-full" : "min-h-screen bg-gray-50 dark:bg-gray-900 p-6"}>
@@ -832,6 +835,8 @@ export default function CommunityPage({ embedded = false }) {
             </Card>
           }
         </div>
+        
+        <ForumOnlineUsers currentUser={user} />
       </div>
     </div>);
 
