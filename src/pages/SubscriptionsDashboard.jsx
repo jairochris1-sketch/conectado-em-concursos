@@ -110,6 +110,24 @@ export default function SubscriptionsDashboard() {
         end_date: new Date().toISOString().split('T')[0]
       });
 
+      // Enviar notificação para os administradores
+      try {
+        const user = await User.me();
+        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
+        for (const email of adminEmails) {
+          await base44.entities.Notification.create({
+            user_email: email,
+            title: "Assinatura Cancelada",
+            message: `O usuário ${user.full_name} (${user.email}) cancelou a assinatura do ${planNames[selectedSub.plan] || selectedSub.plan}.`,
+            type: "warning",
+            related_user_name: user.full_name,
+            related_user_photo: user.profile_photo_url
+          });
+        }
+      } catch (notifError) {
+        console.error("Erro ao enviar notificação aos admins:", notifError);
+      }
+
       // Atualizar estado local
       setSubscriptions(prev => prev.map(s => 
         s.id === selectedSub.id 
