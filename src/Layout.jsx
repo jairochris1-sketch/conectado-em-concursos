@@ -551,7 +551,7 @@ export default function Layout({ children, currentPageName }) {
                       onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                         <div className="flex items-center gap-3 min-w-0">
-                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${isCurrentPage ? `${item.color} ${item.fill}` : 'text-white fill-transparent'}`} />
+                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
                           <span className="truncate text-sm font-bold text-white">{item.title}</span>
                         </div>
                         {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
