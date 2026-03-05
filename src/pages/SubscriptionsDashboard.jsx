@@ -328,9 +328,13 @@ export default function SubscriptionsDashboard() {
                         <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">
                           {sub.status === 'cancelled' || sub.status === 'inactive' ? 'Fim' : 'Próxima Cobrança'}
                         </p>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {formatDate(sub.status === 'cancelled' || sub.status === 'inactive' ? sub.end_date : sub.next_payment_date)}
-                        </p>
+                        {sub.cycle === 'manual' || sub.is_special ? (
+                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Vitalício / Sem data</p>
+                        ) : (
+                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                             {formatDate(sub.status === 'cancelled' || sub.status === 'inactive' ? sub.end_date : sub.next_payment_date)}
+                           </p>
+                        )}
                       </div>
                     </div>
 
