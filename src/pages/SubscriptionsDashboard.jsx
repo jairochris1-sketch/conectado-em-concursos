@@ -94,32 +94,30 @@ export default function SubscriptionsDashboard() {
 
     try {
       // Registrar a solicitação no banco local (sem cancelar imediatamente)
-      await Subscription.update(selectedSub.id, {
-        cancel_requested: true
-      });
+      if (selectedSub.is_special) {
+        await base44.entities.SpecialUser.update(selectedSub.id, {
+          cancel_requested: true
+        });
+      } else {
+        await Subscription.update(selectedSub.id, {
+          cancel_requested: true
+        });
+      }
 
       // Enviar notificação para os administradores via banco de dados
       try {
         const user = await User.me();
         
-        // Criar mensagem no painel de administração (AdminMessage)
-        if (base44.entities.AdminMessage) {
-          await base44.entities.AdminMessage.create({
-            message: `🚨 SOLICITAÇÃO DE CANCELAMENTO 🚨\nO usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do ${planNames[selectedSub.plan] || selectedSub.plan}. Verifique a aba de Assinaturas para prosseguir com o cancelamento manual no Asaas.`,
-            admin_email: user.email,
-            admin_name: user.full_name || 'Sistema',
-          });
-        }
-
         const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
         for (const email of adminEmails) {
           await base44.entities.Notification.create({
             user_email: email,
-            title: "Solicitação de Cancelamento",
-            message: `O usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do plano ${planNames[selectedSub.plan] || selectedSub.plan}.`,
+            title: "🚨 Solicitação de Cancelamento",
+            message: `O usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do plano ${planNames[selectedSub.plan] || selectedSub.plan}. Verifique a aba de Assinaturas.`,
             type: "warning",
             related_user_name: user.full_name,
-            related_user_photo: user.profile_photo_url
+            related_user_photo: user.profile_photo_url,
+            action_url: "/Admin"
           });
         }
       } catch (notifError) {
@@ -133,7 +131,7 @@ export default function SubscriptionsDashboard() {
           : s
       ));
 
-      toast.success("Solicitação de cancelamento enviada com sucesso!");
+      toast.success("Solicitação de cancelamento enviada com sucesso! Os administradores foram notificados.");
     } catch (error) {
       console.error("Erro ao cancelar assinatura:", error);
       toast.error(error.message || "Erro ao cancelar assinatura. Tente novamente mais tarde.");
