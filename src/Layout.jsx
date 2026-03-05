@@ -649,62 +649,125 @@ export default function Layout({ children, currentPageName }) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-              className="text-white border-black border-opacity-20 w-[700px] max-h-[80vh] overflow-y-auto"
-              style={{ backgroundColor: 'var(--primary-color)' }}
-              align="center">
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-                    {moreMenuCategories.map((category) => (
-                        <div key={category.title} className="space-y-2">
-                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                            {category.title}
-                          </h3>
-                          <div className="space-y-1">
-                            {category.items.map((item) => {
-                              const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                              const isCurrentPage = location.pathname === item.url;
-                              return (
-                                <DropdownMenuItem key={item.title} asChild>
-                                  <Link
-                                    to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
-                                    <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 flex-shrink-0" />
-                                        <span className="truncate">{item.title}</span>
-                                    </div>
-                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
-                                  </Link>
-                                </DropdownMenuItem>
-                              );
-                            })}
-                          </div>
-                        </div>
-                    ))}
-                    {isAdmin && (
-                        <div className="space-y-2">
-                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                            Administração
-                          </h3>
-                          <div className="space-y-1">
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
-                                        <span>Admin Geral</span>
-                                    </div>
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
-                                        <span>Admin Simulados Digital</span>
-                                    </div>
-                                </Link>
-                            </DropdownMenuItem>
-                          </div>
-                        </div>
-                    )}
-                    </div>
+                className="text-white border-black border-opacity-20 w-[900px] max-h-[80vh] overflow-y-auto"
+                style={{ backgroundColor: 'var(--primary-color)' }}
+                align="center">
+                  <div className="grid grid-cols-3 gap-x-8 gap-y-6 p-6 items-start">
+                      {/* Coluna 1 */}
+                      <div className="flex flex-col gap-6">
+                          {moreMenuCategories.filter(c => ['Estudos & Planejamento', 'Quizzes'].includes(c.title)).map((category) => (
+                              <div key={category.title} className="space-y-2">
+                                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                                      {category.title}
+                                  </h3>
+                                  <div className="space-y-1">
+                                      {category.items.map((item) => {
+                                          const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                                          const isCurrentPage = location.pathname === item.url;
+                                          return (
+                                              <DropdownMenuItem key={item.title} asChild>
+                                                  <Link
+                                                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                                                      className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
+                                                      <div className="flex items-center gap-2">
+                                                          <item.icon className="w-4 h-4 flex-shrink-0" />
+                                                          <span className="truncate">{item.title}</span>
+                                                      </div>
+                                                      {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
+                                                  </Link>
+                                              </DropdownMenuItem>
+                                          );
+                                      })}
+                                  </div>
+                              </div>
+                          ))}
+                          {isAdmin && (
+                              <div className="space-y-2">
+                                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                                      Administração
+                                  </h3>
+                                  <div className="space-y-1">
+                                      <DropdownMenuItem asChild>
+                                          <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                                              <div className="flex items-center gap-2">
+                                                  <Shield className="w-4 h-4" />
+                                                  <span>Admin Geral</span>
+                                              </div>
+                                          </Link>
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem asChild>
+                                          <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                                              <div className="flex items-center gap-2">
+                                                  <Shield className="w-4 h-4" />
+                                                  <span>Admin Simulados Digital</span>
+                                              </div>
+                                          </Link>
+                                      </DropdownMenuItem>
+                                  </div>
+                              </div>
+                          )}
+                      </div>
+
+                      {/* Coluna 2 */}
+                      <div className="flex flex-col gap-6">
+                          {moreMenuCategories.filter(c => ['Desempenho & Estatísticas', 'Simulados Extras'].includes(c.title)).map((category) => (
+                              <div key={category.title} className="space-y-2">
+                                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                                      {category.title}
+                                  </h3>
+                                  <div className="space-y-1">
+                                      {category.items.map((item) => {
+                                          const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                                          const isCurrentPage = location.pathname === item.url;
+                                          return (
+                                              <DropdownMenuItem key={item.title} asChild>
+                                                  <Link
+                                                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                                                      className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
+                                                      <div className="flex items-center gap-2">
+                                                          <item.icon className="w-4 h-4 flex-shrink-0" />
+                                                          <span className="truncate">{item.title}</span>
+                                                      </div>
+                                                      {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
+                                                  </Link>
+                                              </DropdownMenuItem>
+                                          );
+                                      })}
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+
+                      {/* Coluna 3 */}
+                      <div className="flex flex-col gap-6">
+                          {moreMenuCategories.filter(c => ['Comunidade', 'Conta'].includes(c.title)).map((category) => (
+                              <div key={category.title} className="space-y-2">
+                                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
+                                      {category.title}
+                                  </h3>
+                                  <div className="space-y-1">
+                                      {category.items.map((item) => {
+                                          const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                                          const isCurrentPage = location.pathname === item.url;
+                                          return (
+                                              <DropdownMenuItem key={item.title} asChild>
+                                                  <Link
+                                                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                                                      className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
+                                                      <div className="flex items-center gap-2">
+                                                          <item.icon className="w-4 h-4 flex-shrink-0" />
+                                                          <span className="truncate">{item.title}</span>
+                                                      </div>
+                                                      {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
+                                                  </Link>
+                                              </DropdownMenuItem>
+                                          );
+                                      })}
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>
