@@ -858,6 +858,7 @@ export default function Layout({ children, currentPageName }) {
               </div>
               <div className="flex items-center gap-2">
                 <GlobalSearch isMobile />
+                <ThemeToggle />
                 {(userPlan === 'gratuito') && (
                   <Link to={createPageUrl("Subscription")}>
                     <Button
