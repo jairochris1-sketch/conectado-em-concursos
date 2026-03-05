@@ -341,10 +341,10 @@ export default function SubscriptionsDashboard() {
               <AlertCircle className="w-5 h-5" />
               Confirmar Cancelamento
             </DialogTitle>
-            <DialogDescription className="pt-3 text-base">
-              Tem certeza que deseja cancelar sua assinatura do <strong>{selectedSub ? planNames[selectedSub.plan] || selectedSub.plan : ''}</strong>?
+            <DialogDescription className="pt-3 text-base text-gray-700 dark:text-gray-300">
+              Tem certeza que deseja cancelar sua assinatura do <strong>{selectedSub ? planNames[selectedSub.plan] || selectedSub.plan : ''}</strong> para estudos para Concursos Públicos no conectadoemconcursos?
               <br /><br />
-              Seu acesso aos recursos premium será revogado imediatamente e você não será mais cobrado.
+              Uma mensagem será enviada para o painel do administrador e a assinatura será cancelada.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-6 flex gap-2 sm:justify-end">
