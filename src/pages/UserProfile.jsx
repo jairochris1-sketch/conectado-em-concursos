@@ -214,6 +214,7 @@ export default function UserProfilePage() {
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
                       targetIsAdmin={targetIsAdmin}
+                      userPlan={currentUser.current_plan}
                     />
                   </div>
                 )}
