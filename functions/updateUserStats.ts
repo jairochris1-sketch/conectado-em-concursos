@@ -83,7 +83,9 @@ Deno.serve(async (req) => {
     }
 
     if (!user_email) {
-      return Response.json({ error: 'user_email é obrigatório' }, { status: 400 });
+      // Retornar 200 ao invés de 400 para evitar que a automação seja marcada como falha 
+      // caso um usuário anônimo (sem email/created_by) responda uma questão.
+      return Response.json({ success: true, message: 'Ignorado: user_email não encontrado (usuário possivelmente anônimo)' });
     }
 
     // Buscar todas as respostas do usuário
