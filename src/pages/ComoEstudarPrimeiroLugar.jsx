@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import EnhancedArticleReader from "../components/reading/EnhancedArticleReader";
-import { BookOpen, Lock } from "lucide-react";
+import { BookOpen, Lock, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 
 export default function ComoEstudarPrimeiroLugar() {
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -197,6 +198,16 @@ export default function ComoEstudarPrimeiroLugar() {
           </aside>
           <section className="md:col-span-8 lg:col-span-9">
             <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 md:p-8">
+        <div className="mb-4 flex items-center gap-3">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+            <ArrowLeft className="w-5 h-5" /> Voltar
+          </Button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">{content.title}</h1>
+          </div>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
+        
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -224,8 +235,6 @@ export default function ComoEstudarPrimeiroLugar() {
             )}
           </div>
         )}
-        <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">{content.title}</h1>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
 
         {!loading && articles.some(a => a.is_featured) && (
           <section className="mb-8">

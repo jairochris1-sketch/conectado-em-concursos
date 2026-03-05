@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User } from "@/entities/User";
 import { Subscription } from "@/entities/Subscription";
 import { base44 } from "@/api/base44Client";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight, Trash2 } from "lucide-react";
+import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -35,6 +35,7 @@ const cycleNames = {
 };
 
 export default function SubscriptionsDashboard() {
+  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelingId, setCancelingId] = useState(null);
@@ -198,12 +199,17 @@ export default function SubscriptionsDashboard() {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <CreditCard className="w-6 h-6 text-blue-600" />
-            Painel de Assinaturas
-          </h1>
-          <p className="text-gray-500 mt-1">Gerencie seus planos e histórico de pagamentos.</p>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+            <ArrowLeft className="w-5 h-5" /> Voltar
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <CreditCard className="w-6 h-6 text-blue-600" />
+              Painel de Assinaturas
+            </h1>
+            <p className="text-gray-500 mt-1">Gerencie seus planos e histórico de pagamentos.</p>
+          </div>
         </div>
         
         <Link to={createPageUrl("Subscription")}>
