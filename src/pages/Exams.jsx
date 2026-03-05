@@ -101,6 +101,12 @@ export default function Exams() {
             plan = specialUser.plan;
           }
         }
+
+        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com' || userData.email === 'juniorgmj2016@gmail.com' || userData.role === 'admin';
+        if (userIsAdmin) {
+          plan = 'avancado';
+        }
+
         setUserPlan(plan);
       } catch (e) {
          console.error(e);
