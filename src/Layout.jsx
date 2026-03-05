@@ -126,11 +126,11 @@ const moreMenuCategories = [
     ]
   },
   {
-    title: "Cursos",
+    title: "Quizzes",
     items: [
-      { title: "Curso de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen },
-      { title: "Curso de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen },
-      { title: "Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain },
+      { title: "Quiz de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen },
+      { title: "Quiz de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen },
+      { title: "Quiz de Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain },
     ]
   },
   {
@@ -183,9 +183,9 @@ const pageNameTranslations = {
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
-  MathCourse: "Curso de Matemática Básica",
-  EnglishCourse: "Curso de Inglês",
-  LogicCourse: "Raciocínio Lógico para Concursos",
+  MathCourse: "Quiz de Matemática",
+  EnglishCourse: "Quiz de Inglês",
+  LogicCourse: "Quiz de Raciocínio Lógico",
   Notebooks: "Cadernos de Questões",
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
@@ -225,9 +225,9 @@ const featureAccess = {
   'Minhas Anotações': ['padrao', 'avancado'],
   'Simulados Digital': ['padrao', 'avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
-  'Curso de Inglês': ['padrao', 'avancado'],
-  'Curso de Matemática Básica': ['padrao', 'avancado'],
-  'Raciocínio Lógico para Concursos': ['padrao', 'avancado'],
+  'Quiz de Inglês': ['padrao', 'avancado'],
+  'Quiz de Matemática': ['padrao', 'avancado'],
+  'Quiz de Raciocínio Lógico': ['padrao', 'avancado'],
   'Cadernos de Questões': ['padrao', 'avancado'],
   'Flashcards': ['padrao', 'avancado'],
   'Criar Caderno': ['padrao', 'avancado'],
