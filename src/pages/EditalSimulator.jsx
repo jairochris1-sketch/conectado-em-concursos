@@ -271,29 +271,34 @@ export default function EditalSimulator() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              📄 Resumo do Edital+Geração de questões+ Verticalização
-            </h1>
-            <Button variant="outline" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
-              <ClipboardList className="w-4 h-4 mr-2" />
-              Histórico
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                Meu Edital
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-300 mt-2 font-medium">
+                Envie seu edital, gere resumos, simulados e verticalização automática.
+              </p>
+            </div>
+            <Button variant="outline" className="h-10 px-4 font-medium shadow-sm hover:bg-gray-50" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
+              <ClipboardList className="w-5 h-5 mr-2" />
+              Ver Histórico
             </Button>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Envie o edital do seu concurso e gere simulados personalizados automaticamente
-          </p>
 
           {/* Steps */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {steps.map((step, i) => (
-              <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${step.bg} ${step.border}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm`}>
-                  <span className="text-xs font-bold text-gray-500">{i + 1}</span>
+              <div key={i} className={`flex items-center gap-4 p-4 rounded-xl border shadow-sm transition-all hover:shadow-md ${step.bg} ${step.border}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700`}>
+                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300">{i + 1}</span>
                 </div>
-                <div className="flex items-center gap-2 min-w-0">
-                  <step.icon className={`w-4 h-4 flex-shrink-0 ${step.color}`} />
-                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">{step.label}</p>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <step.icon className={`w-4 h-4 flex-shrink-0 ${step.color}`} />
+                  </div>
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">{step.label}</p>
                 </div>
               </div>
             ))}
@@ -301,58 +306,62 @@ export default function EditalSimulator() {
         </div>
 
         {/* Upload Form */}
-        <Card className="mb-8 border-2 border-blue-200 dark:border-blue-800">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
-            <CardTitle className="flex items-center gap-2">
-              <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <Card className="mb-10 shadow-lg border-0 ring-1 ring-gray-200 dark:ring-gray-800 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
+            <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+              <Upload className="w-6 h-6 text-blue-100" />
               Cadastrar Novo Edital
             </CardTitle>
-            <CardDescription>
-              Faça upload do edital em PDF ou DOC para análise automática
+            <CardDescription className="text-blue-100 text-base mt-1">
+              Faça upload do edital em PDF ou DOC para iniciar a análise inteligente
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="p-8 bg-white dark:bg-gray-900">
             <form onSubmit={handleSubmitEdital} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="concurso">Nome do Concurso *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="concurso" className="font-semibold text-gray-700 dark:text-gray-200">Nome do Concurso *</Label>
                   <Input
                     id="concurso"
                     placeholder="Ex: Prefeitura de São Paulo"
                     value={concursoName}
                     onChange={(e) => setConcursoName(e.target.value)}
+                    className="h-12"
                     required
                   />
                 </div>
-                <div>
-                  <Label htmlFor="orgao">Órgão</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="orgao" className="font-semibold text-gray-700 dark:text-gray-200">Órgão</Label>
                   <Input
                     id="orgao"
                     placeholder="Ex: Prefeitura Municipal"
                     value={orgao}
                     onChange={(e) => setOrgao(e.target.value)}
+                    className="h-12"
                   />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="cargo">Cargo Pretendido</Label>
+              <div className="space-y-2 pt-2">
+                <Label htmlFor="cargo" className="font-semibold text-gray-700 dark:text-gray-200">Cargo Pretendido</Label>
                 <Input
                   id="cargo"
                   placeholder="Ex: Agente Administrativo"
                   value={cargo}
                   onChange={(e) => setCargo(e.target.value)}
+                  className="h-12"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="file">Arquivo do Edital (PDF ou DOC) *</Label>
+              <div className="space-y-2 pt-2 pb-2">
+                <Label htmlFor="file" className="font-semibold text-gray-700 dark:text-gray-200">Arquivo do Edital (PDF ou DOC) *</Label>
                 <Input
                   id="file"
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileUpload}
                   disabled={uploadingFile || (userPlan === 'gratuito' && !isAdmin)}
+                  className="h-12 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                   required
                 />
                 {userPlan === 'gratuito' && !isAdmin && (
@@ -377,16 +386,16 @@ export default function EditalSimulator() {
               <Button
                 type="submit"
                 disabled={loading || !fileUrl}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all mt-4"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Processando...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className="w-5 h-5 mr-2" />
                     Cadastrar e Processar Edital
                   </>
                 )}
