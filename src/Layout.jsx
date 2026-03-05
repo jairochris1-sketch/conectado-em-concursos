@@ -694,7 +694,7 @@ export default function Layout({ children, currentPageName }) {
                                     className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-white hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
                                         <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-4 h-4 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
-                                        <span className="truncate font-bold text-white">{item.title}</span>
+                                        <span className="truncate text-white font-medium">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
                                   </Link>
