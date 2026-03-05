@@ -20,22 +20,28 @@ Deno.serve(async (req) => {
     const sessions = await base44.asServiceRole.entities.StudySession.filter({ status: 'scheduled', reminder_sent: false });
     
     let sentCount = 0;
+    const updatePromises = [];
     
     for (const session of sessions) {
       const sessionStart = new Date(session.start_time);
       if (sessionStart > now && sessionStart <= in15Min) {
-        await base44.asServiceRole.entities.Notification.create({
-          user_email: session.user_email,
-          title: "📚 Sessão de Estudo em breve!",
-          message: `Sua sessão "${session.title}" começará em breve. Prepare-se!`,
-          type: "info",
-          is_read: false,
-          action_url: "/Calendar"
-        });
-        
-        await base44.asServiceRole.entities.StudySession.update(session.id, { reminder_sent: true });
+        updatePromises.push((async () => {
+          await base44.asServiceRole.entities.Notification.create({
+            user_email: session.user_email,
+            title: "📚 Sessão de Estudo em breve!",
+            message: `Sua sessão "${session.title}" começará em breve. Prepare-se!`,
+            type: "info",
+            is_read: false,
+            action_url: "/Calendar"
+          });
+          await base44.asServiceRole.entities.StudySession.update(session.id, { reminder_sent: true });
+        })());
         sentCount++;
       }
+    }
+    
+    for (let i = 0; i < updatePromises.length; i += 20) {
+      await Promise.all(updatePromises.slice(i, i + 20));
     }
     
     return Response.json({ success: true, reminders_sent: sentCount });
