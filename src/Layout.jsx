@@ -102,6 +102,7 @@ const moreMenuCategories = [
     title: "Estudos & Planejamento",
     items: [
       { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy },
+      { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles },
       { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList },
       { title: "Cronograma de Estudos", url: createPageUrl("Schedule"), icon: Calendar },
       { title: "Planos de Estudo", url: createPageUrl("StudyPlans"), icon: Target },
@@ -189,7 +190,8 @@ const pageNameTranslations = {
   Notebooks: "Cadernos de Questões",
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
-  NotebookStats: "Estatísticas do Caderno"
+  NotebookStats: "Estatísticas do Caderno",
+  Flashcards: "Flashcards"
 };
 
 const featureAccess = {
@@ -224,6 +226,7 @@ const featureAccess = {
   'Curso de Matemática Básica': ['padrao', 'avancado'],
   'Raciocínio Lógico para Concursos': ['padrao', 'avancado'],
   'Cadernos de Questões': ['padrao', 'avancado'],
+  'Flashcards': ['padrao', 'avancado'],
   'Criar Caderno': ['padrao', 'avancado'],
   'Resolver Caderno': ['padrao', 'avancado'],
   'Estatísticas do Caderno': ['padrao', 'avancado'],

@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import {
   ArrowLeft, Trophy, Clock, CheckCircle2, AlertCircle, Search,
-  RotateCcw, BookOpen, ChevronDown, ChevronUp, Filter, Eye
+  RotateCcw, BookOpen, ChevronDown, ChevronUp, Filter, Eye, Sparkles, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -187,6 +187,24 @@ export default function SimulationReview() {
   const [questions, setQuestions] = useState([]);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [questionFilter, setQuestionFilter] = useState("all"); // all | correct | wrong
+  const [generatingFlashcards, setGeneratingFlashcards] = useState(false);
+
+  const handleGenerateFlashcards = async (simulation) => {
+    setGeneratingFlashcards(true);
+    try {
+      const res = await base44.functions.invoke('generateFlashcardsFromErrors', { simulation_id: simulation.id });
+      if (res.data?.success) {
+        toast.success(`${res.data.count} Flashcards gerados com sucesso!`);
+        navigate(createPageUrl("Flashcards"));
+      } else {
+        toast.error(res.data?.error || "Nenhum erro para gerar flashcards ou ocorreu um problema.");
+      }
+    } catch (e) {
+      toast.error(e.response?.data?.error || "Erro ao gerar flashcards.");
+    } finally {
+      setGeneratingFlashcards(false);
+    }
+  };
 
   useEffect(() => {
     loadSimulations();
@@ -279,9 +297,15 @@ export default function SimulationReview() {
                     </p>
                   )}
                 </div>
-                <Button onClick={() => handleRedo(selected)} variant="outline" size="sm">
-                  <RotateCcw className="w-4 h-4 mr-1" /> Refazer
-                </Button>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button onClick={() => handleRedo(selected)} variant="outline" size="sm">
+                    <RotateCcw className="w-4 h-4 mr-1" /> Refazer
+                  </Button>
+                  <Button onClick={() => handleGenerateFlashcards(selected)} variant="outline" size="sm" className="border-yellow-400 text-yellow-700 hover:bg-yellow-50 dark:text-yellow-400 dark:hover:bg-yellow-900/20" disabled={generatingFlashcards}>
+                    {generatingFlashcards ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
+                    Gerar Flashcards dos Erros
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-4">
