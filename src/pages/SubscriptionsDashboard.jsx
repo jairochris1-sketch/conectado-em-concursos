@@ -238,6 +238,10 @@ export default function SubscriptionsDashboard() {
             const StatusIcon = statusInfo.icon;
             const isCancelable = sub.status === 'active' || sub.status === 'pending' || sub.status === 'overdue';
 
+            // Verificar se passaram 24h desde a aprovação do cancelamento
+            const hasPassed24hSinceApproval = sub.cancel_approved_date && 
+              (new Date().getTime() - new Date(sub.cancel_approved_date).getTime() > 24 * 60 * 60 * 1000);
+
             return (
               <Card key={sub.id} className="overflow-hidden transition-all hover:shadow-md border-l-4" style={{ borderLeftColor: sub.status === 'active' ? '#10b981' : sub.status === 'pending' ? '#f59e0b' : sub.status === 'overdue' ? '#ef4444' : '#9ca3af' }}>
                 <CardHeader className="pb-3 bg-gray-50/50 dark:bg-gray-800/20 border-b">
@@ -257,7 +261,7 @@ export default function SubscriptionsDashboard() {
                       )}
                     </div>
                     
-                    {sub.cancel_requested ? (
+                    {sub.cancel_requested && !sub.cancel_approved_date ? (
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -266,6 +270,25 @@ export default function SubscriptionsDashboard() {
                       >
                         Enviado solicitação de cancelamento
                       </Button>
+                    ) : sub.cancel_approved_date && !hasPassed24hSinceApproval ? (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        disabled
+                        className="text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 opacity-100"
+                      >
+                        Solicitação Aceita (Aguarde 24h)
+                      </Button>
+                    ) : sub.cancel_approved_date && hasPassed24hSinceApproval ? (
+                      <Link to={createPageUrl("Subscription")}>
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          Assinar Novamente
+                        </Button>
+                      </Link>
                     ) : isCancelable && (
                       <Button 
                         variant="outline" 
