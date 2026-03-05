@@ -78,6 +78,34 @@ export default function Exams() {
   const [viewMode, setViewMode] = useState(() => {
     return localStorage.getItem('examsViewMode') || 'list';
   });
+  const [userPlan, setUserPlan] = useState('gratuito');
+
+  useEffect(() => {
+    const checkPlan = async () => {
+      try {
+        const userData = await User.me();
+        let plan = userData.current_plan || 'gratuito';
+        const activeSubscriptions = await base44.entities.Subscription.filter({ user_email: userData.email, status: 'active' });
+        const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
+        
+        if (activeSubscriptions.length > 0) {
+          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
+          const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
+          plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
+        }
+        if (specialUsers.length > 0) {
+          const specialUser = specialUsers[0];
+          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+            plan = specialUser.plan;
+          }
+        }
+        setUserPlan(plan);
+      } catch (e) {
+         console.error(e);
+      }
+    };
+    checkPlan();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('examsViewMode', viewMode);
