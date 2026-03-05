@@ -590,7 +590,12 @@ export default function StudyCyclePage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Planejamento</h1>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => setCycle(null)} className="mr-2">
+            <ArrowLeft className="w-6 h-6 text-gray-600" />
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{cycle.name || "Planejamento"}</h1>
+        </div>
         <div className="flex gap-3">
           <Button variant="outline" className="text-teal-600 border-teal-200 bg-teal-50 hover:bg-teal-100 rounded-lg px-6" onClick={handleRestartCycle}>
             Recomeçar Ciclo
