@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import EnhancedArticleReader from "../components/reading/EnhancedArticleReader";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Lock } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ComoEstudarPrimeiroLugar() {
   const [articles, setArticles] = useState([]);
@@ -23,6 +24,7 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [userPlan, setUserPlan] = useState('gratuito');
 
   // Determinar guia a partir da URL, localStorage ou primeiro guia disponível
   useEffect(() => {
@@ -73,6 +75,27 @@ export default function ComoEstudarPrimeiroLugar() {
         ]);
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com'));
+
+        let plan = 'gratuito';
+        if (user) {
+          const [activeSubs, specialUsers] = await Promise.all([
+            base44.entities.Subscription.filter({ user_email: user.email, status: 'active' }),
+            base44.entities.SpecialUser.filter({ email: user.email, is_active: true })
+          ]);
+          
+          if (activeSubs.length > 0) {
+            const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
+            const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
+            plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
+          }
+          if (specialUsers.length > 0) {
+            const specialUser = specialUsers[0];
+            if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+              plan = specialUser.plan;
+            }
+          }
+        }
+        setUserPlan(plan);
 
         const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
         const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";
@@ -208,9 +231,21 @@ export default function ComoEstudarPrimeiroLugar() {
             <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Recomendados</h2>
             <div className="space-y-4">
               {articles.filter(a => a.is_featured).map((a) => (
-                <Card key={a.id} className="dark:bg-gray-700 dark:border-gray-600">
-                  <CardContent className="p-4">
-                    <a href={`#art-${a.id}`} className="text-blue-700 dark:text-blue-400 font-semibold hover:underline">{a.title}</a>
+                <Card key={a.id} className="dark:bg-gray-700 dark:border-gray-600 relative">
+                  <CardContent className="p-4 cursor-pointer" onClick={(e) => {
+                    if (userPlan === 'gratuito' && !isAdmin) {
+                      e.preventDefault();
+                      toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
+                    } else {
+                      window.location.hash = `#art-${a.id}`;
+                    }
+                  }}>
+                    {userPlan === 'gratuito' && !isAdmin && (
+                      <div className="absolute top-4 right-4">
+                        <Lock className="w-4 h-4 text-gray-400" />
+                      </div>
+                    )}
+                    <span className="text-blue-700 dark:text-blue-400 font-semibold hover:underline">{a.title}</span>
                     {a.summary && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{a.summary}</p>}
                   </CardContent>
                 </Card>
@@ -259,8 +294,19 @@ export default function ComoEstudarPrimeiroLugar() {
           <section className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
             {articles.map((a) => (
-              <Card key={a.id} id={`art-${a.id}`} className="dark:bg-gray-700 dark:border-gray-600 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedArticle(a)}>
+              <Card key={a.id} id={`art-${a.id}`} className="dark:bg-gray-700 dark:border-gray-600 hover:shadow-lg transition-shadow cursor-pointer relative" onClick={() => {
+                if (userPlan === 'gratuito' && !isAdmin) {
+                  toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
+                  return;
+                }
+                setSelectedArticle(a);
+              }}>
                 <CardContent className="p-6">
+                  {userPlan === 'gratuito' && !isAdmin && (
+                    <div className="absolute top-4 right-4">
+                      <Lock className="w-4 h-4 text-gray-400" />
+                    </div>
+                  )}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">

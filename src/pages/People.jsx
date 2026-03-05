@@ -16,6 +16,8 @@ export default function PeoplePage() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userPlan, setUserPlan] = useState('gratuito');
 
   useEffect(() => {
     loadUsers();
@@ -24,6 +26,29 @@ export default function PeoplePage() {
   const loadUsers = async () => {
     setLoading(true);
     try {
+      const user = await base44.auth.me().catch(() => null);
+      if (user) {
+        setCurrentUser(user);
+        const [activeSubs, specialUsers] = await Promise.all([
+          base44.entities.Subscription.filter({ user_email: user.email, status: 'active' }),
+          base44.entities.SpecialUser.filter({ email: user.email, is_active: true })
+        ]);
+        
+        let plan = 'gratuito';
+        if (activeSubs.length > 0) {
+          const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
+          const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
+          plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
+        }
+        if (specialUsers.length > 0) {
+          const specialUser = specialUsers[0];
+          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+            plan = specialUser.plan;
+          }
+        }
+        setUserPlan(plan);
+      }
+
       const res = await base44.functions.invoke('getPeople', { search: '' });
       if (res.data?.users) {
         setUsers(res.data.users);
@@ -100,9 +125,11 @@ export default function PeoplePage() {
                       size="sm" 
                     />
                     <ConnectButton
+                      currentUser={currentUser}
                       targetEmail={person.email} 
                       targetName={person.name} 
                       size="sm"
+                      userPlan={userPlan}
                     />
                   </div>
                 </CardContent>

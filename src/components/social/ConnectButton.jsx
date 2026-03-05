@@ -9,7 +9,7 @@ import { createPageUrl } from "@/utils";
  * ConnectButton - shows connection state between currentUser and targetEmail.
  * States: not_connected, pending_sent, pending_received, connected, blocked
  */
-export default function ConnectButton({ currentUser, targetEmail, targetName, targetPhoto, size = "sm" }) {
+export default function ConnectButton({ currentUser, targetEmail, targetName, targetPhoto, size = "sm", userPlan = 'padrao' }) {
   const [status, setStatus] = useState("loading"); // loading | not_connected | pending_sent | pending_received | connected | blocked
   const [connectionId, setConnectionId] = useState(null);
 
@@ -41,6 +41,11 @@ export default function ConnectButton({ currentUser, targetEmail, targetName, ta
   };
 
   const sendRequest = async () => {
+    if (userPlan === 'gratuito') {
+      toast.error("Usuários do plano gratuito não podem enviar convites de conexão. Faça um upgrade.");
+      return;
+    }
+    
     setStatus("pending_sent");
     try {
       const conn = await base44.entities.Connection.create({

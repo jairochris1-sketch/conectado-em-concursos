@@ -45,6 +45,8 @@ export default function EditalSimulator() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
   const [advancedModalEdital, setAdvancedModalEdital] = useState(null);
+  const [userPlan, setUserPlan] = useState('gratuito');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadEditais();
@@ -54,6 +56,28 @@ export default function EditalSimulator() {
     setLoading(true);
     try {
       const user = await base44.auth.me();
+      
+      const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
+      const userIsAdmin = user.role === 'admin' || adminEmails.includes(user.email);
+      setIsAdmin(userIsAdmin);
+
+      const activeSubscriptions = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
+      const specialUsers = await base44.entities.SpecialUser.filter({ email: user.email, is_active: true });
+      let currentPlan = 'gratuito';
+
+      if (activeSubscriptions.length > 0) {
+        const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
+        const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
+        currentPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
+      }
+      if (specialUsers.length > 0) {
+        const specialUser = specialUsers[0];
+        if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+          currentPlan = specialUser.plan;
+        }
+      }
+      setUserPlan(currentPlan);
+
       const data = await base44.entities.Edital.filter({ created_by: user.email });
       setEditais(data.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)));
     } catch (error) {
@@ -65,6 +89,25 @@ export default function EditalSimulator() {
   };
 
   const handleFileUpload = async (e) => {
+    if (userPlan === 'gratuito' && !isAdmin) {
+      toast.error("O recurso Meu Edital é exclusivo para assinantes. Faça um upgrade para enviar editais.");
+      e.target.value = '';
+      return;
+    }
+    
+    if (!isAdmin) {
+      if (userPlan === 'padrao' && editais.length >= 5) {
+        toast.error("Limite de 5 editais atingido para o plano Padrão. Faça upgrade para o plano Premium.");
+        e.target.value = '';
+        return;
+      }
+      if (userPlan === 'avancado' && editais.length >= 15) {
+        toast.error("Limite de 15 editais atingido para o plano Premium.");
+        e.target.value = '';
+        return;
+      }
+    }
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -91,6 +134,22 @@ export default function EditalSimulator() {
   const handleSubmitEdital = async (e) => {
     e.preventDefault();
     
+    if (userPlan === 'gratuito' && !isAdmin) {
+      toast.error("O recurso Meu Edital é exclusivo para assinantes. Faça um upgrade para enviar editais.");
+      return;
+    }
+    
+    if (!isAdmin) {
+      if (userPlan === 'padrao' && editais.length >= 5) {
+        toast.error("Limite de 5 editais atingido para o plano Padrão. Faça upgrade para o plano Premium.");
+        return;
+      }
+      if (userPlan === 'avancado' && editais.length >= 15) {
+        toast.error("Limite de 15 editais atingido para o plano Premium.");
+        return;
+      }
+    }
+
     if (!concursoName || !fileUrl) {
       toast.error("Preencha o nome do concurso e envie o edital");
       return;
@@ -293,9 +352,14 @@ export default function EditalSimulator() {
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileUpload}
-                  disabled={uploadingFile}
+                  disabled={uploadingFile || (userPlan === 'gratuito' && !isAdmin)}
                   required
                 />
+                {userPlan === 'gratuito' && !isAdmin && (
+                  <p className="text-sm text-red-500 mt-1">
+                    Exclusivo para assinantes.
+                  </p>
+                )}
                 {uploadingFile && (
                   <p className="text-sm text-blue-600 mt-2 flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />

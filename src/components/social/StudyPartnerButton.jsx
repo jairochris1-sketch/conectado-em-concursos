@@ -9,7 +9,7 @@ import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
 import { encryptEmail } from "@/components/security/emailCrypto";
 
-export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin }) {
+export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin, userPlan = 'padrao' }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -53,6 +53,11 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   };
 
   const sendInvite = async () => {
+    if (userPlan === 'gratuito') {
+      toast.error("Usuários do plano gratuito não podem enviar convites. Faça um upgrade.");
+      return;
+    }
+    
     setLoading(true);
     setStatus("pending_sent");
     const record = await base44.entities.StudyPartner.create({
