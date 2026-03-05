@@ -134,26 +134,52 @@ Deno.serve(async (req) => {
     const userRanking = await base44.asServiceRole.entities.UserRanking.filter({ created_by: user_email });
     const user = await base44.asServiceRole.entities.User.filter({ email: user_email });
     
-    const rankingData = {
-      user_name: user[0]?.full_name || "Usuário",
-      profile_photo_url: user[0]?.profile_photo_url,
-      total_points: totalPoints,
-      questions_answered: totalQuestions,
-      correct_answers: correctAnswers,
-      streak_days: streakDays,
-      level,
-      badges
-    };
+    // Check user plan before updating ranking
+    let userPlan = user[0]?.current_plan || 'gratuito';
+    const activeSubscriptions = await base44.asServiceRole.entities.Subscription.filter({ user_email: user_email, status: 'active' });
+    const specialUsers = await base44.asServiceRole.entities.SpecialUser.filter({ email: user_email, is_active: true });
+    
+    if (activeSubscriptions.length > 0) {
+      const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
+      const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
+      userPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
+    }
+    if (specialUsers.length > 0) {
+      const specialUser = specialUsers[0];
+      if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
+        userPlan = specialUser.plan;
+      }
+    }
 
-    if (userRanking.length > 0) {
-      await base44.asServiceRole.entities.UserRanking.update(userRanking[0].id, rankingData);
+    // Apenas usuários do plano padrão ou avançado (premium) participam do ranking
+    if (userPlan === 'padrao' || userPlan === 'avancado') {
+      const rankingData = {
+        user_name: user[0]?.full_name || "Usuário",
+        profile_photo_url: user[0]?.profile_photo_url,
+        total_points: totalPoints,
+        questions_answered: totalQuestions,
+        correct_answers: correctAnswers,
+        streak_days: streakDays,
+        level,
+        badges
+      };
+
+      if (userRanking.length > 0) {
+        await base44.asServiceRole.entities.UserRanking.update(userRanking[0].id, rankingData);
+      } else {
+        await base44.asServiceRole.entities.UserRanking.create(rankingData);
+      }
     } else {
-      await base44.asServiceRole.entities.UserRanking.create(rankingData);
+      // Se era ranking mas mudou para gratuito, remove do ranking
+      if (userRanking.length > 0) {
+        await base44.asServiceRole.entities.UserRanking.delete(userRanking[0].id);
+      }
     }
 
     return Response.json({ 
       success: true, 
-      stats: statsData 
+      stats: statsData,
+      in_ranking: (userPlan === 'padrao' || userPlan === 'avancado')
     });
 
   } catch (error) {
