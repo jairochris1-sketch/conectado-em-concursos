@@ -2,19 +2,20 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Article, YouTubeVideo, SiteContent, User, FavoriteArticle } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
 import ArticleFeedback from "../components/feedback/ArticleFeedback";
 
 export default function GuiaEstudos() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSlug = (searchParams.get("slug") || "guia_aprovacao").toLowerCase();
 
@@ -398,7 +399,10 @@ export default function GuiaEstudos() {
           <section className="md:col-span-8 lg:col-span-9">
             <div className={`shadow-xl rounded-md p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
+          <div className="flex-1 flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(-1)} className={`px-2 hidden md:flex ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}>
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
             {isAdmin && (
               <div>
                 {!editMode ? (
