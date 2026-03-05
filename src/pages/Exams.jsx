@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
+import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
