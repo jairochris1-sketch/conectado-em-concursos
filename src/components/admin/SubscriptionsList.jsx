@@ -127,9 +127,26 @@ export default function SubscriptionsList() {
                         {getStatusText(subscription.status)}
                       </Badge>
                       {subscription.cancel_requested && subscription.status !== 'cancelled' && (
-                        <Badge className="bg-orange-100 text-orange-800 ml-2 mt-1 block w-max border-orange-200">
-                          Solicitou Cancelamento
-                        </Badge>
+                        <div className="flex flex-col gap-1 mt-1">
+                          <Badge className="bg-orange-100 text-orange-800 w-max border-orange-200">
+                            Solicitou Cancelamento
+                          </Badge>
+                          {!subscription.cancel_approved_date && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-6 text-xs mt-1 w-max border-orange-300 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+                              onClick={() => approveCancellation(subscription)}
+                            >
+                              Confirmar Solicitação
+                            </Button>
+                          )}
+                          {subscription.cancel_approved_date && (
+                            <Badge className="bg-blue-100 text-blue-800 w-max border-blue-200 mt-1">
+                              Cancelamento Aprovado
+                            </Badge>
+                          )}
+                        </div>
                       )}
                     </TableCell>
                     <TableCell>
