@@ -31,8 +31,11 @@ const getColorForSub = (sub) => {
 };
 
 import { Trash2, PlusCircle, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function StudyCyclePage() {
+  const navigate = useNavigate();
   const [allCycles, setAllCycles] = useState([]);
   const [cycle, setCycle] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -288,7 +291,12 @@ export default function StudyCyclePage() {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Meus Planejamentos</h1>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(createPageUrl("StudyPlanning"))} className="text-gray-600 gap-2 px-2 hover:bg-gray-100">
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Meus Planejamentos</h1>
+          </div>
           <Button className="bg-[#66d2ba] hover:bg-[#52ba9f] text-white gap-2" onClick={() => {
             setCycle(null);
             setCycleName('');
@@ -372,18 +380,19 @@ export default function StudyCyclePage() {
       <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white mt-8 rounded-xl shadow-sm border border-gray-100">
         <div className="flex justify-between items-center mb-6 border-b pb-4">
           <div className="flex items-center gap-3">
-            {allCycles.length > 0 && !cycle && (
-              <Button variant="ghost" size="icon" onClick={() => setShowWizard(false)}>
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              onClick={() => {
+                if (cycle) setShowWizard(false);
+                else if (allCycles.length > 0) setShowWizard(false);
+                else navigate(createPageUrl("StudyPlanning"));
+              }} 
+              className="text-gray-600 gap-2 px-2 hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
             <h2 className="text-2xl font-bold text-gray-800">{cycle ? "Editar Planejamento" : "Criar Planejamento"}</h2>
           </div>
-          {cycle && (
-            <Button variant="ghost" size="icon" onClick={() => setShowWizard(false)}>
-              <X className="w-6 h-6 text-gray-400" />
-            </Button>
-          )}
         </div>
 
         {step === 1 && (
@@ -591,8 +600,8 @@ export default function StudyCyclePage() {
     <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setCycle(null)} className="mr-2">
-            <ArrowLeft className="w-6 h-6 text-gray-600" />
+          <Button variant="ghost" onClick={() => setCycle(null)} className="text-gray-600 gap-2 px-2 hover:bg-gray-100 mr-2">
+            <ArrowLeft className="w-5 h-5" /> Voltar
           </Button>
           <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{cycle.name || "Planejamento"}</h1>
         </div>
