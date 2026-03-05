@@ -67,37 +67,44 @@ const navigationItems = [
 {
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
-  icon: LayoutDashboard
+  icon: LayoutDashboard,
+  color: "text-blue-300"
 },
 {
   title: "Questões",
   url: createPageUrl("Questions"),
-  icon: Files
+  icon: Files,
+  color: "text-emerald-300"
 },
 {
   title: "Provas",
   url: createPageUrl("Exams"),
-  icon: ClipboardList
+  icon: ClipboardList,
+  color: "text-amber-300"
 },
 {
   title: "Meu Edital",
   url: createPageUrl("EditalSimulator"),
-  icon: FileText
+  icon: FileText,
+  color: "text-purple-300"
 },
 {
   title: "Resumos",
   url: createPageUrl("ComoEstudarPrimeiroLugar"),
-  icon: Notebook
+  icon: Notebook,
+  color: "text-pink-300"
 },
 {
   title: "Área de Estudos",
   url: createPageUrl("Studies"),
-  icon: BookOpen
+  icon: BookOpen,
+  color: "text-cyan-300"
 },
 {
   title: "Planos",
   url: createPageUrl("Subscription"),
-  icon: CreditCard
+  icon: CreditCard,
+  color: "text-yellow-300"
 }];
 
 
