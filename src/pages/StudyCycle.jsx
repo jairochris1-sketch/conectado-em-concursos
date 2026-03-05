@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import { X, ChevronRight, Edit, RefreshCcw, CheckCircle2, Play } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 const availableSubjects = [
@@ -342,17 +343,30 @@ export default function StudyCyclePage() {
                   </Card>
                 ))}
               </div>
-              <div className="space-y-3">
-                {selectedSubjects.map(sub => (
-                  <div key={sub} className="flex items-center rounded-lg border-2" style={{ backgroundColor: getColorForSub(sub) + '30', borderColor: getColorForSub(sub) + '80' }}>
-                    <div className="px-5 py-4 font-bold border-r-2" style={{ borderColor: getColorForSub(sub) + '80', color: '#334155' }}>
-                      {calculatedPercentages[sub]?.toFixed(0)}%
-                    </div>
-                    <div className="px-4 py-3 flex-1 font-medium text-gray-800 text-center">
-                      {sub}
-                    </div>
-                  </div>
-                ))}
+              <div className="space-y-3 flex flex-col">
+                <AnimatePresence>
+                  {[...selectedSubjects]
+                    .sort((a, b) => (calculatedPercentages[b] || 0) - (calculatedPercentages[a] || 0))
+                    .map(sub => (
+                    <motion.div 
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                      key={sub} 
+                      className="flex items-center rounded-lg border-2" 
+                      style={{ backgroundColor: getColorForSub(sub) + '30', borderColor: getColorForSub(sub) + '80' }}
+                    >
+                      <div className="px-5 py-4 font-bold border-r-2" style={{ borderColor: getColorForSub(sub) + '80', color: '#334155' }}>
+                        {calculatedPercentages[sub]?.toFixed(0)}%
+                      </div>
+                      <div className="px-4 py-3 flex-1 font-medium text-gray-800 text-center">
+                        {sub}
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
             <div className="flex justify-between pt-6 border-t mt-8">
