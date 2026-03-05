@@ -40,6 +40,7 @@ export default function SubscriptionsDashboard() {
   const [cancelingId, setCancelingId] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isClearingHistory, setIsClearingHistory] = useState(false);
 
   useEffect(() => {
     loadSubscriptions();
