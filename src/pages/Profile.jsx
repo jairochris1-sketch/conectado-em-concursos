@@ -230,27 +230,27 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-          <p className="text-lg font-medium text-gray-700">Carregando perfil...</p>
+          <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando perfil...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
+    <div className="min-h-screen bg-transparent p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Meu Perfil
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Gerencie suas informações pessoais e preferências de estudo
           </p>
         </motion.div>
@@ -298,9 +298,9 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{formData.full_name || 'Usuário'}</h3>
-                      <p className="text-sm text-gray-600">{formData.email}</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <h3 className="font-medium text-gray-900 dark:text-white">{formData.full_name || 'Usuário'}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{formData.email}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Clique no ícone da câmera para alterar sua foto
                       </p>
                       <ProfileStatsCard user={user} />
@@ -318,16 +318,16 @@ export default function ProfilePage() {
                             </DialogHeader>
                             <div className="space-y-2 max-h-96 overflow-y-auto">
                               {followers.map(follower => (
-                                <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                <div key={follower.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                                   <Avatar className="w-10 h-10">
                                     <AvatarImage src={follower.following_photo_url} />
                                     <AvatarFallback>{follower.following_name?.charAt(0)}</AvatarFallback>
                                   </Avatar>
-                                  <span className="font-medium">{follower.following_name}</span>
+                                  <span className="font-medium dark:text-white">{follower.following_name}</span>
                                 </div>
                               ))}
                               {followers.length === 0 && (
-                                <p className="text-center text-gray-500 py-8">Você ainda não tem seguidores</p>
+                                <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não tem seguidores</p>
                               )}
                             </div>
                           </DialogContent>
@@ -346,16 +346,16 @@ export default function ProfilePage() {
                             </DialogHeader>
                             <div className="space-y-2 max-h-96 overflow-y-auto">
                               {following.map(follow => (
-                                <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                                <div key={follow.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                                   <Avatar className="w-10 h-10">
                                     <AvatarImage src={follow.following_photo_url} />
                                     <AvatarFallback>{follow.following_name?.charAt(0)}</AvatarFallback>
                                   </Avatar>
-                                  <span className="font-medium">{follow.following_name}</span>
+                                  <span className="font-medium dark:text-white">{follow.following_name}</span>
                                 </div>
                               ))}
                               {following.length === 0 && (
-                                <p className="text-center text-gray-500 py-8">Você ainda não segue ninguém</p>
+                                <p className="text-center text-gray-500 dark:text-gray-400 py-8">Você ainda não segue ninguém</p>
                               )}
                             </div>
                           </DialogContent>
@@ -501,8 +501,8 @@ export default function ProfilePage() {
                             key={subject.value}
                             className={`flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                               formData.preferred_subjects.includes(subject.value)
-                                ? 'bg-blue-50 border-blue-300'
-                                : 'border-gray-200 hover:bg-gray-50'
+                                ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700'
+                                : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800'
                             }`}
                           >
                             <input
@@ -511,7 +511,7 @@ export default function ProfilePage() {
                               onChange={() => handleSubjectToggle(subject.value)}
                               className="rounded text-blue-600"
                             />
-                            <span className="text-sm">{subject.label}</span>
+                            <span className="text-sm dark:text-gray-200">{subject.label}</span>
                           </label>
                         ))}
                       </div>
@@ -561,7 +561,7 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label className="text-base">Notificações por E-mail</Label>
-                      <p className="text-sm text-gray-500">Receber alertas importantes no seu e-mail.</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Receber alertas importantes no seu e-mail.</p>
                     </div>
                     <Switch 
                       checked={formData.notify_by_email} 
@@ -575,7 +575,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>Respostas no Fórum</Label>
-                        <p className="text-xs text-gray-500">Quando alguém responder às suas discussões ou comentários.</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Quando alguém responder às suas discussões ou comentários.</p>
                       </div>
                       <Switch 
                         checked={formData.notify_forum_replies} 
@@ -586,7 +586,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>Convites de Estudo</Label>
-                        <p className="text-xs text-gray-500">Quando alguém te convidar para ser parceiro(a) de estudos.</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Quando alguém te convidar para ser parceiro(a) de estudos.</p>
                       </div>
                       <Switch 
                         checked={formData.notify_study_invites} 
@@ -597,7 +597,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>Menções</Label>
-                        <p className="text-xs text-gray-500">Quando alguém te mencionar em um comentário.</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Quando alguém te mencionar em um comentário.</p>
                       </div>
                       <Switch 
                         checked={formData.notify_mentions} 
@@ -608,7 +608,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>Atualizações do Sistema</Label>
-                        <p className="text-xs text-gray-500">Avisos importantes sobre a plataforma e sua conta.</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Avisos importantes sobre a plataforma e sua conta.</p>
                       </div>
                       <Switch 
                         checked={formData.notify_system_updates} 
