@@ -51,6 +51,26 @@ export default function SubscriptionsDashboard() {
       if (!user) return;
 
       const subs = await Subscription.filter({ user_email: user.email }, '-created_date');
+      
+      try {
+        const specialUsers = await base44.entities.SpecialUser.filter({ email: user.email, is_active: true });
+        if (specialUsers.length > 0) {
+          const su = specialUsers[0];
+          // Adiciona o plano concedido pelo painel admin no topo da lista
+          subs.unshift({
+            id: su.id,
+            status: 'active',
+            plan: su.plan,
+            start_date: su.created_date,
+            end_date: su.valid_until,
+            cycle: 'manual',
+            is_special: true
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao verificar acesso manual:", err);
+      }
+
       setSubscriptions(subs);
     } catch (error) {
       console.error("Erro ao carregar assinaturas:", error);

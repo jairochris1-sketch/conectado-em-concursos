@@ -93,12 +93,12 @@ import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
-import SubscriptionsDashboard from './pages/SubscriptionsDashboard';
 import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import SubscriptionsDashboard from './pages/SubscriptionsDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -149,12 +149,12 @@ export const PAGES = {
     "Studies": Studies,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
-    "SubscriptionsDashboard": SubscriptionsDashboard,
     "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
+    "SubscriptionsDashboard": SubscriptionsDashboard,
 }
 
 export const pagesConfig = {
