@@ -4,8 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Briefcase } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search, MapPin, Briefcase, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import ConnectButton from "@/components/social/ConnectButton";
@@ -13,6 +13,7 @@ import { base44 } from "@/api/base44Client";
 import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function PeoplePage() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -68,9 +69,14 @@ export default function PeoplePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pessoas</h1>
-            <p className="text-gray-500">Descubra e conecte-se com outros estudantes</p>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pessoas</h1>
+              <p className="text-gray-500">Descubra e conecte-se com outros estudantes</p>
+            </div>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

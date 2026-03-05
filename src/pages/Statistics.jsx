@@ -3,10 +3,10 @@ import { UserAnswer, User } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { TrendingUp, Target, BookOpen, Calendar } from "lucide-react";
+import { TrendingUp, Target, BookOpen, Calendar, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, subDays, eachDayOfInterval } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 const subjectNames = {
@@ -27,6 +27,7 @@ const subjectNames = {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 export default function StatisticsPage() {
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -160,12 +161,19 @@ export default function StatisticsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Estatísticas Detalhadas
-            </h1>
-            <p className="text-gray-600">
-              Análise completa do seu desempenho nos estudos
-            </p>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 px-2 hover:bg-gray-100">
+                <ArrowLeft className="w-5 h-5" /> Voltar
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  Estatísticas Detalhadas
+                </h1>
+                <p className="text-gray-600">
+                  Análise completa do seu desempenho nos estudos
+                </p>
+              </div>
+            </div>
           </motion.div>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
             <TrendingUp className="w-12 h-12 text-blue-600 mx-auto mb-4" />
@@ -190,12 +198,19 @@ export default function StatisticsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Estatísticas Detalhadas
-          </h1>
-          <p className="text-gray-600">
-            Análise completa do seu desempenho nos estudos
-          </p>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 px-2 hover:bg-gray-100">
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Estatísticas Detalhadas
+              </h1>
+              <p className="text-gray-600">
+                Análise completa do seu desempenho nos estudos
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Cards de estatísticas gerais */}

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical } from "lucide-react";
+import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical, ArrowLeft } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
@@ -675,9 +675,14 @@ export default function CommunityPage({ embedded = false }) {
 
         <div className={`flex items-center justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
           {!embedded && (
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
-              <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+                <ArrowLeft className="w-5 h-5" /> Voltar
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
+                <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
+              </div>
             </div>
           )}
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>

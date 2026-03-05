@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserAnswer, Simulation } from '@/entities/all';
-import { RefreshCw, AlertCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import PeriodFilter from '../components/reports/PeriodFilter';
 import ProgressChart from '../components/reports/ProgressChart';
 import SubjectPerformance from '../components/reports/SubjectPerformance';
@@ -45,6 +47,7 @@ function formatDateKey(date) {
 }
 
 export default function PerformanceReports() {
+  const navigate = useNavigate();
   const [selectedPeriod, setSelectedPeriod] = useState('30');
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -197,12 +200,19 @@ export default function PerformanceReports() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Relatório de Desempenho
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Acompanhe seu progresso, identifique áreas de melhoria e compare seu desempenho.
-          </p>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+              <ArrowLeft className="w-5 h-5" /> Voltar
+            </Button>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                Relatório de Desempenho
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Acompanhe seu progresso, identifique áreas de melhoria e compare seu desempenho.
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div

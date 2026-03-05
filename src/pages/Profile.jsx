@@ -9,9 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User as UserIcon, Loader2, Users, Bell } from "lucide-react";
+import { Camera, Save, User as UserIcon, Loader2, Users, Bell, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ProfileStatsCard from "@/components/profile/ProfileStatsCard";
 import BadgesCard from "@/components/profile/BadgesCard";
@@ -112,6 +113,7 @@ const cargoOptions = [
 ];
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     full_name: "",
@@ -245,14 +247,19 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 flex items-center gap-3"
         >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Meu Perfil
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Gerencie suas informações pessoais e preferências de estudo
-          </p>
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+            <ArrowLeft className="w-5 h-5" /> Voltar
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Meu Perfil
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Gerencie suas informações pessoais e preferências de estudo
+            </p>
+          </div>
         </motion.div>
 
         <form onSubmit={handleSubmit}>

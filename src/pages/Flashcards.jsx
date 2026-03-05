@@ -4,9 +4,12 @@ import FlashcardLibrary from "../components/flashcards/FlashcardLibrary";
 import FlashcardReviewer from "../components/flashcards/FlashcardReviewer";
 import FlashcardCreator from "../components/flashcards/FlashcardCreator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Library, PlusCircle } from "lucide-react";
+import { Brain, Library, PlusCircle, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export default function FlashcardsPage() {
+  const navigate = useNavigate();
   const [flashcards, setFlashcards] = useState([]);
   const [reviewsDue, setReviewsDue] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +54,17 @@ export default function FlashcardsPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <Brain className="w-8 h-8 text-indigo-600" />
-          Meus Flashcards
-        </h1>
-        <p className="text-gray-500 mt-2">Revise conceitos importantes e fixe seu aprendizado usando os flashcards gerados a partir de seus erros.</p>
+      <div className="mb-8 flex items-start gap-3">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
+          <ArrowLeft className="w-5 h-5" /> Voltar
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <Brain className="w-8 h-8 text-indigo-600" />
+            Meus Flashcards
+          </h1>
+          <p className="text-gray-500 mt-2">Revise conceitos importantes e fixe seu aprendizado usando os flashcards gerados a partir de seus erros.</p>
+        </div>
       </div>
 
       <Tabs defaultValue="review">

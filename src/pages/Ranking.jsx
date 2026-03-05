@@ -2,10 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { UserRanking } from "@/entities/all";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
-import { Trophy, Flame } from "lucide-react";
+import { Trophy, Flame, ArrowLeft } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FollowButton from "@/components/social/FollowButton";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 const MEDAL_GRADIENTS = [
@@ -17,6 +19,7 @@ const MEDAL_GLOW = ["shadow-yellow-500/40", "shadow-slate-400/30", "shadow-amber
 const MEDAL_BORDER = ["border-yellow-400", "border-slate-300", "border-amber-600"];
 
 export default function RankingPage() {
+  const navigate = useNavigate();
   const [rankings, setRankings] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [userRanking, setUserRanking] = useState(null);
@@ -63,7 +66,10 @@ export default function RankingPage() {
       <div className="max-w-3xl mx-auto px-4 pt-8">
 
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
+        <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center relative">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="absolute left-0 top-0 text-white/70 hover:text-white hover:bg-white/10 hidden md:flex">
+            <ArrowLeft className="w-5 h-5 mr-2" /> Voltar
+          </Button>
           <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-4 py-1.5 mb-3">
             <Trophy className="w-4 h-4 text-yellow-400" />
             <span className="text-yellow-300 text-sm font-semibold">Ranking Geral</span>
