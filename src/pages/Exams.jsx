@@ -381,7 +381,14 @@ export default function Exams() {
             transition={{ delay: index * 0.03 }}>
 
               <Link
-              to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}>
+              to={userPlan === 'gratuito' ? '#' : createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
+              onClick={(e) => {
+                if (userPlan === 'gratuito') {
+                  e.preventDefault();
+                  toast.error("O acesso às provas completas é exclusivo para assinantes. Faça um upgrade para acessar.");
+                }
+              }}
+              >
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
