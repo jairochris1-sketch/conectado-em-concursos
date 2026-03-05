@@ -156,6 +156,16 @@ export default function SubscriptionsList() {
                             </Button>
                           )}
                           {subscription.cancel_approved_date && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-6 text-xs mt-1 w-max border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                              onClick={() => cancelSubscriptionFinal(subscription)}
+                            >
+                              Finalizar (Cancelar)
+                            </Button>
+                          )}
+                          {subscription.cancel_approved_date && (
                             <Badge className="bg-blue-100 text-blue-800 w-max border-blue-200 mt-1">
                               Cancelamento Aprovado
                             </Badge>
