@@ -607,58 +607,45 @@ export default function Layout({ children, currentPageName }) {
         }
       </AnimatePresence>
 
-      <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
-        <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
+      <header className="hidden lg:flex text-white border-b px-6 h-16 items-center justify-between shadow-sm sticky top-0 z-40 print-hide gap-6" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.15)' }}>
+        {/* ZONA 1: LOGO */}
+        <Link to={createPageUrl("Dashboard")} className="flex items-center gap-3 flex-shrink-0">
             <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
             alt="Logo Conectado em Concursos"
-            className="w-10 h-10 object-contain shadow-lg" />
+            className="w-9 h-9 object-contain drop-shadow-md" />
 
             <div>
-                <h2 className="text-white text-sm font-semibold text-justify normal-case leading-tight">Conectado em Concursos </h2>
-                <h2 className="font-bold text-white text-sm leading-tight"></h2>
-                
-
-
+                <h2 className="text-white text-sm font-bold tracking-tight normal-case leading-tight">Conectado em Concursos</h2>
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
+        {/* ZONA 2: MENU PRINCIPAL */}
+        <nav className="flex items-center justify-center gap-1.5 flex-1 min-w-0" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
             return (
               <Link
                 key={item.title}
-                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-transparent text-amber-100 px-2 py-2 text-base font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
-
-
-
-                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
-                onMouseEnter={(e) => {
-                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
-                }}>
-
-                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
-                        {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
-                    </Link>);
-
+                to={hasAccess ? item.url : createPageUrl("Subscription")} 
+                className={`px-3 py-2 text-sm font-medium rounded-lg relative flex items-center gap-2 transition-colors min-w-0 ${isCurrentPage ? 'text-white bg-black/20' : 'text-white/80 hover:bg-black/10 hover:text-white'}`}
+              >
+                  <item.icon className="flex-shrink-0 opacity-90" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                  <span className="truncate">{item.title}</span>
+                  {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 absolute top-1.5 right-1.5 drop-shadow-sm" />}
+              </Link>
+            );
           })}
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-
-                        <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                      variant="ghost"
+                      className="px-3 py-2 h-auto rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-black/10 flex items-center gap-1.5 border-0 transition-colors"
+                    >
                         <span>Mais</span>
+                        <ChevronDown className="w-3.5 h-3.5 opacity-80" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -722,36 +709,39 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenu>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        {/* ZONA 3: AÇÕES DO USUÁRIO */}
+        <div className="flex items-center justify-end gap-2 flex-shrink-0">
           <GlobalSearch />
-          <Button
-            onClick={() => setShowProvaUploader(true)}
-            size="sm"
-            className="text-xs px-3 py-2 text-white hover:text-white"
-            style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+          
+          <div className="hidden xl:flex items-center gap-2 mx-1 border-r border-white/20 pr-3">
+            <Button
+              onClick={() => setShowProvaUploader(true)}
+              size="sm"
+              className="text-xs px-3 h-8 text-white hover:text-white/90 bg-white/10 hover:bg-white/20 border border-white/10 transition-colors shadow-none"
+            >
+              <Upload className="w-3 h-3 mr-1.5" />
+              <span>Enviar Prova</span>
+            </Button>
+            
+            {(userPlan === 'gratuito') && (
+              <Link to={createPageUrl("Subscription")}>
+                <Button
+                  size="sm"
+                  className="text-xs px-3 h-8 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-yellow-950 font-bold shadow-sm transition-all border-0"
+                >
+                  <Star className="w-3 h-3 mr-1.5 fill-current" />
+                  Assinar Premium
+                </Button>
+              </Link>
+            )}
+          </div>
 
-            <Upload className="w-3 h-3 mr-1" />
-            <span className="hidden 2xl:inline">Enviar Prova</span>
-          </Button>
-          {(userPlan === 'gratuito') && (
-            <Link to={createPageUrl("Subscription")}>
-              <Button
-                size="sm"
-                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
-              >
-                <Star className="w-3 h-3 mr-1 fill-current" />
-                Assinar Premium
-              </Button>
-            </Link>
-          )}
-        </div>
+          <div className="flex items-center gap-1">
+            <NotificationDropdown />
+            <ThemeToggle />
 
-        <div className="flex items-center gap-2 ml-4">
-          <NotificationDropdown />
-          <ThemeToggle />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-black/10">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={user.profile_photo_url} alt={user.full_name || 'User Avatar'} />
