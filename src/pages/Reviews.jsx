@@ -727,7 +727,8 @@ export default function Reviews() {
                         <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="automatic">Automático (24h, 7d, 30d)</SelectItem>
+                        <SelectItem value="automatic">Automático Padrão (24h, 7d, 30d)</SelectItem>
+                        <SelectItem value="adaptive">Baseado no Desempenho (Adaptativo)</SelectItem>
                         <SelectItem value="custom">Personalizado</SelectItem>
                       </SelectContent>
                     </Select>

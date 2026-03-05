@@ -58,6 +58,53 @@ Deno.serve(async (req) => {
                 ]);
                 
                 return Response.json({ success: true, message: "Revisões automáticas criadas" });
+            } else if (revisionType === 'adaptive') {
+                const studyDateParts = data.study_date.split('-');
+                const studyDate = new Date(Date.UTC(studyDateParts[0], studyDateParts[1] - 1, studyDateParts[2], 12, 0, 0));
+                
+                // Calculate performance percentage
+                const questions = Number(data.questions_count) || 0;
+                const errors = Number(data.errors_count) || 0;
+                let accuracy = 0;
+                
+                if (questions > 0) {
+                    accuracy = ((questions - errors) / questions) * 100;
+                }
+
+                const intervals = [];
+                
+                if (questions === 0 || accuracy < 50) {
+                    // Ruim (Abaixo de 50%) ou sem questões para medir
+                    intervals.push({ type: "24h", days: 1 });
+                    intervals.push({ type: "3 dias", days: 3 });
+                    intervals.push({ type: "7 dias", days: 7 });
+                    intervals.push({ type: "15 dias", days: 15 });
+                    intervals.push({ type: "30 dias", days: 30 });
+                } else if (accuracy >= 50 && accuracy < 80) {
+                    // Médio (50% a 79%)
+                    intervals.push({ type: "24h", days: 1 });
+                    intervals.push({ type: "7 dias", days: 7 });
+                    intervals.push({ type: "30 dias", days: 30 });
+                } else {
+                    // Bom (80% ou mais)
+                    intervals.push({ type: "7 dias", days: 7 });
+                    intervals.push({ type: "30 dias", days: 30 });
+                }
+
+                const reviewsToCreate = intervals.map(interval => {
+                    const revDate = new Date(studyDate);
+                    revDate.setUTCDate(revDate.getUTCDate() + interval.days);
+                    return {
+                        ...reviewData,
+                        review_type: `Adaptativa (${interval.type}) - ${accuracy.toFixed(0)}% de acertos`,
+                        due_date: revDate.toISOString().split('T')[0]
+                    };
+                });
+
+                await Promise.all(reviewsToCreate.map(r => base44.asServiceRole.entities.StudyReview.create(r)));
+                
+                return Response.json({ success: true, message: "Revisões adaptativas criadas baseadas no desempenho" });
+
             } else if (revisionType === 'custom' && data.custom_start_date) {
                 // Determine recurrence
                 const startDate = new Date(data.custom_start_date);
