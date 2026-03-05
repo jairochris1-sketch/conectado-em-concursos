@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight } from "lucide-react";
+import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
