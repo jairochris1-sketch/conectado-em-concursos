@@ -393,9 +393,9 @@ export default function Exams() {
             transition={{ delay: index * 0.03 }}>
 
               <Link
-              to={userPlan === 'gratuito' ? '#' : createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
+              to={!hasAccess ? '#' : createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
               onClick={(e) => {
-                if (userPlan === 'gratuito') {
+                if (!hasAccess) {
                   e.preventDefault();
                   toast.error("O acesso às provas completas é exclusivo para assinantes. Faça um upgrade para acessar.");
                 }
@@ -415,7 +415,7 @@ export default function Exams() {
                     }
                         <CardTitle className="text-gray-900 text-base font-semibold tracking-tight dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1 flex items-center gap-2">
                           {exam.exam_name}
-                          {userPlan === 'gratuito' && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
                         </CardTitle>
                         <button
                       onClick={(e) => toggleFavorite(e, exam.id)}
@@ -461,7 +461,7 @@ export default function Exams() {
                           <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
                             {exam.exam_name}
                           </p>
-                          {userPlan === 'gratuito' && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
                         </div>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
                           <div className="flex items-center gap-1.5">
@@ -508,7 +508,7 @@ export default function Exams() {
                           <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
                             {exam.exam_name}
                           </p>
-                          {userPlan === 'gratuito' && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
                         </div>
                         <button
                       onClick={(e) => toggleFavorite(e, exam.id)}
