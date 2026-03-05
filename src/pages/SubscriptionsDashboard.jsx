@@ -30,7 +30,8 @@ const planNames = {
 const cycleNames = {
   monthly: "Mensal",
   semiannual: "Semestral",
-  annual: "Anual"
+  annual: "Anual",
+  manual: "Manual (Painel Admin)"
 };
 
 export default function SubscriptionsDashboard() {
@@ -178,15 +179,23 @@ export default function SubscriptionsDashboard() {
       </div>
 
       {activeSub && (
-        <div className="mb-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-3 shadow-sm dark:bg-green-900/20 dark:border-green-800 dark:text-green-300">
-          <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
-          <div>
-            <h3 className="font-bold text-lg">
-              {planNames[activeSub.plan] || activeSub.plan} Ativo
+        <div className="mb-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-4 shadow-sm dark:bg-green-900/20 dark:border-green-800 dark:text-green-300">
+          <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400 hidden sm:block" />
+          <div className="flex-1">
+            <h3 className="font-bold text-lg mb-2">
+              Plano Ativo
             </h3>
-            <p className="text-sm opacity-90">
-              Ativado em: {formatDateTime(activeSub.start_date || activeSub.created_date)}
-            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm opacity-90">
+              <div>
+                <span className="font-semibold">Tipo de plano:</span> {planNames[activeSub.plan] || activeSub.plan}
+              </div>
+              <div>
+                <span className="font-semibold">Início:</span> {formatDateTime(activeSub.start_date || activeSub.created_date)}
+              </div>
+              <div>
+                <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "Vitalício / Sem data")}
+              </div>
+            </div>
           </div>
         </div>
       )}
