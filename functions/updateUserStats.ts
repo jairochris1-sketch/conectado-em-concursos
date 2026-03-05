@@ -63,13 +63,19 @@ Deno.serve(async (req) => {
     let user_email = payload.user_email;
     
     // Suporte para a automação de entidade (quando uma nova resposta é criada)
-    if (!user_email && payload.event && payload.event.entity_name) {
+    if (!user_email && payload.event && payload.event.entity_name && payload.event.entity_id) {
+      // Tenta obter do payload.data se estiver disponível
       if (payload.data && payload.data.created_by) {
         user_email = payload.data.created_by;
-      } else if (payload.payload_too_large) {
+      }
+      
+      // Se não encontrou (campos built-in como created_by podem não vir no data em alguns casos), busca direto no banco
+      if (!user_email) {
         try {
-          const entityData = await base44.asServiceRole.entities[payload.event.entity_name].get(payload.event.entity_id);
-          if (entityData) user_email = entityData.created_by;
+          const entityRecords = await base44.asServiceRole.entities[payload.event.entity_name].filter({ id: payload.event.entity_id });
+          if (entityRecords && entityRecords.length > 0) {
+            user_email = entityRecords[0].created_by;
+          }
         } catch (e) {
           console.error("Erro ao buscar entidade", e);
         }
