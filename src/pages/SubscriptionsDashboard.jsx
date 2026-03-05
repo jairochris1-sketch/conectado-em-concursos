@@ -120,6 +120,15 @@ export default function SubscriptionsDashboard() {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "—";
+    try {
+      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-5xl mx-auto flex justify-center items-center min-h-[400px]">

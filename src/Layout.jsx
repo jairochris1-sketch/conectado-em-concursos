@@ -86,7 +86,7 @@ const navigationItems = [
   icon: BookOpenIcon
 },
 {
-  title: "Áreas de Estudo",
+  title: "Área de Estudos",
   url: createPageUrl("Studies"),
   icon: BookOpen
 },
@@ -159,7 +159,7 @@ const pageNameTranslations = {
   People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
-  Studies: "Áreas de Estudo",
+  Studies: "Área de Estudos",
   Schedule: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
