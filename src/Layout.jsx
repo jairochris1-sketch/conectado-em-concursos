@@ -30,7 +30,8 @@ import {
   Brain,
   Target,
   HelpCircle,
-  Users } from
+  Users,
+  Sparkles } from
 "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
