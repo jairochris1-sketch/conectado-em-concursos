@@ -876,7 +876,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
 
-        <header className="bg-white px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide">
+        <header className="bg-white px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide transition-colors duration-200">
             <h1 className="bg-transparent text-gray-900 text-xl font-bold dark:text-white">
               {pageNameTranslations[currentPageName] || currentPageName}
             </h1>
