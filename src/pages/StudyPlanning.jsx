@@ -45,20 +45,73 @@ export default function StudyPlanningPage() {
       <div className="grid gap-5">
         {options.map((opt) => (
           <Link to={opt.url} key={opt.title}>
-            <Card className={`hover:shadow-lg transition-all duration-200 border-2 ${opt.border} hover:scale-[1.01] cursor-pointer`}>
+            <Card className={`hover:shadow-lg transition-all duration-200 border-2 ${opt.border} hover:scale-[1.01] cursor-pointer bg-white dark:bg-gray-800`}>
               <CardContent className="p-6 flex items-center gap-5">
                 <div className={`p-4 rounded-xl ${opt.color} flex-shrink-0`}>
                   <opt.icon className="w-7 h-7" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-xl font-semibold text-gray-900">{opt.title}</h2>
-                  <p className="text-gray-500 mt-1 text-sm">{opt.description}</p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{opt.title}</h2>
+                  <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{opt.description}</p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
               </CardContent>
             </Card>
           </Link>
         ))}
+      </div>
+
+      <div className="mt-12 space-y-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Entenda cada modelo</h2>
+        
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-100 dark:border-blue-900 shadow-sm">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-2 mb-3">
+              <Calendar className="w-5 h-5" />
+              Cronograma de Estudos
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+              Um cronograma é um planejamento fixo que define dias e horários específicos para cada disciplina. Por exemplo: segunda-feira das 14h às 16h para Matemática, terça-feira para Português, e por aí vai...
+              <br /><br />
+              Podemos dizer que o cronograma representa um modelo mais "convencional" de controle de tarefas e atividades. É ideal para quem possui uma rotina fixa e gosta de saber exatamente o que vai estudar em cada dia da semana.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-100 dark:border-purple-900 shadow-sm">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold text-purple-700 dark:text-purple-400 flex items-center gap-2 mb-3">
+              <RefreshCcw className="w-5 h-5" />
+              Ciclo de Estudos
+            </h3>
+            <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p className="mb-4">
+                O Ciclo de Estudos é um modelo mais moderno, que prioriza o tempo dedicado a cada matéria, sem dias fixos. Ele é composto de diversas "sessões" de estudo com horários pré-determinados. Em geral, cada sessão de estudo se refere a uma disciplina, e você as estuda em sequência, retomando de onde parou após interrupções.
+              </p>
+              <p className="mb-4">Por exemplo, você poderia montar um Ciclo de Estudos com as seguintes sessões:</p>
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-4 border border-gray-100 dark:border-gray-700">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span className="font-medium">Sessão</span>
+                    <span className="font-medium">Duração</span>
+                  </li>
+                  <li className="flex justify-between"><span>Português</span> <span>2 horas</span></li>
+                  <li className="flex justify-between"><span>Raciocínio Lógico</span> <span>2 horas</span></li>
+                  <li className="flex justify-between"><span>Direito Constitucional</span> <span>2 horas</span></li>
+                  <li className="flex justify-between"><span>Direito Administrativo</span> <span>2 horas</span></li>
+                  <li className="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2"><span>Noções de Informática</span> <span>1 hora</span></li>
+                  <li className="flex justify-between font-bold pt-2"><span>Total</span> <span>9 horas</span></li>
+                </ul>
+              </div>
+              <p className="mb-4">
+                Ao iniciar os estudos do Ciclo, você primeiro estuda 2h de Português, depois 2h de Raciocínio Lógico, e assim por diante. Ao final do ciclo você terá concluído 9 horas de estudo, quando então você reinicia as sessões.
+              </p>
+              <p>
+                O Ciclo de Estudos representa um conceito simples de rodízio de matérias, mas ele traz consigo diversas implicações cognitivas que favorecem o aprendizado e a fixação dos conteúdos.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
