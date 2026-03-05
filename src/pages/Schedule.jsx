@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import ScheduleForm from "../components/schedule/ScheduleForm";
 import ScheduleView from "../components/schedule/ScheduleView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 
 const getDayName = (day) => {
