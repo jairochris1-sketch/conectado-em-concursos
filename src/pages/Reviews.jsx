@@ -729,6 +729,7 @@ export default function Reviews() {
                       <SelectContent>
                         <SelectItem value="automatic">Automático Padrão (24h, 7d, 30d)</SelectItem>
                         <SelectItem value="adaptive">Baseado no Desempenho (Adaptativo)</SelectItem>
+                        <SelectItem value="weekend">Final de Semana (Sáb/Dom mais próximo)</SelectItem>
                         <SelectItem value="custom">Personalizado</SelectItem>
                       </SelectContent>
                     </Select>

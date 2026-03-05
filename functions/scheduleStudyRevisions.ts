@@ -105,6 +105,45 @@ Deno.serve(async (req) => {
                 
                 return Response.json({ success: true, message: "Revisões adaptativas criadas baseadas no desempenho" });
 
+            } else if (revisionType === 'weekend') {
+                const studyDateParts = data.study_date.split('-');
+                const studyDate = new Date(Date.UTC(studyDateParts[0], studyDateParts[1] - 1, studyDateParts[2], 12, 0, 0));
+                
+                // Find next Saturday (6) or Sunday (0)
+                // If study day is Thu/Fri, schedule for this weekend. If earlier, maybe also this weekend.
+                let nextWeekendDay = new Date(studyDate);
+                let daysToAdd = 0;
+                const currentDayOfWeek = nextWeekendDay.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+
+                if (currentDayOfWeek === 6 || currentDayOfWeek === 0) {
+                     // If studied on weekend, schedule for next weekend
+                     daysToAdd = currentDayOfWeek === 6 ? 7 : 6; 
+                } else {
+                     // Schedule for the upcoming Saturday
+                     daysToAdd = 6 - currentDayOfWeek;
+                }
+
+                nextWeekendDay.setUTCDate(nextWeekendDay.getUTCDate() + daysToAdd);
+
+                // Also schedule a 30 day review just to keep it fresh
+                const date30d = new Date(studyDate);
+                date30d.setUTCDate(date30d.getUTCDate() + 30);
+
+                await Promise.all([
+                    base44.asServiceRole.entities.StudyReview.create({ 
+                        ...reviewData, 
+                        review_type: "Revisão de Fim de Semana", 
+                        due_date: nextWeekendDay.toISOString().split('T')[0] 
+                    }),
+                    base44.asServiceRole.entities.StudyReview.create({ 
+                        ...reviewData, 
+                        review_type: "30 dias", 
+                        due_date: date30d.toISOString().split('T')[0] 
+                    })
+                ]);
+                
+                return Response.json({ success: true, message: "Revisão de fim de semana criada" });
+
             } else if (revisionType === 'custom' && data.custom_start_date) {
                 // Determine recurrence
                 const startDate = new Date(data.custom_start_date);
