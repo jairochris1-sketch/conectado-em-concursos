@@ -634,7 +634,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.title}
                 to={hasAccess ? item.url : createPageUrl("Subscription")}
-                className={`group relative flex items-center gap-2 px-3 py-2 rounded-md font-medium text-sm transition-all duration-150 ease-in-out min-w-0 ${
+                className={`group relative flex items-center gap-2 px-3 py-2 rounded-md font-medium transition-all duration-150 ease-in-out min-w-0 ${
                   isCurrentPage ? 'text-white' : 'text-white/70 hover:text-white'
                 }`}
                 style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.15)' } : {}}
@@ -654,10 +654,10 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="group relative flex items-center gap-1.5 px-3 py-2 h-auto rounded-md font-medium text-sm text-white/70 hover:text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0"
+                className="group relative flex items-center gap-1.5 px-3 py-2 h-auto rounded-md font-medium text-white/70 hover:text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0"
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                        <span className="truncate tracking-wide text-sm">Mais</span>
+                        <span className="truncate tracking-wide">Mais</span>
                         <ChevronDown size={18} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out" />
                     </Button>
                 </DropdownMenuTrigger>
