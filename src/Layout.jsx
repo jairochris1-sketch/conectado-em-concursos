@@ -885,8 +885,7 @@ export default function Layout({ children, currentPageName }) {
         </header>
 
         <div
-          className="flex-1 overflow-auto pb-20 md:pb-0"
-          style={{ backgroundColor: '#1c2c34' }}
+          className="flex-1 overflow-auto pb-20 md:pb-0 bg-gray-50 dark:bg-gray-900 transition-colors duration-200"
           role="main">
 
           {children}
