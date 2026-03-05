@@ -190,7 +190,8 @@ const pageNameTranslations = {
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
   NotebookStats: "Estatísticas do Caderno",
-  Flashcards: "Flashcards"
+  Flashcards: "Flashcards",
+  StudyPlanning: "Planejamento de Estudos"
 };
 
 const featureAccess = {
@@ -211,6 +212,8 @@ const featureAccess = {
   'Visualização de Prova': ['padrao', 'avancado'],
   'Pessoas': ['padrao', 'avancado'],
   'Área de Estudos': ['padrao', 'avancado'],
+  'Criar Planejamento de Estudos': ['padrao', 'avancado'],
+  'Planejamento de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
   'Revisões': ['padrao', 'avancado'],
   'Planos de Estudo': ['padrao', 'avancado'],
