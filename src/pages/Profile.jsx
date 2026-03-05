@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ProfileStatsCard from "@/components/profile/ProfileStatsCard";
+import BadgesCard from "@/components/profile/BadgesCard";
 // Link is no longer used, but keeping it for now if createPageUrl still uses it or other parts. If not, it can be removed.
 // createPageUrl is no longer used, can be removed if not used elsewhere.
 
