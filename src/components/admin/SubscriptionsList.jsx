@@ -126,6 +126,11 @@ export default function SubscriptionsList() {
                       <Badge className={getStatusColor(subscription.status)}>
                         {getStatusText(subscription.status)}
                       </Badge>
+                      {subscription.cancel_requested && subscription.status !== 'cancelled' && (
+                        <Badge className="bg-orange-100 text-orange-800 ml-2 mt-1 block w-max border-orange-200">
+                          Solicitou Cancelamento
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">
