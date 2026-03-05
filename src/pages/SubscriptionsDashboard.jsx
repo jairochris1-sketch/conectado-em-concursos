@@ -206,9 +206,11 @@ export default function SubscriptionsDashboard() {
               <div>
                 <span className="font-semibold">Início:</span> {formatDateTime(activeSub.start_date || activeSub.created_date)}
               </div>
-              <div>
-                <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "Vitalício / Sem data")}
-              </div>
+              {!(activeSub.cycle === 'manual' || activeSub.is_special) && (
+                <div>
+                  <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "Vitalício / Sem data")}
+                </div>
+              )}
             </div>
           </div>
         </div>
