@@ -257,7 +257,16 @@ export default function SubscriptionsDashboard() {
                       )}
                     </div>
                     
-                    {isCancelable && (
+                    {sub.cancel_requested ? (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        disabled
+                        className="text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800 dark:text-orange-400 opacity-100"
+                      >
+                        Enviado solicitação de cancelamento
+                      </Button>
+                    ) : isCancelable && (
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -266,7 +275,7 @@ export default function SubscriptionsDashboard() {
                         disabled={cancelingId === sub.id}
                       >
                         {cancelingId === sub.id ? (
-                          <><RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Cancelando...</>
+                          <><RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Processando...</>
                         ) : (
                           "Cancelar Assinatura"
                         )}
