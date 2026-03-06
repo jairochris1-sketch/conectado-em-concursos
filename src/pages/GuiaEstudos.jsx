@@ -375,6 +375,26 @@ export default function GuiaEstudos() {
                 '--tw-prose-bold': darkMode ? '#ffffff' : '#111827'
               }}
             />
+            <div className="mt-12 flex justify-end">
+              <Button 
+                onClick={() => {
+                  const isCompleted = dbProgress[selectedArticle.id] === 100;
+                  saveArticleProgress(selectedArticle.id, isCompleted ? 0 : 100);
+                  if (!isCompleted) {
+                    toast.success("Artigo marcado como concluído!");
+                  }
+                }}
+                className={dbProgress[selectedArticle.id] === 100 
+                  ? "bg-green-600 hover:bg-green-700 text-white" 
+                  : "bg-indigo-600 hover:bg-indigo-700 text-white"}
+              >
+                {dbProgress[selectedArticle.id] === 100 ? (
+                  <><CheckCircle2 className="w-4 h-4 mr-2" /> Concluído</>
+                ) : (
+                  "Marcar como Concluído"
+                )}
+              </Button>
+            </div>
           </article>
         </div>
       </div>
