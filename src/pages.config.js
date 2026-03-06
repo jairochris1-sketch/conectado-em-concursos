@@ -102,6 +102,7 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import WeeklyTrail from './pages/WeeklyTrail';
 import __Layout from './Layout.jsx';
 
 
@@ -161,6 +162,7 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
+    "WeeklyTrail": WeeklyTrail,
 }
 
 export const pagesConfig = {
