@@ -11,6 +11,7 @@ import FollowButton from "@/components/social/FollowButton";
 import ConnectButton from "@/components/social/ConnectButton";
 import { base44 } from "@/api/base44Client";
 import { encryptEmail } from "@/components/security/emailCrypto";
+import { getPeople } from "@/functions/getPeople";
 
 export default function PeoplePage() {
   const navigate = useNavigate();
