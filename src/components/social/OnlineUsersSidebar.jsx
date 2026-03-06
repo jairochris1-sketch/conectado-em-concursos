@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { encryptEmail } from "@/components/security/emailCrypto";
+import UserLink from "@/components/social/UserLink";
 
 export default function OnlineUsersSidebar() {
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -67,12 +67,14 @@ export default function OnlineUsersSidebar() {
                   </Avatar>
                   <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-slate-800 rounded-full"></div>
               </div>
-              <Link 
-                  to={createPageUrl("UserProfile") + `?u=${encryptEmail(user.user_email)}`} 
+              <UserLink 
+                  email={user.user_email}
+                  name={user.user_name}
+                  photo={user.user_photo}
                   className="text-sm font-medium text-slate-200 hover:text-blue-400 truncate flex-1"
               >
                 {user.user_name || 'Usuário'}
-              </Link>
+              </UserLink>
             </div>
           ))}
         </div>
