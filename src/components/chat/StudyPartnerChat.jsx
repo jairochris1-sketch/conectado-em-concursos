@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff } from "lucide-react";
+import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff, Minus, Smile } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -12,7 +12,17 @@ import { notificationService } from "@/components/chat/notificationService";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover, PopoverContent, PopoverTrigger
+} from "@/components/ui/popover";
 import ChatDebugValidator from "@/components/chat/ChatDebugValidator";
+
+const EMOJIS = ["😀","😂","🤣","😊","😍","🥰","😘","😜","😎","🤩",
+  "😏","😒","😔","😕","😣","😫","🥺","😢","😭","😤","😠","😡",
+  "🤯","😳","😱","😨","😰","😓","🤗","🤔","🤭","🤫","😶","😐",
+  "🙄","😯","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧",
+  "👍","👎","👏","🙌","👐","🤲","🤝","🙏","✌️","🤞","🤟","🤘",
+  "🤙","👈","👉","👆","👇","❤️","💔","💕","💞","💓","💗","💖"];
 
 const HEARTBEAT_INTERVAL = 30_000;
 const ONLINE_THRESHOLD_MS = 3 * 60 * 1000;
