@@ -326,7 +326,7 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
-    const iconSizes = { sm: '1.125rem', md: '1.375rem', lg: '1.625rem' };
+    const iconSizes = { sm: '1.25rem', md: '1.5rem', lg: '1.875rem' };
 
     setPrimaryColor(savedColor);
     setIconSize(savedIconSizeKey);
@@ -342,7 +342,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleIconSizeChange = (sizeKey) => {
-    const iconSizes = { sm: '1.125rem', md: '1.375rem', lg: '1.625rem' };
+    const iconSizes = { sm: '1.25rem', md: '1.5rem', lg: '1.875rem' };
     setIconSize(sizeKey);
     localStorage.setItem('iconSizeKey', sizeKey);
     document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
@@ -708,7 +708,7 @@ export default function Layout({ children, currentPageName }) {
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
                                     className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-white hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
-                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-4 h-4 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
+                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span className="truncate text-white font-medium">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
@@ -728,7 +728,7 @@ export default function Layout({ children, currentPageName }) {
                             <DropdownMenuItem asChild>
                                  <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
+                                        <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Geral</span>
                                     </div>
                                 </Link>
@@ -736,7 +736,7 @@ export default function Layout({ children, currentPageName }) {
                             <DropdownMenuItem asChild>
                                  <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
+                                        <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Simulados Digital</span>
                                     </div>
                                 </Link>
@@ -930,7 +930,7 @@ export default function Layout({ children, currentPageName }) {
           <ThemeToggle />
         </div>
 
-        {showChat && <ChatWidget />}
+        <ChatWidget />
 
         <AnimatePresence>
           {showScrollTop &&
