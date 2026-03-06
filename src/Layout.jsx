@@ -597,8 +597,8 @@ export default function Layout({ children, currentPageName }) {
                           key={item.title}
                           to={hasAccess ? item.url : createPageUrl("Subscription")}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
-                          isCurrentPage ? 'bg-white/20 text-white' : 'text-white'}`
+                          className={`flex items-center justify-between p-3 rounded-lg border border-transparent transition-all duration-200 active:scale-95 ${
+                          isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:border-transparent'}`
                           }
                           onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
                           onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
@@ -622,7 +622,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("Admin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent hover:border-transparent transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
@@ -632,7 +632,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("SDAdmin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent hover:border-transparent transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
