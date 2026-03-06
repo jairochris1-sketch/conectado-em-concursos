@@ -711,10 +711,10 @@ export default function Layout({ children, currentPageName }) {
                               const hasAccess = checkAccess(item.title, userPlan, isAdmin);
                               const isCurrentPage = location.pathname === item.url;
                               return (
-                                <DropdownMenuItem key={item.title} asChild>
+                                <DropdownMenuItem key={item.title} asChild className="focus:bg-transparent">
                                   <Link
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent'}`}>
+                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent'}`}>
                                     <div className="flex items-center gap-2">
                                         <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span className="truncate text-white font-medium">{item.title}</span>
@@ -733,16 +733,16 @@ export default function Layout({ children, currentPageName }) {
                             Administração
                           </h3>
                           <div className="space-y-1">
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent hover:bg-white/10 hover:border-transparent transition-colors">
+                            <DropdownMenuItem asChild className="focus:bg-transparent">
+                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent transition-colors">
                                     <div className="flex items-center gap-2">
                                         <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Geral</span>
                                     </div>
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent hover:bg-white/10 hover:border-transparent transition-colors">
+                            <DropdownMenuItem asChild className="focus:bg-transparent">
+                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent transition-colors">
                                     <div className="flex items-center gap-2">
                                         <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Simulados Digital</span>
