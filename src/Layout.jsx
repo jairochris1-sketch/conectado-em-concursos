@@ -317,6 +317,7 @@ export default function Layout({ children, currentPageName }) {
 
   const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
   const [iconSize, setIconSize] = useState(localStorage.getItem('iconSizeKey') || 'md');
+  const [iconColorMode, setIconColorMode] = useState(localStorage.getItem('iconColorMode') || 'colored');
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
@@ -326,10 +327,12 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
+    const savedIconColorMode = localStorage.getItem('iconColorMode') || 'colored';
     const iconSizes = { sm: '1.25rem', md: '1.5rem', lg: '1.875rem' };
 
     setPrimaryColor(savedColor);
     setIconSize(savedIconSizeKey);
+    setIconColorMode(savedIconColorMode);
     document.documentElement.style.setProperty('--primary-color', savedColor);
     document.documentElement.style.setProperty('--icon-size', iconSizes[savedIconSizeKey]);
   }, []);
@@ -346,6 +349,11 @@ export default function Layout({ children, currentPageName }) {
     setIconSize(sizeKey);
     localStorage.setItem('iconSizeKey', sizeKey);
     document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
+  };
+
+  const handleIconColorModeChange = (mode) => {
+    setIconColorMode(mode);
+    localStorage.setItem('iconColorMode', mode);
   };
 
   React.useEffect(() => {
@@ -566,7 +574,7 @@ export default function Layout({ children, currentPageName }) {
                       onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                         <div className="flex items-center gap-3 min-w-0">
-                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
+                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
                           <span className="truncate text-sm font-bold text-white">{item.title}</span>
                         </div>
                         {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
@@ -596,7 +604,7 @@ export default function Layout({ children, currentPageName }) {
                           onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                             <div className="flex items-center gap-3 min-w-0">
-                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
+                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
                               <span className="truncate text-sm font-medium text-white">{item.title}</span>
                             </div>
                             {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
@@ -671,7 +679,7 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
+                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
                         <span className="truncate tracking-wide font-bold text-white w-full">{item.title}</span>
                         {!hasAccess && <Lock className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-yellow-400 absolute top-0.5 right-0.5" />}
                     </Link>);
@@ -708,7 +716,7 @@ export default function Layout({ children, currentPageName }) {
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
                                     className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-white hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
-                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span className="truncate text-white font-medium">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
@@ -851,6 +859,27 @@ export default function Layout({ children, currentPageName }) {
                         className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
                       >
                         G
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-200">Cor dos Ícones</span>
+                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconColorModeChange('white'); }}
+                        className={`h-6 px-2 text-[10px] rounded-sm ${iconColorMode === 'white' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        Branco
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.preventDefault(); handleIconColorModeChange('colored'); }}
+                        className={`h-6 px-2 text-[10px] rounded-sm ${iconColorMode === 'colored' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
+                      >
+                        Cor
                       </Button>
                     </div>
                   </div>
