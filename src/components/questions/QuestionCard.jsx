@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Added RadioGroup, RadioGroupItem
-import { Label } from '@/components/ui/label'; // Added Label
-import { Alert, AlertDescription } from '@/components/ui/alert'; // Added Alert, AlertDescription
-import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase, Pencil } from 'lucide-react'; // Added Building, Calendar, Briefcase, Pencil
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase, Pencil, Sparkles, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils'; // Added cn utility
+import { cn } from '@/lib/utils';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 import CommentSection from '../comments/CommentSection';
 
