@@ -323,7 +323,7 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
-    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
+    const iconSizes = { sm: '1.125rem', md: '1.375rem', lg: '1.625rem' };
 
     setPrimaryColor(savedColor);
     setIconSize(savedIconSizeKey);
@@ -339,7 +339,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleIconSizeChange = (sizeKey) => {
-    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
+    const iconSizes = { sm: '1.125rem', md: '1.375rem', lg: '1.625rem' };
     setIconSize(sizeKey);
     localStorage.setItem('iconSizeKey', sizeKey);
     document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
@@ -668,7 +668,7 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon size={20} strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out w-[18px] h-[18px] xl:w-[22px] xl:h-[22px] ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
+                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
                         <span className="truncate tracking-wide font-bold text-white w-full">{item.title}</span>
                         {!hasAccess && <Lock className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-yellow-400 absolute top-0.5 right-0.5" />}
                     </Link>);
@@ -681,7 +681,7 @@ export default function Layout({ children, currentPageName }) {
                 className="group relative flex flex-col items-center justify-center gap-1 px-1 xl:px-2 py-1 xl:py-1.5 h-auto rounded-md font-bold text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0 text-[10px] lg:text-[11px] xl:text-xs text-center"
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                        <ChevronDown size={20} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-white w-[18px] h-[18px] xl:w-[22px] xl:h-[22px]" />
+                        <ChevronDown strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-white" style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
                         <span className="truncate tracking-wide w-full">Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
@@ -772,7 +772,6 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex items-center gap-1 xl:gap-2 ml-1 xl:ml-4">
           <ChatDropdown />
           <NotificationDropdown />
-          <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -886,7 +885,6 @@ export default function Layout({ children, currentPageName }) {
               </div>
               <div className="flex items-center gap-2">
                 <GlobalSearch isMobile />
-                <ThemeToggle />
                 {(userPlan === 'gratuito') && (
                   <Link to={createPageUrl("Subscription")}>
                     <Button
@@ -948,6 +946,12 @@ export default function Layout({ children, currentPageName }) {
       <ChatWidget />
       <GlobalStudyPartnerChat currentUser={user} />
       {user && <UserPresenceUpdater user={user} />}
+      
+      <div className="fixed bottom-24 left-4 md:bottom-6 md:left-6 z-40 print-hide">
+        <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 p-1 flex items-center justify-center">
+          <ThemeToggle />
+        </div>
+      </div>
       </div>);
 
 }
