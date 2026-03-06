@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserPlus, UserCheck, Clock, Ban, X } from "lucide-react";
 import { toast } from "sonner";
 import { createPageUrl } from "@/utils";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 /**
  * ConnectButton - shows connection state between currentUser and targetEmail.
@@ -12,24 +13,37 @@ import { createPageUrl } from "@/utils";
 export default function ConnectButton({ currentUser, targetEmail, targetName, targetPhoto, size = "sm", userPlan = 'padrao' }) {
   const [status, setStatus] = useState("loading"); // loading | not_connected | pending_sent | pending_received | connected | blocked
   const [connectionId, setConnectionId] = useState(null);
+  const queryClient = useQueryClient();
+
+  const { data: userConnections = [], isLoading } = useQuery({
+    queryKey: ['connections', currentUser?.email],
+    queryFn: async () => {
+      const [asRequester, asTarget] = await Promise.all([
+        base44.entities.Connection.filter({ requester_email: currentUser.email }),
+        base44.entities.Connection.filter({ target_email: currentUser.email }),
+      ]);
+      return [...asRequester, ...asTarget];
+    },
+    enabled: !!currentUser?.email,
+    staleTime: 1000 * 60 * 5,
+  });
 
   useEffect(() => {
     if (!currentUser || !targetEmail || currentUser.email === targetEmail) return;
-    loadStatus();
-  }, [currentUser?.email, targetEmail]);
+    if (isLoading) return;
 
-  const loadStatus = async () => {
-    const [asRequester, asTarget] = await Promise.all([
-      base44.entities.Connection.filter({ requester_email: currentUser.email, target_email: targetEmail }),
-      base44.entities.Connection.filter({ requester_email: targetEmail, target_email: currentUser.email }),
-    ]);
+    const conn = userConnections.find(c => 
+      (c.requester_email === currentUser.email && c.target_email === targetEmail) ||
+      (c.requester_email === targetEmail && c.target_email === currentUser.email)
+    );
 
-    const all = [...asRequester, ...asTarget];
-    if (all.length === 0) { setStatus("not_connected"); setConnectionId(null); return; }
+    if (!conn) {
+      setStatus("not_connected");
+      setConnectionId(null);
+      return;
+    }
 
-    const conn = all[0];
     setConnectionId(conn.id);
-
     if (conn.status === "accepted") setStatus("connected");
     else if (conn.status === "blocked") setStatus("blocked");
     else if (conn.status === "pending") {
@@ -38,7 +52,7 @@ export default function ConnectButton({ currentUser, targetEmail, targetName, ta
     } else {
       setStatus("not_connected");
     }
-  };
+  }, [currentUser?.email, targetEmail, userConnections, isLoading]);
 
   const sendRequest = async () => {
     if (userPlan === 'gratuito') {
@@ -68,6 +82,7 @@ export default function ConnectButton({ currentUser, targetEmail, targetName, ta
         related_user_photo: currentUser.profile_photo_url,
       });
       toast.success("Pedido de conexão enviado!");
+      queryClient.invalidateQueries({ queryKey: ['connections', currentUser?.email] });
     } catch {
       toast.error("Erro ao enviar pedido");
       setStatus("not_connected");
@@ -80,6 +95,7 @@ export default function ConnectButton({ currentUser, targetEmail, targetName, ta
     setStatus("not_connected");
     setConnectionId(null);
     toast.success("Pedido cancelado");
+    queryClient.invalidateQueries({ queryKey: ['connections', currentUser?.email] });
   };
 
   const accept = async () => {
@@ -87,6 +103,7 @@ export default function ConnectButton({ currentUser, targetEmail, targetName, ta
     await base44.entities.Connection.update(connectionId, { status: "accepted" });
     setStatus("connected");
     toast.success("Conexão aceita!");
+    queryClient.invalidateQueries({ queryKey: ['connections', currentUser?.email] });
   };
 
   if (!currentUser || currentUser.email === targetEmail) return null;
