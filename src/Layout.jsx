@@ -369,13 +369,27 @@ export default function Layout({ children, currentPageName }) {
 
   React.useEffect(() => {
     const checkAuthAndLoad = async () => {
+      let userData;
       try {
-        let userData = await User.me();
+        userData = await base44.auth.me();
+      } catch (error) {
+        console.warn("User not authenticated, redirecting to login:", error);
+        await base44.auth.redirectToLogin();
+        return;
+      }
 
-        const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
+      try {
+        let activeSubscriptions = [];
+        try {
+          activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
+        } catch (e) { console.warn("Error fetching subscriptions", e); }
 
-        // Verificar se é um usuário especial
-        const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
+        let specialUsers = [];
+        try {
+          // Verificar se é um usuário especial
+          specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
+        } catch (e) { console.warn("Error fetching special users", e); }
+        
         let userPlan = userData.current_plan || 'gratuito';
 
         if (activeSubscriptions.length > 0) {
@@ -414,17 +428,19 @@ export default function Layout({ children, currentPageName }) {
         }
 
         if (userData.email) {
-          // Buscar estatísticas pré-calculadas
-          const stats = await UserStats.filter({ user_email: userData.email });
+          try {
+            // Buscar estatísticas pré-calculadas
+            const stats = await UserStats.filter({ user_email: userData.email });
 
-          if (stats.length > 0) {
-            setUserStats(stats[0]);
-            setSidebarStats({
-              streak: stats[0].streak_days || 0,
-              todayQuestions: stats[0].today_questions || 0,
-              accuracy: stats[0].accuracy_rate || 0
-            });
-          }
+            if (stats.length > 0) {
+              setUserStats(stats[0]);
+              setSidebarStats({
+                streak: stats[0].streak_days || 0,
+                todayQuestions: stats[0].today_questions || 0,
+                accuracy: stats[0].accuracy_rate || 0
+              });
+            }
+          } catch (e) { console.warn("Error fetching user stats", e); }
         }
 
         if (!userData.onboarding_complete) {
@@ -433,8 +449,7 @@ export default function Layout({ children, currentPageName }) {
           }
         }
       } catch (error) {
-        console.warn("User not authenticated, redirecting to login:", error);
-        await base44.auth.redirectToLogin();
+        console.error("Error loading user data:", error);
       }
     };
     checkAuthAndLoad();
