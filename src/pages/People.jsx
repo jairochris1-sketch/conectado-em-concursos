@@ -51,7 +51,7 @@ export default function PeoplePage() {
         setUserPlan(plan);
       }
 
-      const res = await base44.functions.invoke('getPeople', { search: '' });
+      const res = await getPeople({ search: '' });
       if (res.data?.users) {
         setUsers(res.data.users);
       }
