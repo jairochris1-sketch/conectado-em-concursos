@@ -574,7 +574,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end z-10" onClick={(e) => e.stopPropagation()}>
+      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end z-10">
         <input
           ref={inputRef}
           value={text}
