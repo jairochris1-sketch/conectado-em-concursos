@@ -714,7 +714,7 @@ export default function Layout({ children, currentPageName }) {
                                 <DropdownMenuItem key={item.title} asChild className="focus:bg-transparent p-0">
                                   <Link
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent focus:bg-white/10'}`}>
+                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-white'}`}>
                                     <div className="flex items-center gap-2">
                                         <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span className="truncate text-white font-medium">{item.title}</span>
@@ -734,7 +734,7 @@ export default function Layout({ children, currentPageName }) {
                           </h3>
                           <div className="space-y-1">
                             <DropdownMenuItem asChild className="focus:bg-transparent p-0">
-                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 transition-colors">
+                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-red-300 transition-colors">
                                     <div className="flex items-center gap-2">
                                         <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Geral</span>
@@ -742,7 +742,7 @@ export default function Layout({ children, currentPageName }) {
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild className="focus:bg-transparent p-0">
-                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 transition-colors">
+                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-red-300 transition-colors">
                                     <div className="flex items-center gap-2">
                                         <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span>Admin Simulados Digital</span>
