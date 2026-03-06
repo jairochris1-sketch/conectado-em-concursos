@@ -464,7 +464,7 @@ export default function CommunityPage({ embedded = false }) {
                 ← Voltar
               </Button>
 
-              <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
+              <Card className="mb-6 bg-white dark:bg-slate-900 shadow-sm border border-gray-200 dark:border-gray-800">
             <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
                 <div className="flex items-start gap-3 w-full">
@@ -475,7 +475,7 @@ export default function CommunityPage({ embedded = false }) {
                   <div className="flex-1 min-w-0 w-full">
                           <CardTitle className="text-xl break-words text-gray-900 dark:text-slate-200 block w-full">{selectedPost.title}</CardTitle>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <p className="flex items-center text-sm text-gray-400 flex-wrap">
+                            <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
                               <UserLink
                                 email={selectedPost.author_email}
@@ -485,7 +485,7 @@ export default function CommunityPage({ embedded = false }) {
                                 {selectedPost.author_name}
                               </UserLink>
                               <StaffBadge email={selectedPost.author_email} className="ml-1" />
-                              <span className="ml-1">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
+                              <span className="ml-1 text-gray-400">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
                             </p>
                       <FollowButton
                         targetEmail={selectedPost.author_email}
@@ -503,12 +503,12 @@ export default function CommunityPage({ embedded = false }) {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 items-center">
-                  <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
-                  {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
+                  <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-2.5 py-0.5 text-xs font-semibold rounded-md border-transparent hover:bg-gray-200 dark:hover:bg-gray-700">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
+                  {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">✓ Resolvido</Badge>}
                   {selectedPost.author_email === user.email &&
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -528,22 +528,22 @@ export default function CommunityPage({ embedded = false }) {
               </div>
             </CardHeader>
             <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg">
-              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300 w-full break-words">{selectedPost.content}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500 mt-4 border-t border-gray-100 dark:border-slate-800 pt-4">
+              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300 w-full break-words text-base leading-relaxed">{selectedPost.content}</p>
+              <div className="flex items-center gap-4 text-sm text-gray-500 mt-6 border-t border-gray-100 dark:border-slate-800 pt-4">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleLikePost(selectedPost)}
-                  className={selectedPost.liked_by?.includes(user.email) ? "text-blue-600" : ""}>
+                  className={`hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 ${selectedPost.liked_by?.includes(user.email) ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20" : ""}`}>
 
-                  <ThumbsUp className="w-4 h-4 mr-1" />
+                  <ThumbsUp className="w-4 h-4 mr-1.5" />
                   {selectedPost.likes_count || 0}
                 </Button>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5 text-gray-500">
                   <MessageSquare className="w-4 h-4" />
                   {selectedPost.replies_count || 0}
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5 text-gray-500">
                   <Eye className="w-4 h-4" />
                   {selectedPost.views_count || 0}
                 </span>
