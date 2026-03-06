@@ -454,6 +454,13 @@ export default function ComoEstudarPrimeiroLugar() {
         article={selectedArticle}
         isOpen={!!selectedArticle}
         onClose={() => setSelectedArticle(null)}
+        isCompleted={selectedArticle ? dbProgress[selectedArticle.id] === 100 : false}
+        onMarkCompleted={(completed) => {
+          if (selectedArticle) {
+            saveArticleProgress(selectedArticle.id, completed ? 100 : 0);
+            if (completed) toast.success("Artigo marcado como concluído!");
+          }
+        }}
       />
     </div>
   );
