@@ -25,6 +25,7 @@ export default function ChatWidget() {
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const [totalMessagesCount, setTotalMessagesCount] = useState(0);
   const [messagesOffset, setMessagesOffset] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messagesStartRef = useRef(null);
