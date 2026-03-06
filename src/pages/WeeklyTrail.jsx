@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, GripVertical, CheckCircle2, Trash, Edit2, Copy, RotateCcw, Target, BookOpen, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, GripVertical, CheckCircle2, Trash, Edit2, Copy, RotateCcw, Target, BookOpen, Settings, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
