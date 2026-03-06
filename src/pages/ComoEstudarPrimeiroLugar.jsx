@@ -82,6 +82,7 @@ export default function ComoEstudarPrimeiroLugar() {
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com'));
 
+        setCurrentUser(user);
         let plan = 'gratuito';
         if (user) {
           const [activeSubs, specialUsers] = await Promise.all([
