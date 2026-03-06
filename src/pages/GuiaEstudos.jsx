@@ -659,7 +659,7 @@ export default function GuiaEstudos() {
                     <h3 className={`text-lg font-semibold mb-2 break-words break-all sm:break-normal ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                       {a.author && <Badge variant="outline">{a.author}</Badge>}
-                      {readingProgress[a.id] && (
+                      {readingProgress[a.id] && dbProgress[a.id] !== 100 && (
                         <Badge className="bg-blue-100 text-blue-800">
                           <BookMarked className="w-3 h-3 mr-1" />
                           Continuar leitura
@@ -669,6 +669,12 @@ export default function GuiaEstudos() {
                         <Badge className="bg-red-100 text-red-800">
                           <Heart className="w-3 h-3 mr-1 fill-current" />
                           Favorito
+                        </Badge>
+                      )}
+                      {dbProgress[a.id] === 100 && (
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          <CheckCircle2 className="w-3 h-3 mr-1" />
+                          Concluído
                         </Badge>
                       )}
                     </div>
