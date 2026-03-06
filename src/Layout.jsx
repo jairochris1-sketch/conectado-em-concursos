@@ -770,6 +770,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         <div className="flex items-center gap-1 xl:gap-2 ml-1 xl:ml-4">
+          <ChatDropdown />
           <NotificationDropdown />
           <ThemeToggle />
 
