@@ -51,7 +51,6 @@ import ActivityFeed from './pages/ActivityFeed';
 import Admin from './pages/Admin';
 import AssistirAula from './pages/AssistirAula';
 import Calendar from './pages/Calendar';
-import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
@@ -102,6 +101,7 @@ import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
+import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -110,7 +110,6 @@ export const PAGES = {
     "Admin": Admin,
     "AssistirAula": AssistirAula,
     "Calendar": Calendar,
-    "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
@@ -161,6 +160,7 @@ export const PAGES = {
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
+    "Community": Community,
 }
 
 export const pagesConfig = {
