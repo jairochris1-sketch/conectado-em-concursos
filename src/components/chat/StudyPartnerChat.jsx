@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff, Minus, Smile } from "lucide-react";
+import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff, Minus, Smile, Search, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -78,6 +78,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [showDebug, setShowDebug] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [prefs, setPrefs] = useState(notificationService.getPreferences());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const containerRef = useRef(null);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
@@ -393,6 +395,18 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     }
   };
 
+  const handleClearMessages = async (e) => {
+    e?.preventDefault();
+    if (!window.confirm("Tem certeza que deseja limpar o histórico desta conversa?")) return;
+    try {
+      await base44.functions.invoke('clearStudyPartnerMessages', { partner_email: partner.email });
+      setMessages([]);
+      toast.success("Histórico apagado com sucesso.");
+    } catch (err) {
+      toast.error("Erro ao apagar histórico.");
+    }
+  };
+
   const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
   const isScrolledToBottom = () => {
@@ -454,7 +468,11 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
         {/* Settings inside header for Facebook feel */}
         {!isMinimized && (
-          <div className="flex items-center" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0" onClick={(e) => { e.stopPropagation(); setIsSearching(!isSearching); if(isSearching) setSearchQuery(""); }}>
+              <Search className="w-[14px] h-[14px]" />
+            </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0">
@@ -469,6 +487,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
                 <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-2">
                   <span>Som no Chat</span>
                   {prefs.sound ? <span className="text-[#54c042]">Ativo</span> : <span className="text-gray-400">Inativo</span>}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleClearMessages} className="flex items-center text-red-500 cursor-pointer py-2 mt-1 border-t">
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />
+                  <span>Limpar Histórico</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -492,6 +514,22 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
       {!isMinimized && (
         <>
+      {isSearching && (
+        <div className="bg-[#f0f2f5] p-1.5 flex items-center border-b border-[#ddd]" onClick={(e) => e.stopPropagation()}>
+          <Search className="w-3.5 h-3.5 text-gray-500 ml-1 mr-1.5" />
+          <input
+            autoFocus
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar nas mensagens..."
+            className="flex-1 bg-transparent text-[11px] outline-none px-1 text-gray-700"
+          />
+          <Button variant="ghost" size="icon" className="h-5 w-5 text-gray-500 hover:text-gray-700" onClick={() => { setIsSearching(false); setSearchQuery(""); }}>
+            <X className="w-3 h-3" />
+          </Button>
+        </div>
+      )}
+
       {/* Debug Panel */}
       {showDebug && (
         <div className="p-3 bg-gray-900 border-b border-gray-700 max-h-60 overflow-y-auto">
@@ -514,14 +552,14 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         {messages.length === 0 && (
           <p className="text-center text-gray-400 text-xs mt-4">Nenhuma mensagem ainda.</p>
         )}
-        {messages.map((msg, i) => {
+        {messages.filter(msg => !searchQuery || msg.content.toLowerCase().includes(searchQuery.toLowerCase())).map((msg, i, arr) => {
           const isMe = msg.sender_email === currentUser.email;
           const senderName = isMe ? currentUser.full_name?.split(' ')[0] : partner.name?.split(' ')[0];
           const timeObj = msg.timestamp ? new Date(msg.timestamp) : new Date(msg.created_date);
           const time = timeObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
           // Determine if we should show the header (if previous message is from someone else or > 5 mins ago)
-          const prevMsg = messages[i - 1];
+          const prevMsg = arr[i - 1];
           const prevTimeObj = prevMsg ? (prevMsg.timestamp ? new Date(prevMsg.timestamp) : new Date(prevMsg.created_date)) : null;
           const showHeader = !prevMsg || prevMsg.sender_email !== msg.sender_email || 
                              (timeObj - prevTimeObj) > 5 * 60 * 1000;

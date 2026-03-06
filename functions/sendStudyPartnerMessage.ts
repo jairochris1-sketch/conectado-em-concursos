@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   try {
@@ -18,6 +18,35 @@ Deno.serve(async (req) => {
     if (user.email === receiver_email) {
       return Response.json({ error: 'Cannot message yourself' }, { status: 400 });
     }
+
+    // --- Block and Spam Checks ---
+    const blocks = await base44.asServiceRole.entities.ChatBlock.filter({ user_email: user.email });
+    if (blocks.length > 0) {
+      const block = blocks[0];
+      if (new Date(block.blocked_until) > new Date()) {
+        return Response.json({ error: `Você está temporariamente bloqueado(a) do chat. Liberado em: ${new Date(block.blocked_until).toLocaleString('pt-BR')}. Motivo: ${block.reason}` }, { status: 403 });
+      }
+    }
+
+    const badWordsRegex = /(porra|caralho|buceta|puta|merda|fuder|foder|arrombado|cu|viado|corno|piranha|prostituta|putaria|xoxota|cacete)/i;
+    if (badWordsRegex.test(content)) {
+        return Response.json({ error: 'Sua mensagem contém palavras impróprias que violam nossas diretrizes.' }, { status: 400 });
+    }
+
+    const userRecentMsgs = await base44.asServiceRole.entities.StudyPartnerMessage.filter({ sender_email: user.email }, '-created_date', 15);
+    const tenSecondsAgo = new Date(Date.now() - 10000); // 10 seconds
+    const floodCount = userRecentMsgs.filter(m => new Date(m.created_date) > tenSecondsAgo).length;
+
+    if (floodCount >= 4) { // 5th message in 10s will block
+      const blockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      if (blocks.length > 0) {
+        await base44.asServiceRole.entities.ChatBlock.update(blocks[0].id, { blocked_until: blockedUntil, reason: "Flooding (Spam)" });
+      } else {
+        await base44.asServiceRole.entities.ChatBlock.create({ user_email: user.email, blocked_until: blockedUntil, reason: "Flooding (Spam)" });
+      }
+      return Response.json({ error: 'Você foi bloqueado do chat por 24 horas por uso excessivo (flooding/spam).' }, { status: 403 });
+    }
+    // -----------------------------
 
     // Validar se existe conexão accepted
     const connections = await base44.entities.StudyPartner.filter({
