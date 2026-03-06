@@ -5,12 +5,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, Briefcase, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import ConnectButton from "@/components/social/ConnectButton";
+import UserLink from "@/components/social/UserLink";
 import { base44 } from "@/api/base44Client";
-import { encryptEmail } from "@/components/security/emailCrypto";
 import { getPeople } from "@/functions/getPeople";
 
 export default function PeoplePage() {
@@ -97,17 +97,17 @@ export default function PeoplePage() {
             {filteredUsers.map(person => (
               <Card key={person.email} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-5 flex flex-col items-center text-center">
-                  <Link to={`${createPageUrl('UserProfile')}?u=${encryptEmail(person.email)}`} className="mb-3">
+                  <UserLink email={person.email} name={person.name} photo={person.photo} className="mb-3">
                     <Avatar className="w-20 h-20 border-2 border-gray-100">
                       <AvatarImage src={person.photo} />
                       <AvatarFallback>{person.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
-                  </Link>
-                  <Link to={`${createPageUrl('UserProfile')}?u=${encryptEmail(person.email)}`}>
+                  </UserLink>
+                  <UserLink email={person.email} name={person.name} photo={person.photo}>
                     <h3 className="font-semibold text-lg text-gray-900 dark:text-white hover:text-blue-600 transition-colors">
                       {person.name || 'Usuário sem nome'}
                     </h3>
-                  </Link>
+                  </UserLink>
                   
                   {(person.location || person.job_title) && (
                     <div className="text-xs text-gray-500 mt-2 space-y-1 flex flex-col items-center">
