@@ -534,8 +534,19 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
                   <span className="text-[10px] text-gray-400 mb-[1px]">{time}</span>
                 </div>
               )}
-              <div className="text-[#333333] pl-0 whitespace-pre-wrap break-words">
-                {msg.content}
+              <div className="text-[#333333] pl-0 whitespace-pre-wrap break-words flex gap-1 items-end">
+                <span>{msg.content}</span>
+                {isMe && (
+                  <span className="text-[10px] mb-0.5 shrink-0">
+                    {msg.status === 'read' || msg.is_read ? (
+                      <span className="text-blue-500 font-bold ml-1">✓✓</span>
+                    ) : msg.status === 'delivered' ? (
+                      <span className="text-gray-400 font-bold ml-1">✓✓</span>
+                    ) : (
+                      <span className="text-gray-400 font-bold ml-1">✓</span>
+                    )}
+                  </span>
+                )}
               </div>
             </div>
           );
