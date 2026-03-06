@@ -1,10 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, Target, RefreshCcw, ArrowRight, Info } from "lucide-react";
+import { Calendar, Target, RefreshCcw, ArrowRight, Info, Footprints } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const options = [
+  {
+    title: "Trilha Semanal",
+    description: "Organize seus estudos por dias da semana sem datas fixas, permitindo total flexibilidade.",
+    icon: Footprints,
+    url: createPageUrl("WeeklyTrail"),
+    color: "bg-orange-50 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400",
+    border: "border-orange-200 dark:border-orange-800"
+  },
   {
     title: "Cronograma de Estudos",
     description: "Um planejamento fixo que define dias e horários específicos para cada disciplina.",
@@ -64,6 +72,20 @@ export default function StudyPlanningPage() {
       <div className="mt-12 space-y-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Entenda cada modelo</h2>
         
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-orange-100 dark:border-orange-900 shadow-sm">
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold text-orange-700 dark:text-orange-400 flex items-center gap-2 mb-3">
+              <Footprints className="w-5 h-5" />
+              Trilha Semanal
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+              Uma trilha semanal é um calendário sem datas fixas, apenas dias da semana (segunda a domingo), onde você define tarefas diárias com objetivos claros. Na prática, você cria uma "trilha" de tarefas e a segue.
+              <br /><br />
+              Por exemplo: Segunda-feira: Português (2h) + Resolver 10 questões. Terça-feira: Matemática (1h30). Quando uma tarefa é finalizada, ela é marcada como "concluída", permitindo ajustes e priorização.
+            </p>
+          </CardContent>
+        </Card>
+
         <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-100 dark:border-blue-900 shadow-sm">
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-2 mb-3">
