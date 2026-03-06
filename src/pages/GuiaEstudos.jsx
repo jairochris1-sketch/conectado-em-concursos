@@ -121,6 +121,13 @@ export default function GuiaEstudos() {
           const userFavs = await FavoriteArticle.filter({ user_email: user.email });
           setFavorites(userFavs);
           setFavoriteIds(new Set(userFavs.map(f => f.article_id)));
+
+          const userProgress = await base44.entities.ArticleProgress.filter({ user_email: user.email, guide_slug: slug });
+          const progressMap = {};
+          userProgress.forEach(p => {
+            progressMap[p.article_id] = p.progress_percent;
+          });
+          setDbProgress(progressMap);
         }
 
         const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
