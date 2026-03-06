@@ -499,7 +499,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-2 bg-white text-[12px] relative" ref={containerRef}>
+      <div className="flex-1 overflow-y-auto p-2 bg-white text-[12px] relative" ref={containerRef} onClick={(e) => e.stopPropagation()}>
         {loadingOlder && (
           <div className="text-center text-gray-400 text-[10px] py-1">
             <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando...
