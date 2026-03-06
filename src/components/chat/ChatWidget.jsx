@@ -49,6 +49,7 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (isOpen) {
+      setUnreadCount(0);
       // Inicializar notificações
       NotificationManager.init();
       
