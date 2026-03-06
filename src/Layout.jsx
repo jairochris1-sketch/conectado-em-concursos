@@ -62,6 +62,7 @@ import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 import ChatWidget from './components/chat/ChatWidget';
 import GlobalStudyPartnerChat from './components/chat/GlobalStudyPartnerChat';
 import GlobalSearch from './components/search/GlobalSearch';
+import UserPresenceUpdater from './components/social/UserPresenceUpdater';
 
 const navigationItems = [
 {
@@ -944,6 +945,7 @@ export default function Layout({ children, currentPageName }) {
 
       <ChatWidget />
       <GlobalStudyPartnerChat currentUser={user} />
+      {user && <UserPresenceUpdater user={user} />}
       </div>);
 
 }
