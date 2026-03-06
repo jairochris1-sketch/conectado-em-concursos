@@ -29,7 +29,7 @@ export default function GlobalStudyPartnerChat({ currentUser }) {
   if (!currentUser || activeChats.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 right-0 md:right-24 z-50 flex flex-row-reverse items-end gap-2 md:gap-4 pointer-events-none p-2 md:p-0 max-w-full overflow-x-auto print-hide" style={{ maxWidth: '100vw' }}>
+    <div className="fixed bottom-0 right-0 md:right-80 z-50 flex flex-row-reverse items-end gap-1 md:gap-2 pointer-events-none p-2 md:p-0 max-w-full overflow-x-auto print-hide" style={{ maxWidth: '100vw' }}>
       <AnimatePresence>
         {activeChats.map(partner => (
           <div key={partner.email} className="pointer-events-auto shrink-0">

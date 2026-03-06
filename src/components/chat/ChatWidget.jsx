@@ -278,7 +278,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-20 right-6 z-40">
+    <div className="fixed bottom-0 left-6 z-40">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -286,7 +286,7 @@ export default function ChatWidget() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="absolute bottom-10 right-0 w-[260px] max-w-[calc(100vw-2rem)] bg-white rounded-t-md shadow-xl flex flex-col h-[350px] border border-gray-300">
+          className="absolute bottom-10 left-0 w-[260px] max-w-[calc(100vw-2rem)] bg-white rounded-t-md shadow-xl flex flex-col h-[350px] border border-gray-300">
 
             {/* Header */}
             <div className="bg-[#3b5998] text-white p-2 rounded-t-md flex justify-between items-center border-b border-[#1d3c78]">
