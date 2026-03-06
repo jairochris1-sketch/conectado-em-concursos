@@ -186,9 +186,13 @@ export default function ChatWidget() {
             setVisitorName(originalMessage.visitor_name);
             setHasUserInfo(true);
           }
-          setIsOpen(true);
+          if (!isOpen) {
+            setUnreadCount(prev => prev + 1);
+          }
         }).catch(() => {
-          setIsOpen(true);
+          if (!isOpen) {
+            setUnreadCount(prev => prev + 1);
+          }
         });
       }
     });
