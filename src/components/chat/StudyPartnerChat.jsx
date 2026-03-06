@@ -558,8 +558,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end">
-        <Input
+      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end z-10" onClick={(e) => e.stopPropagation()}>
+        <input
           ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -570,7 +570,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
             }
           }}
           placeholder="Digite uma mensagem..."
-          className="flex-1 text-[12px] h-7 min-h-[28px] border-none shadow-none rounded-none focus-visible:ring-0 px-1.5 py-1"
+          className="flex-1 text-[12px] h-7 min-h-[28px] border-none shadow-none rounded-none focus-visible:outline-none px-1.5 py-1 bg-transparent"
           disabled={sending}
         />
         <div className="flex items-center px-1">
