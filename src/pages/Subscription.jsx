@@ -194,9 +194,6 @@ const PlanCard = ({ plan, userEmail, currentPlanKey }) => {
     }
     if (plan.link) {
       const url = new URL(plan.link);
-      if (userEmail) {
-        url.searchParams.set('email', userEmail);
-      }
       window.open(url.toString(), '_blank');
     }
   };
