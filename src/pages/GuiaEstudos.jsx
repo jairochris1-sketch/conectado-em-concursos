@@ -135,8 +135,10 @@ export default function GuiaEstudos() {
         }
 
         const normalizedSlug = slug.toLowerCase();
-        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug))
-          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date)));
+        const loadedArticles = (arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug))
+          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
+        
+        setArticles(loadedArticles);
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === normalizedSlug));
 
         const map = {};
@@ -146,6 +148,15 @@ export default function GuiaEstudos() {
             .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
         });
         setGuideArticlesMap(map);
+
+        const articleIdParam = searchParams.get("articleId");
+        if (articleIdParam) {
+          const found = loadedArticles.find(a => String(a.id) === String(articleIdParam));
+          if (found) {
+            setSelectedArticle(found);
+            setFocusMode(true);
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -372,15 +383,19 @@ export default function GuiaEstudos() {
                       <ul className="px-3 pb-2 space-y-1 border-t pt-2" style={{ borderColor: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 1)' }}>
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
-                            <a 
-                              href={`#art-${a.id}`} 
-                              className={`flex items-start gap-2 text-xs py-1 transition-colors ${
+                            <button 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedArticle(a);
+                                setFocusMode(true);
+                              }}
+                              className={`text-left w-full flex items-start gap-2 text-xs py-1 transition-colors ${
                                 darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'
                               }`}
                             >
                               <span className="text-[10px] mt-0.5 flex-shrink-0">→</span>
                               <span className="flex-1 break-words overflow-hidden text-ellipsis line-clamp-3">{a.title}</span>
-                            </a>
+                            </button>
                           </li>
                         ))}
                       </ul>

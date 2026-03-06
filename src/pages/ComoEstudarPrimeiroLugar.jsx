@@ -180,9 +180,33 @@ export default function ComoEstudarPrimeiroLugar() {
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
                             {g.page_key === 'guia_aprovacao' ? (
-                              <a href={`#art-${a.id}`} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (userPlan === 'gratuito' && !isAdmin) {
+                                    toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
+                                    return;
+                                  }
+                                  setSelectedArticle(a);
+                                }}
+                                className="text-left w-full text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                              >
+                                {a.title}
+                              </button>
                             ) : (
-                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (userPlan === 'gratuito' && !isAdmin) {
+                                    toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
+                                    return;
+                                  }
+                                  navigate(createPageUrl(`GuiaEstudos?slug=${g.page_key}&articleId=${a.id}`));
+                                }}
+                                className="text-left w-full text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                              >
+                                {a.title}
+                              </button>
                             )}
                           </li>
                         ))}
@@ -247,7 +271,7 @@ export default function ComoEstudarPrimeiroLugar() {
                       e.preventDefault();
                       toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
                     } else {
-                      window.location.hash = `#art-${a.id}`;
+                      setSelectedArticle(a);
                     }
                   }}>
                     {userPlan === 'gratuito' && !isAdmin && (
