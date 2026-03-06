@@ -66,10 +66,34 @@ export default function UserProfilePage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const me = await User.me();
+      const mePromise = User.me();
+      const profileUserPromise = base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
+
+      const [me, profileUserResult] = await Promise.all([mePromise, profileUserPromise]);
       
-      const activeSubs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
-      const specialUsers = await base44.entities.SpecialUser.filter({ email: me.email, is_active: true });
+      let targetEmail = urlEmail;
+      if (profileUserResult.data && !profileUserResult.data.error) {
+        setProfileUser(profileUserResult.data);
+        targetEmail = profileUserResult.data.email;
+      } else {
+        setIsLoading(false);
+        return;
+      }
+
+      const [
+        activeSubs, specialUsers, stats, ranking, partnersSent, partnersReceived, followList, asSender, asReceiver
+      ] = await Promise.all([
+        base44.entities.Subscription.filter({ user_email: me.email, status: 'active' }),
+        base44.entities.SpecialUser.filter({ email: me.email, is_active: true }),
+        base44.entities.UserStats.filter({ user_email: targetEmail }),
+        base44.entities.UserRanking.filter({ created_by: targetEmail }),
+        base44.entities.StudyPartner.filter({ requester_email: targetEmail, status: "accepted" }),
+        base44.entities.StudyPartner.filter({ target_email: targetEmail, status: "accepted" }),
+        base44.entities.UserFollow.filter({ following_email: targetEmail }),
+        base44.entities.StudyPartner.filter({ requester_email: me.email, target_email: targetEmail }),
+        base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: me.email })
+      ]);
+
       let currentPlan = 'gratuito';
       if (activeSubs.length > 0) {
         const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
@@ -84,39 +108,15 @@ export default function UserProfilePage() {
       }
       setCurrentUser({...me, current_plan: currentPlan});
 
-      // Get profile user via backend function (User entity is restricted by RLS)
-      const profileUserResult = await base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
-      let targetEmail = urlEmail;
-      if (profileUserResult.data && !profileUserResult.data.error) {
-        setProfileUser(profileUserResult.data);
-        targetEmail = profileUserResult.data.email;
-      } else {
-        setIsLoading(false);
-        return;
-      }
-
-      const [stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
-        base44.entities.UserStats.filter({ user_email: targetEmail }),
-        base44.entities.UserRanking.filter({ created_by: targetEmail }),
-        base44.entities.StudyPartner.filter({ requester_email: targetEmail, status: "accepted" }),
-        base44.entities.StudyPartner.filter({ target_email: targetEmail, status: "accepted" }),
-        base44.entities.UserFollow.filter({ following_email: targetEmail }),
-      ]);
-
       if (stats.length > 0) setUserStats(stats[0]);
       if (ranking.length > 0) setUserRanking(ranking[0]);
       setPartners([...partnersSent, ...partnersReceived]);
       setFollowers(followList);
 
-      // check partnership with current user
-      const [asSender, asReceiver] = await Promise.all([
-        base44.entities.StudyPartner.filter({ requester_email: me.email, target_email: targetEmail }),
-        base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: me.email }),
-      ]);
-      const all = [...asSender, ...asReceiver];
-      if (all.length > 0) {
-        setPartnershipStatus(all[0].status);
-        setIsPartner(all[0].status === "accepted");
+      const allPartnerships = [...asSender, ...asReceiver];
+      if (allPartnerships.length > 0) {
+        setPartnershipStatus(allPartnerships[0].status);
+        setIsPartner(allPartnerships[0].status === "accepted");
       }
     } catch (err) {
       console.error(err);
