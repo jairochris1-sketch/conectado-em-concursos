@@ -466,14 +466,14 @@ export default function CommunityPage({ embedded = false }) {
 
               <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
             <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800">
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="flex items-start gap-3">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
+                <div className="flex items-start gap-3 w-full">
                   <Avatar>
                     <AvatarImage src={selectedPost.author_photo_url} />
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                          <CardTitle className="text-xl break-words text-gray-900 dark:text-slate-200">{selectedPost.title}</CardTitle>
+                  <div className="flex-1 min-w-0 w-full">
+                          <CardTitle className="text-xl break-words text-gray-900 dark:text-slate-200 block w-full">{selectedPost.title}</CardTitle>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <p className="flex items-center text-sm text-gray-400 flex-wrap">
                               Por{" "}
