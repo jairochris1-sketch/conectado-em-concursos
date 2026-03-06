@@ -922,36 +922,36 @@ export default function Layout({ children, currentPageName }) {
 
       <ProvaUploader isOpen={showProvaUploader} onOpenChange={setShowProvaUploader} />
 
-      <AnimatePresence>
-        {showScrollTop &&
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed bottom-24 md:bottom-6 right-6 z-40">
+      <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 flex flex-col items-center gap-3 print-hide">
+        <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 p-0.5 flex items-center justify-center">
+          <ThemeToggle />
+        </div>
 
+        <ChatWidget />
+
+        <AnimatePresence>
+          {showScrollTop &&
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+          >
             <Button
             size="icon"
-            className="rounded-full h-12 w-12 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="rounded-full h-10 w-10 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             style={{ backgroundColor: 'var(--primary-color)' }}
             onClick={scrollToTop}
             aria-label="Voltar ao topo">
 
-              <ArrowUp className="h-6 w-6" aria-hidden="true" />
+              <ArrowUp className="h-5 w-5" aria-hidden="true" />
             </Button>
           </motion.div>
-        }
-      </AnimatePresence>
+          }
+        </AnimatePresence>
+      </div>
 
-      <ChatWidget />
       <GlobalStudyPartnerChat currentUser={user} />
       {user && <UserPresenceUpdater user={user} />}
-      
-      <div className="fixed bottom-24 left-4 md:bottom-6 md:left-6 z-40 print-hide">
-        <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 p-1 flex items-center justify-center">
-          <ThemeToggle />
-        </div>
-      </div>
       </div>);
 
 }
