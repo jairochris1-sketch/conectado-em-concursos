@@ -526,6 +526,21 @@ export default function GuiaEstudos() {
         <h1 className={`text-3xl font-extrabold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{content.title}</h1>
         <p className={`mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.subtitle}</p>
 
+        {!loading && articles.length > 0 && (
+          <div className={`mb-8 p-5 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm`}>
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className={`w-5 h-5 ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-500'}`} />
+                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Seu Progresso no Guia</span>
+              </div>
+              <span className={`font-bold ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-600 dark:text-indigo-400'}`}>
+                {globalProgress}%
+              </span>
+            </div>
+            <Progress value={globalProgress} className="h-3" />
+          </div>
+        )}
+
         {loading && <div className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
