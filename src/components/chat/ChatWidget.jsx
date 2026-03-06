@@ -278,19 +278,19 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-0 left-6 z-40">
+    <div className="fixed bottom-20 right-6 z-40">
       <AnimatePresence>
         {isOpen && (
           <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.2 }}
-          className="absolute bottom-10 left-0 w-[260px] max-w-[calc(100vw-2rem)] bg-white rounded-t-md shadow-xl flex flex-col h-[350px] border border-gray-300">
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-20 right-0 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-2xl flex flex-col h-[500px] border border-gray-200">
 
             {/* Header */}
-            <div className="bg-[#3b5998] text-white p-2 rounded-t-md flex justify-between items-center border-b border-[#1d3c78]">
-              <h3 className="font-bold text-sm flex items-center gap-2 px-2">Suporte</h3>
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex justify-between items-center">
+              <h3 className="font-bold text-lg">Suporte</h3>
               <div className="flex gap-1">
                 {notificationsEnabled && (
                   <Button
@@ -378,14 +378,14 @@ export default function ChatWidget() {
                       />
                     )}
                     {msg.message && (
-                      <div className="bg-[#edf0f5] text-gray-900 border border-[#d8dfea] p-2 rounded-sm text-sm">
+                      <div className="bg-blue-100 text-gray-800 p-3 rounded-lg text-sm">
                         {msg.message}
                       </div>
                     )}
                     {adminReplies[msg.id] && adminReplies[msg.id].length > 0 && (
                       <div className="space-y-1">
                         {adminReplies[msg.id].map((reply) => (
-                          <div key={reply.id} className="bg-white border border-gray-200 text-gray-900 p-2 rounded-sm text-sm">
+                          <div key={reply.id} className="bg-green-50 text-green-900 p-3 rounded-lg text-sm border-l-4 border-green-600">
                             <div className="text-xs text-green-600 mb-1">
                               📧 Resposta • {reply.created_date ? format(new Date(reply.created_date), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : 'Agora'}
                             </div>
@@ -479,11 +479,11 @@ export default function ChatWidget() {
 
       {/* Float Button */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-[#3b5998] text-white rounded-t-md shadow-md hover:bg-[#2d4373] transition-colors px-4 py-2 flex items-center justify-center gap-2 font-bold text-sm">
-        <MessageCircle className="w-4 h-4" /> Suporte
+        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-12 h-12 flex items-center justify-center">
+        <MessageCircle className="w-5 h-5" />
       </motion.button>
     </div>
   );
