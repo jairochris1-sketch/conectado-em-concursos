@@ -20,7 +20,7 @@ import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { StaffBadge } from "@/components/ui/staff-badge";
-import { encryptEmail } from "@/components/security/emailCrypto";
+import UserLink from "@/components/social/UserLink";
 import OnlineUsersSidebar from "@/components/social/OnlineUsersSidebar";
 
 const defaultCategories = [
@@ -374,12 +374,13 @@ export default function CommunityPage({ embedded = false }) {
           <div className="flex-1 min-w-0">
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
-                <Link
-                to={createPageUrl("UserProfile") + `?u=${encryptEmail(reply.author_email)}`}
-                className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
-
+                <UserLink
+                  email={reply.author_email}
+                  name={reply.author_name}
+                  photo={reply.author_photo_url}
+                  className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
                   {reply.author_name}
-                </Link>
+                </UserLink>
                 <StaffBadge email={reply.author_email} className="ml-0.5" />
                 {reply.is_best_answer &&
               <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
@@ -475,12 +476,13 @@ export default function CommunityPage({ embedded = false }) {
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <p className="flex items-center text-sm text-gray-400 flex-wrap">
                               Por{" "}
-                              <Link
-                          to={createPageUrl("UserProfile") + `?u=${encryptEmail(selectedPost.author_email)}`}
-                          className="font-semibold hover:underline text-blue-600 ml-1">
-
+                              <UserLink
+                                email={selectedPost.author_email}
+                                name={selectedPost.author_name}
+                                photo={selectedPost.author_photo_url}
+                                className="font-semibold hover:underline text-blue-600 ml-1">
                                 {selectedPost.author_name}
-                              </Link>
+                              </UserLink>
                               <StaffBadge email={selectedPost.author_email} className="ml-1" />
                               <span className="ml-1">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
                             </p>
@@ -805,13 +807,14 @@ export default function CommunityPage({ embedded = false }) {
                     </div>
                     <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
-                        <Link
-                        to={createPageUrl("UserProfile") + `?u=${encryptEmail(post.author_email)}`}
-                        className="font-semibold hover:underline text-blue-600"
-                        onClick={(e) => e.stopPropagation()}>
-
+                        <UserLink
+                          email={post.author_email}
+                          name={post.author_name}
+                          photo={post.author_photo_url}
+                          className="font-semibold hover:underline text-blue-600"
+                          onClick={(e) => e.stopPropagation()}>
                           {post.author_name}
-                        </Link>
+                        </UserLink>
                         <StaffBadge email={post.author_email} />
                       </div>
                       <span>•</span>
