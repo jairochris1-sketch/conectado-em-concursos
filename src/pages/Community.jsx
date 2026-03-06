@@ -552,7 +552,7 @@ export default function CommunityPage({ embedded = false }) {
           </Card>
 
           <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 rounded-t-lg border-b border-gray-200 dark:border-gray-800">
+            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 rounded-t-lg border-x border-t border-b border-gray-200 dark:border-gray-800">
               <CardTitle className="text-gray-900 dark:text-white font-semibold text-lg">Respostas ({replies.length})</CardTitle>
             </CardHeader>
             <CardContent className="bg-white dark:bg-slate-900 p-6 rounded-b-lg border-x border-b border-gray-200 dark:border-gray-800">
