@@ -807,7 +807,7 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
               {user.job_title &&
-              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
+              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80 focus:bg-transparent" disabled>
                   <BookOpen className="w-4 h-4" />
                   {user.job_title}
                 </DropdownMenuItem>
