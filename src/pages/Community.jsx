@@ -465,7 +465,7 @@ export default function CommunityPage({ embedded = false }) {
               </Button>
 
               <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800">
+            <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-x border-t border-b border-gray-200 dark:border-gray-800">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
                 <div className="flex items-start gap-3 w-full">
                   <Avatar>
@@ -527,7 +527,7 @@ export default function CommunityPage({ embedded = false }) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg">
+            <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg border-x border-b border-gray-200 dark:border-gray-800">
               <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300 w-full break-words text-base leading-relaxed">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500 mt-6 border-t border-gray-100 dark:border-slate-800 pt-4">
                 <Button
@@ -552,10 +552,10 @@ export default function CommunityPage({ embedded = false }) {
           </Card>
 
           <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800 rounded-t-lg">
+            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 rounded-t-lg border-b border-gray-200 dark:border-gray-800">
               <CardTitle className="text-gray-900 dark:text-white font-semibold text-lg">Respostas ({replies.length})</CardTitle>
             </CardHeader>
-            <CardContent className="bg-white dark:bg-slate-900 p-6 rounded-b-lg">
+            <CardContent className="bg-white dark:bg-slate-900 p-6 rounded-b-lg border-x border-b border-gray-200 dark:border-gray-800">
               <div className="space-y-1 mb-8">
                 {renderReplies(buildReplyTree(replies))}
               </div>
