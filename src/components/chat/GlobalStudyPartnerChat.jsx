@@ -50,10 +50,10 @@ function ChatWindow({ currentUser, partner, onClose }) {
 
   return (
     <div className={`
-      flex flex-col bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out
+      flex flex-col bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-gray-300 dark:border-gray-700 transition-all duration-300 ease-in-out
       ${isMinimized 
-        ? 'h-[60px] w-64 md:w-72 rounded-t-xl' 
-        : 'fixed inset-0 z-[100] md:relative md:inset-auto md:z-auto h-[100dvh] w-screen md:h-[450px] md:w-[340px] md:rounded-t-xl'}
+        ? 'h-[50px] w-64 md:w-64 rounded-t-md' 
+        : 'fixed inset-0 z-[100] md:relative md:inset-auto md:z-auto h-[100dvh] w-screen md:h-[350px] md:w-[260px] md:rounded-t-md'}
     `}>
       <StudyPartnerChat 
         currentUser={currentUser} 
