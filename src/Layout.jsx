@@ -714,7 +714,7 @@ export default function Layout({ children, currentPageName }) {
                                 <DropdownMenuItem key={item.title} asChild>
                                   <Link
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-white hover:bg-white/10'}`}>
+                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent'}`}>
                                     <div className="flex items-center gap-2">
                                         <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
                                         <span className="truncate text-white font-medium">{item.title}</span>
