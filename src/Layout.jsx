@@ -262,6 +262,7 @@ const featureAccess = {
   'Guia de Estudos': ['padrao', 'avancado'],
   'Edital Verticalizado': ['padrao', 'avancado'],
   'Ciclo de Estudos': ['padrao', 'avancado'],
+  'Trilha Semanal': ['padrao', 'avancado'],
   'Análise de Vídeos': ['padrao', 'avancado']
 };
 
