@@ -218,6 +218,11 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
           setMessages((prev) => [...prev, msg]);
         }
         setLastMessageId(msg.id);
+      } else if (event.type === "update") {
+        const msg = event.data;
+        if (msg.conversation_key === convKey) {
+          setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, ...msg } : m));
+        }
       }
     });
 
