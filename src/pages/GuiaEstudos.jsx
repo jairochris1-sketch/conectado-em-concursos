@@ -8,11 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen, ArrowLeft } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
 import ArticleFeedback from "../components/feedback/ArticleFeedback";
+import { base44 } from "@/api/base44Client";
+import { Progress } from "@/components/ui/progress";
 
 export default function GuiaEstudos() {
   const navigate = useNavigate();
