@@ -320,6 +320,9 @@ export default function Layout({ children, currentPageName }) {
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
+  const hideChatPages = ['Questions', 'ComoEstudarPrimeiroLugar', 'Exams'];
+  const showChat = !hideChatPages.includes(currentPageName);
+
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
@@ -770,7 +773,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         <div className="flex items-center gap-1 xl:gap-2 ml-1 xl:ml-4">
-          <ChatDropdown />
+          {showChat && <ChatDropdown />}
           <NotificationDropdown />
 
           <DropdownMenu>
@@ -927,7 +930,7 @@ export default function Layout({ children, currentPageName }) {
           <ThemeToggle />
         </div>
 
-        <ChatWidget />
+        {showChat && <ChatWidget />}
 
         <AnimatePresence>
           {showScrollTop &&
@@ -950,7 +953,7 @@ export default function Layout({ children, currentPageName }) {
         </AnimatePresence>
       </div>
 
-      <GlobalStudyPartnerChat currentUser={user} />
+      {showChat && <GlobalStudyPartnerChat currentUser={user} />}
       {user && <UserPresenceUpdater user={user} />}
       </div>);
 

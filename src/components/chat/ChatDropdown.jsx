@@ -118,8 +118,27 @@ export default function ChatDropdown() {
     window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
   };
 
+  const handleOpenChange = async (open) => {
+    setIsOpen(open);
+    if (open && unreadCount > 0) {
+      setUnreadCount(0);
+      try {
+        const unreadMsgs = await base44.entities.StudyPartnerMessage.filter({
+          receiver_email: user.email,
+          is_read: false
+        });
+        await Promise.all(
+          unreadMsgs.map(msg => base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true }))
+        );
+        fetchUnreadAndRecent(user.email);
+      } catch (error) {
+        console.error('Erro ao marcar mensagens como lidas:', error);
+      }
+    }
+  };
+
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-white hover:bg-black/10">
           <MessageCircle className="w-5 h-5" />

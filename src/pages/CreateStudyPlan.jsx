@@ -10,31 +10,35 @@ import { createPageUrl } from '@/utils';
 import { addWeeks, format, eachWeekOfInterval } from 'date-fns';
 
 const SUBJECT_OPTIONS = [
-'portugues',
-'matematica',
-'direito_constitucional',
-'direito_administrativo',
-'direito_penal',
-'direito_civil',
-'informatica',
-'conhecimentos_gerais',
-'raciocinio_logico',
-'contabilidade',
-'pedagogia'];
-
+  "portugues", "matematica", "raciocinio_logico", "informatica", "tecnologia_informacao", "conhecimentos_gerais",
+  "direito_constitucional", "direito_administrativo", "direito_penal", "direito_civil", "direito_tributario",
+  "direito_previdenciario", "direito_eleitoral", "direito_ambiental", "direito_trabalho", "direito_processual_penal",
+  "administracao_geral", "administracao_publica", "afo", "gestao_pessoas", "administracao_recursos_materiais",
+  "arquivologia", "financas_publicas", "etica_administracao", "atendimento_publico", "comunicacao_social",
+  "direitos_humanos", "eca", "contabilidade", "economia", "estatistica", "pedagogia", "educacao_fisica",
+  "ingles", "seguranca_publica", "lei_8112", "lei_8666", "lei_14133", "constituicao_federal", "regimento_interno",
+  "legislacao_especifica", "legislacao_estadual", "legislacao_municipal"
+];
 
 const SUBJECT_LABELS = {
-  portugues: 'Português',
-  matematica: 'Matemática',
-  direito_constitucional: 'Direito Constitucional',
-  direito_administrativo: 'Direito Administrativo',
-  direito_penal: 'Direito Penal',
-  direito_civil: 'Direito Civil',
-  informatica: 'Informática',
-  conhecimentos_gerais: 'Conhecimentos Gerais',
-  raciocinio_logico: 'Raciocínio Lógico',
-  contabilidade: 'Contabilidade',
-  pedagogia: 'Pedagogia'
+  portugues: "Português", matematica: "Matemática", raciocinio_logico: "Raciocínio Lógico", informatica: "Informática",
+  tecnologia_informacao: "Tecnologia da Informação", conhecimentos_gerais: "Conhecimentos Gerais",
+  direito_constitucional: "Direito Constitucional", direito_administrativo: "Direito Administrativo",
+  direito_penal: "Direito Penal", direito_civil: "Direito Civil", direito_tributario: "Direito Tributário",
+  direito_previdenciario: "Direito Previdenciário", direito_eleitoral: "Direito Eleitoral",
+  direito_ambiental: "Direito Ambiental", direito_trabalho: "Direito do Trabalho",
+  direito_processual_penal: "Direito Processual Penal", administracao_geral: "Administração Geral",
+  administracao_publica: "Administração Pública", afo: "AFO", gestao_pessoas: "Gestão de Pessoas",
+  administracao_recursos_materiais: "Administração de Recursos Materiais", arquivologia: "Arquivologia",
+  financas_publicas: "Finanças Públicas", etica_administracao: "Ética na Administração",
+  atendimento_publico: "Atendimento ao Público", comunicacao_social: "Comunicação Social",
+  direitos_humanos: "Direitos Humanos", eca: "ECA (Estatuto da Criança e do Adolescente)",
+  contabilidade: "Contabilidade", economia: "Economia", estatistica: "Estatística", pedagogia: "Pedagogia",
+  educacao_fisica: "Educação Física", ingles: "Inglês", seguranca_publica: "Segurança Pública",
+  lei_8112: "Lei 8.112/90", lei_8666: "Lei 8.666/93", lei_14133: "Lei 14.133/21",
+  constituicao_federal: "Constituição Federal", regimento_interno: "Regimento Interno",
+  legislacao_especifica: "Legislação Específica", legislacao_estadual: "Legislação Estadual",
+  legislacao_municipal: "Legislação Municipal"
 };
 
 export default function CreateStudyPlanPage() {
