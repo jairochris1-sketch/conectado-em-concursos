@@ -77,6 +77,11 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const scrollTimeoutRef = useRef(null);
   const loadingRef = useRef(false);
   const convKey = getConversationKey(currentUser.email, partner.email);
+  const isMinimizedRef = useRef(isMinimized);
+
+  useEffect(() => {
+    isMinimizedRef.current = isMinimized;
+  }, [isMinimized]);
 
   // Initialize notifications
   useEffect(() => {
