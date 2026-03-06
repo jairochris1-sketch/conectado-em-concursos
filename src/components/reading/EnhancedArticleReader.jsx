@@ -45,7 +45,7 @@ const subjectNames = {
   constituicao_federal: "Constituição Federal"
 };
 
-export default function EnhancedArticleReader({ article, isOpen, onClose, isCompleted, onMarkCompleted }) {
+export default function EnhancedArticleReader({ article, isOpen, onClose, isCompleted, onMarkCompleted, quizScore, quizPassed, onQuizSubmit }) {
   const [darkMode, setDarkMode] = useState(false);
   const [readingMode, setReadingMode] = useState(false);
   const [fontSize, setFontSize] = useState('medium');
@@ -55,6 +55,34 @@ export default function EnhancedArticleReader({ article, isOpen, onClose, isComp
   const [currentNote, setCurrentNote] = useState('');
   const [showNotes, setShowNotes] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [selectedColor, setSelectedColor] = useState('#ffeb3b');
+
+  // Quiz state
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  
+  useEffect(() => {
+    if (isOpen) {
+      setQuizAnswers({});
+      setQuizSubmitted(quizScore !== null && quizScore !== undefined);
+    }
+  }, [isOpen, article, quizScore]);
+  
+  const handleQuizSubmission = () => {
+    if (!article.quizzes || article.quizzes.length === 0) return;
+    
+    let correctCount = 0;
+    article.quizzes.forEach((q, i) => {
+      if (quizAnswers[i] === q.correct_index) correctCount++;
+    });
+    
+    const score = Math.round((correctCount / article.quizzes.length) * 100);
+    const passed = score >= 60; // 60% para passar (ex: 2/3)
+    
+    setQuizSubmitted(true);
+    if (onQuizSubmit) {
+      onQuizSubmit(score, passed);
+    }
+  };
 
   const highlightColors = [
     { name: 'Amarelo', color: '#ffeb3b' },
@@ -323,7 +351,99 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
                   dangerouslySetInnerHTML={{ __html: article.content }}
                 />
 
-                {onMarkCompleted && (
+                {article.quizzes && article.quizzes.length > 0 && (
+                  <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <h3 className={`text-xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Quiz de Fixação
+                    </h3>
+                    
+                    {quizSubmitted && (
+                      <div className={`p-4 mb-6 rounded-lg ${quizPassed || (quizScore >= 60) ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300'}`}>
+                        <p className="font-bold">
+                          {quizPassed || (quizScore >= 60) ? 'Aprovado!' : 'Reprovado.'} Nota: {quizScore !== null ? quizScore : Math.round((Object.keys(quizAnswers).filter(i => quizAnswers[i] === article.quizzes[i].correct_index).length / article.quizzes.length) * 100)}%
+                        </p>
+                        {(!quizPassed && quizScore < 60) && <p className="text-sm mt-1">Você precisa acertar pelo menos 60% para desbloquear o próximo conteúdo.</p>}
+                      </div>
+                    )}
+                    
+                    <div className="space-y-8">
+                      {article.quizzes.map((q, qIndex) => (
+                        <div key={qIndex} className="space-y-3">
+                          <p className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                            {qIndex + 1}. {q.question}
+                          </p>
+                          <div className="space-y-2 pl-4">
+                            {q.options.map((opt, oIndex) => {
+                              const isSelected = quizAnswers[qIndex] === oIndex;
+                              const isCorrect = q.correct_index === oIndex;
+                              const showCorrect = quizSubmitted && isCorrect;
+                              const showIncorrect = quizSubmitted && isSelected && !isCorrect;
+                              
+                              let optClass = `flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${darkMode ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-200 hover:bg-gray-50'}`;
+                              
+                              if (quizSubmitted) {
+                                optClass = `flex items-center gap-3 p-3 rounded-lg border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`;
+                                if (showCorrect) optClass += ` bg-green-50 border-green-500 dark:bg-green-900/20 dark:border-green-500`;
+                                else if (showIncorrect) optClass += ` bg-red-50 border-red-500 dark:bg-red-900/20 dark:border-red-500`;
+                              } else if (isSelected) {
+                                optClass += ` border-indigo-500 bg-indigo-50 dark:border-indigo-500 dark:bg-indigo-900/20`;
+                              }
+                              
+                              return (
+                                <div 
+                                  key={oIndex} 
+                                  className={optClass}
+                                  onClick={() => {
+                                    if (!quizSubmitted) {
+                                      setQuizAnswers(prev => ({ ...prev, [qIndex]: oIndex }));
+                                    }
+                                  }}
+                                >
+                                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-indigo-500' : (darkMode ? 'border-gray-600' : 'border-gray-400')}`}>
+                                    {isSelected && <div className="w-3 h-3 rounded-full bg-indigo-500" />}
+                                  </div>
+                                  <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{opt}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {quizSubmitted && q.explanation && (
+                            <div className={`mt-3 p-3 rounded-md text-sm ${darkMode ? 'bg-gray-800 text-gray-300 border border-gray-700' : 'bg-blue-50 text-blue-800 border border-blue-100'}`}>
+                              <strong>Explicação:</strong> {q.explanation}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {!quizSubmitted && (
+                      <div className="mt-8 flex justify-end">
+                        <Button 
+                          onClick={handleQuizSubmission}
+                          disabled={Object.keys(quizAnswers).length < article.quizzes.length}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                        >
+                          Enviar Respostas
+                        </Button>
+                      </div>
+                    )}
+                    {quizSubmitted && (!quizPassed && quizScore < 60) && (
+                      <div className="mt-6 flex justify-end">
+                        <Button 
+                          onClick={() => {
+                            setQuizSubmitted(false);
+                            setQuizAnswers({});
+                          }}
+                          variant="outline"
+                        >
+                          Tentar Novamente
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {onMarkCompleted && (!article.quizzes || article.quizzes.length === 0) && (
                   <div className="mt-12 flex justify-end border-t pt-6" style={{ borderColor: darkMode ? '#374151' : '#e5e7eb' }}>
                     <Button 
                       onClick={() => onMarkCompleted(!isCompleted)}

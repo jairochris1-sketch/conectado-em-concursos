@@ -500,11 +500,18 @@ export default function ComoEstudarPrimeiroLugar() {
         article={selectedArticle}
         isOpen={!!selectedArticle}
         onClose={() => setSelectedArticle(null)}
-        isCompleted={selectedArticle ? dbProgress[selectedArticle.id] === 100 : false}
+        isCompleted={selectedArticle ? dbProgress[selectedArticle.id]?.is_completed : false}
+        quizScore={selectedArticle ? dbProgress[selectedArticle.id]?.quiz_score : null}
+        quizPassed={selectedArticle ? dbProgress[selectedArticle.id]?.quiz_passed : false}
         onMarkCompleted={(completed) => {
           if (selectedArticle) {
             saveArticleProgress(selectedArticle.id, completed ? 100 : 0);
             if (completed) toast.success("Artigo marcado como concluído!");
+          }
+        }}
+        onQuizSubmit={(score, passed) => {
+          if (selectedArticle) {
+            handleQuizSubmit(selectedArticle.id, score, passed);
           }
         }}
       />
