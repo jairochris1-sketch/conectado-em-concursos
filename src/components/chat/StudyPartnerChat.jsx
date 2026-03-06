@@ -573,11 +573,33 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
           className="flex-1 text-[12px] h-7 min-h-[28px] border-none shadow-none rounded-none focus-visible:ring-0 px-1.5 py-1"
           disabled={sending}
         />
-        {text.trim() && (
-          <Button size="icon" onClick={sendMessage} disabled={sending} className="h-7 w-7 bg-transparent hover:bg-[#e9ebee] text-[#3b5998] shadow-none flex-shrink-0 rounded-sm">
-            {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" /> : <Send className="w-3.5 h-3.5" />}
-          </Button>
-        )}
+        <div className="flex items-center px-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button size="icon" variant="ghost" className="h-7 w-7 text-[#c1d0f0] hover:bg-[#e9ebee] hover:text-[#3b5998] shadow-none flex-shrink-0 rounded-sm p-0">
+                <Smile className="w-4 h-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent side="top" align="end" className="w-64 p-2 z-[150]" onOpenAutoFocus={(e) => e.preventDefault()}>
+              <div className="flex flex-wrap gap-1 max-h-48 overflow-y-auto custom-scrollbar">
+                {EMOJIS.map(emoji => (
+                  <button 
+                    key={emoji} 
+                    onClick={() => setText(prev => prev + emoji)}
+                    className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-base cursor-pointer"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+          {text.trim() && (
+            <Button size="icon" onClick={sendMessage} disabled={sending} className="h-7 w-7 bg-transparent hover:bg-[#e9ebee] text-[#3b5998] shadow-none flex-shrink-0 rounded-sm ml-0.5 p-0">
+              {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" /> : <Send className="w-3.5 h-3.5" />}
+            </Button>
+          )}
+        </div>
       </div>
         </>
       )}
