@@ -57,6 +57,8 @@ export default function GuiaEstudos() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [currentArticlePage, setCurrentArticlePage] = useState(1);
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
+  const [dbProgress, setDbProgress] = useState({});
+  const [globalProgress, setGlobalProgress] = useState(0);
   const articlesPerPage = 5;
   const videosPerPage = 3;
 
