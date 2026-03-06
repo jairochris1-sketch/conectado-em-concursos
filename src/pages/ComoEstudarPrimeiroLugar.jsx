@@ -416,6 +416,12 @@ export default function ComoEstudarPrimeiroLugar() {
                       <div className="flex flex-wrap items-center gap-2 mb-3">
                         {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
                         {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-600 dark:text-gray-300">{a.reading_time} min</Badge>}
+                        {dbProgress[a.id] === 100 && (
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Concluído
+                          </Badge>
+                        )}
                       </div>
                       {a.summary && (
                         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{a.summary}</p>
