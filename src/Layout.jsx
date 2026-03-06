@@ -650,7 +650,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-0.5 xl:gap-2 flex-grow max-w-6xl" aria-label="Navegação principal">
+        <nav className="flex items-center justify-center gap-0.5 lg:gap-1 flex-grow max-w-[1000px] overflow-hidden" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
@@ -658,7 +658,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.title}
                 to={hasAccess ? item.url : createPageUrl("Subscription")}
-                className="group relative flex items-center gap-1 xl:gap-2 px-1.5 xl:px-3 py-1.5 xl:py-2 rounded-md font-bold transition-all duration-150 ease-in-out min-w-0 text-white text-[11px] lg:text-xs xl:text-sm"
+                className="group relative flex items-center gap-1 px-1 lg:px-1.5 xl:px-2 py-1.5 rounded-md font-bold transition-all duration-150 ease-in-out min-w-0 text-white text-[10px] lg:text-[11px] xl:text-xs"
                 style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.15)' } : {}}
                 onMouseEnter={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)';
@@ -666,9 +666,9 @@ export default function Layout({ children, currentPageName }) {
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon size={22} strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out w-[16px] h-[16px] xl:w-[22px] xl:h-[22px] ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
-                        <span className="truncate tracking-wide font-bold text-white">{item.title}</span>
-                        {!hasAccess && <Lock className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-yellow-400 absolute top-1 right-1" />}
+                        <item.icon size={18} strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out w-[14px] h-[14px] lg:w-[16px] lg:h-[16px] xl:w-[18px] xl:h-[18px] ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} />
+                        <span className="truncate tracking-wide font-bold text-white max-w-[80px] lg:max-w-none">{item.title}</span>
+                        {!hasAccess && <Lock className="w-2 h-2 lg:w-2.5 lg:h-2.5 text-yellow-400 absolute top-0.5 right-0.5" />}
                     </Link>);
           })}
             
@@ -676,11 +676,11 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="group relative flex items-center gap-1 xl:gap-1.5 px-1.5 xl:px-3 py-1.5 xl:py-2 h-auto rounded-md font-bold text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0 text-[11px] lg:text-xs xl:text-sm"
+                className="group relative flex items-center gap-1 px-1 lg:px-1.5 xl:px-2 py-1.5 h-auto rounded-md font-bold text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0 text-[10px] lg:text-[11px] xl:text-xs"
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                         <span className="truncate tracking-wide">Mais</span>
-                        <ChevronDown size={18} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-white w-[14px] h-[14px] xl:w-[18px] xl:h-[18px]" />
+                        <ChevronDown size={14} strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-white w-[12px] h-[12px] lg:w-[14px] lg:h-[14px] xl:w-[16px] xl:h-[16px]" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
