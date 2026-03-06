@@ -80,7 +80,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [prefs, setPrefs] = useState(notificationService.getPreferences());
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [now, setNow] = useState(Date.now());
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const inputRef = useRef(null);
@@ -456,8 +462,14 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       >
         <div className="flex-1 min-w-0 flex items-center gap-1.5">
           <p className="font-bold text-[13px] truncate" style={{ textShadow: "0 1px 0 rgba(0,0,0,0.2)" }}>{partner.name}</p>
-          {partnerPresence?.display === "online" && (
-             <span className="w-2 h-2 rounded-full bg-[#54c042] flex-shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+          {partnerPresence?.display === "online" ? (
+             <span className="w-2 h-2 rounded-full bg-[#54c042] flex-shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.3)]" title="Online" />
+          ) : (
+             partnerPresence?.last_seen && (
+               <span className="text-[10px] text-[#c1d0f0] truncate whitespace-nowrap">
+                 visto {formatDistanceToNow(new Date(partnerPresence.last_seen), { addSuffix: true, locale: ptBR })}
+               </span>
+             )
           )}
           {unreadCount > 0 && isMinimized && (
             <div className="absolute -top-1.5 -left-1.5 bg-[#d92c2c] text-white text-[11px] font-bold px-[5px] py-[2px] rounded-[3px] shadow-[0_1px_2px_rgba(0,0,0,0.3)] leading-none z-50 border border-[#b22020]">
@@ -468,7 +480,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
         {/* Settings inside header for Facebook feel */}
         {!isMinimized && (
-          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0" onClick={(e) => { e.stopPropagation(); setIsSearching(!isSearching); if(isSearching) setSearchQuery(""); }}>
               <Search className="w-[14px] h-[14px]" />
             </Button>
