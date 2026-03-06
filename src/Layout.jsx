@@ -55,6 +55,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 import NotificationDropdown from './components/notifications/NotificationDropdown';
+import ChatDropdown from './components/chat/ChatDropdown';
 import { ThemeToggle } from './components/ui/theme-toggle';
 import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
