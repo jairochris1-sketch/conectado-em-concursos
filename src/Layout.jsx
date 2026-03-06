@@ -744,31 +744,30 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenu>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-1 xl:gap-2">
           <GlobalSearch />
           <Button
             onClick={() => setShowProvaUploader(true)}
             size="sm"
-            className="text-xs px-3 py-2 text-white hover:text-white"
+            className="text-[10px] xl:text-xs px-2 xl:px-3 py-1 xl:py-2 h-7 xl:h-9 text-white hover:text-white"
             style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
 
-            <Upload className="w-3 h-3 mr-1" />
-            <span className="hidden 2xl:inline">Enviar Prova</span>
+            <Upload className="w-3 h-3 xl:mr-1" />
+            <span className="hidden xl:inline">Enviar Prova</span>
           </Button>
           {(userPlan === 'gratuito') && (
             <Link to={createPageUrl("Subscription")}>
               <Button
-                size="sm"
-                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
+                className="text-[10px] xl:text-xs px-2 xl:px-3 py-1 xl:py-2 h-7 xl:h-9 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
               >
                 <Star className="w-3 h-3 mr-1 fill-current" />
-                Assinar Premium
+                Assinar <span className="hidden lg:inline ml-1">Premium</span>
               </Button>
             </Link>
           )}
         </div>
 
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-1 xl:gap-2 ml-1 xl:ml-4">
           <NotificationDropdown />
           <ThemeToggle />
 
