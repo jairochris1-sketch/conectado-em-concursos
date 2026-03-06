@@ -66,7 +66,7 @@ export default function ComoEstudarPrimeiroLugar() {
           .then(userProgress => {
             const progressMap = {};
             userProgress.forEach(p => {
-              progressMap[p.article_id] = p.progress_percent;
+              progressMap[p.article_id] = p; // Guarda o objeto inteiro
             });
             setDbProgress(progressMap);
           })
@@ -79,7 +79,7 @@ export default function ComoEstudarPrimeiroLugar() {
     if (articles.length > 0) {
       let completed = 0;
       articles.forEach(a => {
-        if (dbProgress[a.id] === 100) completed++;
+        if (dbProgress[a.id]?.is_completed) completed++;
       });
       setGlobalProgress(Math.round((completed / articles.length) * 100));
     } else {
@@ -91,12 +91,11 @@ export default function ComoEstudarPrimeiroLugar() {
     if (!currentUser) return;
     try {
       const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
+      let updatedObj;
       if (existing.length > 0) {
-        if (existing[0].progress_percent !== percent) {
-          await base44.entities.ArticleProgress.update(existing[0].id, { progress_percent: percent, is_completed: percent === 100 });
-        }
+        updatedObj = await base44.entities.ArticleProgress.update(existing[0].id, { progress_percent: percent, is_completed: percent === 100 });
       } else {
-        await base44.entities.ArticleProgress.create({
+        updatedObj = await base44.entities.ArticleProgress.create({
           user_email: currentUser.email,
           article_id: articleId,
           guide_slug: selectedGuide,
@@ -104,7 +103,37 @@ export default function ComoEstudarPrimeiroLugar() {
           is_completed: percent === 100
         });
       }
-      setDbProgress(prev => ({ ...prev, [articleId]: percent }));
+      setDbProgress(prev => ({ ...prev, [articleId]: updatedObj }));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleQuizSubmit = async (articleId, score, passed) => {
+    if (!currentUser) return;
+    try {
+      const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
+      let updatedObj;
+      if (existing.length > 0) {
+        updatedObj = await base44.entities.ArticleProgress.update(existing[0].id, { quiz_score: score, quiz_passed: passed, is_completed: true, progress_percent: 100 });
+      } else {
+        updatedObj = await base44.entities.ArticleProgress.create({
+          user_email: currentUser.email,
+          article_id: articleId,
+          guide_slug: selectedGuide,
+          progress_percent: 100,
+          is_completed: true,
+          quiz_score: score,
+          quiz_passed: passed
+        });
+      }
+      setDbProgress(prev => ({ ...prev, [articleId]: updatedObj }));
+      
+      if (passed) {
+        toast.success(`Parabéns! Você passou no quiz com nota ${score}! Novos conteúdos foram desbloqueados.`);
+      } else {
+        toast.error(`Você tirou nota ${score}. Tente novamente para desbloquear o próximo conteúdo.`);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -394,8 +423,25 @@ export default function ComoEstudarPrimeiroLugar() {
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
-            {articles.map((a) => (
-              <Card key={a.id} id={`art-${a.id}`} className="dark:bg-gray-700 dark:border-gray-600 hover:shadow-lg transition-shadow cursor-pointer relative" onClick={() => {
+            {articles.map((a, index) => {
+              // Verifica se está bloqueado (se o anterior não foi completado ou não passou no quiz)
+              let isLockedSequence = false;
+              if (index > 0 && !isAdmin) {
+                const prevArticle = articles[index - 1];
+                const prevProgress = dbProgress[prevArticle.id];
+                if (!prevProgress?.is_completed) {
+                  isLockedSequence = true;
+                } else if (prevArticle.quizzes && prevArticle.quizzes.length > 0 && !prevProgress.quiz_passed) {
+                  isLockedSequence = true;
+                }
+              }
+
+              return (
+              <Card key={a.id} id={`art-${a.id}`} className={`dark:bg-gray-700 dark:border-gray-600 transition-shadow relative ${isLockedSequence ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'}`} onClick={() => {
+                if (isLockedSequence) {
+                  toast.error("Você precisa concluir e passar no quiz do artigo anterior para desbloquear este.");
+                  return;
+                }
                 if (userPlan === 'gratuito' && !isAdmin) {
                   toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
                   return;
@@ -403,11 +449,11 @@ export default function ComoEstudarPrimeiroLugar() {
                 setSelectedArticle(a);
               }}>
                 <CardContent className="p-6">
-                  {userPlan === 'gratuito' && !isAdmin && (
+                  {(userPlan === 'gratuito' && !isAdmin) || isLockedSequence ? (
                     <div className="absolute top-4 right-4">
                       <Lock className="w-4 h-4 text-gray-400" />
                     </div>
-                  )}
+                  ) : null}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -416,7 +462,7 @@ export default function ComoEstudarPrimeiroLugar() {
                       <div className="flex flex-wrap items-center gap-2 mb-3">
                         {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
                         {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-600 dark:text-gray-300">{a.reading_time} min</Badge>}
-                        {dbProgress[a.id] === 100 && (
+                        {dbProgress[a.id]?.is_completed && (
                           <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Concluído
@@ -427,14 +473,14 @@ export default function ComoEstudarPrimeiroLugar() {
                         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{a.summary}</p>
                       )}
                     </div>
-                    <Button size="sm" variant="outline" className="flex-shrink-0">
+                    <Button size="sm" variant="outline" className="flex-shrink-0" disabled={isLockedSequence}>
                       <BookOpen className="w-4 h-4 mr-1" />
                       Ler
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )})}
           </section>
         )}
 
