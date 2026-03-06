@@ -318,6 +318,22 @@ Assunto: ${question.topic || 'Geral'}`;
             </motion.div>
           )}
 
+          {/* Botão gerar flashcard em caso de erro */}
+          {isSubmitted && !isCorrect && (
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleGenerateFlashcard}
+                disabled={generatingFlashcard}
+                className="border-yellow-400 text-yellow-700 hover:bg-yellow-50 dark:text-yellow-400 dark:hover:bg-yellow-900/20"
+              >
+                {generatingFlashcard ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
+                Gerar Flashcard deste Erro
+              </Button>
+            </div>
+          )}
+
           {/* Seção de comentários */}
           {isSubmitted && (
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
