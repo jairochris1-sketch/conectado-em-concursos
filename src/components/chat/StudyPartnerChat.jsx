@@ -449,7 +449,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
         {/* Settings inside header for Facebook feel */}
         {!isMinimized && (
-          <div className="flex items-center">
+          <div className="flex items-center" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0">
@@ -468,6 +468,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
               </DropdownMenuContent>
             </DropdownMenu>
             
+            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 ml-0.5 p-0" onClick={(e) => { e.stopPropagation(); if(onToggleMinimize) onToggleMinimize(); }}>
+              <Minus className="w-[14px] h-[14px]" />
+            </Button>
+
             <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent w-5 h-5 ml-0.5 p-0" onClick={(e) => { e.stopPropagation(); onClose(); }}>
               <X className="w-4 h-4" />
             </Button>
