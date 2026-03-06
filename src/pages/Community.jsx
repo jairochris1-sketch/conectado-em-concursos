@@ -464,8 +464,8 @@ export default function CommunityPage({ embedded = false }) {
                 ← Voltar
               </Button>
 
-              <Card className="mb-6">
-            <CardHeader className="bg-slate-800 p-6 rounded flex flex-col space-y-1.5">
+              <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
+            <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <Avatar>
@@ -473,7 +473,7 @@ export default function CommunityPage({ embedded = false }) {
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                          <CardTitle className="text-xl break-words text-slate-200">{selectedPost.title}</CardTitle>
+                          <CardTitle className="text-xl break-words text-gray-900 dark:text-slate-200">{selectedPost.title}</CardTitle>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <p className="flex items-center text-sm text-gray-400 flex-wrap">
                               Por{" "}
@@ -527,8 +527,8 @@ export default function CommunityPage({ embedded = false }) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="bg-slate-800 pt-0 p-6">
-              <p className="whitespace-pre-wrap mb-4 text-slate-300">{selectedPost.content}</p>
+            <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg">
+              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <Button
                   variant="ghost"
@@ -551,11 +551,11 @@ export default function CommunityPage({ embedded = false }) {
             </CardContent>
           </Card>
 
-          <Card className="mb-6">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800">
+          <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
+            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 border-b border-gray-100 dark:border-slate-800 rounded-t-lg">
               <CardTitle className="text-gray-900 dark:text-white">Respostas ({replies.length})</CardTitle>
             </CardHeader>
-            <CardContent className="bg-white dark:bg-slate-900 p-6">
+            <CardContent className="bg-white dark:bg-slate-900 pt-0 p-6 rounded-b-lg">
               <div className="space-y-1 mb-8">
                 {renderReplies(buildReplyTree(replies))}
               </div>
