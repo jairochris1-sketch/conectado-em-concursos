@@ -251,6 +251,41 @@ export default function GuiaEstudos() {
   }, []);
 
   useEffect(() => {
+    if (articles.length > 0) {
+      let completed = 0;
+      articles.forEach(a => {
+        if (dbProgress[a.id] === 100) completed++;
+      });
+      setGlobalProgress(Math.round((completed / articles.length) * 100));
+    } else {
+      setGlobalProgress(0);
+    }
+  }, [articles, dbProgress]);
+
+  const saveArticleProgress = async (articleId, percent) => {
+    if (!currentUser) return;
+    try {
+      const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
+      if (existing.length > 0) {
+        if (existing[0].progress_percent !== percent) {
+          await base44.entities.ArticleProgress.update(existing[0].id, { progress_percent: percent, is_completed: percent === 100 });
+        }
+      } else {
+        await base44.entities.ArticleProgress.create({
+          user_email: currentUser.email,
+          article_id: articleId,
+          guide_slug: slug,
+          progress_percent: percent,
+          is_completed: percent === 100
+        });
+      }
+      setDbProgress(prev => ({ ...prev, [articleId]: percent }));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
     if (selectedArticle && readingProgress[selectedArticle.id]) {
       setTimeout(() => {
         window.scrollTo(0, readingProgress[selectedArticle.id]);
