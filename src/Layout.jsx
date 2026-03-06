@@ -622,7 +622,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("Admin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent hover:border-transparent transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:border-transparent transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
@@ -632,7 +632,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("SDAdmin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent hover:border-transparent transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:border-transparent transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
