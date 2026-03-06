@@ -528,7 +528,7 @@ export default function CommunityPage({ embedded = false }) {
               </div>
             </CardHeader>
             <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg">
-              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300">{selectedPost.content}</p>
+              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300 w-full break-words">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500 mt-4 border-t border-gray-100 dark:border-slate-800 pt-4">
                 <Button
                   variant="ghost"
