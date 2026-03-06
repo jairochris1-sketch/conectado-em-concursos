@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Added CardHeader
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase, Pencil, Sparkles, Loader2 } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Added RadioGroup, RadioGroupItem
+import { Label } from '@/components/ui/label'; // Added Label
+import { Alert, AlertDescription } from '@/components/ui/alert'; // Added Alert, AlertDescription
+import { CheckCircle, XCircle, MessageSquare, Building, Calendar, Briefcase, Pencil } from 'lucide-react'; // Added Building, Calendar, Briefcase, Pencil
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
+import { cn } from '@/lib/utils'; // Added cn utility
 
 import CommentSection from '../comments/CommentSection';
 
@@ -71,58 +69,7 @@ export default function QuestionCard({
   isBlocked // Added isBlocked prop
 }) {
   const [showComments, setShowComments] = useState(false);
-  const [generatingFlashcard, setGeneratingFlashcard] = useState(false);
-
-  const handleGenerateFlashcard = async () => {
-    setGeneratingFlashcard(true);
-    try {
-      const prompt = `Você é um tutor de concursos públicos. Crie UM flashcard didático baseado nesta questão que o aluno errou, focando no conceito chave que justifica a resposta correta.
-Use HTML básico se necessário (<b>, <i>) para destacar termos importantes. Seja super direto e didático.
-
-Questão: ${question.statement?.replace(/<[^>]*>/g, '').substring(0, 400)}
-Resposta correta: ${question.correct_answer?.toUpperCase()}
-Explicação: ${question.explanation?.replace(/<[^>]*>/g, '').substring(0, 300) || 'N/A'}
-Disciplina: ${question.subject}
-Assunto: ${question.topic || 'Geral'}`;
-
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            front: { type: "string" },
-            back: { type: "string" }
-          },
-          required: ["front", "back"]
-        }
-      });
-
-      const validSubjects = [
-        "portugues", "matematica", "direito_constitucional", "direito_administrativo",
-        "direito_penal", "direito_civil", "informatica", "conhecimentos_gerais",
-        "raciocinio_logico", "contabilidade", "pedagogia", "lei_8112", "lei_8666",
-        "lei_14133", "constituicao_federal"
-      ];
-      const subject = validSubjects.includes(question.subject) ? question.subject : "conhecimentos_gerais";
-
-      await base44.entities.Flashcard.create({
-        front: response.front,
-        back: response.back,
-        subject,
-        topic: question.topic || "Revisão",
-        deck_name: "Erros de Questões",
-        difficulty: "medio",
-        is_active: true,
-        tags: ["revisao_erros"]
-      });
-
-      toast.success("Flashcard criado com sucesso! Acesse Meus Flashcards para revisar.");
-    } catch (error) {
-      toast.error("Erro ao gerar flashcard.");
-    } finally {
-      setGeneratingFlashcard(false);
-    }
-  };
+  // showExplanation state and its related logic have been removed
 
   const handleAnswerSelect = (value) => { // Renamed and adjusted for RadioGroup
     if (submittedAnswer) return;
@@ -318,31 +265,17 @@ Assunto: ${question.topic || 'Geral'}`;
             </motion.div>
           )}
 
-          {/* Seção de botões e comentários pós-submissão */}
+          {/* Seção de comentários */}
           {isSubmitted && (
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowComments(!showComments)}
-                  className="bg-white dark:bg-gray-700 dark:text-white"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  {showComments ? 'Ocultar' : 'Ver'} Comentários
-                </Button>
-
-                {!isCorrect && (
-                  <Button
-                    variant="outline"
-                    onClick={handleGenerateFlashcard}
-                    disabled={generatingFlashcard}
-                    className="border-yellow-400 text-yellow-700 hover:bg-yellow-50 dark:text-yellow-400 dark:hover:bg-yellow-900/20 shadow-sm"
-                  >
-                    {generatingFlashcard ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />}
-                    Gerar Flashcard deste Erro
-                  </Button>
-                )}
-              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowComments(!showComments)}
+                className="mb-4 bg-white dark:bg-gray-700 dark:text-white"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                {showComments ? 'Ocultar' : 'Ver'} Comentários
+              </Button>
               
               {showComments && (
                 <CommentSection questionId={question.id} />
