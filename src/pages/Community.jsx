@@ -18,7 +18,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StaffBadge } from "@/components/ui/staff-badge";
 import UserLink from "@/components/social/UserLink";
 import OnlineUsersSidebar from "@/components/social/OnlineUsersSidebar";
@@ -38,6 +38,7 @@ const defaultCategories = [
 
 
 export default function CommunityPage({ embedded = false }) {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState(defaultCategories);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
