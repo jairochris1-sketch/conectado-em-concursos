@@ -211,7 +211,8 @@ const pageNameTranslations = {
   NotebookStats: "Estatísticas do Caderno",
   Flashcards: "Flashcards",
   StudyPlanning: "Planejamento de Estudos",
-  StudyCycle: "Ciclo de Estudos"
+  StudyCycle: "Ciclo de Estudos",
+  WeeklyTrail: "Trilha Semanal"
 };
 
 const featureAccess = {
