@@ -353,11 +353,11 @@ export default function ExamView() {
         </div>
   
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-white dark:text-white">{examInfo.name}</h1>
-          <p className="text-base md:text-lg text-gray-300 dark:text-gray-300 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{examInfo.name}</h1>
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mt-1">
             {institutionNames[examInfo.institution] || examInfo.institution.toUpperCase()} - {examInfo.year}
           </p>
-          <p className="text-sm md:text-md text-gray-400 dark:text-gray-400">
+          <p className="text-sm md:text-md text-gray-500 dark:text-gray-400">
             Cargo: {examInfo.cargo}
           </p>
         </div>
