@@ -19,10 +19,10 @@ export default function OnlineUsersSidebar() {
         if (active) {
             const now = new Date();
             const activeUsers = records.filter(record => {
-                if (record.status === 'invisible') return false;
+                if (record.status === 'invisible' || record.status === 'offline') return false;
                 if (!record.last_seen) return false;
                 const lastSeen = new Date(record.last_seen);
-                return (now - lastSeen) < 3 * 60 * 1000; // 3 minutes threshold
+                return (now - lastSeen) < 60 * 1000; // 1 minute threshold
             });
             setOnlineUsers(activeUsers);
         }
