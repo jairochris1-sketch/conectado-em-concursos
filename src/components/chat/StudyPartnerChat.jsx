@@ -417,7 +417,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     >
       {/* Header */}
       <div 
-        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0 cursor-pointer"
+        className="flex items-center gap-3 p-2 bg-[#3b5998] text-white flex-shrink-0 cursor-pointer border-b border-[#1d3c78]"
         onClick={(e) => {
           if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
             onToggleMinimize();
@@ -425,9 +425,9 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         }}
       >
         <div className="relative">
-          <Avatar className="w-9 h-9">
-            <AvatarImage src={partner.photo} />
-            <AvatarFallback className="text-sm bg-green-800">{partner.name?.charAt(0)}</AvatarFallback>
+          <Avatar className="w-8 h-8 rounded-sm">
+            <AvatarImage src={partner.photo} className="rounded-sm" />
+            <AvatarFallback className="text-xs bg-[#5c75a9] rounded-sm">{partner.name?.charAt(0)}</AvatarFallback>
           </Avatar>
           {partnerPresence?.display === "online" && (
             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
@@ -448,7 +448,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         {/* My status selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2 h-7">
+            <Button variant="ghost" size="sm" className="text-white hover:bg-[#2d4373] text-xs gap-1 px-2 h-7 rounded-sm">
               {currentStatusOption.label} <ChevronDown className="w-3 h-3" />
             </Button>
           </DropdownMenuTrigger>
@@ -464,7 +464,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         {/* Settings */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs px-2 h-7 gap-1">
+            <Button variant="ghost" size="sm" className="text-white hover:bg-[#2d4373] text-xs px-2 h-7 gap-1 rounded-sm">
               <Settings className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -486,7 +486,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8 ml-auto" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+        <Button variant="ghost" size="icon" className="text-white hover:bg-[#2d4373] w-8 h-8 ml-auto rounded-sm" onClick={(e) => { e.stopPropagation(); onClose(); }}>
           <X className="w-4 h-4" />
         </Button>
       </div>
@@ -525,13 +525,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
                   <AvatarFallback className="text-xs">{msg.sender_name?.charAt(0)}</AvatarFallback>
                 </Avatar>
               )}
-              <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
+              <div className={`max-w-[75%] px-3 py-1.5 rounded-sm text-sm ${
                 isMe
-                  ? "bg-green-600 text-white rounded-br-sm"
-                  : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm shadow-sm"
+                  ? "bg-[#edf0f5] text-gray-900 border border-[#d8dfea]"
+                  : "bg-white text-gray-900 border border-gray-200"
               }`}>
                 <p>{msg.content}</p>
-                <p className={`text-xs mt-0.5 flex items-center gap-1 ${isMe ? "text-green-100" : "text-gray-400"}`}>
+                <p className={`text-[10px] mt-0.5 flex items-center gap-1 ${isMe ? "text-gray-500" : "text-gray-400"}`}>
                   {msg.timestamp 
                     ? new Date(msg.timestamp).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
                     : new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -560,10 +560,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
               className="absolute bottom-16 left-0 right-0 flex justify-center"
             >
               <button
-                onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
-                className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center gap-1"
+              onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
+              className="bg-[#3b5998] text-white text-xs px-3 py-1.5 rounded-sm shadow-md hover:bg-[#2d4373] transition-colors flex items-center gap-1"
               >
-                <Circle className="w-2 h-2 fill-white" /> Nova mensagem
+              <Circle className="w-2 h-2 fill-white" /> Nova mensagem
               </button>
             </motion.div>
           )}
@@ -571,18 +571,18 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
+      <div className="p-2 border-t border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
         <Input
           ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
           placeholder="Digite uma mensagem..."
-          className="flex-1 text-sm"
+          className="flex-1 text-sm rounded-sm border-gray-300 focus-visible:ring-0 focus-visible:border-[#3b5998] shadow-none h-8"
           disabled={sending}
         />
-        <Button size="icon" onClick={sendMessage} disabled={sending || !text.trim()} className="bg-green-600 hover:bg-green-700 text-white w-9 h-9">
-          {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+        <Button size="icon" onClick={sendMessage} disabled={sending || !text.trim()} className="bg-[#3b5998] hover:bg-[#2d4373] text-white w-8 h-8 rounded-sm">
+          {sending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
         </Button>
       </div>
         </>
