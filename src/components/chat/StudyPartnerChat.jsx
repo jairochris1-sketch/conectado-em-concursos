@@ -414,82 +414,61 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden"
+      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 overflow-hidden font-sans"
     >
       {/* Header */}
       <div 
-        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0 cursor-pointer"
+        className={`flex items-center gap-1.5 px-2 py-1.5 bg-[#405a93] hover:bg-[#4b67a1] text-white flex-shrink-0 cursor-pointer ${isMinimized ? 'h-full relative border-b border-[#2d4373]' : ''}`}
         onClick={(e) => {
           if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
             onToggleMinimize();
           }
         }}
       >
-        <div className="relative">
-          <Avatar className="w-9 h-9">
-            <AvatarImage src={partner.photo} />
-            <AvatarFallback className="text-sm bg-green-800">{partner.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
+        <div className="flex-1 min-w-0 flex items-center gap-1.5">
+          <p className="font-bold text-[13px] truncate" style={{ textShadow: "0 1px 0 rgba(0,0,0,0.2)" }}>{partner.name}</p>
           {partnerPresence?.display === "online" && (
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
+             <span className="w-2 h-2 rounded-full bg-[#54c042] flex-shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+          )}
+          {unreadCount > 0 && isMinimized && (
+            <div className="absolute -top-1.5 -left-1.5 bg-[#d92c2c] text-white text-[11px] font-bold px-[5px] py-[2px] rounded-[3px] shadow-[0_1px_2px_rgba(0,0,0,0.3)] leading-none z-50 border border-[#b22020]">
+              {unreadCount}
+            </div>
           )}
         </div>
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <div>
-            <p className="font-semibold text-sm truncate">{partner.name}</p>
-            <PresenceDot presence={partnerPresence} />
+
+        {/* Settings inside header for Facebook feel */}
+        {!isMinimized && (
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0">
+                  <Settings className="w-[14px] h-[14px]" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 text-[12px]">
+                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer py-2">
+                  <span>Notificações Push</span>
+                  {prefs.push ? <span className="text-[#54c042]">Ativo</span> : <span className="text-gray-400">Inativo</span>}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-2">
+                  <span>Som no Chat</span>
+                  {prefs.sound ? <span className="text-[#54c042]">Ativo</span> : <span className="text-gray-400">Inativo</span>}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent w-5 h-5 ml-0.5 p-0" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+              <X className="w-4 h-4" />
+            </Button>
           </div>
-          {unreadCount > 0 && (
-            <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse shadow-sm border border-red-400">
-              {unreadCount} nova{unreadCount > 1 ? 's' : ''}
-            </span>
-          )}
-        </div>
-
-        {/* My status selector */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2 h-7">
-              {currentStatusOption.label} <ChevronDown className="w-3 h-3" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {STATUS_OPTIONS.map(opt => (
-              <DropdownMenuItem key={opt.value} onClick={() => changeMyStatus(opt.value)} className={opt.color}>
-                {opt.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Settings */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs px-2 h-7 gap-1">
-              <Settings className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer py-3">
-              <span className="flex items-center gap-2 font-medium">
-                {prefs.push ? <BellRing className="w-4 h-4 text-green-600" /> : <BellOff className="w-4 h-4 text-gray-400" />}
-                Notificações Push
-              </span>
-              <span className="text-xs text-gray-500">{prefs.push ? 'Ativo' : 'Inativo'}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-3">
-              <span className="flex items-center gap-2 font-medium">
-                {prefs.sound ? <Volume2 className="w-4 h-4 text-green-600" /> : <VolumeX className="w-4 h-4 text-gray-400" />}
-                Som no Chat
-              </span>
-              <span className="text-xs text-gray-500">{prefs.sound ? 'Ativo' : 'Inativo'}</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        )}
         
-        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8 ml-auto" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-          <X className="w-4 h-4" />
-        </Button>
+        {isMinimized && (
+          <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent w-4 h-4 p-0" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+            <X className="w-3.5 h-3.5" />
+          </Button>
+        )}
       </div>
 
       {!isMinimized && (
@@ -506,45 +485,38 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" ref={containerRef}>
+      <div className="flex-1 overflow-y-auto p-2 bg-white text-[12px] relative" ref={containerRef}>
         {loadingOlder && (
-          <div className="text-center text-gray-400 text-xs py-2">
-            <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando mensagens antigas...
+          <div className="text-center text-gray-400 text-[10px] py-1">
+            <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando...
           </div>
         )}
         <div ref={messagesStart} />
         {messages.length === 0 && (
-          <p className="text-center text-gray-400 text-sm mt-8">Nenhuma mensagem ainda. Diga olá! 👋</p>
+          <p className="text-center text-gray-400 text-xs mt-4">Nenhuma mensagem ainda.</p>
         )}
-        {messages.map((msg) => {
+        {messages.map((msg, i) => {
           const isMe = msg.sender_email === currentUser.email;
+          const senderName = isMe ? currentUser.full_name?.split(' ')[0] : partner.name?.split(' ')[0];
+          const timeObj = msg.timestamp ? new Date(msg.timestamp) : new Date(msg.created_date);
+          const time = timeObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+          // Determine if we should show the header (if previous message is from someone else or > 5 mins ago)
+          const prevMsg = messages[i - 1];
+          const prevTimeObj = prevMsg ? (prevMsg.timestamp ? new Date(prevMsg.timestamp) : new Date(prevMsg.created_date)) : null;
+          const showHeader = !prevMsg || prevMsg.sender_email !== msg.sender_email || 
+                             (timeObj - prevTimeObj) > 5 * 60 * 1000;
+
           return (
-            <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-              {!isMe && (
-                <Avatar className="w-6 h-6 mr-1.5 mt-1 flex-shrink-0">
-                  <AvatarImage src={msg.sender_photo} />
-                  <AvatarFallback className="text-xs">{msg.sender_name?.charAt(0)}</AvatarFallback>
-                </Avatar>
+            <div key={msg.id} className="mb-[2px] leading-snug">
+              {showHeader && (
+                <div className="flex items-end gap-1.5 mb-0.5 mt-[6px]">
+                  <span className="font-bold text-[#3b5998]">{senderName}</span>
+                  <span className="text-[10px] text-gray-400 mb-[1px]">{time}</span>
+                </div>
               )}
-              <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
-                isMe
-                  ? "bg-green-600 text-white rounded-br-sm"
-                  : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm shadow-sm"
-              }`}>
-                <p>{msg.content}</p>
-                <p className={`text-xs mt-0.5 flex items-center gap-1 ${isMe ? "text-green-100" : "text-gray-400"}`}>
-                  {msg.timestamp 
-                    ? new Date(msg.timestamp).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-                    : new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-                  }
-                  {isMe && (
-                    msg.status === 'read'
-                      ? <span title="Lido">✓✓</span>
-                      : msg.status === 'delivered'
-                      ? <span title="Entregue">✓</span>
-                      : <span title="Enviado">⏱</span>
-                  )}
-                </p>
+              <div className="text-[#333333] pl-0 whitespace-pre-wrap break-words">
+                {msg.content}
               </div>
             </div>
           );
@@ -558,13 +530,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute bottom-16 left-0 right-0 flex justify-center"
+              className="absolute bottom-1 left-0 right-0 flex justify-center"
             >
               <button
                 onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
-                className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center gap-1"
+                className="bg-[#e9ebee] text-[#3b5998] border border-[#d3d6db] text-[10px] px-2 py-1 rounded shadow-sm hover:bg-[#d8dce6] transition-colors flex items-center gap-1 font-bold"
               >
-                <Circle className="w-2 h-2 fill-white" /> Nova mensagem
+                Novas mensagens
               </button>
             </motion.div>
           )}
@@ -572,19 +544,26 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
+      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end">
         <Input
           ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
           placeholder="Digite uma mensagem..."
-          className="flex-1 text-sm"
+          className="flex-1 text-[12px] h-7 min-h-[28px] border-none shadow-none rounded-none focus-visible:ring-0 px-1.5 py-1"
           disabled={sending}
         />
-        <Button size="icon" onClick={sendMessage} disabled={sending || !text.trim()} className="bg-green-600 hover:bg-green-700 text-white w-9 h-9">
-          {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-        </Button>
+        {text.trim() && (
+          <Button size="icon" onClick={sendMessage} disabled={sending} className="h-7 w-7 bg-transparent hover:bg-[#e9ebee] text-[#3b5998] shadow-none flex-shrink-0 rounded-sm">
+            {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" /> : <Send className="w-3.5 h-3.5" />}
+          </Button>
+        )}
       </div>
         </>
       )}
