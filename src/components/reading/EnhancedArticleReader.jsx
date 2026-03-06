@@ -16,7 +16,8 @@ import {
   Trash2,
   Download,
   Eye,
-  EyeOff
+  EyeOff,
+  CheckCircle2
 } from 'lucide-react';
 import {
   Select,
@@ -44,7 +45,7 @@ const subjectNames = {
   constituicao_federal: "Constituição Federal"
 };
 
-export default function EnhancedArticleReader({ article, isOpen, onClose }) {
+export default function EnhancedArticleReader({ article, isOpen, onClose, isCompleted, onMarkCompleted }) {
   const [darkMode, setDarkMode] = useState(false);
   const [readingMode, setReadingMode] = useState(false);
   const [fontSize, setFontSize] = useState('medium');
@@ -321,6 +322,23 @@ ${notes.map(n => `${new Date(n.timestamp).toLocaleString('pt-BR')}\n${n.content}
                   }}
                   dangerouslySetInnerHTML={{ __html: article.content }}
                 />
+
+                {onMarkCompleted && (
+                  <div className="mt-12 flex justify-end border-t pt-6" style={{ borderColor: darkMode ? '#374151' : '#e5e7eb' }}>
+                    <Button 
+                      onClick={() => onMarkCompleted(!isCompleted)}
+                      className={isCompleted 
+                        ? "bg-green-600 hover:bg-green-700 text-white" 
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white"}
+                    >
+                      {isCompleted ? (
+                        <><CheckCircle2 className="w-4 h-4 mr-2" /> Concluído</>
+                      ) : (
+                        "Marcar como Concluído"
+                      )}
+                    </Button>
+                  </div>
+                )}
               </article>
             </div>
           </div>
