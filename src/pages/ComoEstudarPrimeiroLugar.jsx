@@ -284,6 +284,21 @@ export default function ComoEstudarPrimeiroLugar() {
         </div>
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
         
+        {!loading && articles.length > 0 && (
+          <div className="mb-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className={`w-5 h-5 ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-500'}`} />
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Progresso do Guia</span>
+              </div>
+              <span className={`text-sm font-bold ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-600 dark:text-indigo-400'}`}>
+                {globalProgress}%
+              </span>
+            </div>
+            <Progress value={globalProgress} className="h-2" />
+          </div>
+        )}
+
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
