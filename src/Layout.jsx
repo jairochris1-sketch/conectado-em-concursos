@@ -812,11 +812,11 @@ export default function Layout({ children, currentPageName }) {
                   {user.job_title}
                 </DropdownMenuItem>
               }
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2 focus:bg-white/10 focus:text-white">
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2 focus:bg-white/10 focus:text-white">
                 <CreditCard className="w-4 h-4" />
                 Painel de Assinaturas
               </DropdownMenuItem>
@@ -886,7 +886,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
               <div className="h-px bg-white/20 my-2 mx-2" />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 focus:bg-white/10 focus:text-red-300 text-sm flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
                 Sair
               </DropdownMenuItem>
