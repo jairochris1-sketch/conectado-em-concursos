@@ -435,7 +435,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       <div 
         className={`flex items-center gap-1.5 px-2 py-1.5 bg-[#405a93] hover:bg-[#4b67a1] text-white flex-shrink-0 cursor-pointer ${isMinimized ? 'h-full relative border-b border-[#2d4373]' : ''}`}
         onClick={(e) => {
-          if (onToggleMinimize && isMinimized && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
+          if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
             onToggleMinimize();
           }
         }}
