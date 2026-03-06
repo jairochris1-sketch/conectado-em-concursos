@@ -584,99 +584,99 @@ export default function CommunityPage({ embedded = false }) {
               </div>
             </CardContent>
           </Card>
-        </div>
+            </div>
 
-        <Dialog open={!!editingPost} onOpenChange={() => setEditingPost(null)}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Editar Discussão</DialogTitle>
-            </DialogHeader>
-            {editingPost &&
-            <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Título</label>
-                  <Input
-                  value={editingPost.title}
-                  onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} />
-
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Categoria</label>
-                  <Select value={editingPost.subject} onValueChange={(v) => setEditingPost({ ...editingPost, subject: v })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((s) =>
-                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                    )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
-                  <Input
-                  value={editingPost.topic || ""}
-                  onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })} />
-
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Conteúdo</label>
-                  <Textarea
-                  value={editingPost.content}
-                  onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
-                  rows={6} />
-
-                </div>
-                <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
+            {!embedded && (
+              <div className="hidden lg:block w-72 shrink-0">
+                <OnlineUsersSidebar />
               </div>
-            }
-          </DialogContent>
-        </Dialog>
-
-        <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir discussão?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta ação não pode ser desfeita. Isso excluirá permanentemente o post e todas as suas respostas.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeletePost} className="bg-red-600 hover:bg-red-700">
-                Excluir
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
-                Excluir
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            )}
           </div>
 
-          {!embedded && (
-            <div className="hidden lg:block w-72 shrink-0">
-              <OnlineUsersSidebar />
-            </div>
-          )}
+          <Dialog open={!!editingPost} onOpenChange={() => setEditingPost(null)}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Editar Discussão</DialogTitle>
+              </DialogHeader>
+              {editingPost &&
+              <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Título</label>
+                    <Input
+                    value={editingPost.title}
+                    onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} />
+
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Categoria</label>
+                    <Select value={editingPost.subject} onValueChange={(v) => setEditingPost({ ...editingPost, subject: v })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((s) =>
+                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                      )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
+                    <Input
+                    value={editingPost.topic || ""}
+                    onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })} />
+
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Conteúdo</label>
+                    <Textarea
+                    value={editingPost.content}
+                    onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                    rows={6} />
+
+                  </div>
+                  <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
+                </div>
+              }
+            </DialogContent>
+          </Dialog>
+
+          <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir discussão?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. Isso excluirá permanentemente o post e todas as suas respostas.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeletePost} className="bg-red-600 hover:bg-red-700">
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-        </div>
-        </div>);
+      </div>
+    );
 
   }
 
