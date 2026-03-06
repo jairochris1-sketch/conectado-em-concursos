@@ -124,7 +124,7 @@ const moreMenuCategories = [
       { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy, color: "text-indigo-400", fill: "fill-indigo-400/20" },
       { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles, color: "text-yellow-400", fill: "fill-yellow-400/20" },
       { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList, color: "text-emerald-400", fill: "fill-emerald-400/20" },
-      { title: "Trilha Semanal", url: createPageUrl("WeeklyTrail"), icon: Calendar, color: "text-blue-400", fill: "fill-blue-400/20" },
+      { title: "Criar Planejamento de Estudos", url: createPageUrl("StudyPlanning"), icon: Calendar, color: "text-blue-400", fill: "fill-blue-400/20" },
       { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle, color: "text-red-400", fill: "fill-red-400/20" },
     ]
   },
@@ -211,7 +211,6 @@ const pageNameTranslations = {
   NotebookStats: "Estatísticas do Caderno",
   Flashcards: "Flashcards",
   StudyPlanning: "Planejamento de Estudos",
-  WeeklyTrail: "Trilha Semanal",
   StudyCycle: "Ciclo de Estudos"
 };
 
@@ -234,7 +233,6 @@ const featureAccess = {
   'Pessoas': ['padrao', 'avancado'],
   'Área de Estudos': ['padrao', 'avancado'],
   'Criar Planejamento de Estudos': ['padrao', 'avancado'],
-  'Trilha Semanal': ['padrao', 'avancado'],
   'Planejamento de Estudos': ['padrao', 'avancado'],
   'Cronograma de Estudos': ['padrao', 'avancado'],
   'Revisões': ['padrao', 'avancado'],
