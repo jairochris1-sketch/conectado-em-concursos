@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Clock, Play, Pause, RotateCcw, Settings } from "lucide-react";
+import { Timer, Play, Pause, RotateCcw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -91,7 +91,7 @@ export default function StudyTimer({ defaultMinutes = 25 }) {
         onClick={() => setIsOpen(true)}
         className="text-red-500 hover:text-red-600 hover:bg-red-50 relative"
       >
-        <Clock className="w-5 h-5" />
+        <Timer className="w-5 h-5" />
         {isRunning && (
           <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-pulse"></span>
         )}
@@ -101,7 +101,7 @@ export default function StudyTimer({ defaultMinutes = 25 }) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-red-500" />
+              <Timer className="w-5 h-5 text-red-500" />
               Cronômetro de Estudos
             </DialogTitle>
             <DialogDescription>
