@@ -55,8 +55,16 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
     const loadSubjects = async () => {
       try {
         const list = await base44.entities.Subject?.list?.();
+        const hex24 = /^[a-f0-9]{24}$/i; // id parecido com o da imagem
         if (Array.isArray(list) && list.length > 0) {
-          setSubjects(list.map(s => s.name || s.title || s.subject || s.id).filter(Boolean));
+          const labels = list
+            .map((s) => (
+              s.name || s.title || s.label || s.display_name || s.nome || s.disciplina || s.materia || s.subject || ""
+            ))
+            .map((v) => (typeof v === "string" ? v.trim() : ""))
+            .filter((v) => v && !hex24.test(v) && v.length > 1);
+          const unique = Array.from(new Set(labels));
+          setSubjects(unique.length > 0 ? unique : defaultSubjects);
         } else {
           setSubjects(defaultSubjects);
         }
