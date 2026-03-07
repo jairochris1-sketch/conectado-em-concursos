@@ -403,77 +403,83 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 overflow-hidden font-sans"
+      className="flex flex-col w-full h-full bg-gray-50 dark:bg-gray-900 overflow-hidden"
     >
       {/* Header */}
       <div 
-        className={`flex items-center gap-1.5 px-2 py-1.5 bg-[#405a93] hover:bg-[#4b67a1] text-white flex-shrink-0 cursor-pointer ${isMinimized ? 'h-full relative border-b border-[#2d4373]' : ''}`}
+        className={`flex items-center justify-between gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 cursor-pointer ${isMinimized ? 'h-full relative' : ''}`}
         onClick={(e) => {
           if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
             onToggleMinimize();
           }
         }}
       >
-        <div className="flex-1 min-w-0 flex items-center gap-1.5">
-          <p className="font-bold text-[13px] truncate" style={{ textShadow: "0 1px 0 rgba(0,0,0,0.2)" }}>{partner.name}</p>
-          {partnerPresence?.display === "online" ? (
-             <span className="w-2 h-2 rounded-full bg-[#54c042] flex-shrink-0 shadow-[0_1px_1px_rgba(0,0,0,0.3)]" title="Online" />
-          ) : (
-             partnerPresence?.last_seen && (
-               <span className="text-[10px] text-[#c1d0f0] truncate whitespace-nowrap">
-                 visto {formatDistanceToNow(new Date(partnerPresence.last_seen), { addSuffix: true, locale: ptBR })}
-               </span>
-             )
-          )}
+        <div className="flex-1 min-w-0 flex items-center gap-2">
+          <Avatar className="w-8 h-8 border border-white/20">
+            <AvatarImage src={partner.profile_photo_url} />
+            <AvatarFallback className="bg-blue-800 text-xs">{partner.name?.[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm truncate">{partner.name}</p>
+            {partnerPresence?.display === "online" ? (
+               <p className="text-xs text-blue-100 flex items-center gap-1">
+                 <span className="w-2 h-2 rounded-full bg-green-400" /> Online
+               </p>
+            ) : (
+               <p className="text-[10px] text-blue-200 truncate">
+                 {partnerPresence?.last_seen ? `visto ${formatDistanceToNow(new Date(partnerPresence.last_seen), { addSuffix: true, locale: ptBR })}` : 'Offline'}
+               </p>
+            )}
+          </div>
           {unreadCount > 0 && isMinimized && (
-            <div className="absolute -top-1.5 -left-1.5 bg-[#d92c2c] text-white text-[11px] font-bold px-[5px] py-[2px] rounded-[3px] shadow-[0_1px_2px_rgba(0,0,0,0.3)] leading-none z-50 border border-[#b22020]">
+            <div className="absolute top-1/2 -translate-y-1/2 right-12 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
               {unreadCount}
             </div>
           )}
         </div>
 
-        {/* Settings inside header for Facebook feel */}
+        {/* Settings inside header */}
         {!isMinimized && (
-          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0" onClick={(e) => { e.stopPropagation(); setIsSearching(!isSearching); if(isSearching) setSearchQuery(""); }}>
-              <Search className="w-[14px] h-[14px]" />
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); setIsSearching(!isSearching); if(isSearching) setSearchQuery(""); }}>
+              <Search className="w-4 h-4" />
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 p-0">
-                  <Settings className="w-[14px] h-[14px]" />
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7">
+                  <Settings className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 text-[12px]">
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer py-2">
+              <DropdownMenuContent align="end" className="w-48 text-sm">
+                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer">
                   <span>Notificações Push</span>
-                  {prefs.push ? <span className="text-[#54c042]">Ativo</span> : <span className="text-gray-400">Inativo</span>}
+                  {prefs.push ? <span className="text-green-500">Ativo</span> : <span className="text-gray-400">Inativo</span>}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-2">
+                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer">
                   <span>Som no Chat</span>
-                  {prefs.sound ? <span className="text-[#54c042]">Ativo</span> : <span className="text-gray-400">Inativo</span>}
+                  {prefs.sound ? <span className="text-green-500">Ativo</span> : <span className="text-gray-400">Inativo</span>}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleClearMessages} className="flex items-center text-red-500 cursor-pointer py-2 mt-1 border-t">
-                  <Trash2 className="w-3.5 h-3.5 mr-2" />
+                <DropdownMenuItem onClick={handleClearMessages} className="flex items-center text-red-500 cursor-pointer mt-1 border-t">
+                  <Trash2 className="w-4 h-4 mr-2" />
                   <span>Limpar Histórico</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent h-5 w-5 ml-0.5 p-0" onClick={(e) => { e.stopPropagation(); if(onToggleMinimize) onToggleMinimize(); }}>
-              <Minus className="w-[14px] h-[14px]" />
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); if(onToggleMinimize) onToggleMinimize(); }}>
+              <Minus className="w-4 h-4" />
             </Button>
 
-            <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent w-5 h-5 ml-0.5 p-0" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-red-500 hover:text-white h-7 w-7" onClick={(e) => { e.stopPropagation(); onClose(); }}>
               <X className="w-4 h-4" />
             </Button>
           </div>
         )}
         
         {isMinimized && (
-          <Button variant="ghost" size="icon" className="text-[#c1d0f0] hover:text-white hover:bg-transparent w-4 h-4 p-0" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-            <X className="w-3.5 h-3.5" />
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+            <X className="w-4 h-4" />
           </Button>
         )}
       </div>
@@ -481,17 +487,17 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       {!isMinimized && (
         <>
       {isSearching && (
-        <div className="bg-[#f0f2f5] p-1.5 flex items-center border-b border-[#ddd]" onClick={(e) => e.stopPropagation()}>
-          <Search className="w-3.5 h-3.5 text-gray-500 ml-1 mr-1.5" />
+        <div className="bg-white dark:bg-gray-800 p-2 flex items-center border-b dark:border-gray-700" onClick={(e) => e.stopPropagation()}>
+          <Search className="w-4 h-4 text-gray-500 mr-2" />
           <input
             autoFocus
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar nas mensagens..."
-            className="flex-1 bg-transparent text-[11px] outline-none px-1 text-gray-700"
+            placeholder="Buscar mensagens..."
+            className="flex-1 bg-transparent text-sm outline-none text-gray-700 dark:text-gray-200"
           />
-          <Button variant="ghost" size="icon" className="h-5 w-5 text-gray-500 hover:text-gray-700" onClick={() => { setIsSearching(false); setSearchQuery(""); }}>
-            <X className="w-3 h-3" />
+          <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-500" onClick={() => { setIsSearching(false); setSearchQuery(""); }}>
+            <X className="w-4 h-4" />
           </Button>
         </div>
       )}
@@ -508,49 +514,45 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-2 bg-white text-[12px] relative" ref={containerRef}>
+      <div className="flex-1 overflow-y-auto p-3 bg-[#e5ddd5] dark:bg-gray-900 relative" ref={containerRef}>
         {loadingOlder && (
-          <div className="text-center text-gray-400 text-[10px] py-1">
-            <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando...
+          <div className="flex justify-center py-2">
+            <span className="bg-white/80 dark:bg-gray-800 text-gray-500 text-xs px-3 py-1 rounded-full shadow-sm flex items-center">
+              <Loader2 className="w-3 h-3 animate-spin mr-2" /> Carregando...
+            </span>
           </div>
         )}
         <div ref={messagesStart} />
         {messages.length === 0 && (
-          <p className="text-center text-gray-400 text-xs mt-4">Nenhuma mensagem ainda.</p>
+          <div className="flex justify-center mt-4">
+            <span className="bg-[#fff3c4] text-[#856404] text-xs px-3 py-1.5 rounded-lg text-center shadow-sm">
+              As mensagens são protegidas de ponta a ponta.
+            </span>
+          </div>
         )}
         {messages.filter(msg => !searchQuery || msg.content.toLowerCase().includes(searchQuery.toLowerCase())).map((msg, i, arr) => {
           const isMe = msg.sender_email === currentUser.email;
-          const senderName = isMe ? currentUser.full_name?.split(' ')[0] : partner.name?.split(' ')[0];
           const timeObj = msg.timestamp ? new Date(msg.timestamp) : new Date(msg.created_date);
           const time = timeObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
-          // Determine if we should show the header (if previous message is from someone else or > 5 mins ago)
-          const prevMsg = arr[i - 1];
-          const prevTimeObj = prevMsg ? (prevMsg.timestamp ? new Date(prevMsg.timestamp) : new Date(prevMsg.created_date)) : null;
-          const showHeader = !prevMsg || prevMsg.sender_email !== msg.sender_email || 
-                             (timeObj - prevTimeObj) > 5 * 60 * 1000;
-
           return (
-            <div key={msg.id} className="mb-[2px] leading-snug">
-              {showHeader && (
-                <div className="flex items-end gap-1.5 mb-0.5 mt-[6px]">
-                  <span className="font-bold text-[#3b5998]">{senderName}</span>
-                  <span className="text-[10px] text-gray-400 mb-[1px]">{time}</span>
+            <div key={msg.id} className={`flex flex-col mb-1.5 ${isMe ? 'items-end' : 'items-start'}`}>
+              <div className={`max-w-[85%] rounded-lg px-3 py-1.5 shadow-sm relative ${isMe ? 'bg-[#dcf8c6] dark:bg-green-900 rounded-tr-none text-gray-800 dark:text-gray-100' : 'bg-white dark:bg-gray-800 rounded-tl-none text-gray-800 dark:text-gray-100'}`}>
+                <div className="text-[14px] leading-snug whitespace-pre-wrap break-words">{msg.content}</div>
+                <div className="flex items-center justify-end gap-1 mt-0.5 min-w-[40px]">
+                  <span className="text-[10px] text-gray-500/80 dark:text-gray-400">{time}</span>
+                  {isMe && (
+                    <span className="text-[12px] flex items-center -mb-0.5">
+                      {msg.status === 'read' || msg.is_read ? (
+                        <span className="text-blue-500 font-bold tracking-tighter">✓✓</span>
+                      ) : msg.status === 'delivered' ? (
+                        <span className="text-gray-400 font-bold tracking-tighter">✓✓</span>
+                      ) : (
+                        <span className="text-gray-400 font-bold">✓</span>
+                      )}
+                    </span>
+                  )}
                 </div>
-              )}
-              <div className="text-[#333333] pl-0 whitespace-pre-wrap break-words flex gap-1 items-end">
-                <span>{msg.content}</span>
-                {isMe && (
-                  <span className="text-[10px] mb-0.5 shrink-0">
-                    {msg.status === 'read' || msg.is_read ? (
-                      <span className="text-blue-500 font-bold ml-1">✓✓</span>
-                    ) : msg.status === 'delivered' ? (
-                      <span className="text-gray-400 font-bold ml-1">✓✓</span>
-                    ) : (
-                      <span className="text-gray-400 font-bold ml-1">✓</span>
-                    )}
-                  </span>
-                )}
               </div>
             </div>
           );
@@ -564,13 +566,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute bottom-1 left-0 right-0 flex justify-center"
+              className="absolute bottom-2 left-0 right-0 flex justify-center"
             >
               <button
                 onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
-                className="bg-[#e9ebee] text-[#3b5998] border border-[#d3d6db] text-[10px] px-2 py-1 rounded shadow-sm hover:bg-[#d8dce6] transition-colors flex items-center gap-1 font-bold"
+                className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs px-4 py-1.5 rounded-full shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-1 font-semibold"
               >
-                Novas mensagens
+                <ChevronDown className="w-4 h-4" /> Novas mensagens
               </button>
             </motion.div>
           )}
@@ -578,48 +580,55 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-1 border-t border-[#b3c1df] bg-white flex flex-shrink-0 items-end z-10">
-        <input
-          ref={inputRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
-            }
-          }}
-          placeholder="Digite uma mensagem..."
-          className="flex-1 text-[12px] h-7 min-h-[28px] border-none shadow-none rounded-none focus-visible:outline-none px-1.5 py-1 bg-transparent"
-          disabled={sending}
-        />
-        <div className="flex items-center px-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button size="icon" variant="ghost" className="h-7 w-7 text-[#c1d0f0] hover:bg-[#e9ebee] hover:text-[#3b5998] shadow-none flex-shrink-0 rounded-sm p-0">
-                <Smile className="w-4 h-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="top" align="end" className="w-64 p-2 z-[150]" onOpenAutoFocus={(e) => e.preventDefault()}>
-              <div className="flex flex-wrap gap-1 max-h-48 overflow-y-auto custom-scrollbar">
-                {EMOJIS.map(emoji => (
-                  <button 
-                    key={emoji} 
-                    onClick={() => setText(prev => prev + emoji)}
-                    className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-base cursor-pointer"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {text.trim() && (
-            <Button size="icon" onClick={sendMessage} disabled={sending} className="h-7 w-7 bg-transparent hover:bg-[#e9ebee] text-[#3b5998] shadow-none flex-shrink-0 rounded-sm ml-0.5 p-0">
-              {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" /> : <Send className="w-3.5 h-3.5" />}
+      <div className="p-2 bg-[#f0f0f0] dark:bg-gray-800 flex items-end gap-2 flex-shrink-0 z-10">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="icon" variant="ghost" className="h-10 w-10 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 rounded-full">
+              <Smile className="w-6 h-6" />
             </Button>
-          )}
+          </PopoverTrigger>
+          <PopoverContent side="top" align="start" className="w-64 p-2 z-[150] bg-white dark:bg-gray-800" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <div className="flex flex-wrap gap-1 max-h-48 overflow-y-auto custom-scrollbar">
+              {EMOJIS.map(emoji => (
+                <button 
+                  key={emoji} 
+                  onClick={() => setText(prev => prev + emoji)}
+                  className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-lg cursor-pointer transition-colors"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+        
+        <div className="flex-1 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-transparent overflow-hidden">
+          <input
+            ref={inputRef}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            placeholder="Digite uma mensagem"
+            className="w-full text-sm h-10 border-none shadow-none focus-visible:outline-none px-3 bg-transparent text-gray-800 dark:text-gray-100"
+            disabled={sending}
+          />
         </div>
+        
+        {text.trim() && (
+          <Button 
+            size="icon" 
+            onClick={sendMessage} 
+            disabled={sending} 
+            className="h-10 w-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-sm flex-shrink-0 transition-transform active:scale-95"
+          >
+            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 ml-0.5" />}
+          </Button>
+        )}
       </div>
         </>
       )}
