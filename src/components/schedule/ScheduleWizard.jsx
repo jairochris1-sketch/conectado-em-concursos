@@ -143,15 +143,12 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
     return withScore.map(r => ({ ...r, pct: Math.round((r.score / total) * 100) }));
   }, [selected, weights]);
 
-  const normalize = (s) => (typeof s === 'string' ? s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase() : '');
+  const normalize = (s) => (typeof s === 'string' ? s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim() : '');
   const topicsForLabel = (label) => {
-    const n = normalize(label);
-    const filtered = topics.filter(t => {
-      const subj = normalize(t.subject || '');
-      const lab = normalize(t.label || '');
-      return (subj && n.includes(subj)) || lab.includes(n);
-    });
-    return filtered.length ? filtered : topics;
+    const subjectKey = normalize(label);
+    // Somente tópicos cuja propriedade "subject" corresponde exatamente à disciplina selecionada (normalizada)
+    const filtered = topics.filter((t) => normalize(t.subject || '') === subjectKey);
+    return filtered; // não fazer fallback para todos os tópicos para evitar mistura entre disciplinas
   };
 
   const handleToggleSubject = (s) => {
