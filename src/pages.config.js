@@ -100,7 +100,6 @@ import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
 import WeeklyTrack from './pages/WeeklyTrack';
-import StudyCycle from './pages/StudyCycle';
 import __Layout from './Layout.jsx';
 
 
@@ -158,7 +157,6 @@ export const PAGES = {
     "studies": studies,
     "subscription": subscription,
     "WeeklyTrack": WeeklyTrack,
-    "StudyCycle": StudyCycle,
 }
 
 export const pagesConfig = {
