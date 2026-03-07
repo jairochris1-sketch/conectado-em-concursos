@@ -320,6 +320,7 @@ export default function Layout({ children, currentPageName }) {
   const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
   const [iconSizeKey, setIconSizeKey] = useState(localStorage.getItem('iconSizeKey') || 'md');
   const [iconColorType, setIconColorType] = useState(localStorage.getItem('iconColorType') || 'branco');
+  const [iconCustomColor, setIconCustomColor] = useState(localStorage.getItem('iconCustomColor') || '#fde047');
 
   const [sidebarStats, setSidebarStats] = React.useState({
     streak: 0,
@@ -343,7 +344,9 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     localStorage.setItem('iconColorType', iconColorType);
-  }, [iconColorType]);
+    localStorage.setItem('iconCustomColor', iconCustomColor);
+    document.documentElement.style.setProperty('--nav-icon-color', iconColorType === 'cor' ? iconCustomColor : 'currentColor');
+  }, [iconColorType, iconCustomColor]);
 
   React.useEffect(() => {
     let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -622,7 +625,7 @@ export default function Layout({ children, currentPageName }) {
                         <item.icon className="flex-shrink-0" style={{ 
                           width: 'var(--icon-size, 1.25rem)', 
                           height: 'var(--icon-size, 1.25rem)',
-                          color: iconColorType === 'cor' ? '#fde047' : 'currentColor'
+                          color: 'var(--nav-icon-color)'
                         }} />
                         <span className="text-[13px] font-semibold text-center leading-tight truncate mt-1">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
@@ -641,7 +644,7 @@ export default function Layout({ children, currentPageName }) {
                         <ChevronDown style={{ 
                           width: 'var(--icon-size, 1.25rem)', 
                           height: 'var(--icon-size, 1.25rem)',
-                          color: iconColorType === 'cor' ? '#fde047' : 'currentColor'
+                          color: 'var(--nav-icon-color)'
                         }} />
                         <span className="mt-1">Mais</span>
                     </Button>
@@ -661,7 +664,7 @@ export default function Layout({ children, currentPageName }) {
                       className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
 
                                     <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 flex-shrink-0" />
+                                        <item.icon className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--nav-icon-color)' }} />
                                         <span className="truncate">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
@@ -784,23 +787,35 @@ export default function Layout({ children, currentPageName }) {
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Cor dos Ícones</span>
-                  <div className="flex gap-1 bg-black/20 p-1 rounded-md">
-                    {['branco', 'cor'].map(colorType => {
-                       const isActive = iconColorType === colorType;
-                       return (
-                         <button
-                           key={colorType}
-                           onClick={(e) => {
-                             e.preventDefault();
-                             e.stopPropagation();
-                             setIconColorType(colorType);
-                           }}
-                           className={`px-2 py-1 flex items-center justify-center rounded text-xs font-bold transition-colors ${isActive ? 'bg-white text-blue-600' : 'text-white hover:bg-white/10'}`}
-                         >
-                           {colorType === 'branco' ? 'Branco' : 'Cor'}
-                         </button>
-                       )
-                    })}
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1 bg-black/20 p-1 rounded-md">
+                      {['branco', 'cor'].map(colorType => {
+                         const isActive = iconColorType === colorType;
+                         return (
+                           <button
+                             key={colorType}
+                             onClick={(e) => {
+                               e.preventDefault();
+                               e.stopPropagation();
+                               setIconColorType(colorType);
+                             }}
+                             className={`px-2 py-1 flex items-center justify-center rounded text-xs font-bold transition-colors ${isActive ? 'bg-white text-blue-600' : 'text-white hover:bg-white/10'}`}
+                           >
+                             {colorType === 'branco' ? 'Branco' : 'Cor'}
+                           </button>
+                         )
+                      })}
+                    </div>
+                    {iconColorType === 'cor' && (
+                      <div className="relative w-6 h-6 rounded border border-white/40 cursor-pointer overflow-hidden shadow-sm" style={{ backgroundColor: iconCustomColor }}>
+                        <input 
+                          type="color" 
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                          value={iconCustomColor}
+                          onChange={(e) => setIconCustomColor(e.target.value)}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
