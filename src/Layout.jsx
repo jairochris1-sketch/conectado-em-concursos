@@ -108,9 +108,14 @@ const moreMenuItems = [
   icon: Target
 },
 {
-  title: "Cadernos de Questões",
-  url: createPageUrl("Notebooks"),
-  icon: BookCopy
+title: "Cadernos de Questões",
+url: createPageUrl("Notebooks"),
+icon: BookCopy
+},
+{
+title: "Meus Flashcards",
+url: createPageUrl("Flashcards"),
+icon: Brain
 },
 {
   title: "Minhas Dúvidas",
@@ -245,7 +250,8 @@ const pageNameTranslations = {
   Notebooks: "Cadernos de Questões",
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
-  NotebookStats: "Estatísticas do Caderno"
+  NotebookStats: "Estatísticas do Caderno",
+  Flashcards: "Meus Flashcards"
 };
 
 const featureAccess = {
