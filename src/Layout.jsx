@@ -216,6 +216,7 @@ const pageNameTranslations = {
   Exams: "Provas",
   Studies: "Área de Estudos",
   Schedule: "Cronograma de Estudos",
+  Cronograma: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
   ViewStudyPlan: "Detalhes do Plano",
