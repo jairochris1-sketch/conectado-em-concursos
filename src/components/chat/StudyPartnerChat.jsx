@@ -68,8 +68,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [partnerPresence, setPartnerPresence] = useState(null);
-  const [myStatus, setMyStatus] = useState("online");
-  const [myPresenceId, setMyPresenceId] = useState(null);
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
   const [lastMessageId, setLastMessageId] = useState(null);
