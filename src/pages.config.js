@@ -54,6 +54,7 @@ import Calendar from './pages/Calendar';
 import ChatGPT from './pages/ChatGPT';
 import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
+import Course from './pages/Course';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
@@ -66,6 +67,7 @@ import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
 import FavoriteQuestions from './pages/FavoriteQuestions';
+import Flashcards from './pages/Flashcards';
 import ForgotPassword from './pages/ForgotPassword';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
@@ -101,8 +103,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Flashcards from './pages/Flashcards';
-import Course from './pages/Course';
+import MeuEdital from './pages/MeuEdital';
 import __Layout from './Layout.jsx';
 
 
@@ -114,6 +115,7 @@ export const PAGES = {
     "ChatGPT": ChatGPT,
     "Community": Community,
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
+    "Course": Course,
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
     "CreateStudyPlan": CreateStudyPlan,
@@ -126,6 +128,7 @@ export const PAGES = {
     "ExamView": ExamView,
     "Exams": Exams,
     "FavoriteQuestions": FavoriteQuestions,
+    "Flashcards": Flashcards,
     "ForgotPassword": ForgotPassword,
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
@@ -161,8 +164,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Flashcards": Flashcards,
-    "Course": Course,
+    "MeuEdital": MeuEdital,
 }
 
 export const pagesConfig = {
