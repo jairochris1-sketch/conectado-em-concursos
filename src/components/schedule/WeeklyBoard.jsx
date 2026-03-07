@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
@@ -49,15 +49,19 @@ const dayLabels = {
 
 export default function WeeklyBoard({ schedule, onChange }) {
   const [saving, setSaving] = useState(false);
+  const [localItems, setLocalItems] = useState(schedule?.schedule_items || []);
+  useEffect(() => {
+    setLocalItems(schedule?.schedule_items || []);
+  }, [schedule?.schedule_items]);
 
   const groups = useMemo(() => {
     const base = { sunday: [], monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [] };
-    (schedule?.schedule_items || []).forEach((it, idx) => {
+    (localItems || []).forEach((it, idx) => {
       base[it.day_of_week] = base[it.day_of_week] || [];
       base[it.day_of_week].push({ ...it, _key: `${it.day_of_week}-${idx}` });
     });
     return base;
-  }, [schedule]);
+  }, [localItems]);
 
   const onDragEnd = async (result) => {
     const { destination, source } = result;
@@ -122,9 +126,8 @@ export default function WeeklyBoard({ schedule, onChange }) {
   };
 
   const moveItemKeyboard = async (fromDay, fromIndex, toDay, toIndex) => {
-    const items = [...(schedule?.schedule_items || [])];
+    const items = [...(localItems || [])];
 
-    // Listas por dia (antes de remover)
     const listsBefore = dayOrder.map(d => items.filter(i => i.day_of_week === d));
     const sourceItem = listsBefore[dayOrder.indexOf(fromDay)]?.[fromIndex];
     if (!sourceItem) return;
@@ -134,7 +137,6 @@ export default function WeeklyBoard({ schedule, onChange }) {
     const [moved] = items.splice(removeIdx, 1);
     moved.day_of_week = toDay;
 
-    // Lista do dia alvo após remoção
     const newDayList = items.filter(i => i.day_of_week === toDay);
     const clampedIndex = Math.max(0, Math.min(toIndex, newDayList.length));
 
@@ -152,13 +154,8 @@ export default function WeeklyBoard({ schedule, onChange }) {
       items.splice(insertAt, 0, moved);
     }
 
-    setSaving(true);
-    try {
-      await base44.entities.StudySchedule.update(schedule.id, { schedule_items: items });
-      onChange?.(items);
-    } finally {
-      setSaving(false);
-    }
+    setLocalItems(items);
+    onChange?.(items);
   };
 
   const onItemKeyDown = (e, day, index) => {
@@ -225,7 +222,6 @@ export default function WeeklyBoard({ schedule, onChange }) {
           ))}
         </div>
       </DragDropContext>
-      {saving && <div className="text-xs text-gray-500 mt-2">Salvando mudanças...</div>}
     </div>
   );
 }
