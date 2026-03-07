@@ -221,12 +221,7 @@ export default function SchedulePage() {
                     ? "Crie seu primeiro cronograma personalizado de estudos"
                     : "Ajuste os termos de busca para encontrar cronogramas."}
                 </p>
-                {schedules.length === 0 && searchTerm === "" && (
-                  <Button onClick={() => { setWizardInitial(null); setShowWizard(true); }}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Criar Cronograma
-                  </Button>
-                )}
+
               </div>
             </div>
           ) : (
