@@ -372,6 +372,13 @@ export default function WeeklyTrackPage() {
         defaultDay={defaultDay}
         task={editingTask}
       />
+
+      {/* Registrar Estudo */}
+      <RegisterStudyDialog
+        open={registerOpen}
+        onOpenChange={setRegisterOpen}
+        onSaved={() => {}}
+      />
     </div>
   );
 }
