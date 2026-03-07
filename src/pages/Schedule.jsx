@@ -3,7 +3,7 @@ import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Calendar, Printer, BookOpen, Clock } from "lucide-react";
+import { Plus, Calendar, Printer, BookOpen, Clock, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ScheduleWizard from "../components/schedule/ScheduleWizard";
@@ -151,20 +151,26 @@ export default function SchedulePage() {
   );
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         >
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Cronograma de Estudos
-            </h1>
-            <p className="text-gray-600">
-              Organize seus estudos com horários personalizados
-            </p>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => window.history.back()} aria-label="Voltar">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="sr-only">Voltar</span>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Cronograma de Estudos
+              </h1>
+              <p className="text-gray-600">
+                Organize seus estudos com horários personalizados
+              </p>
+            </div>
           </div>
           <Button
             onClick={() => { setWizardInitial(null); setShowWizard(true); }}
@@ -230,7 +236,7 @@ export default function SchedulePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+                <Card className="shadow-sm border border-gray-200 bg-white">
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>

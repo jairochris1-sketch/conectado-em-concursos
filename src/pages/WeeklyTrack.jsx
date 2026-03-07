@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Plus, Link as LinkIcon, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Plus, Link as LinkIcon, ChevronLeft, ChevronRight, MoreHorizontal, ArrowLeft } from "lucide-react";
 import RegisterStudyDialog from "../components/studies/RegisterStudyDialog";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import WeeklyCreateDialog from "../components/weekly/WeeklyCreateDialog";
@@ -218,7 +218,11 @@ export default function WeeklyTrackPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4 md:mb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => window.history.back()} aria-label="Voltar">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="sr-only">Voltar</span>
+            </Button>
             <LinkIcon className="w-5 h-5 text-blue-600" />
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Trilha semanal</h1>
           </div>

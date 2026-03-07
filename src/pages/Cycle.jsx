@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ArrowLeft } from "lucide-react";
 import CycleWizard from "../components/cycle/CycleWizard";
 import CycleSequenceList from "../components/cycle/CycleSequenceList";
 import CycleDonutChart from "../components/cycle/CycleDonutChart";
@@ -38,7 +38,13 @@ export default function CyclePage() {
     <div className="min-h-screen p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Ciclo de Estudos</h1>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => window.history.back()} aria-label="Voltar">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="sr-only">Voltar</span>
+            </Button>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Ciclo de Estudos</h1>
+          </div>
           <div className="flex gap-2">
             {plan && (
               <>
