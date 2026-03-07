@@ -260,6 +260,7 @@ export default function CommentSection({ questionId, onCommentChange }) {
 
             comments.map((comment) => {
               const isOwnComment = currentUser && comment.user_email === currentUser.email;
+              const isAdmin = currentUser && (currentUser.email === 'conectadoemconcursos@gmail.com' || currentUser.email === 'jairochris1@gmail.com' || currentUser.email === 'juniorgmj2016@gmail.com' || currentUser.role === 'admin');
               const userHasLiked = comment.liked_by_users?.includes(currentUser?.email) || false;
 
               return (
@@ -294,9 +295,9 @@ export default function CommentSection({ questionId, onCommentChange }) {
                             {getTimeAgo(comment.created_date)}
                           </span>
 
-                          {isOwnComment &&
+                          {(isOwnComment || isAdmin) &&
                         <div className="flex items-center gap-1 ml-auto">
-                              {editingComment !== comment.id &&
+                              {isOwnComment && editingComment !== comment.id &&
                           <Button
                             variant="ghost"
                             size="sm"
