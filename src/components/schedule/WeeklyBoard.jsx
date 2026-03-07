@@ -122,17 +122,30 @@ export default function WeeklyBoard({ schedule, onChange }) {
               <Droppable droppableId={day}>
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2 min-h-[60px]">
-                    {(groups[day] || []).map((it, index) => (
-                      <Draggable key={it._key} draggableId={it._key} index={index}>
-                        {(prov) => (
-                          <Card ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="p-2 bg-white">
-                            <div className="text-xs text-gray-500">{it.start_time} - {it.end_time}</div>
-                            <div className="text-sm font-medium">{it.subject}</div>
-                            {it.topic && <div className="text-xs text-gray-600">{it.topic}</div>}
-                          </Card>
-                        )}
-                      </Draggable>
-                    ))}
+                    {(groups[day] || []).map((it, index) => {
+                      const pal = getPaletteForSubject(it.subject);
+                      return (
+                        <Draggable key={it._key} draggableId={it._key} index={index}>
+                          {(prov) => (
+                            <Card
+                              ref={prov.innerRef}
+                              {...prov.draggableProps}
+                              {...prov.dragHandleProps}
+                              className={`p-2 border-l-4 ${pal.bg} ${pal.border}`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className={`inline-block w-2 h-2 rounded-full ${pal.dot}`} />
+                                  <div className="text-xs text-gray-600">{it.start_time} - {it.end_time}</div>
+                                </div>
+                              </div>
+                              <div className="text-sm font-semibold mt-1 text-gray-900">{it.subject}</div>
+                              {it.topic && <div className="text-xs text-gray-700">{it.topic}</div>}
+                            </Card>
+                          )}
+                        </Draggable>
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}
