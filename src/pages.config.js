@@ -94,11 +94,12 @@ import Profile from './pages/Profile';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import UserProfile from './pages/UserProfile';
 import EditalSimulator from './pages/EditalSimulator';
+import EditalVerticalizado from './pages/EditalVerticalizado';
 import SavedContests from './pages/SavedContests';
 import ActivityFeed from './pages/ActivityFeed';
 import SimulationHistory from './pages/SimulationHistory';
 import ExamView from './pages/ExamView';
-import EditalVerticalizado from './pages/EditalVerticalizado';
+import Flashcards from './pages/Flashcards';
 import __Layout from './Layout.jsx';
 
 
@@ -150,11 +151,12 @@ export const PAGES = {
     "CreateStudyPlan": CreateStudyPlan,
     "UserProfile": UserProfile,
     "EditalSimulator": EditalSimulator,
+    "EditalVerticalizado": EditalVerticalizado,
     "SavedContests": SavedContests,
     "ActivityFeed": ActivityFeed,
     "SimulationHistory": SimulationHistory,
     "ExamView": ExamView,
-    "EditalVerticalizado": EditalVerticalizado,
+    "Flashcards": Flashcards,
 }
 
 export const pagesConfig = {
