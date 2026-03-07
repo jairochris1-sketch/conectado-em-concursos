@@ -131,12 +131,13 @@ export default function PeoplePage() {
                       targetPhotoUrl={person.photo} 
                       size="sm" 
                     />
-                    <ConnectButton
-                      currentUser={currentUser}
-                      targetEmail={person.email} 
-                      targetName={person.name} 
-                      size="sm"
-                      userPlan={userPlan}
+                    <StudyPartnerButton
+                        currentUser={currentUser}
+                        targetEmail={person.email}
+                        targetName={person.name}
+                        targetPhoto={person.photo}
+                        targetIsAdmin={['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'].includes(person.email)}
+                        userPlan={userPlan}
                     />
                   </div>
                 </CardContent>
