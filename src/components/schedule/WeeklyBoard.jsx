@@ -3,6 +3,16 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
 
+function colorFromString(str = "") {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  const hue = Math.abs(hash) % 360;
+  const bg = `hsl(${hue} 100% 96%)`;
+  const border = `hsl(${hue} 75% 55%)`;
+  return { bg, border };
+}
+
+
 const dayLabels = {
   sunday: "Dom",
   monday: "Seg",
@@ -91,11 +101,13 @@ export default function WeeklyBoard({ schedule, onChange }) {
                     {(groups[day] || []).map((it, index) => (
                       <Draggable key={it._key} draggableId={it._key} index={index}>
                         {(prov) => (
-                          <Card ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="p-2 bg-white">
+                          {(() => { const { bg, border } = colorFromString(it.subject); return (
+                          <Card ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps} className="p-2" style={{ background: bg, borderLeft: `4px solid ${border}` }}>
                             <div className="text-xs text-gray-500">{it.start_time} - {it.end_time}</div>
-                            <div className="text-sm font-medium">{it.subject}</div>
-                            {it.topic && <div className="text-xs text-gray-600">{it.topic}</div>}
+                            <div className="text-sm font-semibold" style={{ color: border }}>{it.subject}</div>
+                            {it.topic && <div className="text-xs text-gray-700">{it.topic}</div>}
                           </Card>
+                        )})()}
                         )}
                       </Draggable>
                     ))}
