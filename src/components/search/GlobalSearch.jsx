@@ -86,12 +86,11 @@ export default function GlobalSearch({ isMobile }) {
           </Button>
         ) : (
           <Button 
-            variant="outline" 
-            className="hidden md:flex relative w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64 bg-white/10 border-white/20 hover:bg-white/20 hover:text-white text-white/80"
+            variant="ghost" 
+            size="icon"
+            className="hidden md:flex text-gray-300 hover:text-white hover:bg-white/10"
           >
-            <span className="hidden lg:inline-flex">Pesquisar...</span>
-            <span className="inline-flex lg:hidden">Pesquisar...</span>
-            <Search className="absolute right-1.5 top-1.5 h-5 w-5" />
+            <Search className="w-5 h-5" />
           </Button>
         )}
       </DialogTrigger>
