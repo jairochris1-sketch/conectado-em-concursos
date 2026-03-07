@@ -152,7 +152,30 @@ const plans = [
   key: 'avancado',
   monthly: { price: '119,90', cycle: 'MONTHLY' },
   semiannual: { price: '329,90', cycle: 'SEMIANNUALLY' },
-  annual: { price: '798,00', cycle: 'YEARLY', originalPrice: '957,60', savings: '159,60' },
+  annual: {
+    price: '1.397,00',
+    cycle: 'YEARLY',
+    title: 'Premium Anual',
+    subtitle: 'Foco total na aprovação',
+    installments: '12x R$ 139,90',
+    upfront: 'R$ 1.397,00 à vista',
+    features: [
+      'Tudo ilimitado',
+      'IA integrada',
+      'Resumos completos de disciplinas',
+      'Área de estudos (PDFs e materiais exclusivos)',
+      'Estatísticas avançadas',
+      'Questões inéditas',
+      'Simulado por edital',
+      'Cadernos de questões',
+      'Cronograma de estudos',
+      'Planos de estudo estratégicos',
+      'Fórum da comunidade (interatividade total)',
+      'Área "Minhas Dúvidas"',
+      'Acesso antecipado a novos recursos',
+      'Acesso a todas as futuras atualizações'
+    ]
+  },
   buttonText: 'Assinar',
   features: [
   'Tudo do Padrão',
@@ -695,11 +718,14 @@ export default function SubscriptionPage() {
                         Economize R$ {pricing.savings}
                       </div>
                     }
-                    {selectedPlan.cycle === 'semiannual' && pricing.installments &&
-                    <div className="text-sm text-yellow-300">
+                    {(selectedPlan.cycle === 'semiannual' || selectedPlan.cycle === 'annual') && pricing.installments && (
+                      <div className="text-sm text-yellow-300">
                         {pricing.installments}
                       </div>
-                    }
+                    )}
+                    {selectedPlan.cycle === 'annual' && pricing.upfront && (
+                      <div className="text-sm text-yellow-300">ou {pricing.upfront}</div>
+                    )}
                   </div>
                   
                   <Button
