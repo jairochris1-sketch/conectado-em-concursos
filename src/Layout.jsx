@@ -605,7 +605,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
+        <nav className="flex items-center justify-center gap-3 flex-grow max-w-6xl mx-auto" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
@@ -697,7 +697,7 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenu>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2 flex-shrink-0" style={{ width: '220px', justifyContent: 'flex-end' }}>
           <GlobalSearch />
           <Button
             onClick={() => setShowProvaUploader(true)}
