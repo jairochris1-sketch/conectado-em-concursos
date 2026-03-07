@@ -7,7 +7,7 @@ import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ScheduleWizard from "../components/schedule/ScheduleWizard";
-import ScheduleCardView from "../components/schedule/ScheduleCardView";
+import WeeklyBoard from "../components/schedule/WeeklyBoard";
 
 const getDayName = (day) => {
   const days = {
@@ -271,7 +271,7 @@ export default function SchedulePage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <ScheduleCardView schedule={schedule} onChange={(items) => handleItemsChange(schedule.id, items)} />
+                    <WeeklyBoard schedule={schedule} onChange={(items) => handleItemsChange(schedule.id, items)} />
                   </CardContent>
                 </Card>
               </motion.div>
