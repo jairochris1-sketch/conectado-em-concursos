@@ -416,6 +416,26 @@ export default function CommunityPage() {
                 </button>
               </div>
             )}
+
+            {replyingTo?.id === reply.id && (
+              <div className="mt-3 ml-2 flex gap-2 w-full max-w-lg">
+                <Textarea
+                  autoFocus
+                  placeholder={`Respondendo a ${replyingTo.name}...`}
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  rows={2} 
+                  className="text-sm" />
+                <div className="flex flex-col gap-2">
+                  <Button onClick={handleReply} className="bg-blue-600 text-white h-9 px-3">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                  <Button onClick={() => setReplyingTo(null)} variant="ghost" className="h-9 px-3 text-gray-500">
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         {reply.children && reply.children.length > 0 && (
