@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical, ArrowLeft } from "lucide-react";
+import { MessageSquare, ThumbsUp, Eye, Pin, CheckCircle, Plus, Send, Trash2, Edit2, MoreVertical } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
@@ -18,10 +18,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { StaffBadge } from "@/components/ui/staff-badge";
-import UserLink from "@/components/social/UserLink";
-import OnlineUsersSidebar from "@/components/social/OnlineUsersSidebar";
+import { encryptEmail } from "@/components/security/emailCrypto";
 
 const defaultCategories = [
 { value: "depoimentos", label: "Depoimentos de Aprovação" },
@@ -38,7 +37,6 @@ const defaultCategories = [
 
 
 export default function CommunityPage({ embedded = false }) {
-  const navigate = useNavigate();
   const [categories, setCategories] = useState(defaultCategories);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -54,8 +52,6 @@ export default function CommunityPage({ embedded = false }) {
   const [deletePostId, setDeletePostId] = useState(null);
   const [deleteReplyId, setDeleteReplyId] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
-
-  const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com' || user.role === 'admin');
 
   const [newPost, setNewPost] = useState({
     title: "",
@@ -377,18 +373,17 @@ export default function CommunityPage({ embedded = false }) {
           <div className="flex-1 min-w-0">
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
-                <UserLink
-                  email={reply.author_email}
-                  name={reply.author_name}
-                  photo={reply.author_photo_url}
-                  className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
+                <Link
+                to={createPageUrl("UserProfile") + `?u=${encryptEmail(reply.author_email)}`}
+                className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
+
                   {reply.author_name}
-                </UserLink>
+                </Link>
                 <StaffBadge email={reply.author_email} className="ml-0.5" />
                 {reply.is_best_answer &&
               <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
               }
-                {(reply.author_email === user?.email || isAdmin) &&
+                {reply.author_email === user.email &&
               <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
@@ -396,11 +391,9 @@ export default function CommunityPage({ embedded = false }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      {(reply.author_email === user?.email) &&
-                        <DropdownMenuItem onClick={() => setEditingReply(reply)}>
-                          <Edit2 className="w-3 h-3 mr-2" /> Editar
-                        </DropdownMenuItem>
-                      }
+                      <DropdownMenuItem onClick={() => setEditingReply(reply)}>
+                        <Edit2 className="w-3 h-3 mr-2" /> Editar
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
                         <Trash2 className="w-3 h-3 mr-2" /> Excluir
                       </DropdownMenuItem>
@@ -461,35 +454,32 @@ export default function CommunityPage({ embedded = false }) {
   if (selectedPost) {
     return (
       <div className={embedded ? "w-full" : "min-h-screen bg-gray-50 dark:bg-gray-900 p-6"}>
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 min-w-0">
-              <Button onClick={() => setSelectedPost(null)} variant="outline" className="bg-blue-600 text-slate-50 mb-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
-                ← Voltar
-              </Button>
+        <div className="max-w-4xl mx-auto">
+          <Button onClick={() => setSelectedPost(null)} variant="outline" className="bg-blue-600 text-slate-50 mb-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
+            ← Voltar
+          </Button>
 
-              <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 rounded-t-lg flex flex-col space-y-1.5 border-x border-t border-b border-gray-200 dark:border-gray-800">
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
-                <div className="flex items-start gap-3 w-full">
+          <Card className="mb-6">
+            <CardHeader className="bg-slate-800 p-6 rounded flex flex-col space-y-1.5">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
                   <Avatar>
                     <AvatarImage src={selectedPost.author_photo_url} />
                     <AvatarFallback>{selectedPost.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0 w-full">
-                          <CardTitle className="text-xl break-words text-gray-900 dark:text-slate-200 block w-full">{selectedPost.title}</CardTitle>
-                          <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <div className="flex-1">
+                          <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
+                          <div className="flex items-center gap-2">
                             <p className="flex items-center text-sm text-gray-500 flex-wrap">
                               Por{" "}
-                              <UserLink
-                                email={selectedPost.author_email}
-                                name={selectedPost.author_name}
-                                photo={selectedPost.author_photo_url}
-                                className="font-semibold hover:underline text-blue-600 ml-1">
+                              <Link
+                          to={createPageUrl("UserProfile") + `?u=${encryptEmail(selectedPost.author_email)}`}
+                          className="font-semibold hover:underline text-blue-600 ml-1">
+
                                 {selectedPost.author_name}
-                              </UserLink>
+                              </Link>
                               <StaffBadge email={selectedPost.author_email} className="ml-1" />
-                              <span className="ml-1 text-gray-400">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
+                              <span className="ml-1">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
                             </p>
                       <FollowButton
                         targetEmail={selectedPost.author_email}
@@ -501,30 +491,26 @@ export default function CommunityPage({ embedded = false }) {
                         currentUser={user}
                         targetEmail={selectedPost.author_email}
                         targetName={selectedPost.author_name}
-                        targetPhoto={selectedPost.author_photo_url} 
-                        userPlan={user?.current_plan || 'gratuito'}
-                      />
+                        targetPhoto={selectedPost.author_photo_url} />
 
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2 items-center">
-                  <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-2.5 py-0.5 text-xs font-semibold rounded-md border-transparent hover:bg-gray-200 dark:hover:bg-gray-700">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
-                  {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">✓ Resolvido</Badge>}
-                  {(selectedPost.author_email === user?.email || isAdmin) &&
+                <div className="flex gap-2 items-center">
+                  <Badge className="bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
+                  {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600">✓ Resolvido</Badge>}
+                  {selectedPost.author_email === user.email &&
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <Button variant="ghost" size="icon">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        {(selectedPost.author_email === user?.email) &&
-                          <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
-                            <Edit2 className="w-4 h-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                        }
+                        <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
+                          <Edit2 className="w-4 h-4 mr-2" />
+                          Editar
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setDeletePostId(selectedPost.id)} className="text-red-600">
                           <Trash2 className="w-4 h-4 mr-2" />
                           Excluir
@@ -535,23 +521,23 @@ export default function CommunityPage({ embedded = false }) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="bg-white dark:bg-slate-900 pt-6 p-6 rounded-b-lg border-x border-b border-gray-200 dark:border-gray-800">
-              <p className="whitespace-pre-wrap mb-4 text-gray-800 dark:text-slate-300 w-full break-words text-base leading-relaxed">{selectedPost.content}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500 mt-6 border-t border-gray-100 dark:border-slate-800 pt-4">
+            <CardContent className="bg-slate-800 pt-0 p-6">
+              <p className="whitespace-pre-wrap mb-4">{selectedPost.content}</p>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleLikePost(selectedPost)}
-                  className={`hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 ${selectedPost.liked_by?.includes(user.email) ? "text-blue-600 bg-blue-50 dark:bg-blue-900/20" : ""}`}>
+                  className={selectedPost.liked_by?.includes(user.email) ? "text-blue-600" : ""}>
 
-                  <ThumbsUp className="w-4 h-4 mr-1.5" />
+                  <ThumbsUp className="w-4 h-4 mr-1" />
                   {selectedPost.likes_count || 0}
                 </Button>
-                <span className="flex items-center gap-1.5 text-gray-500">
+                <span className="flex items-center gap-1">
                   <MessageSquare className="w-4 h-4" />
                   {selectedPost.replies_count || 0}
                 </span>
-                <span className="flex items-center gap-1.5 text-gray-500">
+                <span className="flex items-center gap-1">
                   <Eye className="w-4 h-4" />
                   {selectedPost.views_count || 0}
                 </span>
@@ -559,16 +545,16 @@ export default function CommunityPage({ embedded = false }) {
             </CardContent>
           </Card>
 
-          <Card className="mb-6 bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardHeader className="bg-white dark:bg-slate-900 p-6 flex flex-col space-y-1.5 rounded-t-lg border-x border-t border-b border-gray-200 dark:border-gray-800">
-              <CardTitle className="text-gray-900 dark:text-white font-semibold text-lg">Respostas ({replies.length})</CardTitle>
+          <Card className="mb-6">
+            <CardHeader className="bg-slate-900 p-6 flex flex-col space-y-1.5">
+              <CardTitle>Respostas ({replies.length})</CardTitle>
             </CardHeader>
-            <CardContent className="bg-white dark:bg-slate-900 p-6 rounded-b-lg border-x border-b border-gray-200 dark:border-gray-800">
+            <CardContent className="bg-slate-900 pt-0 p-6">
               <div className="space-y-1 mb-8">
                 {renderReplies(buildReplyTree(replies))}
               </div>
 
-              <div className="mt-6 border-t border-gray-100 dark:border-slate-800 pt-6">
+              <div className="mt-6">
                 {replyingTo &&
                 <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
                     <span>Respondendo a <strong>{replyingTo.name}</strong></span>
@@ -595,99 +581,90 @@ export default function CommunityPage({ embedded = false }) {
               </div>
             </CardContent>
           </Card>
-            </div>
-
-            {!embedded && (
-              <div className="hidden lg:block w-72 shrink-0">
-                <OnlineUsersSidebar />
-              </div>
-            )}
-          </div>
-
-          <Dialog open={!!editingPost} onOpenChange={() => setEditingPost(null)}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Editar Discussão</DialogTitle>
-              </DialogHeader>
-              {editingPost &&
-              <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Título</label>
-                    <Input
-                    value={editingPost.title}
-                    onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} />
-
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Categoria</label>
-                    <Select value={editingPost.subject} onValueChange={(v) => setEditingPost({ ...editingPost, subject: v })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((s) =>
-                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                      )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
-                    <Input
-                    value={editingPost.topic || ""}
-                    onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })} />
-
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Conteúdo</label>
-                    <Textarea
-                    value={editingPost.content}
-                    onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
-                    rows={6} />
-
-                  </div>
-                  <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
-                </div>
-              }
-            </DialogContent>
-          </Dialog>
-
-          <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Excluir discussão?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta ação não pode ser desfeita. Isso excluirá permanentemente o post e todas as suas respostas.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeletePost} className="bg-red-600 hover:bg-red-700">
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
-      </div>
-    );
+
+        <Dialog open={!!editingPost} onOpenChange={() => setEditingPost(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Editar Discussão</DialogTitle>
+            </DialogHeader>
+            {editingPost &&
+            <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Título</label>
+                  <Input
+                  value={editingPost.title}
+                  onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} />
+
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Categoria</label>
+                  <Select value={editingPost.subject} onValueChange={(v) => setEditingPost({ ...editingPost, subject: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((s) =>
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Tópico (opcional)</label>
+                  <Input
+                  value={editingPost.topic || ""}
+                  onChange={(e) => setEditingPost({ ...editingPost, topic: e.target.value })} />
+
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Conteúdo</label>
+                  <Textarea
+                  value={editingPost.content}
+                  onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                  rows={6} />
+
+                </div>
+                <Button onClick={handleEditPost} className="w-full">Salvar Alterações</Button>
+              </div>
+            }
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog open={!!deletePostId} onOpenChange={() => setDeletePostId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir discussão?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente o post e todas as suas respostas.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeletePost} className="bg-red-600 hover:bg-red-700">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={!!deleteReplyId} onOpenChange={() => setDeleteReplyId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir resposta?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente sua resposta.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteReply} className="bg-red-600 hover:bg-red-700">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>);
 
   }
 
@@ -698,14 +675,9 @@ export default function CommunityPage({ embedded = false }) {
 
         <div className={`flex items-center justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
           {!embedded && (
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-                <ArrowLeft className="w-5 h-5" /> Voltar
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
-                <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
+              <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
             </div>
           )}
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -764,7 +736,7 @@ export default function CommunityPage({ embedded = false }) {
           </Dialog>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex gap-4 mb-6">
           <Input
             placeholder="Buscar discussões..."
             value={searchTerm}
@@ -772,7 +744,7 @@ export default function CommunityPage({ embedded = false }) {
             className="flex-1" />
 
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-            <SelectTrigger className="w-full md:w-64">
+            <SelectTrigger className="w-64">
               <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
@@ -784,9 +756,8 @@ export default function CommunityPage({ embedded = false }) {
           </Select>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 space-y-4 min-w-0">
-            {filteredPosts.map((post) =>
+        <div className="space-y-4">
+          {filteredPosts.map((post) =>
           <Card
             key={post.id}
             className="hover:shadow-lg transition-shadow cursor-pointer"
@@ -799,31 +770,30 @@ export default function CommunityPage({ embedded = false }) {
                     <AvatarFallback>{post.author_name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
+                    <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {post.is_pinned && <Pin className="w-4 h-4 text-yellow-600" />}
-                          <h3 className="text-slate-200 text-lg font-semibold">{post.title}</h3>
+                          <h3 className="text-slate-300 text-lg font-semibold">{post.title}</h3>
                         </div>
                         <p className="text-slate-300 mb-2 text-sm dark:text-gray-400 line-clamp-2">
                           {post.content}
                         </p>
                       </div>
-                      <div className="flex flex-wrap gap-2 md:ml-4">
+                      <div className="flex gap-2 ml-4">
                         <Badge className="bg-blue-600 text-slate-200 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
-                        <UserLink
-                          email={post.author_email}
-                          name={post.author_name}
-                          photo={post.author_photo_url}
-                          className="font-semibold hover:underline text-blue-600"
-                          onClick={(e) => e.stopPropagation()}>
+                        <Link
+                        to={createPageUrl("UserProfile") + `?u=${encryptEmail(post.author_email)}`}
+                        className="font-semibold hover:underline text-blue-600"
+                        onClick={(e) => e.stopPropagation()}>
+
                           {post.author_name}
-                        </UserLink>
+                        </Link>
                         <StaffBadge email={post.author_email} />
                       </div>
                       <span>•</span>
@@ -856,13 +826,6 @@ export default function CommunityPage({ embedded = false }) {
               </CardContent>
             </Card>
           }
-          </div>
-          
-          {!embedded && (
-            <div className="hidden lg:block w-72 shrink-0">
-              <OnlineUsersSidebar />
-            </div>
-          )}
         </div>
       </div>
     </div>);

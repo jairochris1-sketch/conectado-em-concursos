@@ -29,10 +29,10 @@ export default function GlobalStudyPartnerChat({ currentUser }) {
   if (!currentUser || activeChats.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 right-[70px] md:right-28 z-[110] flex flex-row-reverse items-end gap-2 md:gap-4 p-0 max-w-full overflow-x-auto print-hide" style={{ maxWidth: 'calc(100vw - 70px)' }}>
+    <div className="fixed bottom-0 right-0 md:right-24 z-50 flex flex-row-reverse items-end gap-2 md:gap-4 pointer-events-none p-2 md:p-0 max-w-full overflow-x-auto print-hide" style={{ maxWidth: '100vw' }}>
       <AnimatePresence>
         {activeChats.map(partner => (
-          <div key={partner.email} className="shrink-0">
+          <div key={partner.email} className="pointer-events-auto shrink-0">
             <ChatWindow 
               currentUser={currentUser} 
               partner={partner} 
@@ -50,10 +50,10 @@ function ChatWindow({ currentUser, partner, onClose }) {
 
   return (
     <div className={`
-      flex flex-col bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 transition-all duration-200 ease-in-out
+      flex flex-col bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out
       ${isMinimized 
-        ? 'h-12 w-64 rounded-t-xl' 
-        : 'fixed inset-0 z-[100] md:relative md:inset-auto md:z-auto h-[100dvh] w-screen md:h-[450px] md:w-[320px] md:rounded-t-xl'}
+        ? 'h-[60px] w-64 md:w-72 rounded-t-xl' 
+        : 'fixed inset-0 z-[100] md:relative md:inset-auto md:z-auto h-[100dvh] w-screen md:h-[450px] md:w-[340px] md:rounded-t-xl'}
     `}>
       <StudyPartnerChat 
         currentUser={currentUser} 

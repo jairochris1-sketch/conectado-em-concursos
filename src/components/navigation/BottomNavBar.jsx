@@ -4,15 +4,15 @@ import { Home, FileText, User, BookCopy, BookOpen, Lock, Trophy, MessageSquare, 
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: 'Planos', url: createPageUrl('Subscription'), icon: CreditCard, feature: null, color: "text-yellow-500", fill: "fill-yellow-500/20" },
-  { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null, color: "text-blue-500", fill: "fill-blue-500/20" },
-  { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null, color: "text-emerald-500", fill: "fill-emerald-500/20" },
-  { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null, color: "text-amber-500", fill: "fill-amber-500/20" },
-  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos', color: "text-pink-500", fill: "fill-pink-500/20" },
-  { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos', color: "text-cyan-500", fill: "fill-cyan-500/20" },
-  { name: 'Ranking', url: createPageUrl('Ranking'), icon: Trophy, feature: 'Ranking de Usuários', color: "text-orange-500", fill: "fill-orange-500/20" },
-  { name: 'Fórum', url: createPageUrl('Community'), icon: MessageSquare, feature: null, color: "text-green-500", fill: "fill-green-500/20" },
-  { name: 'Relatórios', url: createPageUrl('PerformanceReports'), icon: BarChart3, feature: null, color: "text-indigo-500", fill: "fill-indigo-500/20" }
+  { name: 'Painel', url: createPageUrl('Dashboard'), icon: Home, feature: null },
+  { name: 'Questões', url: createPageUrl('Questions'), icon: FileText, feature: null },
+  { name: 'Provas', url: createPageUrl('Exams'), icon: BookCopy, feature: null },
+  { name: 'Resumos', url: createPageUrl('ComoEstudarPrimeiroLugar'), icon: BookOpen, feature: 'Resumos' },
+  { name: 'Área de Estudos', url: createPageUrl('Studies'), icon: BookOpen, feature: 'Área de Estudos' },
+  { name: 'Ranking', url: createPageUrl('Ranking'), icon: Trophy, feature: 'Ranking de Usuários' },
+  { name: 'Fórum', url: createPageUrl('Community'), icon: MessageSquare, feature: null },
+  { name: 'Relatórios', url: createPageUrl('PerformanceReports'), icon: BarChart3, feature: null },
+  { name: 'Planos', url: createPageUrl('Subscription'), icon: CreditCard, feature: null }
 ];
 
 export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className }) {
@@ -32,7 +32,7 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
             <Link
               key={item.name}
               to={hasAccess ? item.url : createPageUrl("Subscription")}
-              className={`flex flex-col items-center justify-center min-w-[50px] px-0.5 transition-colors duration-200 relative ${
+              className={`flex flex-col items-center justify-center min-w-[70px] px-2 transition-colors duration-200 relative ${
                 isCurrentPage
                   ? 'dark:text-blue-400' 
                   : 'text-gray-500 dark:text-gray-400'
@@ -46,14 +46,8 @@ export default function BottomNavBar({ userPlan, checkAccess, isAdmin, className
               }}
             >
               {!hasAccess && item.feature && <Lock className="absolute top-1 right-3 w-3 h-3 text-yellow-500" />}
-              <item.icon 
-                style={{ width: '1.25rem', height: '1.25rem' }} 
-                className={`mb-0.5 transition-all duration-300 ${item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} 
-                strokeWidth={isCurrentPage ? 2 : 1.5}
-              />
-              <span className={`text-[9px] font-bold leading-tight text-center ${isCurrentPage ? item.color : 'text-gray-500 dark:text-gray-400'}`}>
-                {item.name}
-              </span>
+              <item.icon style={{ width: 'var(--icon-size, 1.5rem)', height: 'var(--icon-size, 1.5rem)' }} className="mb-1" />
+              <span className="text-xs font-medium">{item.name}</span>
             </Link>
           );
         })}

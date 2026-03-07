@@ -8,53 +8,33 @@ import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag }
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
 import { encryptEmail } from "@/components/security/emailCrypto";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin, userPlan }) {
-  const queryClient = useQueryClient();
+export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
-  const { data: partnerships, isLoading: isQueryLoading } = useQuery({
-    queryKey: ['studyPartners', currentUser?.email],
-    queryFn: async () => {
-      if (!currentUser?.email) return [];
-      const [asSender, asReceiver] = await Promise.all([
-        base44.entities.StudyPartner.filter({ requester_email: currentUser.email }),
-        base44.entities.StudyPartner.filter({ target_email: currentUser.email })
-      ]);
-      return [...asSender, ...asReceiver];
-    },
-    enabled: !!currentUser?.email,
-    staleTime: 60000,
-  });
-
   useEffect(() => {
     if (!currentUser || !targetEmail || currentUser.email === targetEmail) return;
-    if (isQueryLoading) {
-      setStatus("loading");
-      return;
-    }
-    
-    if (partnerships) {
-      const record = partnerships.find(p => p.requester_email === targetEmail || p.target_email === targetEmail);
-      if (!record) {
-        setStatus("not_connected");
-        setPartnerId(null);
-      } else {
-        setPartnerId(record.id);
-        if (record.status === "accepted") setStatus("accepted");
-        else if (record.status === "blocked") setStatus("blocked");
-        else if (record.status === "pending") {
-          setStatus(record.requester_email === currentUser.email ? "pending_sent" : "pending_received");
-        } else {
-          setStatus("not_connected");
-        }
-      }
-    }
-  }, [currentUser?.email, targetEmail, partnerships, isQueryLoading]);
+    loadStatus();
+  }, [currentUser?.email, targetEmail]);
+
+  const loadStatus = async () => {
+    const [asSender, asReceiver] = await Promise.all([
+    base44.entities.StudyPartner.filter({ requester_email: currentUser.email, target_email: targetEmail }),
+    base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: currentUser.email })]
+    );
+    const all = [...asSender, ...asReceiver];
+    if (all.length === 0) {setStatus("not_connected");setPartnerId(null);return;}
+    const record = all[0];
+    setPartnerId(record.id);
+    if (record.status === "accepted") setStatus("accepted");else
+    if (record.status === "blocked") setStatus("blocked");else
+    if (record.status === "pending")
+    setStatus(record.requester_email === currentUser.email ? "pending_sent" : "pending_received");else
+    setStatus("not_connected");
+  };
 
   const notify = async (toEmail, title, message, type = "invite") => {
     try {
@@ -74,17 +54,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
 
   const sendInvite = async () => {
     setLoading(true);
-    
-    const isAdmin = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com' || currentUser?.email === 'juniorgmj2016@gmail.com' || currentUser?.role === 'admin';
-    const currentPlan = userPlan || currentUser?.current_plan;
-    
-    const isPremium = currentPlan === 'padrao' || currentPlan === 'avancado';
-    
-    if (!isAdmin && !isPremium) {
-      toast.error("Apenas usuários do plano Padrão ou Premium podem enviar convites de Parceria. Faça um upgrade!");
-      setLoading(false);
-      return;
-    }
     setStatus("pending_sent");
     const record = await base44.entities.StudyPartner.create({
       requester_email: currentUser.email, requester_name: currentUser.full_name,
@@ -95,7 +64,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setPartnerId(record.id);
     await notify(targetEmail, "📚 Convite de Parceria de Estudos", `${currentUser.full_name} te convidou para ser parceiro(a) de estudos!`);
     toast.success("Convite enviado!");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -105,7 +73,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Convite cancelado");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -116,7 +83,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("accepted");
     await notify(targetEmail, "✅ Parceria aceita!", `${currentUser.full_name} aceitou seu convite de Parceria de Estudos!`);
     toast.success("Parceria aceita!");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -126,7 +92,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Convite recusado");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -146,7 +111,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     }
     setStatus("blocked");
     toast.success("Usuário bloqueado");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -157,7 +121,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Parceria desfeita");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -168,7 +131,6 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("not_connected");
     setPartnerId(null);
     toast.success("Usuário desbloqueado");
-    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 

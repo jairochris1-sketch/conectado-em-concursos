@@ -35,18 +35,30 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
       onClick={toggleTheme}
-      className="rounded-full w-9 h-9 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all print-hide"
-      title={isDarkMode ? "Mudar para modo claro" : "Mudar para modo escuro"}
+      className="fixed bottom-32 md:bottom-20 right-6 z-40 rounded-full shadow-lg transition-all hover:scale-110 print-hide"
+      style={{
+        backgroundColor: isDarkMode ? '#242526' : '#ffffff',
+        color: isDarkMode ? '#e4e6eb' : '#050505',
+        border: isDarkMode ? '1px solid #3a3b3c' : '1px solid #e5e7eb',
+        padding: '6px 10px',
+        fontSize: '12px',
+        height: '32px',
+        minWidth: 'auto'
+      }}
+      size="sm"
     >
       {isDarkMode ? (
-        <Sun className="h-4 w-4" />
+        <>
+          <Sun className="h-3 w-3 mr-1" />
+          <span className="hidden md:inline">Claro</span>
+        </>
       ) : (
-        <Moon className="h-4 w-4" />
+        <>
+          <Moon className="h-3 w-3 mr-1" />
+          <span className="hidden md:inline">Dark</span>
+        </>
       )}
-      <span className="sr-only">Alternar tema</span>
     </Button>
   );
 }

@@ -4,23 +4,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Briefcase, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Search, MapPin, Briefcase } from "lucide-react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import ConnectButton from "@/components/social/ConnectButton";
-import UserLink from "@/components/social/UserLink";
-import StudyPartnerButton from "@/components/social/StudyPartnerButton";
 import { base44 } from "@/api/base44Client";
-import { getPeople } from "@/functions/getPeople";
+import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function PeoplePage() {
-  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [userPlan, setUserPlan] = useState('gratuito');
 
   useEffect(() => {
     loadUsers();
@@ -29,30 +24,7 @@ export default function PeoplePage() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const user = await base44.auth.me().catch(() => null);
-      if (user) {
-        setCurrentUser(user);
-        const [activeSubs, specialUsers] = await Promise.all([
-          base44.entities.Subscription.filter({ user_email: user.email, status: 'active' }),
-          base44.entities.SpecialUser.filter({ email: user.email, is_active: true })
-        ]);
-        
-        let plan = 'gratuito';
-        if (activeSubs.length > 0) {
-          const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
-          const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
-          plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
-        }
-        if (specialUsers.length > 0) {
-          const specialUser = specialUsers[0];
-          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-            plan = specialUser.plan;
-          }
-        }
-        setUserPlan(plan);
-      }
-
-      const res = await getPeople({ search: '' });
+      const res = await base44.functions.invoke('getPeople', { search: '' });
       if (res.data?.users) {
         setUsers(res.data.users);
       }
@@ -71,14 +43,9 @@ export default function PeoplePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pessoas</h1>
-              <p className="text-gray-500">Descubra e conecte-se com outros estudantes</p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Pessoas</h1>
+            <p className="text-gray-500">Descubra e conecte-se com outros estudantes</p>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -98,17 +65,17 @@ export default function PeoplePage() {
             {filteredUsers.map(person => (
               <Card key={person.email} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-5 flex flex-col items-center text-center">
-                  <UserLink email={person.email} name={person.name} photo={person.photo} className="mb-3">
+                  <Link to={`${createPageUrl('UserProfile')}?u=${encryptEmail(person.email)}`} className="mb-3">
                     <Avatar className="w-20 h-20 border-2 border-gray-100">
                       <AvatarImage src={person.photo} />
                       <AvatarFallback>{person.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
-                  </UserLink>
-                  <UserLink email={person.email} name={person.name} photo={person.photo}>
+                  </Link>
+                  <Link to={`${createPageUrl('UserProfile')}?u=${encryptEmail(person.email)}`}>
                     <h3 className="font-semibold text-lg text-gray-900 dark:text-white hover:text-blue-600 transition-colors">
                       {person.name || 'Usuário sem nome'}
                     </h3>
-                  </UserLink>
+                  </Link>
                   
                   {(person.location || person.job_title) && (
                     <div className="text-xs text-gray-500 mt-2 space-y-1 flex flex-col items-center">
@@ -132,13 +99,10 @@ export default function PeoplePage() {
                       targetPhotoUrl={person.photo} 
                       size="sm" 
                     />
-                    <StudyPartnerButton
-                        currentUser={currentUser}
-                        targetEmail={person.email}
-                        targetName={person.name}
-                        targetPhoto={person.photo}
-                        targetIsAdmin={['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'].includes(person.email)}
-                        userPlan={userPlan}
+                    <ConnectButton
+                      targetEmail={person.email} 
+                      targetName={person.name} 
+                      size="sm"
                     />
                   </div>
                 </CardContent>

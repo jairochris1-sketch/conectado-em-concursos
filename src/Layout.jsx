@@ -30,12 +30,8 @@ import {
   Brain,
   Target,
   HelpCircle,
-  Users,
-  Sparkles,
-  LayoutDashboard,
-  Files,
-  Notebook
-} from "lucide-react";
+  Users } from
+"lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { Subscription } from "@/entities/Subscription";
@@ -55,7 +51,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 import NotificationDropdown from './components/notifications/NotificationDropdown';
-import ChatDropdown from './components/chat/ChatDropdown';
 import { ThemeToggle } from './components/ui/theme-toggle';
 import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
@@ -63,57 +58,42 @@ import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 import ChatWidget from './components/chat/ChatWidget';
 import GlobalStudyPartnerChat from './components/chat/GlobalStudyPartnerChat';
 import GlobalSearch from './components/search/GlobalSearch';
-import UserPresenceUpdater from './components/social/UserPresenceUpdater';
 
 const navigationItems = [
 {
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
-  icon: LayoutDashboard,
-  color: "text-blue-400",
-  fill: "fill-blue-400/20"
+  icon: Home
 },
 {
   title: "Questões",
   url: createPageUrl("Questions"),
-  icon: Files,
-  color: "text-emerald-400",
-  fill: "fill-emerald-400/20"
+  icon: FileText
 },
 {
   title: "Provas",
   url: createPageUrl("Exams"),
-  icon: ClipboardList,
-  color: "text-amber-400",
-  fill: "fill-amber-400/20"
+  icon: BookCopy
 },
 {
-  title: "Meu Edital",
+  title: "Simulado por Edital",
   url: createPageUrl("EditalSimulator"),
-  icon: FileText,
-  color: "text-purple-400",
-  fill: "fill-purple-400/20"
+  icon: Target
 },
 {
   title: "Resumos",
-  url: createPageUrl("ComoEstudarPrimeiroLugar"),
-  icon: Notebook,
-  color: "text-pink-400",
-  fill: "fill-pink-400/20"
+  url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
+  icon: BookOpenIcon
 },
 {
-  title: "Área de Estudos",
+  title: "Meus Cursos",
   url: createPageUrl("Studies"),
-  icon: BookOpen,
-  color: "text-cyan-400",
-  fill: "fill-cyan-400/20"
+  icon: BookOpen
 },
 {
   title: "Planos",
   url: createPageUrl("Subscription"),
-  icon: CreditCard,
-  color: "text-yellow-400",
-  fill: "fill-yellow-400/20"
+  icon: CreditCard
 }];
 
 
@@ -121,50 +101,51 @@ const moreMenuCategories = [
   {
     title: "Estudos & Planejamento",
     items: [
-      { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy, color: "text-indigo-400", fill: "fill-indigo-400/20" },
-      { title: "Flashcards", url: createPageUrl("Flashcards"), icon: Sparkles, color: "text-yellow-400", fill: "fill-yellow-400/20" },
-      { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList, color: "text-emerald-400", fill: "fill-emerald-400/20" },
-      { title: "Criar Planejamento de Estudos", url: createPageUrl("StudyPlanning"), icon: Calendar, color: "text-blue-400", fill: "fill-blue-400/20" },
-      { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle, color: "text-red-400", fill: "fill-red-400/20" },
+      { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy },
+      { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList },
+      { title: "Cronograma de Estudos", url: createPageUrl("Schedule"), icon: Calendar },
+      { title: "Planos de Estudo", url: createPageUrl("StudyPlans"), icon: Target },
+      { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle },
+      { title: "Revisões", url: createPageUrl("Reviews"), icon: RefreshCcw },
     ]
   },
   {
     title: "Desempenho & Estatísticas",
     items: [
-      { title: "Relatórios", url: createPageUrl("PerformanceReports"), icon: BarChart3, color: "text-blue-400", fill: "fill-blue-400/20" },
-      { title: "Minhas Estatísticas", url: createPageUrl("Statistics"), icon: BarChart3, color: "text-purple-400", fill: "fill-purple-400/20" },
-      { title: "Ranking de Usuários", url: createPageUrl("Ranking"), icon: Trophy, color: "text-amber-400", fill: "fill-amber-400/20" },
+      { title: "Relatórios", url: createPageUrl("PerformanceReports"), icon: BarChart3 },
+      { title: "Minhas Estatísticas", url: createPageUrl("Statistics"), icon: BarChart3 },
+      { title: "Ranking de Usuários", url: createPageUrl("Ranking"), icon: Trophy },
     ]
   },
   {
     title: "Comunidade",
     items: [
-      { title: "Pessoas", url: createPageUrl("People"), icon: Users, color: "text-cyan-400", fill: "fill-cyan-400/20" },
-      { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare, color: "text-green-400", fill: "fill-green-400/20" },
-      { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen, color: "text-orange-400", fill: "fill-orange-400/20" },
+      { title: "Pessoas", url: createPageUrl("People"), icon: Users },
+      { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare },
+      { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen },
     ]
   },
   {
-    title: "Quizzes",
+    title: "Cursos",
     items: [
-      { title: "Quiz de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen, color: "text-blue-400", fill: "fill-blue-400/20" },
-      { title: "Quiz de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen, color: "text-red-400", fill: "fill-red-400/20" },
-      { title: "Quiz de Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain, color: "text-purple-400", fill: "fill-purple-400/20" },
+      { title: "Curso de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen },
+      { title: "Curso de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen },
+      { title: "Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain },
     ]
   },
   {
     title: "Simulados Extras",
     items: [
-      { title: "Simulados Digital", url: createPageUrl("SimuladosDigital"), icon: ClipboardList, color: "text-indigo-400", fill: "fill-indigo-400/20" },
-      { title: "Histórico de Simulações", url: createPageUrl("SimulationHistory"), icon: ClipboardList, color: "text-teal-400", fill: "fill-teal-400/20" },
-      { title: "Revisão de Simulados", url: createPageUrl("SimulationReview"), icon: ClipboardList, color: "text-rose-400", fill: "fill-rose-400/20" },
+      { title: "Simulados Digital", url: createPageUrl("SimuladosDigital"), icon: ClipboardList },
+      { title: "Histórico de Simulações", url: createPageUrl("SimulationHistory"), icon: ClipboardList },
+      { title: "Revisão de Simulados", url: createPageUrl("SimulationReview"), icon: ClipboardList },
     ]
   },
   {
     title: "Conta",
     items: [
-      { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield, color: "text-slate-400", fill: "fill-slate-400/20" },
-      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard, color: "text-emerald-400", fill: "fill-emerald-400/20" },
+      { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield },
+      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard },
     ]
   }
 ];
@@ -178,7 +159,7 @@ const pageNameTranslations = {
   People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
-  Studies: "Área de Estudos",
+  Studies: "Meus Cursos",
   Schedule: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
@@ -195,75 +176,50 @@ const pageNameTranslations = {
   SavedContests: "Concursos Abertos",
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
-  EditalVerticalizado: "Edital Verticalizado",
   SDAdmin: "Admin Simulados Digital",
   Reviews: "Revisões",
   ComoEstudarPrimeiroLugar: "Como Estudar",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
-  MathCourse: "Quiz de Matemática",
-  EnglishCourse: "Quiz de Inglês",
-  LogicCourse: "Quiz de Raciocínio Lógico",
+  MathCourse: "Curso de Matemática Básica",
+  EnglishCourse: "Curso de Inglês",
+  LogicCourse: "Raciocínio Lógico para Concursos",
   Notebooks: "Cadernos de Questões",
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
-  NotebookStats: "Estatísticas do Caderno",
-  Flashcards: "Flashcards",
-  StudyPlanning: "Planejamento de Estudos",
-  StudyCycle: "Ciclo de Estudos",
-  WeeklyTrail: "Trilha Semanal"
+  NotebookStats: "Estatísticas do Caderno"
 };
 
 const featureAccess = {
-  // Free & Paid
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
+  'Pessoas': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
-  'Provas': ['gratuito', 'padrao', 'avancado'],
-  'Meu Edital': ['gratuito', 'padrao', 'avancado'],
-  'EditalSimulator': ['gratuito', 'padrao', 'avancado'],
-  'Resumos': ['gratuito', 'padrao', 'avancado'],
-  'Como Estudar': ['gratuito', 'padrao', 'avancado'],
-  'Planos e Assinatura': ['gratuito', 'padrao', 'avancado'],
-  'Painel de Assinaturas': ['gratuito', 'padrao', 'avancado'],
-  'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
-  'Welcome': ['gratuito', 'padrao', 'avancado'],
-
-  // Blocked for Free
-  'Visualização de Prova': ['padrao', 'avancado'],
-  'Pessoas': ['padrao', 'avancado'],
-  'Área de Estudos': ['padrao', 'avancado'],
-  'Criar Planejamento de Estudos': ['padrao', 'avancado'],
-  'Planejamento de Estudos': ['padrao', 'avancado'],
-  'Cronograma de Estudos': ['padrao', 'avancado'],
+  'Meus Cursos': ['avancado'],
+  'Cronograma de Estudos': ['avancado'],
   'Revisões': ['padrao', 'avancado'],
-  'Planos de Estudo': ['padrao', 'avancado'],
-  'Criar Plano de Estudo': ['padrao', 'avancado'],
-  'Detalhes do Plano': ['padrao', 'avancado'],
-  'Criar Simulado': ['padrao', 'avancado'],
-  'Concursos Abertos': ['padrao', 'avancado'],
-  'Minhas Anotações': ['padrao', 'avancado'],
-  'Simulados Digital': ['padrao', 'avancado'],
+  'Planos de Estudo': ['avancado'],
+  'Criar Simulado': ['avancado'],
+  'Concursos Abertos': ['avancado'],
+  'Planos': ['gratuito', 'padrao', 'avancado'],
+  'Minhas Anotações': ['avancado'],
+  'Simulados Digital': ['avancado'],
+  'Resumos': ['avancado'],
+  'Provas': ['avancado'],
   'Ranking de Usuários': ['padrao', 'avancado'],
-  'Quiz de Inglês': ['padrao', 'avancado'],
-  'Quiz de Matemática': ['padrao', 'avancado'],
-  'Quiz de Raciocínio Lógico': ['padrao', 'avancado'],
-  'Cadernos de Questões': ['padrao', 'avancado'],
-  'Flashcards': ['padrao', 'avancado'],
-  'Criar Caderno': ['padrao', 'avancado'],
-  'Resolver Caderno': ['padrao', 'avancado'],
-  'Estatísticas do Caderno': ['padrao', 'avancado'],
-  'Fórum da Comunidade': ['padrao', 'avancado'],
-  'Favoritas': ['padrao', 'avancado'],
+  'Curso de Inglês': ['avancado'],
+  'Curso de Matemática': ['avancado'],
+  'Raciocínio Lógico': ['avancado'],
+  'Cadernos de Questões': ['avancado'],
+  'Simulado por Edital': ['avancado'],
+  'Fórum': ['avancado'],
+  'Favoritas': ['gratuito', 'padrao', 'avancado'],
   'Relatórios': ['padrao', 'avancado'],
-  'Minhas Estatísticas': ['padrao', 'avancado'],
+  'Minhas Estatísticas': ['gratuito', 'padrao', 'avancado'],
+  'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
   'Feed de Atividades': ['padrao', 'avancado'],
-  'Minhas Dúvidas': ['padrao', 'avancado'],
-  'Guia de Estudos': ['padrao', 'avancado'],
-  'Edital Verticalizado': ['padrao', 'avancado'],
-  'Ciclo de Estudos': ['padrao', 'avancado'],
-  'Trilha Semanal': ['padrao', 'avancado'],
-  'Análise de Vídeos': ['padrao', 'avancado']
+  'Minhas Dúvidas': ['avancado'],
+  'Painel de Assinaturas': ['gratuito', 'padrao', 'avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -274,12 +230,6 @@ const checkAccess = (featureTitle, plan, isAdmin) => {
   if (!featureAccess[featureTitle]) {
     return true;
   }
-  
-  // Any paid/active plan allows access to premium features
-  if (plan !== 'gratuito' && plan !== 'inactive' && plan !== 'pending' && plan !== 'cancelled' && plan !== 'overdue') {
-    return true;
-  }
-
   return featureAccess[featureTitle].includes(plan);
 };
 
@@ -319,21 +269,16 @@ export default function Layout({ children, currentPageName }) {
 
   const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
   const [iconSize, setIconSize] = useState(localStorage.getItem('iconSizeKey') || 'md');
-  const [iconColorMode, setIconColorMode] = useState(localStorage.getItem('iconColorMode') || 'colored');
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
-
-  const showChat = true;
 
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
-    const savedIconColorMode = localStorage.getItem('iconColorMode') || 'colored';
-    const iconSizes = { sm: '1.25rem', md: '1.5rem', lg: '1.875rem' };
+    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
 
     setPrimaryColor(savedColor);
     setIconSize(savedIconSizeKey);
-    setIconColorMode(savedIconColorMode);
     document.documentElement.style.setProperty('--primary-color', savedColor);
     document.documentElement.style.setProperty('--icon-size', iconSizes[savedIconSizeKey]);
   }, []);
@@ -346,15 +291,10 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleIconSizeChange = (sizeKey) => {
-    const iconSizes = { sm: '1.25rem', md: '1.5rem', lg: '1.875rem' };
+    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
     setIconSize(sizeKey);
     localStorage.setItem('iconSizeKey', sizeKey);
     document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
-  };
-
-  const handleIconColorModeChange = (mode) => {
-    setIconColorMode(mode);
-    localStorage.setItem('iconColorMode', mode);
   };
 
   React.useEffect(() => {
@@ -385,6 +325,7 @@ export default function Layout({ children, currentPageName }) {
     const checkAuthAndLoad = async () => {
       try {
         let userData = await User.me();
+        setUser(userData);
 
         const activeSubscriptions = await Subscription.filter({ user_email: userData.email, status: 'active' });
 
@@ -392,34 +333,20 @@ export default function Layout({ children, currentPageName }) {
         const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
         let userPlan = userData.current_plan || 'gratuito';
 
-        if (activeSubscriptions.length > 0) {
-          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
-          const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
-          if (hasPremium) {
-            userPlan = 'avancado';
-          } else if (hasStandard) {
-            userPlan = 'padrao';
-          } else {
-            userPlan = activeSubscriptions[0].plan;
-          }
-        }
-
         if (specialUsers.length > 0) {
           const specialUser = specialUsers[0];
           // Verificar se ainda está válido
           if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
             userPlan = specialUser.plan;
+            userData = { ...userData, current_plan: userPlan };
+            setUser(userData);
           }
         }
 
-        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com' || userData.email === 'juniorgmj2016@gmail.com' || userData.role === 'admin';
-        
-        if (userIsAdmin) {
-          userPlan = 'avancado'; // Admins always have premium access
-        }
 
-        userData = { ...userData, current_plan: userPlan };
-        setUser(userData);
+
+        userPlan = userData.current_plan || 'gratuito';
+        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com';
 
         const currentTitle = pageNameTranslations[currentPageName] || currentPageName;
         if (!checkAccess(currentTitle, userPlan, userIsAdmin)) {
@@ -486,7 +413,7 @@ export default function Layout({ children, currentPageName }) {
 
   if (user === null) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>);
 
@@ -567,16 +494,16 @@ export default function Layout({ children, currentPageName }) {
                       key={item.title}
                       to={hasAccess ? item.url : createPageUrl("Subscription")}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center justify-between p-3 rounded-lg border border-transparent transition-all duration-200 active:scale-95 outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none ${
-                      isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:border-transparent'}`
+                      className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
+                      isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
                       }
                       style={isCurrentPage ? {} : {}}
                       onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
                       onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                         <div className="flex items-center gap-3 min-w-0">
-                          <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
-                          <span className="truncate text-sm font-bold text-white">{item.title}</span>
+                          <item.icon className="w-5 h-5 flex-shrink-0" />
+                          <span className="truncate text-sm font-medium">{item.title}</span>
                         </div>
                         {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
                       </Link>);
@@ -598,15 +525,15 @@ export default function Layout({ children, currentPageName }) {
                           key={item.title}
                           to={hasAccess ? item.url : createPageUrl("Subscription")}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center justify-between p-3 rounded-lg border border-transparent transition-all duration-200 active:scale-95 outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none ${
-                          isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:border-transparent'}`
+                          className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
+                          isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
                           }
                           onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
                           onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
                             <div className="flex items-center gap-3 min-w-0">
-                              <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`w-5 h-5 flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80'}`} />
-                              <span className="truncate text-sm font-medium text-white">{item.title}</span>
+                              <item.icon className="w-5 h-5 flex-shrink-0" />
+                              <span className="truncate text-sm font-medium">{item.title}</span>
                             </div>
                             {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
                           </Link>
@@ -623,7 +550,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("Admin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:border-transparent transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
@@ -633,7 +560,7 @@ export default function Layout({ children, currentPageName }) {
                     <Link
                     to={createPageUrl("SDAdmin")}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:border-transparent transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
@@ -664,37 +591,42 @@ export default function Layout({ children, currentPageName }) {
             </div>
         </Link>
 
-        <nav className="flex items-center justify-center gap-1 xl:gap-2 flex-grow max-w-6xl" aria-label="Navegação principal">
+        <nav className="flex items-center justify-center gap-1 flex-grow max-w-6xl" aria-label="Navegação principal">
             {navigationItems.map((item) => {
             const hasAccess = checkAccess(item.title, userPlan, isAdmin);
             const isCurrentPage = location.pathname === item.url;
             return (
               <Link
                 key={item.title}
-                to={hasAccess ? item.url : createPageUrl("Subscription")}
-                className="group relative flex flex-col items-center justify-center gap-1 px-1 xl:px-2 py-1 xl:py-1.5 rounded-md font-bold transition-all duration-150 ease-in-out min-w-0 text-white text-[10px] lg:text-[11px] xl:text-xs text-center"
-                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.15)' } : {}}
+                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-transparent text-amber-100 px-2 py-2 text-base font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
+
+
+
+                style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
                 onMouseEnter={(e) => {
-                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)';
+                  if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
                 }}
                 onMouseLeave={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
-                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all duration-300 ease-in-out ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
-                        <span className="truncate tracking-wide font-bold text-white w-full">{item.title}</span>
-                        {!hasAccess && <Lock className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-yellow-400 absolute top-0.5 right-0.5" />}
+
+                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
+                        {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
                     </Link>);
+
           })}
             
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="group relative flex flex-col items-center justify-center gap-1 px-1 xl:px-2 py-1 xl:py-1.5 h-auto rounded-md font-bold text-white hover:bg-transparent transition-all duration-150 ease-in-out min-w-0 text-[10px] lg:text-[11px] xl:text-xs text-center"
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.08)'}
+                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                        <ChevronDown strokeWidth={2} className="flex-shrink-0 transition-colors duration-150 ease-in-out text-white" style={{ width: 'var(--icon-size, 1.375rem)', height: 'var(--icon-size, 1.375rem)' }} />
-                        <span className="truncate tracking-wide w-full">Mais</span>
+
+                        <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
+                        <span>Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -712,13 +644,13 @@ export default function Layout({ children, currentPageName }) {
                               const hasAccess = checkAccess(item.title, userPlan, isAdmin);
                               const isCurrentPage = location.pathname === item.url;
                               return (
-                                <DropdownMenuItem key={item.title} asChild className="focus:bg-transparent p-0">
+                                <DropdownMenuItem key={item.title} asChild>
                                   <Link
                                     to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none ${isCurrentPage ? 'bg-white/20 text-white border-transparent' : 'text-white hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-white'}`}>
+                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
                                     <div className="flex items-center gap-2">
-                                        <item.icon strokeWidth={isCurrentPage ? 2 : 1.5} className={`flex-shrink-0 transition-all ${iconColorMode === 'white' ? 'text-white' : item.color} ${isCurrentPage ? item.fill : 'fill-transparent opacity-80 group-hover:opacity-100'}`} style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                                        <span className="truncate text-white font-medium">{item.title}</span>
+                                        <item.icon className="w-4 h-4 flex-shrink-0" />
+                                        <span className="truncate">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
                                   </Link>
@@ -734,18 +666,18 @@ export default function Layout({ children, currentPageName }) {
                             Administração
                           </h3>
                           <div className="space-y-1">
-                            <DropdownMenuItem asChild className="focus:bg-transparent p-0">
-                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-red-300 transition-colors">
+                            <DropdownMenuItem asChild>
+                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-2">
-                                        <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                                        <Shield className="w-4 h-4" />
                                         <span>Admin Geral</span>
                                     </div>
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild className="focus:bg-transparent p-0">
-                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg border border-transparent outline-none ring-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none hover:bg-white/10 hover:border-transparent focus:bg-white/10 focus:text-red-300 transition-colors">
+                            <DropdownMenuItem asChild>
+                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-2">
-                                        <Shield className="flex-shrink-0" style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                                        <Shield className="w-4 h-4" />
                                         <span>Admin Simulados Digital</span>
                                     </div>
                                 </Link>
@@ -758,32 +690,33 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenu>
         </nav>
 
-        <div className="hidden md:flex items-center gap-1 xl:gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <GlobalSearch />
           <Button
             onClick={() => setShowProvaUploader(true)}
             size="sm"
-            className="text-[10px] xl:text-xs px-2 xl:px-3 py-1 xl:py-2 h-7 xl:h-9 text-white hover:text-white"
+            className="text-xs px-3 py-2 text-white hover:text-white"
             style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
 
-            <Upload className="w-3 h-3 xl:mr-1" />
-            <span className="hidden xl:inline">Enviar Prova</span>
+            <Upload className="w-3 h-3 mr-1" />
+            <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
           {(userPlan === 'gratuito') && (
             <Link to={createPageUrl("Subscription")}>
               <Button
-                className="text-[10px] xl:text-xs px-2 xl:px-3 py-1 xl:py-2 h-7 xl:h-9 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
+                size="sm"
+                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
               >
                 <Star className="w-3 h-3 mr-1 fill-current" />
-                Assinar <span className="hidden lg:inline ml-1">Premium</span>
+                Assinar Premium
               </Button>
             </Link>
           )}
         </div>
 
-        <div className="flex items-center gap-1 xl:gap-2 ml-1 xl:ml-4">
-          {showChat && <ChatDropdown />}
+        <div className="flex items-center gap-2 ml-4">
           <NotificationDropdown />
+          <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -808,18 +741,14 @@ export default function Layout({ children, currentPageName }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
               {user.job_title &&
-              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80 focus:bg-transparent" disabled>
+              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
                   <BookOpen className="w-4 h-4" />
                   {user.job_title}
                 </DropdownMenuItem>
               }
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2 focus:bg-white/10 focus:text-white">
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("SubscriptionsDashboard"))} className="cursor-pointer text-sm flex items-center gap-2 focus:bg-white/10 focus:text-white">
-                <CreditCard className="w-4 h-4" />
-                Painel de Assinaturas
               </DropdownMenuItem>
               <div className="h-px bg-white/20 my-2 mx-2" />
               <div className="px-2 py-2">
@@ -863,31 +792,10 @@ export default function Layout({ children, currentPageName }) {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-200">Cor dos Ícones</span>
-                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconColorModeChange('white'); }}
-                        className={`h-6 px-2 text-[10px] rounded-sm ${iconColorMode === 'white' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        Branco
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconColorModeChange('colored'); }}
-                        className={`h-6 px-2 text-[10px] rounded-sm ${iconColorMode === 'colored' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        Cor
-                      </Button>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="h-px bg-white/20 my-2 mx-2" />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 focus:bg-white/10 focus:text-red-300 text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
                 Sair
               </DropdownMenuItem>
@@ -935,7 +843,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </header>
 
-        <header className="bg-white px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide transition-colors duration-200">
+        <header className="bg-white px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide">
             <h1 className="bg-transparent text-gray-900 text-xl font-bold dark:text-white">
               {pageNameTranslations[currentPageName] || currentPageName}
             </h1>
@@ -944,7 +852,8 @@ export default function Layout({ children, currentPageName }) {
         </header>
 
         <div
-          className="flex-1 overflow-auto pb-20 md:pb-0 bg-gray-50 dark:bg-gray-900 transition-colors duration-200"
+          className="flex-1 overflow-auto pb-20 md:pb-0"
+          style={{ backgroundColor: '#1c2c34' }}
           role="main">
 
           {children}
@@ -955,36 +864,29 @@ export default function Layout({ children, currentPageName }) {
 
       <ProvaUploader isOpen={showProvaUploader} onOpenChange={setShowProvaUploader} />
 
-      <div className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 flex flex-col items-center gap-3 print-hide">
-        <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 p-0.5 flex items-center justify-center">
-          <ThemeToggle />
-        </div>
+      <AnimatePresence>
+        {showScrollTop &&
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="fixed bottom-24 md:bottom-6 right-6 z-40">
 
-        <ChatWidget />
-
-        <AnimatePresence>
-          {showScrollTop &&
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-          >
             <Button
             size="icon"
-            className="rounded-full h-10 w-10 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="rounded-full h-12 w-12 text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             style={{ backgroundColor: 'var(--primary-color)' }}
             onClick={scrollToTop}
             aria-label="Voltar ao topo">
 
-              <ArrowUp className="h-5 w-5" aria-hidden="true" />
+              <ArrowUp className="h-6 w-6" aria-hidden="true" />
             </Button>
           </motion.div>
-          }
-        </AnimatePresence>
-      </div>
+        }
+      </AnimatePresence>
 
-      {showChat && <GlobalStudyPartnerChat currentUser={user} />}
-      {user && <UserPresenceUpdater user={user} />}
+      <ChatWidget />
+      <GlobalStudyPartnerChat currentUser={user} />
       </div>);
 
 }

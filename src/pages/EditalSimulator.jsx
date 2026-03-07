@@ -45,8 +45,6 @@ export default function EditalSimulator() {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
   const [advancedModalEdital, setAdvancedModalEdital] = useState(null);
-  const [userPlan, setUserPlan] = useState('gratuito');
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadEditais();
@@ -56,28 +54,6 @@ export default function EditalSimulator() {
     setLoading(true);
     try {
       const user = await base44.auth.me();
-      
-      const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
-      const userIsAdmin = user.role === 'admin' || adminEmails.includes(user.email);
-      setIsAdmin(userIsAdmin);
-
-      const activeSubscriptions = await base44.entities.Subscription.filter({ user_email: user.email, status: 'active' });
-      const specialUsers = await base44.entities.SpecialUser.filter({ email: user.email, is_active: true });
-      let currentPlan = 'gratuito';
-
-      if (activeSubscriptions.length > 0) {
-        const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
-        const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
-        currentPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
-      }
-      if (specialUsers.length > 0) {
-        const specialUser = specialUsers[0];
-        if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-          currentPlan = specialUser.plan;
-        }
-      }
-      setUserPlan(currentPlan);
-
       const data = await base44.entities.Edital.filter({ created_by: user.email });
       setEditais(data.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)));
     } catch (error) {
@@ -89,25 +65,6 @@ export default function EditalSimulator() {
   };
 
   const handleFileUpload = async (e) => {
-    if (userPlan === 'gratuito' && !isAdmin) {
-      toast.error("O recurso Meu Edital é exclusivo para assinantes. Faça um upgrade para enviar editais.");
-      e.target.value = '';
-      return;
-    }
-    
-    if (!isAdmin) {
-      if (userPlan === 'padrao' && editais.length >= 5) {
-        toast.error("Limite de 5 editais atingido para o plano Padrão. Faça upgrade para o plano Premium.");
-        e.target.value = '';
-        return;
-      }
-      if (userPlan === 'avancado' && editais.length >= 15) {
-        toast.error("Limite de 15 editais atingido para o plano Premium.");
-        e.target.value = '';
-        return;
-      }
-    }
-
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -134,22 +91,6 @@ export default function EditalSimulator() {
   const handleSubmitEdital = async (e) => {
     e.preventDefault();
     
-    if (userPlan === 'gratuito' && !isAdmin) {
-      toast.error("O recurso Meu Edital é exclusivo para assinantes. Faça um upgrade para enviar editais.");
-      return;
-    }
-    
-    if (!isAdmin) {
-      if (userPlan === 'padrao' && editais.length >= 5) {
-        toast.error("Limite de 5 editais atingido para o plano Padrão. Faça upgrade para o plano Premium.");
-        return;
-      }
-      if (userPlan === 'avancado' && editais.length >= 15) {
-        toast.error("Limite de 15 editais atingido para o plano Premium.");
-        return;
-      }
-    }
-
     if (!concursoName || !fileUrl) {
       toast.error("Preencha o nome do concurso e envie o edital");
       return;
@@ -271,34 +212,29 @@ export default function EditalSimulator() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
-                <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                Meu Edital
-              </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mt-2 font-medium">
-                Envie seu edital, gere resumos, simulados e verticalização automática.
-              </p>
-            </div>
-            <Button variant="outline" className="h-10 px-4 font-medium shadow-sm hover:bg-gray-50" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
-              <ClipboardList className="w-5 h-5 mr-2" />
-              Ver Histórico
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              📄 Simulados Baseados no Edital
+            </h1>
+            <Button variant="outline" onClick={() => navigate(createPageUrl("SimulationHistory"))}>
+              <ClipboardList className="w-4 h-4 mr-2" />
+              Histórico
             </Button>
           </div>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            Envie o edital do seu concurso e gere simulados personalizados automaticamente
+          </p>
 
           {/* Steps */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
             {steps.map((step, i) => (
-              <div key={i} className={`flex items-center gap-4 p-4 rounded-xl border shadow-sm transition-all hover:shadow-md ${step.bg} ${step.border}`}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700`}>
-                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300">{i + 1}</span>
+              <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border ${step.bg} ${step.border}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white dark:bg-gray-800 shadow-sm`}>
+                  <span className="text-xs font-bold text-gray-500">{i + 1}</span>
                 </div>
-                <div className="flex flex-col min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <step.icon className={`w-4 h-4 flex-shrink-0 ${step.color}`} />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">{step.label}</p>
+                <div className="flex items-center gap-2 min-w-0">
+                  <step.icon className={`w-4 h-4 flex-shrink-0 ${step.color}`} />
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">{step.label}</p>
                 </div>
               </div>
             ))}
@@ -306,69 +242,60 @@ export default function EditalSimulator() {
         </div>
 
         {/* Upload Form */}
-        <Card className="mb-10 shadow-lg border-0 ring-1 ring-gray-200 dark:ring-gray-800 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
-            <CardTitle className="flex items-center gap-2 text-2xl font-bold">
-              <Upload className="w-6 h-6 text-blue-100" />
+        <Card className="mb-8 border-2 border-blue-200 dark:border-blue-800">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Cadastrar Novo Edital
             </CardTitle>
-            <CardDescription className="text-blue-100 text-base mt-1">
-              Faça upload do edital em PDF ou DOC para iniciar a análise inteligente
+            <CardDescription>
+              Faça upload do edital em PDF ou DOC para análise automática
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-8 bg-white dark:bg-gray-900">
+          <CardContent className="p-6">
             <form onSubmit={handleSubmitEdital} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="concurso" className="font-semibold text-gray-700 dark:text-gray-200">Nome do Concurso *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="concurso">Nome do Concurso *</Label>
                   <Input
                     id="concurso"
                     placeholder="Ex: Prefeitura de São Paulo"
                     value={concursoName}
                     onChange={(e) => setConcursoName(e.target.value)}
-                    className="h-12"
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="orgao" className="font-semibold text-gray-700 dark:text-gray-200">Órgão</Label>
+                <div>
+                  <Label htmlFor="orgao">Órgão</Label>
                   <Input
                     id="orgao"
                     placeholder="Ex: Prefeitura Municipal"
                     value={orgao}
                     onChange={(e) => setOrgao(e.target.value)}
-                    className="h-12"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2">
-                <Label htmlFor="cargo" className="font-semibold text-gray-700 dark:text-gray-200">Cargo Pretendido</Label>
+              <div>
+                <Label htmlFor="cargo">Cargo Pretendido</Label>
                 <Input
                   id="cargo"
                   placeholder="Ex: Agente Administrativo"
                   value={cargo}
                   onChange={(e) => setCargo(e.target.value)}
-                  className="h-12"
                 />
               </div>
 
-              <div className="space-y-2 pt-2 pb-2">
-                <Label htmlFor="file" className="font-semibold text-gray-700 dark:text-gray-200">Arquivo do Edital (PDF ou DOC) *</Label>
+              <div>
+                <Label htmlFor="file">Arquivo do Edital (PDF ou DOC) *</Label>
                 <Input
                   id="file"
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileUpload}
-                  disabled={uploadingFile || (userPlan === 'gratuito' && !isAdmin)}
-                  className="h-12 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+                  disabled={uploadingFile}
                   required
                 />
-                {userPlan === 'gratuito' && !isAdmin && (
-                  <p className="text-sm text-red-500 mt-1">
-                    Exclusivo para assinantes.
-                  </p>
-                )}
                 {uploadingFile && (
                   <p className="text-sm text-blue-600 mt-2 flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -386,16 +313,16 @@ export default function EditalSimulator() {
               <Button
                 type="submit"
                 disabled={loading || !fileUrl}
-                className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all mt-4"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Processando...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-5 h-5 mr-2" />
+                    <Upload className="w-4 h-4 mr-2" />
                     Cadastrar e Processar Edital
                   </>
                 )}
@@ -582,15 +509,6 @@ export default function EditalSimulator() {
                       >
                         <FileText className="w-4 h-4 mr-2" />
                         Ver Edital
-                      </Button>
-
-                      <Button
-                        onClick={() => navigate(createPageUrl("EditalVerticalizado") + "?id=" + edital.id)}
-                        variant="outline"
-                        className="border-blue-400 text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:border-blue-600 dark:hover:bg-blue-900/20"
-                      >
-                        <ListChecks className="w-4 h-4 mr-2" />
-                        Edital Verticalizado
                       </Button>
 
                       <Button

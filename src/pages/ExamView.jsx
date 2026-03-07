@@ -4,7 +4,6 @@ import { Question } from "@/entities/Question";
 import { UserAnswer } from "@/entities/UserAnswer";
 import { User } from "@/entities/User";
 import QuestionList from "../components/questions/QuestionList";
-import StudyTimer from "../components/questions/StudyTimer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -314,7 +313,6 @@ export default function ExamView() {
             <span className="text-xs">Voltar</span>
           </Button>
           <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
-            <StudyTimer defaultMinutes={240} />
             {examInfo.edital_url && (
               <Button 
                 variant="outline" 
@@ -353,11 +351,11 @@ export default function ExamView() {
         </div>
   
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{examInfo.name}</h1>
-          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-white dark:text-white">{examInfo.name}</h1>
+          <p className="text-base md:text-lg text-gray-300 dark:text-gray-300 mt-1">
             {institutionNames[examInfo.institution] || examInfo.institution.toUpperCase()} - {examInfo.year}
           </p>
-          <p className="text-sm md:text-md text-gray-500 dark:text-gray-400">
+          <p className="text-sm md:text-md text-gray-400 dark:text-gray-400">
             Cargo: {examInfo.cargo}
           </p>
         </div>

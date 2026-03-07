@@ -436,8 +436,6 @@ export default function UserManager() {
                   <SelectItem value="gratuito">Gratuito</SelectItem>
                   <SelectItem value="padrao">Padrão</SelectItem>
                   <SelectItem value="avancado">Avançado</SelectItem>
-                  <SelectItem value="trimestral">Trimestral</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-gray-500 mt-1">

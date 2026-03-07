@@ -66,11 +66,11 @@ export default function UserProfilePage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const mePromise = User.me();
-      const profileUserPromise = base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
+      const me = await User.me();
+      setCurrentUser(me);
 
-      const [me, profileUserResult] = await Promise.all([mePromise, profileUserPromise]);
-      
+      // Get profile user via backend function (User entity is restricted by RLS)
+      const profileUserResult = await base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
       let targetEmail = urlEmail;
       if (profileUserResult.data && !profileUserResult.data.error) {
         setProfileUser(profileUserResult.data);
@@ -80,43 +80,28 @@ export default function UserProfilePage() {
         return;
       }
 
-      const [
-        activeSubs, specialUsers, stats, ranking, partnersSent, partnersReceived, followList, asSender, asReceiver
-      ] = await Promise.all([
-        base44.entities.Subscription.filter({ user_email: me.email, status: 'active' }),
-        base44.entities.SpecialUser.filter({ email: me.email, is_active: true }),
+      const [stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
         base44.entities.UserStats.filter({ user_email: targetEmail }),
         base44.entities.UserRanking.filter({ created_by: targetEmail }),
         base44.entities.StudyPartner.filter({ requester_email: targetEmail, status: "accepted" }),
         base44.entities.StudyPartner.filter({ target_email: targetEmail, status: "accepted" }),
         base44.entities.UserFollow.filter({ following_email: targetEmail }),
-        base44.entities.StudyPartner.filter({ requester_email: me.email, target_email: targetEmail }),
-        base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: me.email })
       ]);
-
-      let currentPlan = 'gratuito';
-      if (activeSubs.length > 0) {
-        const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
-        const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
-        currentPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
-      }
-      if (specialUsers.length > 0) {
-        const specialUser = specialUsers[0];
-        if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-          currentPlan = specialUser.plan;
-        }
-      }
-      setCurrentUser({...me, current_plan: currentPlan});
 
       if (stats.length > 0) setUserStats(stats[0]);
       if (ranking.length > 0) setUserRanking(ranking[0]);
       setPartners([...partnersSent, ...partnersReceived]);
       setFollowers(followList);
 
-      const allPartnerships = [...asSender, ...asReceiver];
-      if (allPartnerships.length > 0) {
-        setPartnershipStatus(allPartnerships[0].status);
-        setIsPartner(allPartnerships[0].status === "accepted");
+      // check partnership with current user
+      const [asSender, asReceiver] = await Promise.all([
+        base44.entities.StudyPartner.filter({ requester_email: me.email, target_email: targetEmail }),
+        base44.entities.StudyPartner.filter({ requester_email: targetEmail, target_email: me.email }),
+      ]);
+      const all = [...asSender, ...asReceiver];
+      if (all.length > 0) {
+        setPartnershipStatus(all[0].status);
+        setIsPartner(all[0].status === "accepted");
       }
     } catch (err) {
       console.error(err);
@@ -210,10 +195,10 @@ export default function UserProfilePage() {
                     <StudyPartnerButton
                       currentUser={currentUser}
                       targetEmail={profileUser.email}
+                      targetId={profileUser.id}
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
                       targetIsAdmin={targetIsAdmin}
-                      userPlan={currentUser.current_plan}
                     />
                   </div>
                 )}

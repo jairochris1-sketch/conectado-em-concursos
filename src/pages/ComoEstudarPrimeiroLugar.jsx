@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Article, YouTubeVideo, SiteContent, User } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import EnhancedArticleReader from "../components/reading/EnhancedArticleReader";
-import { BookOpen, Lock, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
-import { Progress } from "@/components/ui/progress";
+import { BookOpen } from "lucide-react";
 
 export default function ComoEstudarPrimeiroLugar() {
-  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,10 +23,6 @@ export default function ComoEstudarPrimeiroLugar() {
   const [guideArticlesMap, setGuideArticlesMap] = useState({});
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [userPlan, setUserPlan] = useState('gratuito');
-  const [currentUser, setCurrentUser] = useState(null);
-  const [dbProgress, setDbProgress] = useState({});
-  const [globalProgress, setGlobalProgress] = useState(0);
 
   // Determinar guia a partir da URL, localStorage ou primeiro guia disponível
   useEffect(() => {
@@ -60,84 +52,8 @@ export default function ComoEstudarPrimeiroLugar() {
         setContentId(guide.id);
         setArticles(guideArticlesMap[selectedGuide] || []);
       }
-
-      if (currentUser) {
-        base44.entities.ArticleProgress.filter({ user_email: currentUser.email, guide_slug: selectedGuide })
-          .then(userProgress => {
-            const progressMap = {};
-            userProgress.forEach(p => {
-              progressMap[p.article_id] = p; // Guarda o objeto inteiro
-            });
-            setDbProgress(progressMap);
-          })
-          .catch(console.error);
-      }
     }
-  }, [selectedGuide, guides, guideArticlesMap, currentUser]);
-
-  useEffect(() => {
-    if (articles.length > 0) {
-      let completed = 0;
-      articles.forEach(a => {
-        if (dbProgress[a.id]?.is_completed) completed++;
-      });
-      setGlobalProgress(Math.round((completed / articles.length) * 100));
-    } else {
-      setGlobalProgress(0);
-    }
-  }, [articles, dbProgress]);
-
-  const saveArticleProgress = async (articleId, percent) => {
-    if (!currentUser) return;
-    try {
-      const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
-      let updatedObj;
-      if (existing.length > 0) {
-        updatedObj = await base44.entities.ArticleProgress.update(existing[0].id, { progress_percent: percent, is_completed: percent === 100 });
-      } else {
-        updatedObj = await base44.entities.ArticleProgress.create({
-          user_email: currentUser.email,
-          article_id: articleId,
-          guide_slug: selectedGuide,
-          progress_percent: percent,
-          is_completed: percent === 100
-        });
-      }
-      setDbProgress(prev => ({ ...prev, [articleId]: updatedObj }));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleQuizSubmit = async (articleId, score, passed) => {
-    if (!currentUser) return;
-    try {
-      const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
-      let updatedObj;
-      if (existing.length > 0) {
-        updatedObj = await base44.entities.ArticleProgress.update(existing[0].id, { quiz_score: score, quiz_passed: passed, is_completed: true, progress_percent: 100 });
-      } else {
-        updatedObj = await base44.entities.ArticleProgress.create({
-          user_email: currentUser.email,
-          article_id: articleId,
-          guide_slug: selectedGuide,
-          progress_percent: 100,
-          is_completed: true,
-          quiz_score: score,
-          quiz_passed: passed
-        });
-      }
-      setDbProgress(prev => ({ ...prev, [articleId]: updatedObj }));
-      
-      if (passed) {
-        toast.success(`Parabéns! Você passou no quiz com nota ${score}! Novos conteúdos foram desbloqueados.`);
-      } else {
-        toast.error(`Você tirou nota ${score}. Tente novamente para desbloquear o próximo conteúdo.`);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  }, [selectedGuide, guides, guideArticlesMap]);
 
   const extractYouTubeId = (url) => {
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -157,28 +73,6 @@ export default function ComoEstudarPrimeiroLugar() {
         ]);
 
         setIsAdmin(!!user && (user.role === 'admin' || user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com'));
-
-        setCurrentUser(user);
-        let plan = 'gratuito';
-        if (user) {
-          const [activeSubs, specialUsers] = await Promise.all([
-            base44.entities.Subscription.filter({ user_email: user.email, status: 'active' }),
-            base44.entities.SpecialUser.filter({ email: user.email, is_active: true })
-          ]);
-          
-          if (activeSubs.length > 0) {
-            const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
-            const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
-            plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
-          }
-          if (specialUsers.length > 0) {
-            const specialUser = specialUsers[0];
-            if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-              plan = specialUser.plan;
-            }
-          }
-        }
-        setUserPlan(plan);
 
         const defaultTitle = "Como estudar para ser aprovado em primeiro lugar";
         const defaultSubtitle = "Guia prático com materiais selecionados para acelerar sua aprovação. Os itens abaixo são exibidos sem bloqueios, em um formato limpo, como uma folha A4.";
@@ -261,33 +155,9 @@ export default function ComoEstudarPrimeiroLugar() {
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
                             {g.page_key === 'guia_aprovacao' ? (
-                              <button 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (userPlan === 'gratuito' && !isAdmin) {
-                                    toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
-                                    return;
-                                  }
-                                  setSelectedArticle(a);
-                                }}
-                                className="text-left w-full text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-                              >
-                                {a.title}
-                              </button>
+                              <a href={`#art-${a.id}`} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
                             ) : (
-                              <button 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (userPlan === 'gratuito' && !isAdmin) {
-                                    toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
-                                    return;
-                                  }
-                                  navigate(createPageUrl(`GuiaEstudos?slug=${g.page_key}&articleId=${a.id}`));
-                                }}
-                                className="text-left w-full text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-                              >
-                                {a.title}
-                              </button>
+                              <a href={createPageUrl(`GuiaEstudos?slug=${g.page_key}#art-${a.id}`)} className="text-xs text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">{a.title}</a>
                             )}
                           </li>
                         ))}
@@ -303,31 +173,6 @@ export default function ComoEstudarPrimeiroLugar() {
           </aside>
           <section className="md:col-span-8 lg:col-span-9">
             <div className="bg-white dark:bg-gray-800 shadow-xl rounded-md p-4 md:p-8">
-        <div className="mb-4 flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-            <ArrowLeft className="w-5 h-5" /> Voltar
-          </Button>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">{content.title}</h1>
-          </div>
-        </div>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
-        
-        {!loading && articles.length > 0 && (
-          <div className="mb-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-5 h-5 ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-500'}`} />
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Progresso do Guia</span>
-              </div>
-              <span className={`text-sm font-bold ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-600 dark:text-indigo-400'}`}>
-                {globalProgress}%
-              </span>
-            </div>
-            <Progress value={globalProgress} className="h-2" />
-          </div>
-        )}
-
         {isAdmin && (
           <div className="mb-4">
             {!editMode ? (
@@ -355,27 +200,17 @@ export default function ComoEstudarPrimeiroLugar() {
             )}
           </div>
         )}
+        <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">{content.title}</h1>
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-6">{content.subtitle}</p>
 
         {!loading && articles.some(a => a.is_featured) && (
           <section className="mb-8">
             <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Recomendados</h2>
             <div className="space-y-4">
               {articles.filter(a => a.is_featured).map((a) => (
-                <Card key={a.id} className="dark:bg-gray-700 dark:border-gray-600 relative">
-                  <CardContent className="p-4 cursor-pointer" onClick={(e) => {
-                    if (userPlan === 'gratuito' && !isAdmin) {
-                      e.preventDefault();
-                      toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
-                    } else {
-                      setSelectedArticle(a);
-                    }
-                  }}>
-                    {userPlan === 'gratuito' && !isAdmin && (
-                      <div className="absolute top-4 right-4">
-                        <Lock className="w-4 h-4 text-gray-400" />
-                      </div>
-                    )}
-                    <span className="text-blue-700 dark:text-blue-400 font-semibold hover:underline">{a.title}</span>
+                <Card key={a.id} className="dark:bg-gray-700 dark:border-gray-600">
+                  <CardContent className="p-4">
+                    <a href={`#art-${a.id}`} className="text-blue-700 dark:text-blue-400 font-semibold hover:underline">{a.title}</a>
                     {a.summary && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{a.summary}</p>}
                   </CardContent>
                 </Card>
@@ -423,37 +258,9 @@ export default function ComoEstudarPrimeiroLugar() {
         {!loading && articles.length > 0 && (
           <section className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Artigos</h2>
-            {articles.map((a, index) => {
-              // Verifica se está bloqueado (se o anterior não foi completado ou não passou no quiz)
-              let isLockedSequence = false;
-              if (index > 0 && !isAdmin) {
-                const prevArticle = articles[index - 1];
-                const prevProgress = dbProgress[prevArticle.id];
-                if (!prevProgress?.is_completed) {
-                  isLockedSequence = true;
-                } else if (prevArticle.quizzes && prevArticle.quizzes.length > 0 && !prevProgress.quiz_passed) {
-                  isLockedSequence = true;
-                }
-              }
-
-              return (
-              <Card key={a.id} id={`art-${a.id}`} className={`dark:bg-gray-700 dark:border-gray-600 transition-shadow relative ${isLockedSequence ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'}`} onClick={() => {
-                if (isLockedSequence) {
-                  toast.error("Você precisa concluir e passar no quiz do artigo anterior para desbloquear este.");
-                  return;
-                }
-                if (userPlan === 'gratuito' && !isAdmin) {
-                  toast.error("O acesso aos resumos é exclusivo para assinantes. Faça um upgrade.");
-                  return;
-                }
-                setSelectedArticle(a);
-              }}>
+            {articles.map((a) => (
+              <Card key={a.id} id={`art-${a.id}`} className="dark:bg-gray-700 dark:border-gray-600 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedArticle(a)}>
                 <CardContent className="p-6">
-                  {(userPlan === 'gratuito' && !isAdmin) || isLockedSequence ? (
-                    <div className="absolute top-4 right-4">
-                      <Lock className="w-4 h-4 text-gray-400" />
-                    </div>
-                  ) : null}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -462,25 +269,19 @@ export default function ComoEstudarPrimeiroLugar() {
                       <div className="flex flex-wrap items-center gap-2 mb-3">
                         {a.author && <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">{a.author}</Badge>}
                         {a.reading_time && <Badge variant="secondary" className="dark:bg-gray-600 dark:text-gray-300">{a.reading_time} min</Badge>}
-                        {dbProgress[a.id]?.is_completed && (
-                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Concluído
-                          </Badge>
-                        )}
                       </div>
                       {a.summary && (
                         <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{a.summary}</p>
                       )}
                     </div>
-                    <Button size="sm" variant="outline" className="flex-shrink-0" disabled={isLockedSequence}>
+                    <Button size="sm" variant="outline" className="flex-shrink-0">
                       <BookOpen className="w-4 h-4 mr-1" />
                       Ler
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            )})}
+            ))}
           </section>
         )}
 
@@ -500,20 +301,6 @@ export default function ComoEstudarPrimeiroLugar() {
         article={selectedArticle}
         isOpen={!!selectedArticle}
         onClose={() => setSelectedArticle(null)}
-        isCompleted={selectedArticle ? dbProgress[selectedArticle.id]?.is_completed : false}
-        quizScore={selectedArticle ? dbProgress[selectedArticle.id]?.quiz_score : null}
-        quizPassed={selectedArticle ? dbProgress[selectedArticle.id]?.quiz_passed : false}
-        onMarkCompleted={(completed) => {
-          if (selectedArticle) {
-            saveArticleProgress(selectedArticle.id, completed ? 100 : 0);
-            if (completed) toast.success("Artigo marcado como concluído!");
-          }
-        }}
-        onQuizSubmit={(score, passed) => {
-          if (selectedArticle) {
-            handleQuizSubmit(selectedArticle.id, score, passed);
-          }
-        }}
       />
     </div>
   );

@@ -79,8 +79,7 @@ export default function ArticleManager() {
     tags: [],
     is_featured: false,
     is_published: true,
-    order: 0,
-    quizzes: []
+    order: 0
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -157,8 +156,7 @@ export default function ArticleManager() {
       tags: article.tags || [],
       is_featured: article.is_featured || false,
       is_published: article.is_published !== false,
-      order: article.order || 0,
-      quizzes: article.quizzes || []
+      order: article.order || 0
     });
     setShowForm(true);
   };
@@ -190,8 +188,7 @@ export default function ArticleManager() {
       tags: [],
       is_featured: false,
       is_published: true,
-      order: 0,
-      quizzes: []
+      order: 0
     });
     setEditingArticle(null);
     setShowForm(false);
@@ -438,106 +435,6 @@ export default function ArticleManager() {
                   className="h-[350px]"
                 />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Quiz de Validação (Opcional)</CardTitle>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={() => {
-                  setFormData(prev => ({
-                    ...prev,
-                    quizzes: [...(prev.quizzes || []), { question: '', options: ['', '', '', ''], correct_index: 0, explanation: '' }]
-                  }));
-                }}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Pergunta
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {!formData.quizzes || formData.quizzes.length === 0 ? (
-                <p className="text-gray-500 text-sm">Nenhuma pergunta adicionada. Você pode adicionar perguntas para validar o aprendizado ao final do artigo.</p>
-              ) : (
-                <div className="space-y-6">
-                  {formData.quizzes.map((quiz, qIndex) => (
-                    <div key={qIndex} className="p-4 border rounded-md relative bg-gray-50 dark:bg-gray-800">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                        onClick={() => {
-                          const newQuizzes = [...formData.quizzes];
-                          newQuizzes.splice(qIndex, 1);
-                          setFormData(prev => ({ ...prev, quizzes: newQuizzes }));
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      
-                      <div className="mb-4 pr-8">
-                        <Label>Pergunta {qIndex + 1}</Label>
-                        <Input
-                          value={quiz.question}
-                          onChange={(e) => {
-                            const newQuizzes = [...formData.quizzes];
-                            newQuizzes[qIndex].question = e.target.value;
-                            setFormData(prev => ({ ...prev, quizzes: newQuizzes }));
-                          }}
-                          placeholder="Digite a pergunta..."
-                        />
-                      </div>
-                      
-                      <div className="space-y-2 mb-4">
-                        <Label>Opções e Resposta Correta</Label>
-                        {quiz.options.map((opt, oIndex) => (
-                          <div key={oIndex} className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name={`correct_${qIndex}`}
-                              checked={quiz.correct_index === oIndex}
-                              onChange={() => {
-                                const newQuizzes = [...formData.quizzes];
-                                newQuizzes[qIndex].correct_index = oIndex;
-                                setFormData(prev => ({ ...prev, quizzes: newQuizzes }));
-                              }}
-                              className="w-4 h-4"
-                            />
-                            <Input
-                              value={opt}
-                              onChange={(e) => {
-                                const newQuizzes = [...formData.quizzes];
-                                newQuizzes[qIndex].options[oIndex] = e.target.value;
-                                setFormData(prev => ({ ...prev, quizzes: newQuizzes }));
-                              }}
-                              placeholder={`Opção ${String.fromCharCode(65 + oIndex)}`}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div>
-                        <Label>Explicação (Mostrada após responder)</Label>
-                        <Textarea
-                          value={quiz.explanation}
-                          onChange={(e) => {
-                            const newQuizzes = [...formData.quizzes];
-                            newQuizzes[qIndex].explanation = e.target.value;
-                            setFormData(prev => ({ ...prev, quizzes: newQuizzes }));
-                          }}
-                          placeholder="Explicação da resposta correta..."
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </CardContent>
           </Card>
 

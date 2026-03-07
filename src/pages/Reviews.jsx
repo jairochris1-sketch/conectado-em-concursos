@@ -3,10 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { 
   RefreshCcw, Plus, Search, Filter, AlertTriangle, 
   Calendar, CheckCircle2, ChevronLeft, ChevronRight,
-  ChevronsLeft, ChevronsRight, Edit, Trash2, BookOpen, ArrowLeft
+  ChevronsLeft, ChevronsRight, Edit, Trash2, BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -19,7 +18,6 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 export default function Reviews() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -299,9 +297,6 @@ export default function Reviews() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
             <RefreshCcw className="w-8 h-8 text-gray-900 dark:text-white" />
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Revisões</h1>
           </div>
@@ -732,11 +727,8 @@ export default function Reviews() {
                         <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="automatic">Automático Padrão (24h, 7d, 30d)</SelectItem>
-                        <SelectItem value="adaptive">Baseado no Desempenho (Adaptativo)</SelectItem>
-                        <SelectItem value="weekend">Final de Semana (Sáb/Dom mais próximo)</SelectItem>
+                        <SelectItem value="automatic">Automático (24h, 7d, 30d)</SelectItem>
                         <SelectItem value="custom">Personalizado</SelectItem>
-                        <SelectItem value="none">Não agendar revisão</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

@@ -3,7 +3,7 @@ import { User, StudyPlan, UserAnswer } from '@/entities/all';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Target, Trash2, Eye, Edit2, ArrowLeft } from 'lucide-react';
+import { Plus, Target, Trash2, Eye, Edit2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Progress } from '@/components/ui/progress';
@@ -124,14 +124,9 @@ export default function StudyPlansPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(createPageUrl("StudyPlanning"))} className="text-gray-600 dark:text-gray-300 gap-2 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Meus Planos de Estudo</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">Crie e acompanhe seus planos de estudo personalizados</p>
-            </div>
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Meus Planos de Estudo</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Crie e acompanhe seus planos de estudo personalizados</p>
           </div>
           <Link to={createPageUrl('CreateStudyPlan')}>
             <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2">

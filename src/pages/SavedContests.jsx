@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { SavedContest } from '@/entities/SavedContest';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Building, Briefcase, DollarSign, Calendar, ArrowUpRight, Search, Globe, MapPin, ArrowLeft } from 'lucide-react';
+import { Loader2, Building, Briefcase, DollarSign, Calendar, ArrowUpRight, Search, Globe, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { findOpenContests } from '@/functions/findOpenContests';
 
 const ContestCard = ({ contest, index }) => (
@@ -62,7 +61,6 @@ const ContestCard = ({ contest, index }) => (
 );
 
 export default function SavedContestsPage() {
-  const navigate = useNavigate();
   const [contests, setContests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
@@ -106,20 +104,13 @@ export default function SavedContestsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                <Search className="w-8 h-8 text-blue-600" />
-                Concursos Abertos
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Acompanhe os concursos encontrados pela nossa IA. Busque por novas oportunidades a qualquer momento.
-              </p>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+            <Search className="w-8 h-8 text-blue-600" />
+            Concursos Abertos
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Acompanhe os concursos encontrados pela nossa IA. Busque por novas oportunidades a qualquer momento.
+          </p>
         </motion.div>
 
         <Card className="mb-8 shadow-sm">

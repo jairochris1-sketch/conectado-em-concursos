@@ -2,22 +2,19 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Article, YouTubeVideo, SiteContent, User, FavoriteArticle } from "@/entities/all";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Search, Sun, Moon, BookMarked, Star, Heart, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import ReadingControls from "../components/reading/ReadingControls";
 import AnnotationTools from "../components/reading/AnnotationTools";
 import ArticleFeedback from "../components/feedback/ArticleFeedback";
-import { base44 } from "@/api/base44Client";
-import { Progress } from "@/components/ui/progress";
 
 export default function GuiaEstudos() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSlug = (searchParams.get("slug") || "guia_aprovacao").toLowerCase();
 
@@ -57,8 +54,6 @@ export default function GuiaEstudos() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [currentArticlePage, setCurrentArticlePage] = useState(1);
   const [currentVideoPage, setCurrentVideoPage] = useState(1);
-  const [dbProgress, setDbProgress] = useState({});
-  const [globalProgress, setGlobalProgress] = useState(0);
   const articlesPerPage = 5;
   const videosPerPage = 3;
 
@@ -121,13 +116,6 @@ export default function GuiaEstudos() {
           const userFavs = await FavoriteArticle.filter({ user_email: user.email });
           setFavorites(userFavs);
           setFavoriteIds(new Set(userFavs.map(f => f.article_id)));
-
-          const userProgress = await base44.entities.ArticleProgress.filter({ user_email: user.email, guide_slug: slug });
-          const progressMap = {};
-          userProgress.forEach(p => {
-            progressMap[p.article_id] = p.progress_percent;
-          });
-          setDbProgress(progressMap);
         }
 
         const defaultTitle = slug.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -146,10 +134,8 @@ export default function GuiaEstudos() {
         }
 
         const normalizedSlug = slug.toLowerCase();
-        const loadedArticles = (arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug))
-          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
-        
-        setArticles(loadedArticles);
+        setArticles((arts || []).filter(a => Array.isArray(a.tags) && a.tags.map(t => (t || "").toLowerCase()).includes(normalizedSlug))
+          .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date)));
         setVideos((vids || []).filter(v => (v.topic || "").toLowerCase() === normalizedSlug));
 
         const map = {};
@@ -159,15 +145,6 @@ export default function GuiaEstudos() {
             .sort((a,b) => (a.order ?? 0) - (b.order ?? 0) || new Date(a.created_date) - new Date(b.created_date));
         });
         setGuideArticlesMap(map);
-
-        const articleIdParam = searchParams.get("articleId");
-        if (articleIdParam) {
-          const found = loadedArticles.find(a => String(a.id) === String(articleIdParam));
-          if (found) {
-            setSelectedArticle(found);
-            setFocusMode(true);
-          }
-        }
       } finally {
         setLoading(false);
       }
@@ -251,41 +228,6 @@ export default function GuiaEstudos() {
   }, []);
 
   useEffect(() => {
-    if (articles.length > 0) {
-      let completed = 0;
-      articles.forEach(a => {
-        if (dbProgress[a.id] === 100) completed++;
-      });
-      setGlobalProgress(Math.round((completed / articles.length) * 100));
-    } else {
-      setGlobalProgress(0);
-    }
-  }, [articles, dbProgress]);
-
-  const saveArticleProgress = async (articleId, percent) => {
-    if (!currentUser) return;
-    try {
-      const existing = await base44.entities.ArticleProgress.filter({ user_email: currentUser.email, article_id: articleId });
-      if (existing.length > 0) {
-        if (existing[0].progress_percent !== percent) {
-          await base44.entities.ArticleProgress.update(existing[0].id, { progress_percent: percent, is_completed: percent === 100 });
-        }
-      } else {
-        await base44.entities.ArticleProgress.create({
-          user_email: currentUser.email,
-          article_id: articleId,
-          guide_slug: slug,
-          progress_percent: percent,
-          is_completed: percent === 100
-        });
-      }
-      setDbProgress(prev => ({ ...prev, [articleId]: percent }));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
     if (selectedArticle && readingProgress[selectedArticle.id]) {
       setTimeout(() => {
         window.scrollTo(0, readingProgress[selectedArticle.id]);
@@ -363,6 +305,7 @@ export default function GuiaEstudos() {
             </h1>
             <div className="flex items-center gap-2 mb-6">
               {selectedArticle.author && <Badge variant="outline">{selectedArticle.author}</Badge>}
+              {selectedArticle.reading_time && <Badge variant="secondary">{selectedArticle.reading_time} min</Badge>}
             </div>
             <div 
               className={`prose prose-lg max-w-none ${darkMode ? 'prose-invert [&_*]:!text-gray-200 [&_p]:!text-gray-200 [&_span]:!text-gray-200 [&_li]:!text-gray-200 [&_td]:!text-gray-200 [&_th]:!text-gray-200 [&_h1]:!text-white [&_h2]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_strong]:!text-white [&_b]:!text-white' : ''}`}
@@ -375,26 +318,6 @@ export default function GuiaEstudos() {
                 '--tw-prose-bold': darkMode ? '#ffffff' : '#111827'
               }}
             />
-            <div className="mt-12 flex justify-end">
-              <Button 
-                onClick={() => {
-                  const isCompleted = dbProgress[selectedArticle.id] === 100;
-                  saveArticleProgress(selectedArticle.id, isCompleted ? 0 : 100);
-                  if (!isCompleted) {
-                    toast.success("Artigo marcado como concluído!");
-                  }
-                }}
-                className={dbProgress[selectedArticle.id] === 100 
-                  ? "bg-green-600 hover:bg-green-700 text-white" 
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white"}
-              >
-                {dbProgress[selectedArticle.id] === 100 ? (
-                  <><CheckCircle2 className="w-4 h-4 mr-2" /> Concluído</>
-                ) : (
-                  "Marcar como Concluído"
-                )}
-              </Button>
-            </div>
           </article>
         </div>
       </div>
@@ -449,19 +372,15 @@ export default function GuiaEstudos() {
                       <ul className="px-3 pb-2 space-y-1 border-t pt-2" style={{ borderColor: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 1)' }}>
                         {guideArticlesMap[g.page_key].map((a) => (
                           <li key={a.id}>
-                            <button 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setSelectedArticle(a);
-                                setFocusMode(true);
-                              }}
-                              className={`text-left w-full flex items-start gap-2 text-xs py-1 transition-colors ${
+                            <a 
+                              href={`#art-${a.id}`} 
+                              className={`flex items-start gap-2 text-xs py-1 transition-colors ${
                                 darkMode ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-600 hover:text-indigo-600'
                               }`}
                             >
-                              <span className="text-[10px] mt-0.5 flex-shrink-0">→</span>
-                              <span className="flex-1 break-words overflow-hidden text-ellipsis line-clamp-3">{a.title}</span>
-                            </button>
+                              <span className="text-[10px] mt-0.5">→</span>
+                              <span className="flex-1">{a.title}</span>
+                            </a>
                           </li>
                         ))}
                       </ul>
@@ -480,10 +399,7 @@ export default function GuiaEstudos() {
           <section className="md:col-span-8 lg:col-span-9">
             <div className={`shadow-xl rounded-md p-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="flex justify-between items-start mb-4">
-          <div className="flex-1 flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className={`px-2 hidden md:flex ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}>
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
+          <div className="flex-1">
             {isAdmin && (
               <div>
                 {!editMode ? (
@@ -546,21 +462,6 @@ export default function GuiaEstudos() {
         <h1 className={`text-3xl font-extrabold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{content.title}</h1>
         <p className={`mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{content.subtitle}</p>
 
-        {!loading && articles.length > 0 && (
-          <div className={`mb-8 p-5 rounded-lg border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm`}>
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-5 h-5 ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-500'}`} />
-                <span className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>Seu Progresso no Guia</span>
-              </div>
-              <span className={`font-bold ${globalProgress === 100 ? 'text-green-500' : 'text-indigo-600 dark:text-indigo-400'}`}>
-                {globalProgress}%
-              </span>
-            </div>
-            <Progress value={globalProgress} className="h-3" />
-          </div>
-        )}
-
         {loading && <div className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Carregando conteúdo...</div>}
 
         {!loading && videos.length > 0 && (
@@ -596,7 +497,7 @@ export default function GuiaEstudos() {
                           allowFullScreen
                         />
                       ) : (
-                        <Card><CardContent className="p-4 break-words break-all sm:break-normal">{v.title}</CardContent></Card>
+                        <Card><CardContent className="p-4">{v.title}</CardContent></Card>
                       )}
                     </div>
                     <div className="mt-2">
@@ -675,11 +576,12 @@ export default function GuiaEstudos() {
               paginatedArticles.map((a) => (
               <div key={a.id} id={`art-${a.id}`} className={`relative p-6 rounded-lg mb-6 ${darkMode ? 'bg-gray-700/50' : 'bg-white'} shadow-sm border ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className={`text-lg font-semibold mb-2 break-words break-all sm:break-normal ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
-                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <div className="flex-1">
+                    <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{a.title}</h3>
+                    <div className="flex items-center gap-2 mb-3">
                       {a.author && <Badge variant="outline">{a.author}</Badge>}
-                      {readingProgress[a.id] && dbProgress[a.id] !== 100 && (
+                      {a.reading_time && <Badge variant="secondary">{a.reading_time} min</Badge>}
+                      {readingProgress[a.id] && (
                         <Badge className="bg-blue-100 text-blue-800">
                           <BookMarked className="w-3 h-3 mr-1" />
                           Continuar leitura
@@ -689,12 +591,6 @@ export default function GuiaEstudos() {
                         <Badge className="bg-red-100 text-red-800">
                           <Heart className="w-3 h-3 mr-1 fill-current" />
                           Favorito
-                        </Badge>
-                      )}
-                      {dbProgress[a.id] === 100 && (
-                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Concluído
                         </Badge>
                       )}
                     </div>

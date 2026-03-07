@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { User } from "@/entities/User";
 import { Subscription } from "@/entities/Subscription";
 import { base44 } from "@/api/base44Client";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight, Trash2, ArrowLeft } from "lucide-react";
+import { CreditCard, Calendar, CheckCircle2, XCircle, Clock, AlertCircle, RefreshCw, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -30,18 +30,15 @@ const planNames = {
 const cycleNames = {
   monthly: "Mensal",
   semiannual: "Semestral",
-  annual: "Anual",
-  manual: "Manual (Painel Admin)"
+  annual: "Anual"
 };
 
 export default function SubscriptionsDashboard() {
-  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelingId, setCancelingId] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [isClearingHistory, setIsClearingHistory] = useState(false);
 
   useEffect(() => {
     loadSubscriptions();
@@ -54,26 +51,6 @@ export default function SubscriptionsDashboard() {
       if (!user) return;
 
       const subs = await Subscription.filter({ user_email: user.email }, '-created_date');
-      
-      try {
-        const specialUsers = await base44.entities.SpecialUser.filter({ email: user.email, is_active: true });
-        if (specialUsers.length > 0) {
-          const su = specialUsers[0];
-          // Adiciona o plano concedido pelo painel admin no topo da lista
-          subs.unshift({
-            id: su.id,
-            status: 'active',
-            plan: su.plan,
-            start_date: su.created_date,
-            end_date: su.valid_until,
-            cycle: 'manual',
-            is_special: true
-          });
-        }
-      } catch (err) {
-        console.error("Erro ao verificar acesso manual:", err);
-      }
-
       setSubscriptions(subs);
     } catch (error) {
       console.error("Erro ao carregar assinaturas:", error);
@@ -88,26 +65,6 @@ export default function SubscriptionsDashboard() {
     setIsCancelModalOpen(true);
   };
 
-  const handleClearHistory = async () => {
-    if (!window.confirm("Tem certeza que deseja apagar o histórico de assinaturas inativas/canceladas?")) return;
-    setIsClearingHistory(true);
-    try {
-      const inactiveSubs = subscriptions.filter(s => s.status === 'cancelled' || s.status === 'inactive');
-      for (const sub of inactiveSubs) {
-        if (!sub.is_special) {
-          await Subscription.delete(sub.id);
-        }
-      }
-      toast.success("Histórico limpo com sucesso!");
-      loadSubscriptions();
-    } catch (error) {
-      console.error("Erro ao limpar histórico:", error);
-      toast.error("Erro ao limpar o histórico.");
-    } finally {
-      setIsClearingHistory(false);
-    }
-  };
-
   const confirmCancel = async () => {
     if (!selectedSub) return;
     
@@ -115,45 +72,31 @@ export default function SubscriptionsDashboard() {
     setIsCancelModalOpen(false);
 
     try {
-      // Registrar a solicitação no banco local (sem cancelar imediatamente)
-      if (selectedSub.is_special) {
-        await base44.entities.SpecialUser.update(selectedSub.id, {
-          cancel_requested: true
+      if (selectedSub.asaas_subscription_id) {
+        // Cancelar no Asaas se tiver ID da assinatura
+        const response = await base44.functions.invoke('cancelAsaasSubscription', {
+          subscriptionId: selectedSub.asaas_subscription_id
         });
-      } else {
-        await Subscription.update(selectedSub.id, {
-          cancel_requested: true
-        });
+
+        if (response.data?.error) {
+          throw new Error(response.data.error);
+        }
       }
 
-      // Enviar notificação para os administradores via banco de dados
-      try {
-        const user = await User.me();
-        
-        const adminEmails = ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'];
-        for (const email of adminEmails) {
-          await base44.entities.Notification.create({
-            user_email: email,
-            title: "🚨 Solicitação de Cancelamento",
-            message: `O usuário ${user.full_name} (${user.email}) solicitou o cancelamento da assinatura do plano ${planNames[selectedSub.plan] || selectedSub.plan}. Verifique a aba de Assinaturas.`,
-            type: "warning",
-            related_user_name: user.full_name,
-            related_user_photo: user.profile_photo_url,
-            action_url: "/Admin"
-          });
-        }
-      } catch (notifError) {
-        console.error("Erro ao enviar notificação aos admins:", notifError);
-      }
+      // Atualizar no banco local
+      await Subscription.update(selectedSub.id, {
+        status: 'cancelled',
+        end_date: new Date().toISOString().split('T')[0]
+      });
 
       // Atualizar estado local
       setSubscriptions(prev => prev.map(s => 
         s.id === selectedSub.id 
-          ? { ...s, cancel_requested: true } 
+          ? { ...s, status: 'cancelled', end_date: new Date().toISOString().split('T')[0] } 
           : s
       ));
 
-      toast.success("Solicitação de cancelamento enviada com sucesso! Os administradores foram notificados.");
+      toast.success("Assinatura cancelada com sucesso!");
     } catch (error) {
       console.error("Erro ao cancelar assinatura:", error);
       toast.error(error.message || "Erro ao cancelar assinatura. Tente novamente mais tarde.");
@@ -177,15 +120,6 @@ export default function SubscriptionsDashboard() {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const formatDateTime = (dateString) => {
-    if (!dateString) return "—";
-    try {
-      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
-    } catch (e) {
-      return dateString;
-    }
-  };
-
   if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-5xl mx-auto flex justify-center items-center min-h-[400px]">
@@ -194,22 +128,15 @@ export default function SubscriptionsDashboard() {
     );
   }
 
-  const activeSub = subscriptions.find(s => s.status === 'active');
-
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-            <ArrowLeft className="w-5 h-5" /> Voltar
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <CreditCard className="w-6 h-6 text-blue-600" />
-              Painel de Assinaturas
-            </h1>
-            <p className="text-gray-500 mt-1">Gerencie seus planos e histórico de pagamentos.</p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <CreditCard className="w-6 h-6 text-blue-600" />
+            Painel de Assinaturas
+          </h1>
+          <p className="text-gray-500 mt-1">Gerencie seus planos e histórico de pagamentos.</p>
         </div>
         
         <Link to={createPageUrl("Subscription")}>
@@ -218,28 +145,6 @@ export default function SubscriptionsDashboard() {
           </Button>
         </Link>
       </div>
-
-      {activeSub && (
-        <div className="mb-6 bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-4 shadow-sm dark:bg-green-900/20 dark:border-green-800 dark:text-green-300">
-          <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400 hidden sm:block" />
-          <div className="flex-1">
-            <h3 className="font-bold text-lg mb-2">
-              Plano Ativo
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm opacity-90">
-              <div>
-                <span className="font-semibold">Tipo de plano:</span> {planNames[activeSub.plan] || activeSub.plan}
-              </div>
-              <div>
-                <span className="font-semibold">Início:</span> {formatDateTime(activeSub.start_date || activeSub.created_date)}
-              </div>
-              <div>
-                <span className="font-semibold">Fim:</span> {activeSub.end_date ? formatDateTime(activeSub.end_date) : (activeSub.next_payment_date ? formatDateTime(activeSub.next_payment_date) : "—")}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {subscriptions.length === 0 ? (
         <Card className="text-center py-12">
@@ -257,30 +162,11 @@ export default function SubscriptionsDashboard() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {subscriptions.some(s => s.status === 'cancelled' || s.status === 'inactive') && (
-            <div className="flex justify-end">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleClearHistory} 
-                disabled={isClearingHistory}
-                className="text-gray-500 hover:text-red-600 border-gray-200"
-              >
-                {isClearingHistory ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                Limpar Histórico Cancelado
-              </Button>
-            </div>
-          )}
-          <div className="grid gap-6">
-            {subscriptions.map((sub) => {
+        <div className="grid gap-6">
+          {subscriptions.map((sub) => {
             const statusInfo = statusConfig[sub.status] || statusConfig.inactive;
             const StatusIcon = statusInfo.icon;
             const isCancelable = sub.status === 'active' || sub.status === 'pending' || sub.status === 'overdue';
-
-            // Verificar se passaram 24h desde a aprovação do cancelamento
-            const hasPassed24hSinceApproval = sub.cancel_approved_date && 
-              (new Date().getTime() - new Date(sub.cancel_approved_date).getTime() > 24 * 60 * 60 * 1000);
 
             return (
               <Card key={sub.id} className="overflow-hidden transition-all hover:shadow-md border-l-4" style={{ borderLeftColor: sub.status === 'active' ? '#10b981' : sub.status === 'pending' ? '#f59e0b' : sub.status === 'overdue' ? '#ef4444' : '#9ca3af' }}>
@@ -294,42 +180,12 @@ export default function SubscriptionsDashboard() {
                           {statusInfo.label}
                         </Badge>
                       </CardTitle>
-                      {sub.cycle !== 'manual' && (
-                        <CardDescription className="mt-1">
-                          Ciclo {cycleNames[sub.cycle] || sub.cycle} • {formatCurrency(sub.price)}
-                        </CardDescription>
-                      )}
+                      <CardDescription className="mt-1">
+                        Ciclo {cycleNames[sub.cycle] || sub.cycle} • {formatCurrency(sub.price)}
+                      </CardDescription>
                     </div>
                     
-                    {sub.cancel_requested && !sub.cancel_approved_date ? (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        disabled
-                        className="text-orange-600 border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800 dark:text-orange-400 opacity-100"
-                      >
-                        Enviado solicitação de cancelamento
-                      </Button>
-                    ) : sub.cancel_approved_date && !hasPassed24hSinceApproval ? (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        disabled
-                        className="text-blue-600 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 opacity-100"
-                      >
-                        Solicitação Aceita (Aguarde 24h)
-                      </Button>
-                    ) : sub.cancel_approved_date && hasPassed24hSinceApproval ? (
-                      <Link to={createPageUrl("Subscription")}>
-                        <Button 
-                          variant="default" 
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          Assinar Novamente
-                        </Button>
-                      </Link>
-                    ) : isCancelable && (
+                    {isCancelable && (
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -338,7 +194,7 @@ export default function SubscriptionsDashboard() {
                         disabled={cancelingId === sub.id}
                       >
                         {cancelingId === sub.id ? (
-                          <><RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Processando...</>
+                          <><RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Cancelando...</>
                         ) : (
                           "Cancelar Assinatura"
                         )}
@@ -402,7 +258,6 @@ export default function SubscriptionsDashboard() {
               </Card>
             );
           })}
-          </div>
         </div>
       )}
 
@@ -414,10 +269,10 @@ export default function SubscriptionsDashboard() {
               <AlertCircle className="w-5 h-5" />
               Confirmar Cancelamento
             </DialogTitle>
-            <DialogDescription className="pt-3 text-base text-gray-700 dark:text-gray-300">
-              Tem certeza que deseja cancelar sua assinatura do <strong>{selectedSub ? planNames[selectedSub.plan] || selectedSub.plan : ''}</strong> para estudos para Concursos Públicos no conectadoemconcursos?
+            <DialogDescription className="pt-3 text-base">
+              Tem certeza que deseja cancelar sua assinatura do <strong>{selectedSub ? planNames[selectedSub.plan] || selectedSub.plan : ''}</strong>?
               <br /><br />
-              Uma mensagem será enviada para o painel do administrador e a assinatura será cancelada.
+              Seu acesso aos recursos premium será revogado imediatamente e você não será mais cobrado.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-6 flex gap-2 sm:justify-end">

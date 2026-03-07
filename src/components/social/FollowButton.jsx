@@ -6,29 +6,37 @@ import { UserPlus, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { sendAppNotification } from "@/functions/sendAppNotification";
 
 export default function FollowButton({ targetEmail, targetId, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
+  const [user, setUser] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followId, setFollowId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const queryClient = useQueryClient();
 
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => User.me(),
-    staleTime: Infinity,
-  });
+  useEffect(() => {
+    loadFollowStatus();
+  }, [targetEmail]);
 
-  const { data: userFollowings = [], isPending } = useQuery({
-    queryKey: ['userFollowings', user?.email],
-    queryFn: () => UserFollow.filter({ follower_email: user.email }),
-    enabled: !!user?.email,
-    staleTime: 1000 * 60 * 5,
-  });
+  const loadFollowStatus = async () => {
+    try {
+      const userData = await User.me();
+      setUser(userData);
 
-  const followRecord = userFollowings.find(f => f.following_email === targetEmail);
-  const isFollowing = !!followRecord;
-  const followId = followRecord?.id;
+      if (userData.email === targetEmail) return;
+
+      const follows = await UserFollow.filter({
+        follower_email: userData.email,
+        following_email: targetEmail
+      });
+
+      if (follows.length > 0) {
+        setIsFollowing(true);
+        setFollowId(follows[0].id);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar status de seguir:", error);
+    }
+  };
 
   const handleFollow = async (e) => {
     e.preventDefault();
@@ -40,17 +48,21 @@ export default function FollowButton({ targetEmail, targetId, targetName, target
     try {
       if (isFollowing) {
         await UserFollow.delete(followId);
+        setIsFollowing(false);
+        setFollowId(null);
         toast.success(`Você deixou de seguir ${targetName}`);
       } else {
-        await UserFollow.create({
+        const newFollow = await UserFollow.create({
           follower_email: user.email,
           following_email: targetEmail,
           following_name: targetName,
           following_photo_url: targetPhotoUrl
         });
+        setIsFollowing(true);
+        setFollowId(newFollow.id);
         toast.success(`Você agora está seguindo ${targetName}`);
 
-        await sendAppNotification({
+        await base44.functions.invoke("sendAppNotification", {
           targetEmail: targetEmail,
           title: "Novo seguidor",
           message: `${user.full_name} começou a seguir você`,
@@ -60,7 +72,6 @@ export default function FollowButton({ targetEmail, targetId, targetName, target
           relatedUserPhoto: user.profile_photo_url
         });
       }
-      queryClient.invalidateQueries({ queryKey: ['userFollowings', user.email] });
     } catch (error) {
       toast.error("Erro ao processar ação");
     }

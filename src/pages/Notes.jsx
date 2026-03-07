@@ -8,9 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2, Star, StarOff, StickyNote, Loader2, ArrowLeft } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Star, StarOff, StickyNote, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 
 const subjectNames = {
   portugues: "Português",
@@ -37,7 +36,6 @@ const colorClasses = {
 };
 
 export default function NotesPage() {
-  const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,15 +159,10 @@ export default function NotesPage() {
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <StickyNote className="w-8 h-8" />
-              Minhas Anotações
-            </h1>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+            <StickyNote className="w-8 h-8" />
+            Minhas Anotações
+          </h1>
           <div className="flex items-center gap-3 flex-wrap">
             <Link to={createPageUrl("FavoriteQuestions")}>
               <Button variant="outline">

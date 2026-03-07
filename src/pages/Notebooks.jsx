@@ -30,8 +30,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight,
-  ArrowLeft
+  ChevronsRight
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -238,21 +237,16 @@ export default function Notebooks() {
       <div className="max-w-7xl mx-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-                <ArrowLeft className="w-5 h-5" /> Voltar
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                  <BookOpen className="w-8 h-8 text-blue-600" />
-                  {activeTab === "cadernos" ? "Meus Cadernos de Questões" : "Caderno de Erros"}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  {activeTab === "cadernos" 
-                    ? "Organize e resolva suas questões de forma personalizada" 
-                    : "Registre seus erros para revisão e aprimoramento"}
-                </p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <BookOpen className="w-8 h-8 text-blue-600" />
+                {activeTab === "cadernos" ? "Meus Cadernos de Questões" : "Caderno de Erros"}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                {activeTab === "cadernos" 
+                  ? "Organize e resolva suas questões de forma personalizada" 
+                  : "Registre seus erros para revisão e aprimoramento"}
+              </p>
             </div>
             
             <div className="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">

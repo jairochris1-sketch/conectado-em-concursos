@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff, Minus, Smile, Search, Trash2 } from "lucide-react";
+import { X, Send, Loader2, Circle, ChevronDown, Bell, Settings, Volume2, VolumeX, BellRing, BellOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -12,17 +12,7 @@ import { notificationService } from "@/components/chat/notificationService";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {
-  Popover, PopoverContent, PopoverTrigger
-} from "@/components/ui/popover";
 import ChatDebugValidator from "@/components/chat/ChatDebugValidator";
-
-const EMOJIS = ["😀","😂","🤣","😊","😍","🥰","😘","😜","😎","🤩",
-  "😏","😒","😔","😕","😣","😫","🥺","😢","😭","😤","😠","😡",
-  "🤯","😳","😱","😨","😰","😓","🤗","🤔","🤭","🤫","😶","😐",
-  "🙄","😯","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧",
-  "👍","👎","👏","🙌","👐","🤲","🤝","🙏","✌️","🤞","🤟","🤘",
-  "🤙","👈","👉","👆","👇","❤️","💔","💕","💞","💓","💗","💖"];
 
 const HEARTBEAT_INTERVAL = 30_000;
 const ONLINE_THRESHOLD_MS = 3 * 60 * 1000;
@@ -68,7 +58,8 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [partnerPresence, setPartnerPresence] = useState(null);
-
+  const [myStatus, setMyStatus] = useState("online");
+  const [myPresenceId, setMyPresenceId] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showNewMessageIndicator, setShowNewMessageIndicator] = useState(false);
   const [lastMessageId, setLastMessageId] = useState(null);
@@ -77,27 +68,14 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [showDebug, setShowDebug] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [prefs, setPrefs] = useState(notificationService.getPreferences());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [now, setNow] = useState(Date.now());
   const containerRef = useRef(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 60000);
-    return () => clearInterval(interval);
-  }, []);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
-  const inputRef = useRef(null);
+  const myStatusRef = useRef("online");
   const visibilityUnsubRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const loadingRef = useRef(false);
   const convKey = getConversationKey(currentUser.email, partner.email);
-  const isMinimizedRef = useRef(isMinimized);
-
-  useEffect(() => {
-    isMinimizedRef.current = isMinimized;
-  }, [isMinimized]);
 
   // Initialize notifications
   useEffect(() => {
@@ -187,48 +165,47 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         
         // If I'm receiving this message, mark as read and update status
         if (msg.receiver_email === currentUser.email && !msg.is_read) {
+          base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
+            console.warn("Failed to mark message as read:", err);
+          });
+
           // Tocar som em todas as novas mensagens
           if (notificationService.getPreferences().sound) {
             notificationService.playNotificationSound();
           }
 
+          // Verificar se é a primeira mensagem lendo o estado atual
           setMessages((prev) => {
             const isFirstMessage = prev.length === 0;
+
             // Exibir notificação apenas se for a primeira mensagem da conversa
             if (isFirstMessage && !document.hidden) {
+              // Delay the toast slightly to avoid strict mode double render issues
               setTimeout(() => {
                 toast.info(`Nova conversa com ${msg.sender_name}`, {
                   description: msg.content.substring(0, 50) + (msg.content.length > 50 ? '...' : '')
                 });
               }, 100);
             }
+
             return [...prev, msg];
           });
-
-          if (!isMinimizedRef.current && isScrolledToBottom() && !document.hidden) {
-            base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
-              console.warn("Failed to mark message as read:", err);
-            });
-            setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true, status: 'read' } : m));
-          } else {
-            setShowNewMessageIndicator(true);
-            setUnreadCount(prevCount => prevCount + 1);
-          }
 
           // Show push notification if app in background
           if (notificationsEnabled && document.hidden) {
             notificationService.sendPushNotification(`Nova mensagem de ${msg.sender_name}`, { body: msg.content.substring(0, 50) });
+          }
+
+          // Show scroll-to-bottom indicator
+          if (!isScrolledToBottom()) {
+            setShowNewMessageIndicator(true);
+            setUnreadCount(prevCount => prevCount + 1);
           }
         } else {
           // It's my own message or already read
           setMessages((prev) => [...prev, msg]);
         }
         setLastMessageId(msg.id);
-      } else if (event.type === "update") {
-        const msg = event.data;
-        if (msg.conversation_key === convKey) {
-          setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, ...msg } : m));
-        }
       }
     });
 
@@ -258,7 +235,41 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     };
   }, [convKey, partner.email, notificationsEnabled]);
 
-  // A presença já é atualizada globalmente pelo UserPresenceUpdater no Layout.
+  // Heartbeat
+  useEffect(() => {
+    initMyPresence();
+    const interval = setInterval(() => {
+      if (myPresenceId) {
+        base44.entities.UserPresence.update(myPresenceId, {
+          last_seen: new Date().toISOString(),
+          status: myStatusRef.current
+        }).catch(() => {});
+      }
+    }, HEARTBEAT_INTERVAL);
+    return () => {
+      clearInterval(interval);
+      if (myPresenceId) {
+        base44.entities.UserPresence.update(myPresenceId, { status: "offline" }).catch(() => {});
+      }
+    };
+  }, [myPresenceId]);
+
+  const initMyPresence = async () => {
+    const existing = await base44.entities.UserPresence.filter({ user_email: currentUser.email });
+    if (existing.length > 0) {
+      const rec = existing[0];
+      setMyPresenceId(rec.id);
+      const savedStatus = rec.status === "invisible" ? "invisible" : "online";
+      setMyStatus(savedStatus);
+      myStatusRef.current = savedStatus;
+      await base44.entities.UserPresence.update(rec.id, { last_seen: new Date().toISOString(), status: savedStatus });
+    } else {
+      const record = await base44.entities.UserPresence.create({
+        user_email: currentUser.email, last_seen: new Date().toISOString(), status: "online"
+      });
+      setMyPresenceId(record.id);
+    }
+  };
 
   const loadMessages = async (skipCount = 0) => {
     try {
@@ -328,7 +339,17 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     }
   };
 
-
+  const changeMyStatus = async (newStatus) => {
+    setMyStatus(newStatus);
+    myStatusRef.current = newStatus;
+    if (myPresenceId) {
+      await base44.entities.UserPresence.update(myPresenceId, {
+        status: newStatus, last_seen: new Date().toISOString()
+      });
+    }
+    const label = STATUS_OPTIONS.find(s => s.value === newStatus)?.label;
+    toast.success(`Status: ${label}`);
+  };
 
   const sendMessage = async () => {
     if (!text.trim() || sending) return;
@@ -351,23 +372,10 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       setText(content); // Restore text on error
     } finally {
       setSending(false);
-      setTimeout(() => inputRef.current?.focus(), 10);
     }
   };
 
-  const handleClearMessages = async (e) => {
-    e?.preventDefault();
-    if (!window.confirm("Tem certeza que deseja limpar o histórico desta conversa?")) return;
-    try {
-      await base44.functions.invoke('clearStudyPartnerMessages', { partner_email: partner.email });
-      setMessages([]);
-      toast.success("Histórico apagado com sucesso.");
-    } catch (err) {
-      toast.error("Erro ao apagar histórico.");
-    }
-  };
-
-
+  const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
   const isScrolledToBottom = () => {
     if (isMinimized) return false;
@@ -403,105 +411,86 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col w-full h-full bg-gray-50 dark:bg-gray-900 overflow-hidden"
+      className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden"
     >
       {/* Header */}
       <div 
-        className={`flex items-center justify-between gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 cursor-pointer ${isMinimized ? 'h-full relative' : ''}`}
+        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0 cursor-pointer"
         onClick={(e) => {
           if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
             onToggleMinimize();
           }
         }}
       >
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <Avatar className="w-8 h-8 border border-white/20">
-            <AvatarImage src={partner.profile_photo_url} />
-            <AvatarFallback className="bg-blue-800 text-xs">{partner.name?.[0]}</AvatarFallback>
+        <div className="relative">
+          <Avatar className="w-9 h-9">
+            <AvatarImage src={partner.photo} />
+            <AvatarFallback className="text-sm bg-green-800">{partner.name?.charAt(0)}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
+          {partnerPresence?.display === "online" && (
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-white" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0 flex items-center gap-2">
+          <div>
             <p className="font-semibold text-sm truncate">{partner.name}</p>
-            {partnerPresence?.display === "online" ? (
-               <p className="text-xs text-blue-100 flex items-center gap-1">
-                 <span className="w-2 h-2 rounded-full bg-green-400" /> Online
-               </p>
-            ) : (
-               <p className="text-[10px] text-blue-200 truncate">
-                 {partnerPresence?.last_seen ? `visto ${formatDistanceToNow(new Date(partnerPresence.last_seen), { addSuffix: true, locale: ptBR })}` : 'Offline'}
-               </p>
-            )}
+            <PresenceDot presence={partnerPresence} />
           </div>
-          {unreadCount > 0 && isMinimized && (
-            <div className="absolute top-1/2 -translate-y-1/2 right-12 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-              {unreadCount}
-            </div>
+          {unreadCount > 0 && (
+            <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse shadow-sm border border-red-400">
+              {unreadCount} nova{unreadCount > 1 ? 's' : ''}
+            </span>
           )}
         </div>
 
-        {/* Settings inside header */}
-        {!isMinimized && (
-          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); setIsSearching(!isSearching); if(isSearching) setSearchQuery(""); }}>
-              <Search className="w-4 h-4" />
+        {/* My status selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs gap-1 px-2 h-7">
+              {currentStatusOption.label} <ChevronDown className="w-3 h-3" />
             </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {STATUS_OPTIONS.map(opt => (
+              <DropdownMenuItem key={opt.value} onClick={() => changeMyStatus(opt.value)} className={opt.color}>
+                {opt.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7">
-                  <Settings className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 text-sm">
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer">
-                  <span>Notificações Push</span>
-                  {prefs.push ? <span className="text-green-500">Ativo</span> : <span className="text-gray-400">Inativo</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer">
-                  <span>Som no Chat</span>
-                  {prefs.sound ? <span className="text-green-500">Ativo</span> : <span className="text-gray-400">Inativo</span>}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleClearMessages} className="flex items-center text-red-500 cursor-pointer mt-1 border-t">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  <span>Limpar Histórico</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); if(onToggleMinimize) onToggleMinimize(); }}>
-              <Minus className="w-4 h-4" />
+        {/* Settings */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-white hover:bg-green-600 text-xs px-2 h-7 gap-1">
+              <Settings className="w-4 h-4" />
             </Button>
-
-            <Button variant="ghost" size="icon" className="text-white hover:bg-red-500 hover:text-white h-7 w-7" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-        )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('push'); }} className="flex items-center justify-between cursor-pointer py-3">
+              <span className="flex items-center gap-2 font-medium">
+                {prefs.push ? <BellRing className="w-4 h-4 text-green-600" /> : <BellOff className="w-4 h-4 text-gray-400" />}
+                Notificações Push
+              </span>
+              <span className="text-xs text-gray-500">{prefs.push ? 'Ativo' : 'Inativo'}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.preventDefault(); togglePref('sound'); }} className="flex items-center justify-between cursor-pointer py-3">
+              <span className="flex items-center gap-2 font-medium">
+                {prefs.sound ? <Volume2 className="w-4 h-4 text-green-600" /> : <VolumeX className="w-4 h-4 text-gray-400" />}
+                Som no Chat
+              </span>
+              <span className="text-xs text-gray-500">{prefs.sound ? 'Ativo' : 'Inativo'}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
-        {isMinimized && (
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-7 w-7" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-            <X className="w-4 h-4" />
-          </Button>
-        )}
+        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8 ml-auto" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+          <X className="w-4 h-4" />
+        </Button>
       </div>
 
       {!isMinimized && (
         <>
-      {isSearching && (
-        <div className="bg-white dark:bg-gray-800 p-2 flex items-center border-b dark:border-gray-700" onClick={(e) => e.stopPropagation()}>
-          <Search className="w-4 h-4 text-gray-500 mr-2" />
-          <input
-            autoFocus
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar mensagens..."
-            className="flex-1 bg-transparent text-sm outline-none text-gray-700 dark:text-gray-200"
-          />
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-500" onClick={() => { setIsSearching(false); setSearchQuery(""); }}>
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
-
       {/* Debug Panel */}
       {showDebug && (
         <div className="p-3 bg-gray-900 border-b border-gray-700 max-h-60 overflow-y-auto">
@@ -514,45 +503,45 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 bg-[#e5ddd5] dark:bg-gray-900 relative" ref={containerRef}>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" ref={containerRef}>
         {loadingOlder && (
-          <div className="flex justify-center py-2">
-            <span className="bg-white/80 dark:bg-gray-800 text-gray-500 text-xs px-3 py-1 rounded-full shadow-sm flex items-center">
-              <Loader2 className="w-3 h-3 animate-spin mr-2" /> Carregando...
-            </span>
+          <div className="text-center text-gray-400 text-xs py-2">
+            <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando mensagens antigas...
           </div>
         )}
         <div ref={messagesStart} />
         {messages.length === 0 && (
-          <div className="flex justify-center mt-4">
-            <span className="bg-[#fff3c4] text-[#856404] text-xs px-3 py-1.5 rounded-lg text-center shadow-sm">
-              As mensagens são protegidas de ponta a ponta.
-            </span>
-          </div>
+          <p className="text-center text-gray-400 text-sm mt-8">Nenhuma mensagem ainda. Diga olá! 👋</p>
         )}
-        {messages.filter(msg => !searchQuery || msg.content.toLowerCase().includes(searchQuery.toLowerCase())).map((msg, i, arr) => {
+        {messages.map((msg) => {
           const isMe = msg.sender_email === currentUser.email;
-          const timeObj = msg.timestamp ? new Date(msg.timestamp) : new Date(msg.created_date);
-          const time = timeObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-
           return (
-            <div key={msg.id} className={`flex flex-col mb-1.5 ${isMe ? 'items-end' : 'items-start'}`}>
-              <div className={`max-w-[85%] rounded-lg px-3 py-1.5 shadow-sm relative ${isMe ? 'bg-[#dcf8c6] dark:bg-green-900 rounded-tr-none text-gray-800 dark:text-gray-100' : 'bg-white dark:bg-gray-800 rounded-tl-none text-gray-800 dark:text-gray-100'}`}>
-                <div className="text-[14px] leading-snug whitespace-pre-wrap break-words">{msg.content}</div>
-                <div className="flex items-center justify-end gap-1 mt-0.5 min-w-[40px]">
-                  <span className="text-[10px] text-gray-500/80 dark:text-gray-400">{time}</span>
+            <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+              {!isMe && (
+                <Avatar className="w-6 h-6 mr-1.5 mt-1 flex-shrink-0">
+                  <AvatarImage src={msg.sender_photo} />
+                  <AvatarFallback className="text-xs">{msg.sender_name?.charAt(0)}</AvatarFallback>
+                </Avatar>
+              )}
+              <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
+                isMe
+                  ? "bg-green-600 text-white rounded-br-sm"
+                  : "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm shadow-sm"
+              }`}>
+                <p>{msg.content}</p>
+                <p className={`text-xs mt-0.5 flex items-center gap-1 ${isMe ? "text-green-100" : "text-gray-400"}`}>
+                  {msg.timestamp 
+                    ? new Date(msg.timestamp).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                    : new Date(msg.created_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                  }
                   {isMe && (
-                    <span className="text-[12px] flex items-center -mb-0.5">
-                      {msg.status === 'read' || msg.is_read ? (
-                        <span className="text-blue-500 font-bold tracking-tighter">✓✓</span>
-                      ) : msg.status === 'delivered' ? (
-                        <span className="text-gray-400 font-bold tracking-tighter">✓✓</span>
-                      ) : (
-                        <span className="text-gray-400 font-bold">✓</span>
-                      )}
-                    </span>
+                    msg.status === 'read'
+                      ? <span title="Lido">✓✓</span>
+                      : msg.status === 'delivered'
+                      ? <span title="Entregue">✓</span>
+                      : <span title="Enviado">⏱</span>
                   )}
-                </div>
+                </p>
               </div>
             </div>
           );
@@ -566,13 +555,13 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute bottom-2 left-0 right-0 flex justify-center"
+              className="absolute bottom-16 left-0 right-0 flex justify-center"
             >
               <button
                 onClick={() => messagesEnd.current?.scrollIntoView({ behavior: "smooth" })}
-                className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs px-4 py-1.5 rounded-full shadow-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-1 font-semibold"
+                className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center gap-1"
               >
-                <ChevronDown className="w-4 h-4" /> Novas mensagens
+                <Circle className="w-2 h-2 fill-white" /> Nova mensagem
               </button>
             </motion.div>
           )}
@@ -580,55 +569,18 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       </div>
 
       {/* Input */}
-      <div className="p-2 bg-[#f0f0f0] dark:bg-gray-800 flex items-end gap-2 flex-shrink-0 z-10">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button size="icon" variant="ghost" className="h-10 w-10 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0 rounded-full">
-              <Smile className="w-6 h-6" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent side="top" align="start" className="w-64 p-2 z-[150] bg-white dark:bg-gray-800" onOpenAutoFocus={(e) => e.preventDefault()}>
-            <div className="flex flex-wrap gap-1 max-h-48 overflow-y-auto custom-scrollbar">
-              {EMOJIS.map(emoji => (
-                <button 
-                  key={emoji} 
-                  onClick={() => setText(prev => prev + emoji)}
-                  className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-lg cursor-pointer transition-colors"
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
-        
-        <div className="flex-1 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-transparent overflow-hidden">
-          <input
-            ref={inputRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            placeholder="Digite uma mensagem"
-            className="w-full text-sm h-10 border-none shadow-none focus-visible:outline-none px-3 bg-transparent text-gray-800 dark:text-gray-100"
-            disabled={sending}
-          />
-        </div>
-        
-        {text.trim() && (
-          <Button 
-            size="icon" 
-            onClick={sendMessage} 
-            disabled={sending} 
-            className="h-10 w-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-sm flex-shrink-0 transition-transform active:scale-95"
-          >
-            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 ml-0.5" />}
-          </Button>
-        )}
+      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex gap-2 flex-shrink-0">
+        <Input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+          placeholder="Digite uma mensagem..."
+          className="flex-1 text-sm"
+          disabled={sending}
+        />
+        <Button size="icon" onClick={sendMessage} disabled={sending || !text.trim()} className="bg-green-600 hover:bg-green-700 text-white w-9 h-9">
+          {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+        </Button>
       </div>
         </>
       )}

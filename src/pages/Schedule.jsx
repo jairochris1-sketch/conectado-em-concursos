@@ -1,18 +1,14 @@
+
 import { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Calendar, Printer, BookOpen, ArrowLeft } from "lucide-react";
+import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 
 import ScheduleForm from "../components/schedule/ScheduleForm";
 import ScheduleView from "../components/schedule/ScheduleView";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
 
 const getDayName = (day) => {
   const days = {
@@ -38,14 +34,12 @@ const getActivityName = (activity) => {
 };
 
 export default function SchedulePage() {
-  const navigate = useNavigate();
   const [schedules, setSchedules] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
-  const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
     loadData();
@@ -157,25 +151,20 @@ export default function SchedulePage() {
   );
 
   return (
-    <div className="min-h-screen bg-transparent p-4 md:p-8">
+    <div className="min-h-screen bg-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
         >
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(createPageUrl("StudyPlanning"))} className="text-gray-600 dark:text-gray-300 gap-2 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Cronograma de Estudos
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Organize seus estudos com horários personalizados
-              </p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Cronograma de Estudos
+            </h1>
+            <p className="text-gray-600">
+              Organize seus estudos com horários personalizados
+            </p>
           </div>
           <Button
             onClick={() => setShowForm(!showForm)}
@@ -186,184 +175,119 @@ export default function SchedulePage() {
           </Button>
         </motion.div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 max-w-md mx-auto">
-            <TabsTrigger value="today" className="flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Modo "Hoje"
-            </TabsTrigger>
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> Todos os Cronogramas
-            </TabsTrigger>
-          </TabsList>
+        {/* Search Input for filtering schedules */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Pesquisar cronogramas por título ou descrição..."
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-          <TabsContent value="today">
-            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg p-6">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-indigo-900 mb-2">Suas Tarefas de Hoje</h2>
-                <p className="text-gray-600">O que você tem planejado para hoje de acordo com seus cronogramas ativos.</p>
-              </div>
-              
-              {/* Calcula os itens de hoje baseados nos cronogramas */}
-              {(() => {
-                const today = new Date();
-                const dayNameMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                const currentDayOfWeek = dayNameMap[today.getDay()];
-                
-                const todayItems = schedules
-                  .flatMap(s => s.schedule_items.map(i => ({ ...i, scheduleTitle: s.title })))
-                  .filter(item => item.day_of_week === currentDayOfWeek)
-                  .sort((a, b) => a.start_time.localeCompare(b.start_time));
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <ScheduleForm
+              schedule={editingSchedule}
+              onSubmit={handleSubmit}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingSchedule(null);
+              }}
+            />
+          </motion.div>
+        )}
 
-                if (todayItems.length === 0) {
-                  return (
-                    <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                      <p className="text-gray-500 font-medium">Nenhum bloco de estudo programado para hoje.</p>
-                      <Button variant="outline" className="mt-4" onClick={() => setActiveTab('all')}>Ver todos os cronogramas</Button>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div className="space-y-4 max-w-3xl mx-auto">
-                    {todayItems.map((item, idx) => (
-                      <div key={idx} className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                        <div className="bg-indigo-50 text-indigo-700 font-bold px-4 py-2 rounded-lg text-center min-w-[120px]">
-                          {item.start_time} - {item.end_time}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-lg text-gray-900">{item.subject}</h4>
-                          {item.topic && <p className="text-gray-600 text-sm mt-1">{item.topic}</p>}
-                          <p className="text-xs text-gray-400 mt-2">Cronograma: {item.scheduleTitle}</p>
-                        </div>
-                        <div>
-                          <Badge variant="outline" className="bg-gray-50 uppercase tracking-wider text-[10px]">
-                            {item.activity_type}
-                          </Badge>
+        <div className="grid gap-6">
+          {filteredSchedules.length === 0 ? (
+            <Card className="text-center py-12">
+              <CardContent className="space-y-4">
+                <Calendar className="w-16 h-16 mx-auto text-gray-400" />
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {schedules.length === 0 && searchTerm === ""
+                    ? "Nenhum cronograma criado"
+                    : "Nenhum cronograma encontrado"}
+                </h3>
+                <p className="text-gray-600">
+                  {schedules.length === 0 && searchTerm === ""
+                    ? "Crie seu primeiro cronograma personalizado de estudos"
+                    : "Ajuste os termos de busca para encontrar cronogramas."}
+                </p>
+                {schedules.length === 0 && searchTerm === "" && ( // Only show "Criar Cronograma" button if truly no schedules and no search term
+                  <Button onClick={() => setShowForm(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Criar Cronograma
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            filteredSchedules.map((schedule) => (
+              <motion.div
+                key={schedule.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-xl text-gray-900">
+                          {schedule.title}
+                        </CardTitle>
+                        {schedule.description && (
+                          <p className="text-gray-600 mt-2">{schedule.description}</p>
+                        )}
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <BookOpen className="w-4 h-4" />
+                            {schedule.schedule_items.length} atividades
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                );
-              })()}
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="all">
-            {/* Search Input for filtering schedules */}
-            <div className="mb-6">
-              <input
-                type="text"
-                placeholder="Pesquisar cronogramas por título ou descrição..."
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {showForm && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
-                <ScheduleForm
-                  schedule={editingSchedule}
-                  onSubmit={handleSubmit}
-                  onCancel={() => {
-                    setShowForm(false);
-                    setEditingSchedule(null);
-                  }}
-                />
-              </motion.div>
-            )}
-
-            <div className="grid gap-6">
-              {filteredSchedules.length === 0 ? (
-                <Card className="text-center py-12">
-                  <CardContent className="space-y-4">
-                    <Calendar className="w-16 h-16 mx-auto text-gray-400" />
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {schedules.length === 0 && searchTerm === ""
-                        ? "Nenhum cronograma criado"
-                        : "Nenhum cronograma encontrado"}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {schedules.length === 0 && searchTerm === ""
-                        ? "Crie seu primeiro cronograma personalizado de estudos"
-                        : "Ajuste os termos de busca para encontrar cronogramas."}
-                    </p>
-                    {schedules.length === 0 && searchTerm === "" && ( // Only show "Criar Cronograma" button if truly no schedules and no search term
-                      <Button onClick={() => setShowForm(true)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Criar Cronograma
-                      </Button>
-                    )}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePrint(schedule)}
+                        >
+                          <Printer className="w-4 h-4 mr-2" />
+                          Imprimir
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(schedule)}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDelete(schedule.id)}
+                        >
+                          Excluir
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ScheduleView schedule={schedule} />
                   </CardContent>
                 </Card>
-              ) : (
-                filteredSchedules.map((schedule) => (
-                  <motion.div
-                    key={schedule.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <Card className="shadow-lg border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
-                      <CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-xl text-gray-900 dark:text-white">
-                              {schedule.title}
-                            </CardTitle>
-                            {schedule.description && (
-                              <p className="text-gray-600 dark:text-gray-400 mt-2">{schedule.description}</p>
-                            )}
-                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4" />
-                                {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <BookOpen className="w-4 h-4" />
-                                {schedule.schedule_items.length} atividades
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handlePrint(schedule)}
-                            >
-                              <Printer className="w-4 h-4 mr-2" />
-                              Imprimir
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(schedule)}
-                            >
-                              Editar
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDelete(schedule.id)}
-                            >
-                              Excluir
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <ScheduleView schedule={schedule} />
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

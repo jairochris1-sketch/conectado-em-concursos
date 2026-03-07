@@ -28,37 +28,6 @@ export default function SubscriptionsList() {
     setIsLoading(false);
   };
 
-  const approveCancellation = async (subscription) => {
-    try {
-      await Subscription.update(subscription.id, {
-        cancel_approved_date: new Date().toISOString()
-      });
-      
-      toast.success('Solicitação de cancelamento confirmada. O usuário será notificado e o botão de assinar será liberado em 24h.');
-      loadSubscriptions();
-    } catch (error) {
-      console.error('Erro ao confirmar cancelamento:', error);
-      toast.error('Erro ao confirmar a solicitação.');
-    }
-  };
-
-  const cancelSubscriptionFinal = async (subscription) => {
-    if (!window.confirm("Tem certeza que deseja cancelar definitivamente esta assinatura?")) return;
-    
-    try {
-      await Subscription.update(subscription.id, {
-        status: 'cancelled',
-        end_date: new Date().toISOString().split('T')[0]
-      });
-      
-      toast.success('Assinatura cancelada definitivamente.');
-      loadSubscriptions();
-    } catch (error) {
-      console.error('Erro ao finalizar cancelamento:', error);
-      toast.error('Erro ao cancelar definitivamente.');
-    }
-  };
-
   const getStatusColor = (status) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800';
@@ -157,38 +126,6 @@ export default function SubscriptionsList() {
                       <Badge className={getStatusColor(subscription.status)}>
                         {getStatusText(subscription.status)}
                       </Badge>
-                      {subscription.cancel_requested && subscription.status !== 'cancelled' && (
-                        <div className="flex flex-col gap-1 mt-1">
-                          <Badge className="bg-orange-100 text-orange-800 w-max border-orange-200">
-                            Solicitou Cancelamento
-                          </Badge>
-                          {!subscription.cancel_approved_date && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 text-xs mt-1 w-max border-orange-300 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
-                              onClick={() => approveCancellation(subscription)}
-                            >
-                              Confirmar Solicitação
-                            </Button>
-                          )}
-                          {subscription.cancel_approved_date && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 text-xs mt-1 w-max border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
-                              onClick={() => cancelSubscriptionFinal(subscription)}
-                            >
-                              Finalizar (Cancelar)
-                            </Button>
-                          )}
-                          {subscription.cancel_approved_date && (
-                            <Badge className="bg-blue-100 text-blue-800 w-max border-blue-200 mt-1">
-                              Cancelamento Aprovado
-                            </Badge>
-                          )}
-                        </div>
-                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">

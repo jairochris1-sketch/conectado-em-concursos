@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
@@ -141,9 +140,7 @@ export default function StudiesPage() {
   const [userCourseItems, setUserCourseItems] = useState([]);
   const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false, term1: false, term2: false });
-  const [deleteMode, setDeleteMode] = useState(false);
-  const [selectedFolderIds, setSelectedFolderIds] = useState([]);
+  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false });
   const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -172,7 +169,7 @@ export default function StudiesPage() {
   });
 
   // New Windows 11 Explorer-style navigation
-  const [navigationPath, setNavigationPath] = useState(['Áreas de Estudo']);
+  const [navigationPath, setNavigationPath] = useState(['Meus Cursos']);
   const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -188,7 +185,6 @@ export default function StudiesPage() {
   const [selectedVideoSubject, setSelectedVideoSubject] = useState('all');
   const [playingVideo, setPlayingVideo] = useState(null);
   const [videoNotes, setVideoNotes] = useState(''); // New state for video notes
-  const [videoNotesSaveStatus, setVideoNotesSaveStatus] = useState('');
   const [videoPlayerSize, setVideoPlayerSize] = useState(() => {
     return localStorage.getItem('videoPlayerSize') || 'normal';
   }); // normal, medium, large
@@ -362,21 +358,21 @@ export default function StudiesPage() {
     setSelectedSubject(subject);
     setSelectedType(null);
     setCurrentView('subject');
-    setNavigationPath(['Áreas de Estudo', subjectNames[subject]]);
+    setNavigationPath(['Meus Cursos', subjectNames[subject]]);
   };
 
   const handleNavigateToType = (type) => {
     setSelectedType(type);
     setSelectedSubject(null);
     setCurrentView('type');
-    setNavigationPath(['Áreas de Estudo', typeNames[type]]);
+    setNavigationPath(['Meus Cursos', typeNames[type]]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
     setCurrentView('root');
-    setNavigationPath(['Áreas de Estudo']);
+    setNavigationPath(['Meus Cursos']);
   };
 
   const handleBreadcrumbClick = (index) => {
@@ -496,33 +492,6 @@ export default function StudiesPage() {
     // Carregar anotações salvas no localStorage
     const savedNotes = localStorage.getItem(`video_notes_${video.id}`);
     setVideoNotes(savedNotes || '');
-
-    // Smart preloading next video Se existir
-    let nextVideo;
-    if (video.isCustom) {
-      const customVideos = userCourseItems.filter(i => i.course_id === video.course_id && i.type === 'video');
-      const currentIndex = customVideos.findIndex((v) => v.id === video.id);
-      if (currentIndex !== -1 && currentIndex < customVideos.length - 1) {
-        nextVideo = customVideos[currentIndex + 1];
-      }
-    } else {
-      const currentIndex = filteredVideos.findIndex((v) => v.id === video.id);
-      if (currentIndex !== -1 && currentIndex < filteredVideos.length - 1) {
-        nextVideo = filteredVideos[currentIndex + 1];
-      }
-    }
-
-    if (nextVideo) {
-      const nextId = extractYouTubeId(nextVideo.video_id) || extractYouTubeId(nextVideo.content_url) || nextVideo.video_id;
-      if (nextId) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'document';
-        link.href = `https://www.youtube-nocookie.com/embed/${nextId}?autoplay=1&rel=0`;
-        document.head.appendChild(link);
-        setTimeout(() => document.head.removeChild(link), 10000); // cleanup after 10s
-      }
-    }
   };
 
   const handleCloseVideo = () => {
@@ -540,18 +509,10 @@ export default function StudiesPage() {
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
 
-    if (playingVideo.isCustom) {
-      const customVideos = userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video');
-      const currentIndex = customVideos.findIndex((v) => v.id === playingVideo.id);
-      if (currentIndex > 0) {
-        handleOpenCustomItem(customVideos[currentIndex - 1]);
-      }
-    } else {
-      const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
-      if (currentIndex > 0) {
-        const previousVideo = filteredVideos[currentIndex - 1];
-        handlePlayVideo(previousVideo);
-      }
+    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
+    if (currentIndex > 0) {
+      const previousVideo = filteredVideos[currentIndex - 1];
+      handlePlayVideo(previousVideo);
     }
   };
 
@@ -561,18 +522,10 @@ export default function StudiesPage() {
     // Salvar anotações do vídeo atual
     localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
 
-    if (playingVideo.isCustom) {
-      const customVideos = userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video');
-      const currentIndex = customVideos.findIndex((v) => v.id === playingVideo.id);
-      if (currentIndex < customVideos.length - 1) {
-        handleOpenCustomItem(customVideos[currentIndex + 1]);
-      }
-    } else {
-      const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
-      if (currentIndex < filteredVideos.length - 1) {
-        const nextVideo = filteredVideos[currentIndex + 1];
-        handlePlayVideo(nextVideo);
-      }
+    const currentIndex = filteredVideos.findIndex((v) => v.id === playingVideo.id);
+    if (currentIndex < filteredVideos.length - 1) {
+      const nextVideo = filteredVideos[currentIndex + 1];
+      handlePlayVideo(nextVideo);
     }
   };
 
@@ -743,25 +696,25 @@ ${videoNotes}
       });
       setUserCourses([...userCourses, newCourse]);
       setShowCreateCourseModal(false);
-      setNewCourseForm({ title: '', description: '', is_public: false, term1: false, term2: false });
+      setNewCourseForm({ title: '', description: '', is_public: false });
     } catch (e) { console.error(e); }
   };
 
   const handleCreateCourseItem = async () => {
-    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com';
+    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com';
     
-    // Check limits
+    // Check limits if not admin
     if (!isAdminUser) {
       const currentItems = userCourseItems.filter(i => i.course_id === selectedCourse.id);
       const videosCount = currentItems.filter(i => i.type === 'video').length;
       const pdfsCount = currentItems.filter(i => i.type === 'pdf').length;
 
       if (newItemForm.type === 'video' && videosCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por pasta.");
+        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por curso.");
         return;
       }
       if (newItemForm.type === 'pdf' && pdfsCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 PDFs por pasta.");
+        alert("Limite atingido: Você só pode adicionar até 10 PDFs por curso.");
         return;
       }
     }
@@ -802,36 +755,6 @@ ${videoNotes}
     } catch(e) { console.error(e); }
   };
 
-  const toggleFolderSelection = (id, e) => {
-    e.stopPropagation();
-    setSelectedFolderIds(prev => prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]);
-  };
-
-  const handleDeleteSelectedFolders = async () => {
-    if (!window.confirm(`Tem certeza que deseja excluir ${selectedFolderIds.length} pasta(s)?`)) return;
-    try {
-      for (const id of selectedFolderIds) {
-        await base44.entities.UserCourse.delete(id);
-      }
-      setUserCourses(userCourses.filter(c => !selectedFolderIds.includes(c.id)));
-      setSelectedFolderIds([]);
-      setDeleteMode(false);
-    } catch (e) { console.error(e); }
-  };
-
-  const handleDeleteAllFolders = async () => {
-    if (!window.confirm("Tem certeza que deseja excluir TODAS as suas pastas? Esta ação não pode ser desfeita.")) return;
-    try {
-      const myCourses = userCourses.filter(c => c.user_email === currentUser?.email);
-      for (const c of myCourses) {
-        await base44.entities.UserCourse.delete(c.id);
-      }
-      setUserCourses(userCourses.filter(c => c.user_email !== currentUser?.email));
-      setSelectedFolderIds([]);
-      setDeleteMode(false);
-    } catch (e) { console.error(e); }
-  };
-
   const handleDeleteCourseItem = async (itemId) => {
     if (!window.confirm("Tem certeza que deseja excluir este material?")) return;
     try {
@@ -848,11 +771,8 @@ ${videoNotes}
         id: item.id,
         title: item.title,
         video_id: item.content_url,
-        youtube_url: item.content_url,
         description: item.description,
-        subject: selectedCourse.title,
-        isCustom: true,
-        course_id: item.course_id
+        subject: selectedCourse.title
       });
     } else {
       setSelectedMaterial({
@@ -870,7 +790,7 @@ ${videoNotes}
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando suas áreas de estudo...</p>
+            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando seus cursos...</p>
           </div>
         </div>);
 
@@ -886,7 +806,7 @@ ${videoNotes}
 
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Áreas de Estudo
+              <BookUser className="w-8 h-8" /> Meus Cursos
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Seus materiais, resumos e videoaulas organizados por curso.
@@ -927,29 +847,10 @@ ${videoNotes}
                        <List className="w-4 h-4" />
                      </Button>
                    </div>
-                   {deleteMode ? (
-                     <>
-                       <Button variant="outline" onClick={() => { setDeleteMode(false); setSelectedFolderIds([]); }}>Cancelar</Button>
-                       <Button variant="destructive" onClick={handleDeleteSelectedFolders} disabled={selectedFolderIds.length === 0}>
-                         Excluir Selecionadas ({selectedFolderIds.length})
-                       </Button>
-                       <Button variant="destructive" onClick={handleDeleteAllFolders}>
-                         Excluir Todas
-                       </Button>
-                     </>
-                   ) : (
-                     <>
-                       {userCourses.length > 0 && (
-                         <Button variant="outline" onClick={() => setDeleteMode(true)}>
-                           <Trash2 className="w-4 h-4 mr-2" /> Excluir
-                         </Button>
-                       )}
-                       {canCreateCourse && (
-                         <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                           <Plus className="w-4 h-4 mr-2" /> Criar Pasta
-                         </Button>
-                       )}
-                     </>
+                   {canCreateCourse && (
+                     <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                       <Plus className="w-4 h-4 mr-2" /> Criar Pasta
+                     </Button>
                    )}
                  </div>
               </div>
@@ -965,18 +866,7 @@ ${videoNotes}
                   </div>
                 ) : (
                   userCourses.map(course => (
-                    <Card key={course.id} className={`relative cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border ${selectedFolderIds.includes(course.id) ? 'border-red-500 ring-2 ring-red-200' : 'border-blue-100 dark:border-blue-900/30'} ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => {
-                      if (deleteMode) {
-                        setSelectedFolderIds(prev => prev.includes(course.id) ? prev.filter(fid => fid !== course.id) : [...prev, course.id]);
-                      } else {
-                        setSelectedCourse({...course, isCustom: true, label: course.title});
-                      }
-                    }}>
-                      {deleteMode && (
-                        <div className="absolute top-4 left-4 z-10" onClick={e => e.stopPropagation()}>
-                          <Checkbox checked={selectedFolderIds.includes(course.id)} onCheckedChange={() => setSelectedFolderIds(prev => prev.includes(course.id) ? prev.filter(fid => fid !== course.id) : [...prev, course.id])} />
-                        </div>
-                      )}
+                    <Card key={course.id} className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30 ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
                       {courseViewMode === 'grid' ? (
                         <CardContent className="p-6 flex flex-col items-center text-center relative w-full">
                           <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
@@ -990,7 +880,7 @@ ${videoNotes}
                           <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
                         </CardContent>
                       ) : (
-                        <div className="flex items-center w-full gap-4 pl-8 md:pl-4">
+                        <div className="flex items-center w-full gap-4">
                           <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-400">
                             <Folder className="w-6 h-6" fill="currentColor" />
                           </div>
@@ -1013,7 +903,7 @@ ${videoNotes}
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Áreas de Estudo</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
                   <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
@@ -1030,71 +920,6 @@ ${videoNotes}
                   </Card>
                 ))}
               </div>
-            </div>
-          </div>
-        ) : selectedCourse.isCustom ? (
-          <div className="space-y-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 md:p-8 shadow-sm">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-100 dark:border-gray-800">
-               <div className="flex items-center gap-4">
-                 <Button variant="ghost" size="icon" onClick={() => setSelectedCourse(null)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white bg-gray-50 dark:bg-gray-800 rounded-full h-10 w-10 shrink-0">
-                   <ArrowLeft className="w-5 h-5" />
-                 </Button>
-                 <div>
-                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                     <Folder className="w-6 h-6 text-blue-600 shrink-0" fill="currentColor" />
-                     {selectedCourse.label}
-                   </h2>
-                   {selectedCourse.description && <p className="text-gray-500 text-sm mt-1">{selectedCourse.description}</p>}
-                 </div>
-               </div>
-               {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                 <div className="flex items-center gap-2">
-                   <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
-                     <Plus className="w-4 h-4 mr-2" /> Adicionar Material
-                   </Button>
-                 </div>
-               )}
-            </div>
-
-            <div className="space-y-3">
-              {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
-                <div className="py-16 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                  <Folder className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Pasta Vazia</h3>
-                  <p className="text-gray-500">Nenhum material foi adicionado a esta pasta ainda.</p>
-                  {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                    <Button onClick={() => setShowAddItemModal(true)} variant="outline" className="mt-4 border-blue-200 text-blue-600 hover:bg-blue-50">
-                      <Plus className="w-4 h-4 mr-2" /> Adicionar Primeiro Material
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
-                  <div key={item.id} className="flex flex-col p-5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group relative">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm ${item.type === 'video' ? 'bg-red-500' : 'bg-blue-500'}`}>
-                        {item.type === 'video' ? <Play className="w-6 h-6 ml-1" fill="currentColor" /> : <FileText className="w-6 h-6" />}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); toggleItemCompletion(item); }} className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`} title="Marcar como concluído">
-                          {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
-                        </button>
-                        {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleDeleteCourseItem(item.id); }} className="h-7 w-7 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex-1 cursor-pointer" onClick={() => handleOpenCustomItem(item)}>
-                      <h4 className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 mb-1">{item.title}</h4>
-                      {item.description && <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>}
-                    </div>
-                  </div>
-                ))}
-                </div>
-              )}
             </div>
           </div>
         ) : (
@@ -1142,6 +967,55 @@ ${videoNotes}
               </TabsContent>
               
               <TabsContent value="conteudo" className="p-6">
+                {selectedCourse.isCustom ? (
+                  <div className="space-y-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiais do Curso</h3>
+                      {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                        <div className="flex flex-wrap gap-2">
+                          <Button variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => handleDeleteCourse(selectedCourse.id)}>
+                            <Trash2 className="w-4 h-4 mr-2" /> Excluir Curso
+                          </Button>
+                          <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                            <Plus className="w-4 h-4 mr-2" /> Adicionar Material
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
+                        <div className="py-12 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                          <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
+                          <p className="text-gray-500 font-medium">Nenhum material adicionado a este curso ainda.</p>
+                          <Button onClick={() => setShowAddItemModal(true)} variant="link" className="text-blue-600 mt-2">Clique aqui para adicionar</Button>
+                        </div>
+                      ) : (
+                        userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
+                          <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm gap-4 hover:border-blue-300 transition-colors group">
+                            <div className="flex items-center gap-4 flex-1 w-full">
+                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
+                                {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
+                              </button>
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                {item.type === 'video' ? <Play className="w-4 h-4 ml-0.5" fill="currentColor" /> : <FileText className="w-4 h-4" />}
+                              </div>
+                              <div className="flex-1 min-w-0" onClick={() => handleOpenCustomItem(item)}>
+                                <h4 className="font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">{item.title}</h4>
+                                {item.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{item.description}</p>}
+                              </div>
+                            </div>
+                            {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
+                              <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : (
                 <div className="space-y-6">
                   {/* Pills */}
                   <div className="flex flex-wrap items-center gap-2">
@@ -1323,6 +1197,7 @@ ${videoNotes}
                     )}
                   </div>
                 </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
@@ -1393,7 +1268,7 @@ ${videoNotes}
                       variant="outline"
                       size="sm"
                       onClick={handlePreviousVideo}
-                      disabled={playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').findIndex(v => v.id === playingVideo.id) === 0 : filteredVideos.findIndex((v) => v.id === playingVideo.id) === 0}
+                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === 0}
                       className="text-white border-gray-600 hover:bg-gray-700 disabled:opacity-50 text-xs h-7 px-2">
 
                         ← Anterior
@@ -1402,7 +1277,7 @@ ${videoNotes}
                       variant="default"
                       size="sm"
                       onClick={handleNextVideo}
-                      disabled={playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').findIndex(v => v.id === playingVideo.id) === (userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video').length - 1) : filteredVideos.findIndex((v) => v.id === playingVideo.id) === filteredVideos.length - 1}
+                      disabled={filteredVideos.findIndex((v) => v.id === playingVideo.id) === filteredVideos.length - 1}
                       className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 text-xs h-7 px-2">
 
                         Próximo →
@@ -1450,18 +1325,15 @@ ${videoNotes}
               <>
                     <div className="flex-1 overflow-y-auto">
                       <div className="p-2">
-                        {(playingVideo.isCustom ? userCourseItems.filter(i => i.course_id === playingVideo.course_id && i.type === 'video') : filteredVideos).map((video, idx) => {
+                        {filteredVideos.map((video, idx) => {
+                      const videoId = getSafeVideoId(video);
                       const isActive = video.id === playingVideo.id;
                       return (
                         <button
                           key={video.id}
                           onClick={() => {
                             localStorage.setItem(`video_notes_${playingVideo.id}`, videoNotes);
-                            if (playingVideo.isCustom) {
-                              handleOpenCustomItem(video);
-                            } else {
-                              handlePlayVideo(video);
-                            }
+                            handlePlayVideo(video);
                           }}
                           className={`w-full text-left p-3 mb-2 rounded-lg transition-all ${
                           isActive ?
@@ -1479,7 +1351,7 @@ ${videoNotes}
                                   <div className={`font-medium text-sm mb-1 line-clamp-2 ${isActive ? 'text-white' : 'text-gray-200'}`}>
                                     {video.title}
                                   </div>
-                                  {video.duration && !playingVideo.isCustom &&
+                                  {video.duration &&
                               <div className={`text-xs ${isActive ? 'text-blue-200' : 'text-gray-500'}`}>
                                       {video.duration}
                                     </div>
@@ -1513,27 +1385,15 @@ ${videoNotes}
 
                       <Textarea
                     value={videoNotes}
-                    onChange={(e) => {
-                      setVideoNotes(e.target.value);
-                      localStorage.setItem(`video_notes_${playingVideo.id}`, e.target.value);
-                      setVideoNotesSaveStatus('Salvo');
-                      setTimeout(() => setVideoNotesSaveStatus(''), 2000);
-                    }}
-                    placeholder="Faça suas anotações avançadas sobre este vídeo aqui... (Salvo automaticamente para leitura offline)"
-                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm flex-1"
-                    rows={12} />
+                    onChange={(e) => setVideoNotes(e.target.value)}
+                    placeholder="Faça suas anotações sobre este vídeo aqui..."
+                    className="bg-gray-900 text-white border-gray-700 resize-none text-sm"
+                    rows={8} />
 
 
-                      <div className="flex items-center justify-between mt-2">
-                        <p className="text-xs text-gray-500">
-                          Salvas localmente para leitura offline.
-                        </p>
-                        {videoNotesSaveStatus && (
-                          <span className="text-xs text-green-500 flex items-center gap-1">
-                            <Check className="w-3 h-3" /> {videoNotesSaveStatus}
-                          </span>
-                        )}
-                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Salvas automaticamente no navegador.
+                      </p>
                     </div>
                   </>
               }
@@ -1555,22 +1415,6 @@ ${videoNotes}
               <DialogTitle>Criar Nova Pasta de Materiais</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-4">
-              <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-                <p className="text-sm text-amber-800 dark:text-amber-300 font-medium mb-2">Antes de continuar, confirme:</p>
-                <p className="text-xs text-amber-700 dark:text-amber-400 mb-3">
-                  Ao criar uma pasta, você concorda que é o único responsável pelo conteúdo adicionado, respeitando os direitos autorais de terceiros. Lembre-se: a violação de direitos autorais é de sua inteira responsabilidade.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <Checkbox id="term1" checked={newCourseForm.term1} onCheckedChange={c => setNewCourseForm({...newCourseForm, term1: c})} />
-                    <Label htmlFor="term1" className="text-xs leading-tight cursor-pointer text-amber-900 dark:text-amber-200">O material que vou adicionar foi criado por mim.</Label>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Checkbox id="term2" checked={newCourseForm.term2} onCheckedChange={c => setNewCourseForm({...newCourseForm, term2: c})} />
-                    <Label htmlFor="term2" className="text-xs leading-tight cursor-pointer text-amber-900 dark:text-amber-200">Tenho autorização expressa do autor para usar este conteúdo.</Label>
-                  </div>
-                </div>
-              </div>
               <div className="space-y-2">
                 <Label>Título da Pasta</Label>
                 <Input value={newCourseForm.title} onChange={e => setNewCourseForm({...newCourseForm, title: e.target.value})} placeholder="Ex: Materiais de Informática" />
@@ -1594,7 +1438,7 @@ ${videoNotes}
             </div>
             <DialogFooter className="mt-6">
               <Button variant="outline" onClick={() => setShowCreateCourseModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title || (!newCourseForm.term1 && !newCourseForm.term2)} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
+              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

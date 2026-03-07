@@ -15,15 +15,12 @@ import {
   Flame,
   Target,
   Brain,
-  Lightbulb,
-  ArrowLeft
+  Lightbulb
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 
 export default function LogicCourse() {
-  const navigate = useNavigate();
   const [lessons, setLessons] = useState([]);
   const [currentLesson, setCurrentLesson] = useState(null);
   const [currentExercise, setCurrentExercise] = useState(0);
@@ -414,11 +411,8 @@ export default function LogicCourse() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl relative">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="absolute top-4 right-4 text-white hover:bg-white/20">
-            <ArrowLeft className="w-5 h-5 mr-2" /> Voltar
-          </Button>
-          <h1 className="text-4xl font-bold mb-3 flex items-center gap-3 mt-4 md:mt-0">
+        <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
             🧠 Raciocínio Lógico para Concursos
           </h1>
           <p className="text-teal-100 text-lg">

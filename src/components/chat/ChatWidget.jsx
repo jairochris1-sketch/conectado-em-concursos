@@ -25,7 +25,6 @@ export default function ChatWidget() {
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const [totalMessagesCount, setTotalMessagesCount] = useState(0);
   const [messagesOffset, setMessagesOffset] = useState(0);
-  const [unreadCount, setUnreadCount] = useState(0);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messagesStartRef = useRef(null);
@@ -49,7 +48,6 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (isOpen) {
-      setUnreadCount(0);
       // Inicializar notificações
       NotificationManager.init();
       
@@ -187,13 +185,9 @@ export default function ChatWidget() {
             setVisitorName(originalMessage.visitor_name);
             setHasUserInfo(true);
           }
-          if (!isOpen) {
-            setUnreadCount(prev => prev + 1);
-          }
+          setIsOpen(true);
         }).catch(() => {
-          if (!isOpen) {
-            setUnreadCount(prev => prev + 1);
-          }
+          setIsOpen(true);
         });
       }
     });
@@ -284,7 +278,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="relative z-40">
+    <div className="fixed bottom-20 right-6 z-40">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -292,7 +286,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-14 right-0 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-2xl flex flex-col h-[500px] border border-gray-200">
+            className="absolute bottom-20 right-0 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-2xl flex flex-col h-[500px] border border-gray-200">
 
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex justify-between items-center">
@@ -488,13 +482,8 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-10 h-10 flex items-center justify-center relative">
+        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow w-12 h-12 flex items-center justify-center">
         <MessageCircle className="w-5 h-5" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
-        )}
       </motion.button>
     </div>
   );

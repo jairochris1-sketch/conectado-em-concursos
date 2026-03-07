@@ -58,13 +58,11 @@ import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import EditalSimulator from './pages/EditalSimulator';
-import EditalVerticalizado from './pages/EditalVerticalizado';
 import EditalViewer from './pages/EditalViewer';
 import EnglishCourse from './pages/EnglishCourse';
 import ExamView from './pages/ExamView';
 import Exams from './pages/Exams';
 import FavoriteQuestions from './pages/FavoriteQuestions';
-import Flashcards from './pages/Flashcards';
 import ForgotPassword from './pages/ForgotPassword';
 import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
@@ -92,14 +90,11 @@ import SolveNotebook from './pages/SolveNotebook';
 import SolveSimulation from './pages/SolveSimulation';
 import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
-import StudyCycle from './pages/StudyCycle';
-import StudyPlanning from './pages/StudyPlanning';
 import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
 import SubscriptionsDashboard from './pages/SubscriptionsDashboard';
 import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
-import WeeklyTrail from './pages/WeeklyTrail';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
@@ -118,13 +113,11 @@ export const PAGES = {
     "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "EditalSimulator": EditalSimulator,
-    "EditalVerticalizado": EditalVerticalizado,
     "EditalViewer": EditalViewer,
     "EnglishCourse": EnglishCourse,
     "ExamView": ExamView,
     "Exams": Exams,
     "FavoriteQuestions": FavoriteQuestions,
-    "Flashcards": Flashcards,
     "ForgotPassword": ForgotPassword,
     "GuiaEstudos": GuiaEstudos,
     "Home": Home,
@@ -152,14 +145,11 @@ export const PAGES = {
     "SolveSimulation": SolveSimulation,
     "Statistics": Statistics,
     "Studies": Studies,
-    "StudyCycle": StudyCycle,
-    "StudyPlanning": StudyPlanning,
     "StudyPlans": StudyPlans,
     "Subscription": Subscription,
     "SubscriptionsDashboard": SubscriptionsDashboard,
     "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
-    "WeeklyTrail": WeeklyTrail,
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,

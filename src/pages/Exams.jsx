@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
-import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,14 +17,12 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  Star,
-  Lock } from
+  Star } from
 "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import _ from 'lodash';
-import { toast } from "sonner";
 
 const institutionNames = {
   fcc: "FCC",
@@ -80,46 +77,6 @@ export default function Exams() {
   const [viewMode, setViewMode] = useState(() => {
     return localStorage.getItem('examsViewMode') || 'list';
   });
-  const [userPlan, setUserPlan] = useState('gratuito');
-
-  useEffect(() => {
-    const checkPlan = async () => {
-      try {
-        const userData = await User.me();
-        let plan = 'gratuito';
-        
-        const activeSubscriptions = await base44.entities.Subscription.filter({ user_email: userData.email, status: 'active' });
-        const specialUsers = await base44.entities.SpecialUser.filter({ email: userData.email, is_active: true });
-        
-        if (activeSubscriptions.length > 0) {
-          const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado' || sub.plan === 'premium' || sub.plan === 'trimestral');
-          const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
-          plan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
-        }
-        
-        if (specialUsers.length > 0) {
-          const specialUser = specialUsers[0];
-          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-            plan = specialUser.plan;
-          }
-        }
-
-        const userIsAdmin = userData.email === 'conectadoemconcursos@gmail.com' || userData.email === 'jairochris1@gmail.com' || userData.email === 'juniorgmj2016@gmail.com' || userData.role === 'admin';
-        if (userIsAdmin) {
-          plan = 'avancado';
-        }
-
-        setUserPlan(plan);
-      } catch (e) {
-         console.error(e);
-         // Fallback to allow access if we can't verify, so we don't accidentally block valid users on DB errors
-         setUserPlan('avancado'); 
-      }
-    };
-    checkPlan();
-  }, []);
-
-  const hasAccess = userPlan !== 'gratuito' && userPlan !== 'inactive' && userPlan !== 'pending';
 
   useEffect(() => {
     localStorage.setItem('examsViewMode', viewMode);
@@ -393,14 +350,7 @@ export default function Exams() {
             transition={{ delay: index * 0.03 }}>
 
               <Link
-              to={!hasAccess ? '#' : createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}
-              onClick={(e) => {
-                if (!hasAccess) {
-                  e.preventDefault();
-                  toast.error("O acesso às provas completas é exclusivo para assinantes. Faça um upgrade para acessar.");
-                }
-              }}
-              >
+              to={createPageUrl(`ExamView?institution=${exam.institution}&year=${exam.year}&exam_name=${encodeURIComponent(exam.exam_name)}&cargo=${encodeURIComponent(exam.cargo)}`)}>
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
@@ -413,9 +363,8 @@ export default function Exams() {
                       className="w-12 h-12 object-contain flex-shrink-0 rounded" />
 
                     }
-                        <CardTitle className="text-gray-900 text-base font-semibold tracking-tight dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1 flex items-center gap-2">
+                        <CardTitle className="text-gray-900 text-base font-semibold tracking-tight dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
-                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
                         </CardTitle>
                         <button
                       onClick={(e) => toggleFavorite(e, exam.id)}
@@ -457,12 +406,9 @@ export default function Exams() {
 
                   }
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
-                            {exam.exam_name}
-                          </p>
-                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
-                        </div>
+                        <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
+                          {exam.exam_name}
+                        </p>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400 mt-1">
                           <div className="flex items-center gap-1.5">
                             <Building className="w-4 h-4" />
@@ -504,12 +450,9 @@ export default function Exams() {
                       className="w-10 h-10 object-contain flex-shrink-0 rounded" />
 
                     }
-                        <div className="flex-1 flex items-center gap-2">
-                          <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2">
-                            {exam.exam_name}
-                          </p>
-                          {!hasAccess && <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />}
-                        </div>
+                        <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
+                          {exam.exam_name}
+                        </p>
                         <button
                       onClick={(e) => toggleFavorite(e, exam.id)}
                       className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">

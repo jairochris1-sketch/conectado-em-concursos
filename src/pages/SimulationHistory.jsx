@@ -19,8 +19,7 @@ import {
   Target,
   Calendar,
   Hash,
-  Building2,
-  ArrowLeft
+  Building2
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -119,19 +118,14 @@ export default function SimulationHistory() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <ClipboardList className="w-8 h-8 text-blue-600" />
-                Histórico de Simulações
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">
-                Todos os simulados gerados a partir dos seus editais
-              </p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <ClipboardList className="w-8 h-8 text-blue-600" />
+              Histórico de Simulações
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Todos os simulados gerados a partir dos seus editais
+            </p>
           </div>
           <Button
             variant="outline"

@@ -58,34 +58,10 @@ const getBadges = (points, correct, total) => {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const payload = await req.json();
-    
-    let user_email = payload.user_email;
-    
-    // Suporte para a automação de entidade (quando uma nova resposta é criada)
-    if (!user_email && payload.event && payload.event.entity_name && payload.event.entity_id) {
-      // Tenta obter do payload.data se estiver disponível
-      if (payload.data && payload.data.created_by) {
-        user_email = payload.data.created_by;
-      }
-      
-      // Se não encontrou (campos built-in como created_by podem não vir no data em alguns casos), busca direto no banco
-      if (!user_email) {
-        try {
-          const entityRecords = await base44.asServiceRole.entities[payload.event.entity_name].filter({ id: payload.event.entity_id });
-          if (entityRecords && entityRecords.length > 0) {
-            user_email = entityRecords[0].created_by;
-          }
-        } catch (e) {
-          console.error("Erro ao buscar entidade", e);
-        }
-      }
-    }
+    const { user_email } = await req.json();
 
     if (!user_email) {
-      // Retornar 200 ao invés de 400 para evitar que a automação seja marcada como falha 
-      // caso um usuário anônimo (sem email/created_by) responda uma questão.
-      return Response.json({ success: true, message: 'Ignorado: user_email não encontrado (usuário possivelmente anônimo)' });
+      return Response.json({ error: 'user_email é obrigatório' }, { status: 400 });
     }
 
     // Buscar todas as respostas do usuário
@@ -134,52 +110,26 @@ Deno.serve(async (req) => {
     const userRanking = await base44.asServiceRole.entities.UserRanking.filter({ created_by: user_email });
     const user = await base44.asServiceRole.entities.User.filter({ email: user_email });
     
-    // Check user plan before updating ranking
-    let userPlan = user[0]?.current_plan || 'gratuito';
-    const activeSubscriptions = await base44.asServiceRole.entities.Subscription.filter({ user_email: user_email, status: 'active' });
-    const specialUsers = await base44.asServiceRole.entities.SpecialUser.filter({ email: user_email, is_active: true });
-    
-    if (activeSubscriptions.length > 0) {
-      const hasPremium = activeSubscriptions.some(sub => sub.plan === 'avancado');
-      const hasStandard = activeSubscriptions.some(sub => sub.plan === 'padrao');
-      userPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubscriptions[0].plan);
-    }
-    if (specialUsers.length > 0) {
-      const specialUser = specialUsers[0];
-      if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-        userPlan = specialUser.plan;
-      }
-    }
+    const rankingData = {
+      user_name: user[0]?.full_name || "Usuário",
+      profile_photo_url: user[0]?.profile_photo_url,
+      total_points: totalPoints,
+      questions_answered: totalQuestions,
+      correct_answers: correctAnswers,
+      streak_days: streakDays,
+      level,
+      badges
+    };
 
-    // Apenas usuários do plano padrão ou avançado (premium) participam do ranking
-    if (userPlan === 'padrao' || userPlan === 'avancado') {
-      const rankingData = {
-        user_name: user[0]?.full_name || "Usuário",
-        profile_photo_url: user[0]?.profile_photo_url,
-        total_points: totalPoints,
-        questions_answered: totalQuestions,
-        correct_answers: correctAnswers,
-        streak_days: streakDays,
-        level,
-        badges
-      };
-
-      if (userRanking.length > 0) {
-        await base44.asServiceRole.entities.UserRanking.update(userRanking[0].id, rankingData);
-      } else {
-        await base44.asServiceRole.entities.UserRanking.create(rankingData);
-      }
+    if (userRanking.length > 0) {
+      await base44.asServiceRole.entities.UserRanking.update(userRanking[0].id, rankingData);
     } else {
-      // Se era ranking mas mudou para gratuito, remove do ranking
-      if (userRanking.length > 0) {
-        await base44.asServiceRole.entities.UserRanking.delete(userRanking[0].id);
-      }
+      await base44.asServiceRole.entities.UserRanking.create(rankingData);
     }
 
     return Response.json({ 
       success: true, 
-      stats: statsData,
-      in_ranking: (userPlan === 'padrao' || userPlan === 'avancado')
+      stats: statsData 
     });
 
   } catch (error) {

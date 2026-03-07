@@ -4,14 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Trophy, BookOpen, UserPlus, Users, Link as LinkIcon, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { MessageSquare, Trophy, BookOpen, UserPlus, Users, Link as LinkIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function ActivityFeedPage() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [activities, setActivities] = useState([]);
   const [watchedCount, setWatchedCount] = useState(0);
@@ -77,16 +76,11 @@ export default function ActivityFeedPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-3 md:p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-4 md:mb-6">
-          <div className="flex items-center gap-3 min-w-0">
-            <Button variant="ghost" onClick={() => navigate(-1)} className="text-gray-600 dark:text-gray-300 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:flex">
-              <ArrowLeft className="w-5 h-5" /> Voltar
-            </Button>
-            <div>
-              <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Feed de Atividades</h1>
-              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
-                Acompanhe as atividades da sua rede de estudos
-              </p>
-            </div>
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">Feed de Atividades</h1>
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+              Acompanhe as atividades da sua rede de estudos
+            </p>
           </div>
         </div>
 
