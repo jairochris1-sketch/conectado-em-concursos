@@ -236,7 +236,6 @@ const pageNameTranslations = {
   SDAdmin: "Admin Simulados Digital",
   GuiaEstudos: "Resumos",
   ComoEstudarPrimeiroLugar: "Como Estudar",
-  GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
   ActivityFeed: "Feed de Atividades",
   MathCourse: "Curso de Matemática Básica",
