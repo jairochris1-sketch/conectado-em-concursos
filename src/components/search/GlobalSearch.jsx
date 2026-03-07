@@ -82,9 +82,9 @@ export default function GlobalSearch({ isMobile }) {
       <DialogTrigger asChild>
         {isMobile ? (
           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" style={{ backgroundColor: 'var(--primary-color)' }}>
-            <span className="relative inline-flex items-center justify-center">
+            <span className="inline-flex items-center justify-center gap-1">
               <Users className="w-4 h-4 text-white" />
-              <Search className="w-3 h-3 text-white absolute -bottom-0.5 -right-0.5 bg-white/20 rounded-full p-[1px]" />
+              <Search className="w-3.5 h-3.5 text-white" />
             </span>
           </Button>
         ) : (
@@ -94,9 +94,9 @@ export default function GlobalSearch({ isMobile }) {
             className="hidden md:inline-flex h-9 w-9 rounded-lg"
             style={{ backgroundColor: 'var(--primary-color)' }}
           >
-            <span className="relative inline-flex items-center justify-center">
+            <span className="inline-flex items-center justify-center gap-1">
               <Users className="w-4 h-4 text-white" />
-              <Search className="w-3 h-3 text-white absolute -bottom-0.5 -right-0.5 bg-white/20 rounded-full p-[1px]" />
+              <Search className="w-3.5 h-3.5 text-white" />
             </span>
           </Button>
         )}
