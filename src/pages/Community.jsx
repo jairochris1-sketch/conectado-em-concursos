@@ -501,7 +501,9 @@ export default function CommunityPage({ embedded = false }) {
                         currentUser={user}
                         targetEmail={selectedPost.author_email}
                         targetName={selectedPost.author_name}
-                        targetPhoto={selectedPost.author_photo_url} />
+                        targetPhoto={selectedPost.author_photo_url} 
+                        userPlan={user?.current_plan || 'gratuito'}
+                      />
 
                     </div>
                   </div>
