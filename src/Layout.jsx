@@ -650,222 +650,48 @@ export default function Layout({ children, currentPageName }) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="text-white border-black border-opacity-20 w-[740px] max-h-[500px] overflow-y-auto" 
+                  className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto" 
                   style={{ backgroundColor: 'var(--primary-color)' }}
                   align="center">
-                    <div className="grid grid-cols-3 gap-4 p-4">
-                      {/* ESTUDOS & PLANEJAMENTO */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">ESTUDOS & PLANEJAMENTO</p>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Cadernos de Questões', userPlan, isAdmin) ? createPageUrl('Notebooks') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Cadernos de Questões</span>
-                            </div>
-                            {!checkAccess('Cadernos de Questões', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Minhas Anotações', userPlan, isAdmin) ? createPageUrl('Notes') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <Pencil className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Minhas Anotações</span>
-                            </div>
-                            {!checkAccess('Minhas Anotações', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Planos de Estudo', userPlan, isAdmin) ? createPageUrl('CreateStudyPlan') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Criar Planejamento de Estudos</span>
-                            </div>
-                            {!checkAccess('Planos de Estudo', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Minhas Dúvidas', userPlan, isAdmin) ? createPageUrl('MyDoubts') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <HelpCircle className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Minhas Dúvidas</span>
-                            </div>
-                            {!checkAccess('Minhas Dúvidas', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
+                    <div className="grid grid-cols-2 gap-1 p-2">
+                    {moreMenuItems.map((item) => {
+                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                const isCurrentPage = location.pathname === item.url;
+                return (
+                  <DropdownMenuItem key={item.title} asChild>
+                                <Link
+                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                      className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
 
-                      {/* DESEMPENHO & ESTATÍSTICAS */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">DESEMPENHO & ESTATÍSTICAS</p>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Relatórios', userPlan, isAdmin) ? createPageUrl('PerformanceReports') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BarChart3 className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Relatórios</span>
-                            </div>
-                            {!checkAccess('Relatórios', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Minhas Estatísticas', userPlan, isAdmin) ? createPageUrl('Statistics') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BarChart3 className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Minhas Estatísticas</span>
-                            </div>
-                            {!checkAccess('Minhas Estatísticas', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Ranking de Usuários', userPlan, isAdmin) ? createPageUrl('Ranking') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <Trophy className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Ranking de Usuários</span>
-                            </div>
-                            {!checkAccess('Ranking de Usuários', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
+                                    <div className="flex items-center gap-2">
+                                        <item.icon className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--nav-icon-color)' }} />
+                                        <span className="truncate">{item.title}</span>
+                                    </div>
+                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
+                                </Link>
+                            </DropdownMenuItem>);
 
-                      {/* COMUNIDADE */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">COMUNIDADE</p>
+              })}
+                    {isAdmin &&
+              <>
                         <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Pessoas', userPlan, isAdmin) ? createPageUrl('People') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Pessoas</span>
-                            </div>
-                            {!checkAccess('Pessoas', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Fórum', userPlan, isAdmin) ? createPageUrl('Community') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <MessageSquare className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Fórum</span>
-                            </div>
-                            {!checkAccess('Fórum', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Feed de Atividades', userPlan, isAdmin) ? createPageUrl('ActivityFeed') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Feed de Atividades</span>
-                            </div>
-                            {!checkAccess('Feed de Atividades', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
-
-                      {/* QUIZZES */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">QUIZZES</p>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Curso de Inglês', userPlan, isAdmin) ? createPageUrl('EnglishCourse') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Quiz de Inglês</span>
-                            </div>
-                            {!checkAccess('Curso de Inglês', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Curso de Matemática', userPlan, isAdmin) ? createPageUrl('MathCourse') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Quiz de Matemática</span>
-                            </div>
-                            {!checkAccess('Curso de Matemática', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Raciocínio Lógico', userPlan, isAdmin) ? createPageUrl('LogicCourse') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Quiz de Raciocínio Lógico</span>
-                            </div>
-                            {!checkAccess('Raciocínio Lógico', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
-
-                      {/* SIMULADOS EXTRAS */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">SIMULADOS EXTRAS</p>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Simulados Digital', userPlan, isAdmin) ? createPageUrl('SimuladosDigital') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Simulados Digital</span>
-                            </div>
-                            {!checkAccess('Simulados Digital', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Histórico de Simulações', userPlan, isAdmin) ? createPageUrl('SimulationHistory') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Histórico de Simulações</span>
-                            </div>
-                            {!checkAccess('Histórico de Simulações', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Revisão de Simulados', userPlan, isAdmin) ? createPageUrl('SimulationReview') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Revisão de Simulados</span>
-                            </div>
-                            {!checkAccess('Revisão de Simulados', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
-
-                      {/* CONTA */}
-                      <div>
-                        <p className="text-xs uppercase text-white/70 font-semibold mb-2">CONTA</p>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Meu Perfil', userPlan, isAdmin) ? createPageUrl('Profile') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <UserIcon className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Meu Perfil</span>
-                            </div>
-                            {!checkAccess('Meu Perfil', userPlan, isAdmin) && <Lock className="w-3 h-3 text-yellow-400" />}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to={checkAccess('Planos', userPlan, isAdmin) ? createPageUrl('Subscription') : createPageUrl('Subscription')} className="flex items-center justify-between w-full cursor-pointer text-sm p-2 rounded hover:bg-black/20">
-                            <div className="flex items-center gap-2">
-                              <CreditCard className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} />
-                              <span>Painel de Assinaturas</span>
-                            </div>
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
-
-                      {/* Admin links */}
-                      {isAdmin && (
-                        <div className="col-span-3 pt-2 border-t border-white/20 mt-2 grid grid-cols-2 gap-2">
-                          <DropdownMenuItem asChild>
-                            <Link to={createPageUrl('Admin')} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
-                              <div className="flex items-center gap-2">
-                                <Shield className="w-4 h-4" />
-                                <span>Admin Geral</span>
-                              </div>
+                             <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-4 h-4" />
+                                    <span>Admin Geral</span>
+                                </div>
                             </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link to={createPageUrl('SDAdmin')} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
-                              <div className="flex items-center gap-2">
-                                <Shield className="w-4 h-4" />
-                                <span>Admin Simulados Digital</span>
-                              </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-4 h-4" />
+                                    <span>Admin Simulados Digital</span>
+                                </div>
                             </Link>
-                          </DropdownMenuItem>
-                        </div>
-                      )}
+                        </DropdownMenuItem>
+                        </>
+              }
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>

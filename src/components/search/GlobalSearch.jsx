@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { 
-  Search, UserSearch, X, User as UserIcon, MessageSquare, 
+  Search, X, User as UserIcon, MessageSquare, 
   Calendar, Filter, Loader2, ChevronRight 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -81,12 +81,17 @@ export default function GlobalSearch({ isMobile }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {isMobile ? (
-          <Button variant="ghost" size="icon" className="rounded-lg" style={{ backgroundColor: 'var(--primary-color)' }}>
-            <UserSearch className="w-5 h-5 text-white" />
+          <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
+            <Search className="w-5 h-5" style={{ color: 'var(--nav-icon-color)' }} />
           </Button>
         ) : (
-          <Button variant="ghost" size="icon" className="rounded-lg" style={{ backgroundColor: 'var(--primary-color)' }}>
-            <UserSearch className="w-5 h-5 text-white" />
+          <Button 
+            variant="outline" 
+            className="hidden md:flex relative w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64 bg-white/10 border-white/20 hover:bg-white/20 hover:text-white text-white/80"
+          >
+            <span className="hidden lg:inline-flex">Pesquisar...</span>
+            <span className="inline-flex lg:hidden">Pesquisar...</span>
+            <Search className="absolute right-1.5 top-1.5 h-5 w-5" style={{ color: 'var(--nav-icon-color)' }} />
           </Button>
         )}
       </DialogTrigger>
