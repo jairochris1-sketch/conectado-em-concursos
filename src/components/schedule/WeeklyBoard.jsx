@@ -112,6 +112,73 @@ export default function WeeklyBoard({ schedule, onChange }) {
     }
   };
 
+  // Keyboard reordering (setas): mover itens sem mouse
+  const dayOrder = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+  const getAdjacentDay = (day, dir) => {
+    const idx = dayOrder.indexOf(day);
+    if (idx === -1) return day;
+    const next = (idx + dir + dayOrder.length) % dayOrder.length;
+    return dayOrder[next];
+  };
+
+  const moveItemKeyboard = async (fromDay, fromIndex, toDay, toIndex) => {
+    const items = [...(schedule?.schedule_items || [])];
+
+    // Listas por dia (antes de remover)
+    const listsBefore = dayOrder.map(d => items.filter(i => i.day_of_week === d));
+    const sourceItem = listsBefore[dayOrder.indexOf(fromDay)]?.[fromIndex];
+    if (!sourceItem) return;
+
+    const removeIdx = items.findIndex(i => i === sourceItem);
+    if (removeIdx === -1) return;
+    const [moved] = items.splice(removeIdx, 1);
+    moved.day_of_week = toDay;
+
+    // Lista do dia alvo após remoção
+    const newDayList = items.filter(i => i.day_of_week === toDay);
+    const clampedIndex = Math.max(0, Math.min(toIndex, newDayList.length));
+
+    if (clampedIndex >= newDayList.length) {
+      let lastIdx = -1;
+      for (let i = items.length - 1; i >= 0; i--) {
+        if (items[i].day_of_week === toDay) { lastIdx = i; break; }
+      }
+      const insertAt = lastIdx === -1 ? items.length : lastIdx + 1;
+      items.splice(insertAt, 0, moved);
+    } else {
+      const target = newDayList[clampedIndex];
+      const targetGlobalIdx = items.findIndex(i => i === target);
+      const insertAt = targetGlobalIdx === -1 ? items.length : targetGlobalIdx;
+      items.splice(insertAt, 0, moved);
+    }
+
+    setSaving(true);
+    try {
+      await base44.entities.StudySchedule.update(schedule.id, { schedule_items: items });
+      onChange?.(items);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onItemKeyDown = (e, day, index) => {
+    if (!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) return;
+    e.preventDefault();
+    if (e.key === "ArrowUp") {
+      moveItemKeyboard(day, index, day, Math.max(0, index - 1));
+    } else if (e.key === "ArrowDown") {
+      moveItemKeyboard(day, index, day, index + 1);
+    } else if (e.key === "ArrowLeft") {
+      const toDay = getAdjacentDay(day, -1);
+      const toIndex = (groups[toDay] || []).length;
+      moveItemKeyboard(day, index, toDay, toIndex);
+    } else if (e.key === "ArrowRight") {
+      const toDay = getAdjacentDay(day, 1);
+      const toIndex = (groups[toDay] || []).length;
+      moveItemKeyboard(day, index, toDay, toIndex);
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <DragDropContext onDragEnd={onDragEnd}>
@@ -131,7 +198,11 @@ export default function WeeklyBoard({ schedule, onChange }) {
                               ref={prov.innerRef}
                               {...prov.draggableProps}
                               {...prov.dragHandleProps}
-                              className={`p-2 border-l-4 ${pal.bg} ${pal.border}`}
+                              tabIndex={0}
+                              role="button"
+                              aria-label={`Mover ${it.subject} com setas`}
+                              onKeyDown={(e) => onItemKeyDown(e, day, index)}
+                              className={`p-2 border-l-4 focus:outline-none focus:ring-2 focus:ring-blue-500 ${pal.bg} ${pal.border}`}
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
