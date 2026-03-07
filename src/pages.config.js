@@ -101,6 +101,7 @@ import ActivityFeed from './pages/ActivityFeed';
 import SimulationHistory from './pages/SimulationHistory';
 import ExamView from './pages/ExamView';
 import StudyCycle from './pages/StudyCycle';
+import StudyPlanning from './pages/StudyPlanning';
 import __Layout from './Layout.jsx';
 
 
@@ -159,6 +160,7 @@ export const PAGES = {
     "SimulationHistory": SimulationHistory,
     "ExamView": ExamView,
     "StudyCycle": StudyCycle,
+    "StudyPlanning": StudyPlanning,
 }
 
 export const pagesConfig = {
