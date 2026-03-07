@@ -185,16 +185,20 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
           <div className="space-y-4 mt-4">
             <p className="text-gray-700">Selecione suas disciplinas para este planejamento.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {subjects.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => handleToggleSubject(s)}
-                  className={`w-full rounded-lg border px-4 py-3 text-left transition ${selected.includes(s) ? 'bg-emerald-50 border-emerald-300' : 'bg-white hover:bg-gray-50'}`}
-                >
-                  {s}
-                </button>
-              ))}
+              {subjects.map((s) => {
+                const label = cleanLabel(s);
+                if (!label || isIdLike(label)) return null;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => handleToggleSubject(label)}
+                    className={`w-full rounded-lg border px-4 py-3 text-left transition ${selected.includes(label) ? 'bg-emerald-50 border-emerald-300' : 'bg-white hover:bg-gray-50'}`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
