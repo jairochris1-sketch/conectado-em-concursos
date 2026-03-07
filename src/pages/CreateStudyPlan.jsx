@@ -38,7 +38,14 @@ export default function CreateStudyPlan() {
   ];
 
   const handleSelect = (mode) => {
-    navigate(createPageUrl("CreateStudyPlan") + `?mode=${mode}`);
+    if (mode === "weekly") {
+      navigate(createPageUrl("WeeklyTrack"));
+    } else if (mode === "schedule") {
+      navigate(createPageUrl("Schedule"));
+    } else if (mode === "cycle") {
+      // Ciclo de Estudos ainda não implementado
+      navigate(createPageUrl("StudyPlans"));
+    }
   };
 
   return (
@@ -86,20 +93,7 @@ export default function CreateStudyPlan() {
         })}
       </div>
 
-      {selectedMode && (
-        <div className="mt-6 p-3 md:p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-sm md:text-base flex items-center justify-between gap-3 flex-wrap">
-          <span>
-            Modo selecionado: <strong>{
-              selectedMode === "weekly" ? "Trilha Semanal" : selectedMode === "schedule" ? "Cronograma de Estudos" : "Ciclo de Estudos"
-            }</strong>. Me diga como você quer configurar e eu preparo a próxima etapa.
-          </span>
-          {selectedMode === "weekly" && (
-            <Button size="sm" onClick={() => navigate(createPageUrl("WeeklyTrack"))}>
-              Abrir Trilha Semanal
-            </Button>
-          )}
-        </div>
-      )}
+
     </div>
   );
 }
