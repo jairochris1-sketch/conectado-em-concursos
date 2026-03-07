@@ -311,7 +311,7 @@ export default function WeeklyTrackPage() {
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
                 {DAYS.map((d) => (
-                  <div key={d.key} className="rounded-lg border bg-white dark:bg-slate-800 p-2">
+                  <div key={d.key} className="rounded-lg border border-gray-200 bg-white dark:bg-slate-800 p-3">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className={`text-sm font-semibold ${d.key === 'thursday' ? 'text-white bg-blue-600 px-2 py-0.5 rounded' : 'text-gray-900 dark:text-white'}`}>{d.label}</h3>
                       <Button size="sm" variant="outline" onClick={() => openAddTask(d.key)}>+</Button>

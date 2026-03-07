@@ -79,7 +79,7 @@ export default function CyclePage() {
         ) : plan ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2 space-y-4">
-              <Card className="dark:bg-slate-800">
+              <Card className="border border-gray-200 bg-white dark:bg-slate-800">
                 <CardHeader>
                   <CardTitle>Sequência dos Estudos</CardTitle>
                 </CardHeader>
@@ -89,7 +89,7 @@ export default function CyclePage() {
               </Card>
             </div>
             <div className="space-y-4">
-              <Card className="dark:bg-slate-800">
+              <Card className="border border-gray-200 bg-white dark:bg-slate-800">
                 <CardHeader>
                   <CardTitle>Ciclo</CardTitle>
                 </CardHeader>
@@ -100,7 +100,7 @@ export default function CyclePage() {
 
               <UntilExamCard plan={plan} onEditClick={() => setOpenWizard(true)} />
 
-              <Card className="dark:bg-slate-800">
+              <Card className="border border-gray-200 bg-white dark:bg-slate-800">
                 <CardHeader>
                   <CardTitle>Progresso</CardTitle>
                 </CardHeader>
@@ -114,7 +114,7 @@ export default function CyclePage() {
             </div>
           </div>
         ) : (
-          <Card className="dark:bg-slate-800">
+          <Card className="border border-gray-200 bg-white dark:bg-slate-800">
             <CardContent className="py-12 text-center">
               <p className="text-gray-600 dark:text-gray-300">Crie seu ciclo para começar a estudar com foco.</p>
               <Button onClick={() => setOpenWizard(true)} className="mt-3">Criar Planejamento</Button>
