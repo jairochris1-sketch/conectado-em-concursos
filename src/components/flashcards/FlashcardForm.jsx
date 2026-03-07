@@ -25,20 +25,31 @@ export default function FlashcardForm({ onSaved }) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const loadSchema = async () => {
+    const loadSubjects = async () => {
       try {
-        const schema = await base44.entities.Flashcard.schema();
-        const subjectEnum = schema?.properties?.subject?.enum || [];
-        const opts = subjectEnum.map((v) => ({ value: v, label: v.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase()) }));
+        // 1) Tenta carregar disciplinas do banco (Subject)
+        const list = await base44.entities.Subject.filter({ is_active: true }, 'order', 200);
+        let opts = (list || []).map((s) => ({
+          value: s.value,
+          label: s.label || (s.value ? s.value.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()) : '')
+        }));
+
+        // 2) Fallback: se não houver Subject, usa o enum do schema de Flashcard
+        if (opts.length === 0) {
+          const schema = await base44.entities.Flashcard.schema();
+          const subjectEnum = schema?.properties?.subject?.enum || [];
+          opts = subjectEnum.map((v) => ({ value: v, label: v.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()) }));
+        }
+
         setSubjects(opts);
         if (opts.length && !form.subject) {
           setForm((f) => ({ ...f, subject: opts[0].value }));
         }
       } catch (e) {
-        // fallback: vazio
+        // mantém vazio em caso de erro
       }
     };
-    loadSchema();
+    loadSubjects();
   }, []);
 
   const canSubmit = useMemo(() => {
