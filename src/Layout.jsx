@@ -672,6 +672,14 @@ export default function Layout({ children, currentPageName }) {
                               </Link>
                             </DropdownMenuItem>
                           ); })()}
+                          {(() => { const title='Meus Flashcards'; const url=createPageUrl('Flashcards'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><Brain className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
                           {(() => { const title='Minhas Anotações'; const url=createPageUrl('Notes'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
                             <DropdownMenuItem asChild key={title}>
                               <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
