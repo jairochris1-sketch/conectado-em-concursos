@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Brain } from "lucide-react";
+import { ArrowLeft, Brain, Play, Check, X, RotateCcw } from "lucide-react";
 import FlashcardForm from "../components/flashcards/FlashcardForm";
 
 export default function Flashcards() {
@@ -11,14 +11,25 @@ export default function Flashcards() {
   const [user, setUser] = useState(null);
   const [myCards, setMyCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [dueCards, setDueCards] = useState([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [showBack, setShowBack] = useState(false);
 
   useEffect(() => {
     const init = async () => {
       try {
         const u = await base44.auth.me();
         setUser(u);
-        const list = await base44.entities.Flashcard.filter({ created_by: u.email }, "-created_date", 500);
-        setMyCards(list);
+        // Auto-gerar flashcards a partir de erros recentes
+        await autoGenerateFromMistakes(u);
+        const [cards, revs] = await Promise.all([
+          base44.entities.Flashcard.filter({ created_by: u.email }, "-created_date", 500),
+          base44.entities.FlashcardReview.filter({ created_by: u.email }, "-created_date", 1000)
+        ]);
+        setMyCards(cards);
+        setReviews(revs);
+        computeDue(cards, revs);
       } finally {
         setLoading(false);
       }
@@ -27,12 +38,132 @@ export default function Flashcards() {
   }, []);
 
   const libraryCount = myCards.length;
-  const reviewCount = 0; // lógica de revisão será adicionada futuramente
+  const reviewCount = dueCards.length;
 
   const reload = async () => {
     if (!user) return;
-    const list = await base44.entities.Flashcard.filter({ created_by: user.email }, "-created_date", 500);
-    setMyCards(list);
+    const [cards, revs] = await Promise.all([
+      base44.entities.Flashcard.filter({ created_by: user.email }, "-created_date", 500),
+      base44.entities.FlashcardReview.filter({ created_by: user.email }, "-created_date", 1000)
+    ]);
+    setMyCards(cards);
+    setReviews(revs);
+    computeDue(cards, revs);
+  };
+
+  const computeDue = (cards, revs) => {
+    const latest = new Map();
+    for (const r of revs) {
+      const prev = latest.get(r.flashcard_id);
+      if (!prev || new Date(r.created_date) > new Date(prev.created_date)) latest.set(r.flashcard_id, r);
+    }
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = cards.filter(c => {
+      const r = latest.get(c.id);
+      if (!r) return true;
+      if (!r.next_review_date) return true;
+      return new Date(r.next_review_date) <= today;
+    });
+    setDueCards(due);
+    setCurrentIdx(0);
+    setShowBack(false);
+    if (due.length > 0) setActive('review');
+  };
+
+  const autoGenerateFromMistakes = async (u) => {
+    try {
+      const wrong = await base44.entities.ResponseHistory.filter({ created_by: u.email, is_correct: false }, "-created_date", 5);
+      if (wrong.length === 0) return;
+      const existing = await base44.entities.Flashcard.filter({ created_by: u.email }, "-created_date", 1000);
+      const haveTag = new Set();
+      for (const c of existing) {
+        if (Array.isArray(c.tags)) c.tags.forEach(t => { if (typeof t === 'string' && t.startsWith('qid:')) haveTag.add(t); });
+      }
+      const toCreate = [];
+      for (const w of wrong) {
+        const tag = `qid:${w.question_id}`;
+        if (haveTag.has(tag)) continue;
+        // Buscar questão
+        const qArr = await base44.entities.Question.filter({ id: w.question_id }, undefined, 1);
+        const q = qArr?.[0];
+        if (!q) continue;
+        const subject = q.subject || 'conhecimentos_gerais';
+        const front = `${q.statement || ''}${q.command ? '<br/><em>' + q.command + '</em>' : ''}`.trim();
+        const back = q.explanation || `Gabarito: <strong>${q.correct_answer || ''}</strong>`;
+        toCreate.push({
+          subject,
+          topic: q.topic || undefined,
+          front,
+          back,
+          difficulty: 'medio',
+          deck_name: 'Erros Recentes',
+          tags: [tag, q.institution || ''],
+          is_active: true
+        });
+        if (toCreate.length >= 3) break; // limita criação inicial
+      }
+      if (toCreate.length > 0) {
+        await base44.entities.Flashcard.bulkCreate(toCreate);
+      }
+    } catch (e) {
+      // silencioso
+    }
+  };
+
+  const handleGrade = async (quality) => {
+    if (!dueCards[currentIdx]) return;
+    const card = dueCards[currentIdx];
+    // pegar último review do card
+    const cardReviews = reviews.filter(r => r.flashcard_id === card.id).sort((a,b) => new Date(b.created_date) - new Date(a.created_date));
+    let ef = cardReviews[0]?.easiness_factor ?? 2.5;
+    let reps = cardReviews[0]?.repetitions ?? 0;
+    let interval = cardReviews[0]?.interval ?? 0;
+
+    if (quality < 2) {
+      reps = 0;
+      interval = 1;
+    } else if (reps === 0) {
+      reps = 1;
+      interval = 1;
+    } else if (reps === 1) {
+      reps = 2;
+      interval = 6;
+    } else {
+      reps = reps + 1;
+      interval = Math.max(1, Math.round(interval * ef));
+    }
+
+    ef = ef + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02));
+    if (ef < 1.3) ef = 1.3;
+
+    const next = new Date();
+    next.setDate(next.getDate() + interval);
+
+    await base44.entities.FlashcardReview.create({
+      flashcard_id: card.id,
+      quality,
+      easiness_factor: ef,
+      interval,
+      repetitions: reps,
+      next_review_date: next.toISOString(),
+      review_time_seconds: 0
+    });
+
+    // atualizar estado
+    const newReviews = [
+      {
+        flashcard_id: card.id,
+        quality,
+        easiness_factor: ef,
+        interval,
+        repetitions: reps,
+        next_review_date: next.toISOString(),
+        created_date: new Date().toISOString()
+      },
+      ...reviews
+    ];
+    setReviews(newReviews);
+    computeDue(myCards, newReviews);
   };
 
   return (
@@ -114,7 +245,43 @@ export default function Flashcards() {
               <CardTitle>Revisão Diária</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Sem cartões para revisar hoje.</p>
+              {loading ? (
+                <div className="flex items-center justify-center py-10">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+                </div>
+              ) : dueCards.length === 0 ? (
+                <div className="text-center text-gray-600">Sem cartões para revisar hoje.</div>
+              ) : (
+                <div className="max-w-2xl mx-auto">
+                  <div className="rounded-lg border border-gray-200 p-4 mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="outline" className="capitalize">{(dueCards[currentIdx]?.subject || '').replace(/_/g, ' ')}</Badge>
+                      <span className="text-xs text-gray-500">{currentIdx + 1} / {dueCards.length}</span>
+                    </div>
+                    <div className="prose max-w-none min-h-[120px]">
+                      {!showBack ? (
+                        <div dangerouslySetInnerHTML={{ __html: dueCards[currentIdx]?.front || '' }} />
+                      ) : (
+                        <div dangerouslySetInnerHTML={{ __html: dueCards[currentIdx]?.back || '' }} />
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Button variant="outline" onClick={() => setShowBack(!showBack)} className="gap-2">
+                      {!showBack ? <Play className="w-4 h-4" /> : <RotateCcw className="w-4 h-4" />}
+                      {!showBack ? 'Mostrar Resposta' : 'Ver Frente'}
+                    </Button>
+                    {showBack && (
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="destructive" onClick={() => handleGrade(0)}>Again</Button>
+                        <Button variant="outline" onClick={() => handleGrade(1)}>Hard</Button>
+                        <Button onClick={() => handleGrade(2)}>Good</Button>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleGrade(3)}>Easy</Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
