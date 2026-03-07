@@ -134,7 +134,7 @@ export default function StudiesPage() {
   });
 
   // New Windows 11 Explorer-style navigation
-  const [navigationPath, setNavigationPath] = useState(['Área de Estudos']);
+  const [navigationPath, setNavigationPath] = useState(['Áreas de Estudo']);
   const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -300,25 +300,32 @@ export default function StudiesPage() {
   }, [materials, selectedCargo, selectedSubject, selectedType, searchTerm]);
 
   // Navigation handlers
+  const handleNavigateToCargo = (cargoValue, cargoLabel) => {
+    setSelectedCargo(cargoValue);
+    setSelectedSubject(null);
+    setSelectedType(null);
+    setCurrentView('root');
+    setNavigationPath(['Áreas de Estudo', cargoLabel]);
+  };
   const handleNavigateToSubject = (subject) => {
     setSelectedSubject(subject);
     setSelectedType(null);
     setCurrentView('subject');
-    setNavigationPath(['Área de Estudos', subjectNames[subject]]);
+    setNavigationPath(['Áreas de Estudo', subjectNames[subject]]);
   };
 
   const handleNavigateToType = (type) => {
     setSelectedType(type);
     setSelectedSubject(null);
     setCurrentView('type');
-    setNavigationPath(['Área de Estudos', typeNames[type]]);
+    setNavigationPath(['Áreas de Estudo', typeNames[type]]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
     setCurrentView('root');
-    setNavigationPath(['Área de Estudos']);
+    setNavigationPath(['Áreas de Estudo']);
   };
 
   const handleBreadcrumbClick = (index) => {
@@ -614,10 +621,10 @@ ${videoNotes}
 
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Área de Estudos
+              <BookUser className="w-8 h-8" /> Áreas de Estudo
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Seus materiais, resumos e flashcards, tudo em um só lugar.
+              Seus materiais, resumos e vídeo-aulas organizados por curso.
             </p>
           </div>
           {isAdmin &&
@@ -795,67 +802,56 @@ ${videoNotes}
                   </CardContent>
                 </Card>
 
-            {/* Root View - Folders */}
+            {/* Root View - Pastas e Áreas de Estudo */}
             {currentView === 'root' && !searchTerm && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Disciplinas
-                </h3>
-                {availableSubjects.map((subject) => (
-                  <motion.div
-                    key={subject}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="cursor-pointer"
-                    onClick={() => handleNavigateToSubject(subject)}>
-                    <Card className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
-                          <FileText className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
-                          {subjectNames[subject]}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter(m => m.subject === subject).length} materiais
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+              <div className="space-y-6">
+                {/* Pastas de Materiais de Estudo Personalizadas */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Pastas de Materiais de Estudo Personalizadas</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    Se você aprende melhor com um material próprio ou um professor específico em determinada disciplina, pode reunir tudo em um só lugar — simples, organizado e totalmente personalizado para o seu método de aprendizagem. (Limite de 10 pastas)
+                  </p>
+                  <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 flex flex-col items-center justify-center text-center bg-white dark:bg-gray-900">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
+                      <BookOpen className="w-6 h-6 text-gray-500" />
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400">Você ainda não criou nenhuma pasta.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500">Crie uma pasta para organizar seus próprios materiais.</p>
+                  </div>
+                </div>
 
-                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2 mt-6">
-                  Tipos de Material
-                </h3>
-                {availableTypes.map((type) => (
-                  <motion.div
-                    key={type}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="cursor-pointer"
-                    onClick={() => handleNavigateToType(type)}>
-                    <Card className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center shadow-md">
-                          <FileText className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
-                          {typeNames[type]}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {materials.filter(m => m.type === type).length} materiais
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+                {/* Áreas de Estudo (por cargo) */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Áreas de Estudo</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {cargoOptions
+                      .filter(c => c.value !== 'all' && c.value !== 'materiais_questoes')
+                      .map((cargo) => (
+                        <motion.div
+                          key={cargo.value}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          whileHover={{ scale: 1.03 }}
+                          className="cursor-pointer"
+                          onClick={() => handleNavigateToCargo(cargo.value, cargo.label)}>
+                          <Card className="hover:shadow-lg transition-shadow">
+                            <CardContent className="p-5 flex flex-col items-center text-center gap-2">
+                              <div className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                                <BookOpen className="w-7 h-7 text-gray-600" />
+                              </div>
+                              <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">{cargo.label}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">Acessar conteúdo do curso</p>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                  </div>
+                </div>
               </div>
             )}
 
             {/* Materials List - Shown when filtering or in subject/type view */}
-            {(currentView !== 'root' || searchTerm) && (
+            {(currentView !== 'root' || searchTerm || selectedCargo !== 'all') && (
               <div>
               {filteredMaterials.length === 0 ?
               <Card className="text-center py-12">
