@@ -28,8 +28,9 @@ export default function FlashcardForm({ onSaved }) {
     const loadSubjects = async () => {
       try {
         // 1) Tenta carregar disciplinas do banco (Subject)
-        const list = await base44.entities.Subject.filter({ is_active: true }, 'order', 200);
-        let opts = (list || []).map((s) => ({
+        const active = await base44.entities.Subject.filter({ is_active: true }, 'order', 200);
+        const src = active && active.length > 0 ? active : await base44.entities.Subject.list('order', 200);
+        let opts = (src || []).map((s) => ({
           value: s.value,
           label: s.label || (s.value ? s.value.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()) : '')
         }));
