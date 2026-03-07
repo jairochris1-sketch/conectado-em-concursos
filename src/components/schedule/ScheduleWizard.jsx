@@ -222,7 +222,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
   };
 
   return (
-    <Card className="bg-white">
+    <Card className="bg-card">
       <CardHeader>
         <CardTitle>Criar Planejamento</CardTitle>
       </CardHeader>
@@ -233,20 +233,20 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
           <div className="space-y-4 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
-                <label className="text-sm font-medium text-gray-700">Título</label>
+                <label className="text-sm font-medium text-foreground">Título</label>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Semana 1" />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Início</label>
+                  <label className="text-sm font-medium text-foreground">Início</label>
                   <Input type="date" value={period.start} onChange={(e) => setPeriod(p => ({ ...p, start: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Fim</label>
+                  <label className="text-sm font-medium text-foreground">Fim</label>
                   <Input type="date" value={period.end} onChange={(e) => setPeriod(p => ({ ...p, end: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Data da prova</label>
+                  <label className="text-sm font-medium text-foreground">Data da prova</label>
                   <Input type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
                   {daysLeft !== null && (
                     <div className="text-xs text-gray-600 mt-1">
@@ -256,13 +256,13 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                 </div>
               </div>
             </div>
-            <div className="text-gray-600">Organização básica do seu planejamento semanal.</div>
+            <div className="text-muted-foreground">Organização básica do seu planejamento semanal.</div>
           </div>
         )}
 
         {step === 2 && (
           <div className="space-y-4 mt-4">
-            <p className="text-gray-700">Selecione suas disciplinas para este planejamento.</p>
+            <p className="text-foreground">Selecione suas disciplinas para este planejamento.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {subjects.map((s) => {
                 const label = cleanLabel(s);
@@ -272,7 +272,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                     key={label}
                     type="button"
                     onClick={() => handleToggleSubject(label)}
-                    className={`w-full rounded-lg border px-4 py-3 text-left transition ${selected.includes(label) ? 'bg-emerald-50 border-emerald-300' : 'bg-white hover:bg-gray-50'}`}
+                    className={`w-full rounded-lg border px-4 py-3 text-left transition ${selected.includes(label) ? 'bg-emerald-50 border-emerald-300 dark:bg-emerald-900/30 dark:border-emerald-600' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700'}`}
                   >
                     {label}
                   </button>
@@ -354,12 +354,12 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
               ))}
             </div>
             <div className="space-y-3">
-              <div className="rounded-lg border p-4 bg-slate-50">
+              <div className="rounded-lg border p-4 bg-slate-50 dark:bg-slate-800">
                 <div className="font-semibold mb-2">Distribuição</div>
                 <div className="space-y-2">
                   {weightList.map(r => (
                     <div key={r.subject} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">{r.subject}</span>
+                      <span className="text-sm text-foreground">{r.subject}</span>
                       <span className="text-sm font-semibold">{r.pct}%</span>
                     </div>
                   ))}
@@ -375,7 +375,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
               <div className="text-gray-700 font-medium mb-3">Quais dias e quantas horas pretende estudar?</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {dayOptions.map((d) => (
-                  <div key={d.key} className="flex items-center justify-between rounded-lg border p-3 bg-white">
+                  <div key={d.key} className="flex items-center justify-between rounded-lg border p-3 bg-white dark:bg-gray-800 dark:border-gray-700">
                     <div className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -396,16 +396,16 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                   </div>
                 ))}
               </div>
-              <div className="mt-2 text-right text-sm text-gray-700">Total na semana: <strong>{toHHMM(totalWeekMinutes)}</strong></div>
+              <div className="mt-2 text-right text-sm text-foreground">Total na semana: <strong>{toHHMM(totalWeekMinutes)}</strong></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Tempo mínimo por sessão</label>
+                <label className="text-sm font-medium text-foreground">Tempo mínimo por sessão</label>
                 <SelectNumber value={minSession} onChange={setMinSession} options={[30, 45, 60, 75, 90]} suffix="min" />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">Tempo máximo por sessão</label>
+                <label className="text-sm font-medium text-foreground">Tempo máximo por sessão</label>
                 <SelectNumber value={maxSession} onChange={setMaxSession} options={[60, 75, 90, 105, 120]} suffix="min" />
               </div>
             </div>
@@ -432,9 +432,9 @@ function Stepper({ step }) {
         const n = idx + 1; const active = n <= step;
         return (
           <div key={label} className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${active ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600'}`}>{n.toString().padStart(2, '0')}</div>
-            <div className={`text-sm ${active ? 'text-emerald-700' : 'text-gray-500'}`}>{label}</div>
-            {idx < items.length - 1 && <div className={`w-10 h-[2px] ${active ? 'bg-emerald-400' : 'bg-gray-200'}`} />}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${active ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200'}`}>{n.toString().padStart(2, '0')}</div>
+            <div className={`text-sm ${active ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-500 dark:text-gray-300'}`}>{label}</div>
+            {idx < items.length - 1 && <div className={`w-10 h-[2px] ${active ? 'bg-emerald-400' : 'bg-gray-200 dark:bg-gray-700'}`} />}
           </div>
         );
       })}

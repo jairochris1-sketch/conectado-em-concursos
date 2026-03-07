@@ -200,7 +200,7 @@ export default function WeeklyBoard({ schedule, onChange }) {
                               role="button"
                               aria-label={`Mover ${it.subject} com setas`}
                               onKeyDownCapture={(e) => onItemKeyDown(e, day, index)}
-                              className={`p-2 border-l-4 focus:outline-none focus:ring-2 focus:ring-blue-500 ${pal.bg} ${pal.border}`}
+                              className={`p-2 border-l-4 focus:outline-none focus:ring-2 focus:ring-blue-500 ${pal.bg} ${pal.border} dark:bg-slate-800 dark:border-slate-600`}
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
