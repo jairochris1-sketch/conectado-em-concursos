@@ -323,8 +323,7 @@ export default function Layout({ children, currentPageName }) {
 
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
-  const hideChatPages = ['Questions', 'ComoEstudarPrimeiroLugar', 'Exams'];
-  const showChat = !hideChatPages.includes(currentPageName);
+  const showChat = true;
 
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
