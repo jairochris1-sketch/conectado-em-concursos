@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Calendar, Repeat, Link as LinkIcon, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function CreateStudyPlan() {
   const navigate = useNavigate();
@@ -86,10 +87,17 @@ export default function CreateStudyPlan() {
       </div>
 
       {selectedMode && (
-        <div className="mt-6 p-3 md:p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-sm md:text-base">
-          Modo selecionado: <strong>{
-            selectedMode === "weekly" ? "Trilha Semanal" : selectedMode === "schedule" ? "Cronograma de Estudos" : "Ciclo de Estudos"
-          }</strong>. Me diga como você quer configurar e eu preparo a próxima etapa.
+        <div className="mt-6 p-3 md:p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-sm md:text-base flex items-center justify-between gap-3 flex-wrap">
+          <span>
+            Modo selecionado: <strong>{
+              selectedMode === "weekly" ? "Trilha Semanal" : selectedMode === "schedule" ? "Cronograma de Estudos" : "Ciclo de Estudos"
+            }</strong>. Me diga como você quer configurar e eu preparo a próxima etapa.
+          </span>
+          {selectedMode === "weekly" && (
+            <Button size="sm" onClick={() => navigate(createPageUrl("WeeklyTrack"))}>
+              Abrir Trilha Semanal
+            </Button>
+          )}
         </div>
       )}
     </div>

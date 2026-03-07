@@ -14,6 +14,7 @@ import WeeklyCreateDialog from "../components/weekly/WeeklyCreateDialog";
 import TaskFormDialog from "../components/weekly/TaskFormDialog";
 import TaskCard from "../components/weekly/TaskCard";
 
+
 const DAYS = [
   { key: "monday", label: "Segunda" },
   { key: "tuesday", label: "Terça" },
@@ -29,6 +30,12 @@ export default function WeeklyTrackPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Hints (coachmarks) simples, salvos em localStorage para não repetir
+  const [showHintAdd, setShowHintAdd] = useState(() => !localStorage.getItem('weekly_hint_add'));
+  const [showHintDrag, setShowHintDrag] = useState(() => !localStorage.getItem('weekly_hint_drag'));
+  const [showHintNav, setShowHintNav] = useState(() => !localStorage.getItem('weekly_hint_nav'));
+  const [showHintMenu, setShowHintMenu] = useState(() => !localStorage.getItem('weekly_hint_menu'));
 
   const [createOpen, setCreateOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
@@ -251,7 +258,51 @@ export default function WeeklyTrackPage() {
                   <DropdownMenuItem className="text-red-600" onClick={handleDeleteTrack}>Excluir</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              {/* Hint: navegação entre trilhas */}
+              {tracks.length > 1 && showHintNav && (
+                <div className="ml-3 p-3 rounded-lg bg-slate-900 text-slate-100 text-sm shadow border border-slate-700 max-w-md">
+                  <p className="font-semibold mb-1">Navegue entre suas trilhas</p>
+                  <p className="opacity-90">Use as setas para alternar entre trilhas diferentes que você criou.</p>
+                  <div className="text-right mt-2">
+                    <Button size="sm" onClick={() => { localStorage.setItem('weekly_hint_nav','1'); setShowHintNav(false); }}>Entendi</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Hint: menu de opções */}
+              {showHintMenu && (
+                <div className="ml-3 p-3 rounded-lg bg-slate-900 text-slate-100 text-sm shadow border border-slate-700 max-w-md">
+                  <p className="font-semibold mb-1">Opções da Trilha Semanal</p>
+                  <p className="opacity-90">No botão de três pontos, você pode criar, renomear, clonar, reiniciar ou excluir sua trilha.</p>
+                  <div className="text-right mt-2">
+                    <Button size="sm" onClick={() => { localStorage.setItem('weekly_hint_menu','1'); setShowHintMenu(false); }}>Entendi</Button>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Hint: adicionar tarefa (quando não há tarefas) */}
+            {currentTrack && tasks.length === 0 && showHintAdd && (
+              <div className="mb-3 p-4 rounded-lg bg-slate-900 text-slate-100 text-sm shadow border border-slate-700 max-w-lg">
+                <p className="font-semibold mb-1">Adicione tarefas!</p>
+                <p className="opacity-90">Use o botão “+” em qualquer dia para criar tarefas da sua trilha (por matéria, duração e metas).</p>
+                <div className="text-right mt-2">
+                  <Button size="sm" onClick={() => { localStorage.setItem('weekly_hint_add','1'); setShowHintAdd(false); }}>Entendi</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Hint: arrastar/soltar e concluir (quando já existe tarefa) */}
+            {currentTrack && tasks.length > 0 && showHintDrag && (
+              <div className="mb-3 p-4 rounded-lg bg-slate-900 text-slate-100 text-sm shadow border border-slate-700 max-w-2xl">
+                <p className="font-semibold mb-1">Arraste, ajuste e conclua suas tarefas!</p>
+                <p className="opacity-90">Reorganize ou mude o dia arrastando as tarefas. Ao finalizar, marque como concluída no ícone à esquerda.</p>
+                <div className="text-right mt-2">
+                  <Button size="sm" onClick={() => { localStorage.setItem('weekly_hint_drag','1'); setShowHintDrag(false); }}>Entendi</Button>
+                </div>
+              </div>
+            )}
 
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
