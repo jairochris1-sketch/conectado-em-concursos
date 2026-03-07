@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { createPageUrl } from '@/utils';
 import { FileText, UploadCloud, Trash2, List, PlayCircle, Loader2 } from 'lucide-react';
 
@@ -258,52 +259,79 @@ export default function MeuEdital() {
           </CardContent>
         </Card>
 
-        {/* Resumo dos pontos importantes */}
         {hasSummary && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Resumo do Edital</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {extracted.exam_date && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="rounded-lg border p-3">
-                    <p className="text-xs text-muted-foreground">Data da prova</p>
-                    <p className="font-medium">{extracted.exam_date}</p>
+          <Tabs defaultValue="resumo" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="resumo">Resumo</TabsTrigger>
+              <TabsTrigger value="verticalizacao">Verticalização</TabsTrigger>
+              <TabsTrigger value="simulado">Simulado</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="resumo">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Resumo do Edital</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {extracted.exam_date && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="rounded-lg border p-3">
+                        <p className="text-xs text-muted-foreground">Data da prova</p>
+                        <p className="font-medium">{extracted.exam_date}</p>
+                      </div>
+                      {Array.isArray(extracted.exam_times) && extracted.exam_times.length > 0 && (
+                        <div className="rounded-lg border p-3">
+                          <p className="text-xs text-muted-foreground">Horários</p>
+                          <p className="font-medium">{extracted.exam_times.join(', ')}</p>
+                        </div>
+                      )}
+                      {Array.isArray(extracted.subjects) && extracted.subjects.length > 0 && (
+                        <div className="rounded-lg border p-3">
+                          <p className="text-xs text-muted-foreground">Disciplinas</p>
+                          <p className="font-medium">{extracted.subjects.join(', ')}</p>
+                        </div>
+                      )}
+                      {extracted.scoring_by_subject && (
+                        <div className="rounded-lg border p-3">
+                          <p className="text-xs text-muted-foreground">Pontuação por disciplina</p>
+                          <p className="font-medium">{Object.keys(extracted.scoring_by_subject).length} definidas</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={handleGenerateSimulation} disabled={!selectedCargoLabel || simLoading}>
+                      {simLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PlayCircle className="w-4 h-4 mr-2" />}
+                      Gerar Simulado Completo
+                    </Button>
                   </div>
-                  {Array.isArray(extracted.exam_times) && extracted.exam_times.length > 0 && (
-                    <div className="rounded-lg border p-3">
-                      <p className="text-xs text-muted-foreground">Horários</p>
-                      <p className="font-medium">{extracted.exam_times.join(', ')}</p>
-                    </div>
-                  )}
-                  {Array.isArray(extracted.subjects) && extracted.subjects.length > 0 && (
-                    <div className="rounded-lg border p-3">
-                      <p className="text-xs text-muted-foreground">Disciplinas</p>
-                      <p className="font-medium">{extracted.subjects.join(', ')}</p>
-                    </div>
-                  )}
-                  {extracted.scoring_by_subject && (
-                    <div className="rounded-lg border p-3">
-                      <p className="text-xs text-muted-foreground">Pontuação por disciplina</p>
-                      <p className="font-medium">{Object.keys(extracted.scoring_by_subject).length} definidas</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={handleGenerateSimulation} disabled={!selectedCargoLabel || simLoading}>
-                  {simLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PlayCircle className="w-4 h-4 mr-2" />}
-                  Gerar Simulado Completo
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            <TabsContent value="verticalizacao">
+              <Verticalizado data={extracted} />
+            </TabsContent>
+
+            <TabsContent value="simulado">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Simulado</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Cargo selecionado: <span className="font-medium">{selectedCargoLabel || '—'}</span>
+                  </p>
+                  <Button onClick={handleGenerateSimulation} disabled={!selectedCargoLabel || simLoading}>
+                    {simLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <PlayCircle className="w-4 h-4 mr-2" />}
+                    Gerar Simulado Completo
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         )}
-
-        {/* Verticalização do edital na própria tela */}
-        {hasSummary && <Verticalizado data={extracted} />}
       </div>
     </div>
   );
