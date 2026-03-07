@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, BookOpenCheck, PlusCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, PlusCircle, Sparkles } from "lucide-react";
 
 function formatDateTime(dtStr) {
   if (!dtStr) return "";
@@ -194,7 +194,7 @@ export default function Flashcards() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
-            <TabsTrigger value="review" className="gap-2"><BookOpenCheck className="w-4 h-4"/> Revisar</TabsTrigger>
+            <TabsTrigger value="review" className="gap-2"><BookOpen className="w-4 h-4"/> Revisar</TabsTrigger>
             <TabsTrigger value="create" className="gap-2"><PlusCircle className="w-4 h-4"/> Criar</TabsTrigger>
             <TabsTrigger value="library" className="gap-2"><Sparkles className="w-4 h-4"/> Biblioteca</TabsTrigger>
           </TabsList>
