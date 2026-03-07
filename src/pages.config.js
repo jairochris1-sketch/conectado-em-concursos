@@ -56,6 +56,7 @@ import Community from './pages/Community';
 import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
+import CreateStudyPlan from './pages/CreateStudyPlan';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import EditalSimulator from './pages/EditalSimulator';
@@ -98,7 +99,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import CreateStudyPlan from './pages/CreateStudyPlan';
+import WeeklyTrack from './pages/WeeklyTrack';
 import __Layout from './Layout.jsx';
 
 
@@ -112,6 +113,7 @@ export const PAGES = {
     "ComoEstudarPrimeiroLugar": ComoEstudarPrimeiroLugar,
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
+    "CreateStudyPlan": CreateStudyPlan,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
     "EditalSimulator": EditalSimulator,
@@ -154,7 +156,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "CreateStudyPlan": CreateStudyPlan,
+    "WeeklyTrack": WeeklyTrack,
 }
 
 export const pagesConfig = {
