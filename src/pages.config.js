@@ -99,10 +99,10 @@ import Subscription from './pages/Subscription';
 import SubscriptionsDashboard from './pages/SubscriptionsDashboard';
 import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
+import WeeklyTrail from './pages/WeeklyTrail';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import WeeklyTrail from './pages/WeeklyTrail';
 import __Layout from './Layout.jsx';
 
 
@@ -159,10 +159,10 @@ export const PAGES = {
     "SubscriptionsDashboard": SubscriptionsDashboard,
     "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
+    "WeeklyTrail": WeeklyTrail,
     "Welcome": Welcome,
     "studies": studies,
     "subscription": subscription,
-    "WeeklyTrail": WeeklyTrail,
 }
 
 export const pagesConfig = {

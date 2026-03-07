@@ -55,6 +55,8 @@ export default function CommunityPage({ embedded = false }) {
   const [deleteReplyId, setDeleteReplyId] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
 
+  const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com' || user.role === 'admin');
+
   const [newPost, setNewPost] = useState({
     title: "",
     content: "",
@@ -386,7 +388,7 @@ export default function CommunityPage({ embedded = false }) {
                 {reply.is_best_answer &&
               <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
               }
-                {reply.author_email === user.email &&
+                {(reply.author_email === user?.email || isAdmin) &&
               <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
@@ -394,9 +396,11 @@ export default function CommunityPage({ embedded = false }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => setEditingReply(reply)}>
-                        <Edit2 className="w-3 h-3 mr-2" /> Editar
-                      </DropdownMenuItem>
+                      {(reply.author_email === user?.email) &&
+                        <DropdownMenuItem onClick={() => setEditingReply(reply)}>
+                          <Edit2 className="w-3 h-3 mr-2" /> Editar
+                        </DropdownMenuItem>
+                      }
                       <DropdownMenuItem onClick={() => setDeleteReplyId(reply.id)} className="text-red-600">
                         <Trash2 className="w-3 h-3 mr-2" /> Excluir
                       </DropdownMenuItem>
@@ -505,7 +509,7 @@ export default function CommunityPage({ embedded = false }) {
                 <div className="flex flex-wrap gap-2 items-center">
                   <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-2.5 py-0.5 text-xs font-semibold rounded-md border-transparent hover:bg-gray-200 dark:hover:bg-gray-700">{categories.find((s) => s.value === selectedPost.subject)?.label}</Badge>
                   {selectedPost.is_resolved && <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">✓ Resolvido</Badge>}
-                  {selectedPost.author_email === user.email &&
+                  {(selectedPost.author_email === user?.email || isAdmin) &&
                   <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -513,10 +517,12 @@ export default function CommunityPage({ embedded = false }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
-                          <Edit2 className="w-4 h-4 mr-2" />
-                          Editar
-                        </DropdownMenuItem>
+                        {(selectedPost.author_email === user?.email) &&
+                          <DropdownMenuItem onClick={() => setEditingPost(selectedPost)}>
+                            <Edit2 className="w-4 h-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                        }
                         <DropdownMenuItem onClick={() => setDeletePostId(selectedPost.id)} className="text-red-600">
                           <Trash2 className="w-4 h-4 mr-2" />
                           Excluir
