@@ -785,9 +785,9 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Cor dos Ícones</span>
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Cor dos Ícones</span>
                     <div className="flex gap-1 bg-black/20 p-1 rounded-md">
                       {['branco', 'cor'].map(colorType => {
                          const isActive = iconColorType === colorType;
@@ -806,17 +806,35 @@ export default function Layout({ children, currentPageName }) {
                          )
                       })}
                     </div>
-                    {iconColorType === 'cor' && (
+                  </div>
+                  {iconColorType === 'cor' && (
+                    <div className="flex items-center gap-2 justify-end mt-1">
+                      <div className="flex items-center gap-1.5 p-1 bg-black/20 rounded-md">
+                        {['#fde047', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6', '#0ea5e9', '#14b8a6', '#06b6d4', '#10b981', '#22c55e', '#84cc16'].map(color => (
+                          <button
+                            key={color}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setIconCustomColor(color);
+                            }}
+                            className={`w-5 h-5 rounded-sm border ${iconCustomColor === color ? 'border-white scale-110' : 'border-transparent hover:scale-110'} transition-transform`}
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
                       <div className="relative w-6 h-6 rounded border border-white/40 cursor-pointer overflow-hidden shadow-sm" style={{ backgroundColor: iconCustomColor }}>
                         <input 
                           type="color" 
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                           value={iconCustomColor}
                           onChange={(e) => setIconCustomColor(e.target.value)}
+                          title="Cor Personalizada"
                         />
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
