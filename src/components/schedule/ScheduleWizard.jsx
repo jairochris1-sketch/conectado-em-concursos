@@ -54,6 +54,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
   const [maxSession, setMaxSession] = useState(90);
   const [topics, setTopics] = useState([]);
   const [subjectTopics, setSubjectTopics] = useState({});
+  const [subjectKeyByLabel, setSubjectKeyByLabel] = useState({});
   const [title, setTitle] = useState(initialSchedule?.title || "Planejamento Semanal");
   const [period, setPeriod] = useState(() => {
     const start = nextWeekStart();
@@ -73,20 +74,30 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       try {
         const list = await base44.entities.Subject?.list?.();
         const hex24 = /^[a-f0-9]{24}$/i; // id parecido com o da imagem
+        const norm = (s) => (typeof s === 'string' ? s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim() : '');
         if (Array.isArray(list) && list.length > 0) {
-          const labels = list
-            .map((s) => (
-              s.name || s.title || s.label || s.display_name || s.nome || s.disciplina || s.materia || s.subject || ""
-            ))
-            .map((v) => (typeof v === "string" ? v.trim() : ""))
-            .filter((v) => v && !hex24.test(v) && v.length > 1);
+          const labels = [];
+          const map = {};
+          list.forEach((s) => {
+            const label = (s.name || s.title || s.label || s.display_name || s.nome || s.disciplina || s.materia || s.subject || "").toString().trim();
+            if (!label || hex24.test(label) || label.length <= 1) return;
+            const keyCandidate = s.value || s.slug || s.key || s.code || s.subject || label;
+            const key = norm(String(keyCandidate));
+            labels.push(label);
+            map[label] = key;
+          });
           const unique = Array.from(new Set(labels));
           setSubjects(unique.length > 0 ? unique : defaultSubjects);
+          setSubjectKeyByLabel(map);
         } else {
           setSubjects(defaultSubjects);
+          const map = Object.fromEntries(defaultSubjects.map((l) => [l, norm(l)]));
+          setSubjectKeyByLabel(map);
         }
       } catch {
         setSubjects(defaultSubjects);
+        const map = Object.fromEntries(defaultSubjects.map((l) => [l, l.toString().toLowerCase()]));
+        setSubjectKeyByLabel(map);
       }
     };
     loadSubjects();
@@ -145,10 +156,17 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
 
   const normalize = (s) => (typeof s === 'string' ? s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim() : '');
   const topicsForLabel = (label) => {
-    const subjectKey = normalize(label);
-    // Somente tópicos cuja propriedade "subject" corresponde exatamente à disciplina selecionada (normalizada)
-    const filtered = topics.filter((t) => normalize(t.subject || '') === subjectKey);
-    return filtered; // não fazer fallback para todos os tópicos para evitar mistura entre disciplinas
+    const mapped = subjectKeyByLabel[label];
+    const subjectKey = normalize(mapped || label);
+    let filtered = topics.filter((t) => normalize(t.subject || '') === subjectKey);
+    if (!filtered.length) {
+      const subjectKeys = Array.from(new Set(topics.map((t) => normalize(t.subject || '')).filter(Boolean)));
+      const candidates = subjectKeys.filter((ts) => subjectKey.includes(ts) || ts.includes(subjectKey));
+      if (candidates.length) {
+        filtered = topics.filter((t) => candidates.includes(normalize(t.subject || '')));
+      }
+    }
+    return filtered;
   };
 
   const handleToggleSubject = (s) => {
