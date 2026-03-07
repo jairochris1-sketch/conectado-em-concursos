@@ -36,13 +36,11 @@ import {
   BookUser } from
 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 import StudyMaterialViewer from '../components/studies/StudyMaterialViewer';
 import StudyMaterialUploader from '../components/studies/StudyMaterialUploader';
-import FlashcardCreator from '../components/flashcards/FlashcardCreator';
-import FlashcardReviewer from '../components/flashcards/FlashcardReviewer';
-import FlashcardStats from '../components/flashcards/FlashcardStats';
-import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
 import EnhancedArticleReader from '../components/reading/EnhancedArticleReader';
 
 const cargoOptions = [
@@ -1539,99 +1537,15 @@ ${videoNotes}
           </TabsContent>
 
           <TabsContent value="flashcards" className="mt-6">
-              {/* Cards de estatísticas */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-90">Total de Cartões</p>
-                      <p className="text-2xl font-bold">{flashcardStats.totalCards}</p>
-                    </div>
-                    <BookOpen className="w-8 h-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-90">Para Revisar</p>
-                      <p className="text-2xl font-bold">{flashcardStats.cardsDue}</p>
-                    </div>
-                    <Timer className="w-8 h-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-90">Revisados Hoje</p>
-                      <p className="text-2xl font-bold">{flashcardStats.reviewedToday}</p>
-                    </div>
-                    <BarChart3 className="w-8 h-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-90">Facilidade Média</p>
-                      <p className="text-2xl font-bold">{flashcardStats.avgEasiness}</p>
-                    </div>
-                    <Brain className="w-8 h-8 opacity-80" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Tabs defaultValue="review" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="review" className="flex items-center gap-2">
-                  <Play className="w-4 h-4" />
-                  Revisar ({flashcardStats.cardsDue})
-                </TabsTrigger>
-                <TabsTrigger value="create" className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Criar
-                </TabsTrigger>
-                <TabsTrigger value="library" className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4" />
-                  Biblioteca
-                </TabsTrigger>
-                <TabsTrigger value="stats" className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4" />
-                  Estatísticas
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="review" className="mt-6">
-                <FlashcardReviewer
-                  cardsDue={cardsDueToday}
-                  onReviewComplete={loadAllData} />
-
-              </TabsContent>
-              <TabsContent value="create" className="mt-6">
-                <FlashcardCreator onFlashcardCreated={loadAllData} />
-              </TabsContent>
-              <TabsContent value="library" className="mt-6">
-                <FlashcardLibrary
-                  flashcards={flashcards}
-                  onUpdate={loadAllData} />
-
-              </TabsContent>
-              <TabsContent value="stats" className="mt-6">
-                <FlashcardStats
-                  flashcards={flashcards}
-                  reviews={reviews} />
-
-              </TabsContent>
-            </Tabs>
+            <Card className="bg-white border border-gray-200">
+              <CardContent className="p-6 text-center space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">Gerencie seus Flashcards</h3>
+                <p className="text-gray-600">Crie, revise e organize seus cartões na página dedicada.</p>
+                <Link to={createPageUrl('Flashcards')}>
+                  <Button className="bg-blue-600 hover:bg-blue-700">Ir para Meus Flashcards</Button>
+                </Link>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
         

@@ -239,7 +239,7 @@ const pageNameTranslations = {
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  GuiaEstudos: "Resumos",
+
   ComoEstudarPrimeiroLugar: "Como Estudar",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
