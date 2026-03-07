@@ -159,7 +159,7 @@ const moreMenuItems = [
 },
 {
   title: "Cronograma de Estudos",
-  url: createPageUrl("Schedule"),
+  url: createPageUrl("Cronograma"),
   icon: Calendar
 },
 {
