@@ -10,31 +10,20 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   BookOpen,
   FileText,
-  Search,
   Eye,
   RefreshCw,
-  Filter,
   Upload,
-  Trash2,
-  Brain,
-  Plus,
-  Play,
-  BarChart3,
-  Timer,
-  X,
-  ArrowLeft,
-  ArrowRight,
-  Save,
   Download,
-  Printer,
-  User as UserIcon, // Renamed to avoid conflict with entity User
-  Moon,
-  Sun,
-  Grid3x3,
-  List,
-  LayoutGrid,
-  BookUser } from
-'lucide-react';
+  BookUser,
+  Briefcase,
+  GraduationCap,
+  Shield,
+  Stethoscope,
+  Cpu,
+  Calculator,
+  Building2,
+  ClipboardList
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -43,6 +32,7 @@ import StudyMaterialViewer from '../components/studies/StudyMaterialViewer';
 import StudyMaterialUploader from '../components/studies/StudyMaterialUploader';
 import EnhancedArticleReader from '../components/reading/EnhancedArticleReader';
 
+// Carreiras disponíveis
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
 { value: "materiais_questoes", label: "📝 Materiais de Questões" },
@@ -104,7 +94,11 @@ const typeColors = {
   leis: "bg-amber-100 text-amber-800"
 };
 
-const VIEW_MODES = {
+// Ícones genéricos e diferentes por carreira
+const careerIcons = [Briefcase, GraduationCap, Shield, Stethoscope, Cpu, Calculator, Building2, ClipboardList];
+const getCareerIcon = (index) => careerIcons[index % careerIcons.length];
+
+// Removidos modos/abas antigos
   EXTRA_LARGE: 'extra_large',
   LARGE: 'large',
   MEDIUM: 'medium',
@@ -122,7 +116,24 @@ const LAYOUT_MODES = {
 };
 
 export default function StudiesPage() {
-  // State for Study Materials
+  // Estado mínimo necessário
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const user = await User.me();
+        setCurrentUser(user);
+      } catch (e) {
+        // usuário não autenticado
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  // Handlers removidos: filtros, busca, abas, etc.
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [selectedCargo, setSelectedCargo] = useState('all');
@@ -603,17 +614,17 @@ ${videoNotes}
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-          <div className="text-center">
-            <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando área de estudos...</p>
-          </div>
-        </div>);
-
+        <div className="text-center">
+          <RefreshCw className="w-10 h-10 animate-spin text-indigo-600 mx-auto mb-3" />
+          <p className="text-sm text-gray-600 dark:text-gray-300">Carregando Áreas de Estudo...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-6 md:p-10">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -624,21 +635,27 @@ ${videoNotes}
               <BookUser className="w-8 h-8" /> Áreas de Estudo
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Seus materiais, resumos e vídeo-aulas organizados por curso.
+              Escolha uma carreira para acessar os materiais e conteúdos do curso.
             </p>
           </div>
-          {isAdmin &&
-          <Button
-            onClick={() => setShowUploader(!showUploader)}
-            className="bg-indigo-600 hover:bg-indigo-700">
-
-              <Upload className="w-4 h-4 mr-2" />
-              Adicionar Material
-            </Button>
-          }
         </motion.div>
 
-        <Tabs defaultValue="materials" className="w-full">
+        {/* Pastas de Materiais Personalizadas */}
+        <div className="mb-10">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Pastas de Materiais Personalizadas</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            Organize seus próprios materiais por pasta. Em breve você poderá criar e gerenciar essas pastas aqui.
+          </p>
+          <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 flex flex-col items-center justify-center text-center bg-white dark:bg-gray-900">
+            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
+              <BookOpen className="w-6 h-6 text-gray-500" />
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">Você ainda não criou nenhuma pasta.</p>
+            <p className="text-sm text-gray-500">Crie uma pasta para organizar seus próprios materiais.</p>
+          </div>
+        </div>
+
+        {/* Grid de Carreiras */}
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="materials" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
@@ -1543,10 +1560,10 @@ ${videoNotes}
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
-        
-        {/* Viewer Modal */}
-        {selectedMaterial &&
+        {/* Fim do conteúdo simplificado */}
+
+        {/* Removido: viewer e player antigos */}
+        {false && selectedMaterial &&
         <StudyMaterialViewer
           material={selectedMaterial}
           isOpen={!!selectedMaterial}
