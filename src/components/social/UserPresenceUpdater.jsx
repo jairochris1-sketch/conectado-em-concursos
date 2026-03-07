@@ -36,18 +36,8 @@ export default function UserPresenceUpdater({ user }) {
     // Then update every 30 seconds
     const interval = setInterval(() => updatePresence(), 30000);
 
-    const handleUnload = () => {
-      if (currentRecordId) {
-        base44.entities.UserPresence.update(currentRecordId, { status: 'offline' });
-      }
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-
     return () => {
       clearInterval(interval);
-      window.removeEventListener('beforeunload', handleUnload);
-      handleUnload();
     };
   }, [user]);
 
