@@ -898,7 +898,7 @@ export default function SubscriptionPage() {
                 Mensal
               </button>
               <button
-                onClick={() => setBillingCycle('semiannual')
+                onClick={() => setBillingCycle('semiannual')}
                 className={`px-4 py-2 rounded-md transition-all text-sm relative ${
                 billingCycle === 'semiannual' ?
                 'bg-white text-gray-800 shadow-sm' :
