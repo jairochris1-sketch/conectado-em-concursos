@@ -13,7 +13,10 @@ import {
   Flame,
   Award,
   CheckCircle,
-  Search
+  Search,
+  Brain,
+  BookCopy,
+  MessageSquare
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -183,13 +186,13 @@ export default function Dashboard() {
                 Resolver Questões
               </Button>
             </Link>
-            <Link to={createPageUrl("Studies")} className="sm:w-auto">
+            <Link to={createPageUrl("CreateStudyPlan")} className="sm:w-auto">
               <Button 
                 variant="outline" 
                 className="w-full sm:w-auto rounded-md border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
               >
-                <FileText className="w-4 h-4 mr-2" />
-                Área de Estudos
+                <Calendar className="w-4 h-4 mr-2" />
+                Criar Planejamento de Estudos
               </Button>
             </Link>
           </div>
@@ -253,6 +256,24 @@ export default function Dashboard() {
                   <Button variant="outline" className="w-full justify-start">
                     <Calendar className="w-4 h-4 mr-2" />
                     Cronograma de Estudos
+                  </Button>
+                </Link>
+                <Link to={createPageUrl("Flashcards")} className="block">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Brain className="w-4 h-4 mr-2" />
+                    Flashcards
+                  </Button>
+                </Link>
+                <Link to={createPageUrl("Notebooks")} className="block">
+                  <Button variant="outline" className="w-full justify-start">
+                    <BookCopy className="w-4 h-4 mr-2" />
+                    Cadernos de Questões
+                  </Button>
+                </Link>
+                <Link to={createPageUrl("Community")} className="block">
+                  <Button variant="outline" className="w-full justify-start">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Fórum
                   </Button>
                 </Link>
                 <Link to={createPageUrl("Ranking")} className="block">
