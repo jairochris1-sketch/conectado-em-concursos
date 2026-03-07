@@ -590,7 +590,7 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       <header className="hidden md:flex text-white border-b px-4 h-20 items-center justify-between shadow-md sticky top-0 z-40 print-hide" role="banner" style={{ backgroundColor: 'var(--primary-color)', borderBottomColor: 'rgba(0,0,0,0.2)' }}>
-        <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0">
+        <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2 flex-shrink-0" style={{ width: '220px' }}>
             <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
             alt="Logo Conectado em Concursos"
