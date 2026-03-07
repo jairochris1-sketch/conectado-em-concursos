@@ -9,7 +9,7 @@ import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
 import { encryptEmail } from "@/components/security/emailCrypto";
 
-export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin, userPlan }) {
+export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin, userPlan = 'padrao' }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
