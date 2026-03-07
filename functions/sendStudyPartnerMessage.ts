@@ -50,19 +50,6 @@ Deno.serve(async (req) => {
       timestamp: new Date().toISOString()
     });
 
-    // Notificar o destinatário no app
-    await base44.asServiceRole.entities.Notification.create({
-      user_email: receiver_email,
-      title: `Nova mensagem de ${user.full_name || 'Usuário'}`,
-      message: content.length > 50 ? content.substring(0, 50) + '...' : content,
-      type: "chat_message",
-      action_url: `/UserProfile?email=${encodeURIComponent(user.email)}&openChat=true`,
-      related_user_name: user.full_name,
-      related_user_photo: user.profile_photo_url,
-      entity_id: message.id,
-      is_read: false
-    }).catch(err => console.error("Error creating notification:", err));
-
     return Response.json({ success: true, message });
   } catch (error) {
     console.error('Error sending message:', error);

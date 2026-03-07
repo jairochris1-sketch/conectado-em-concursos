@@ -1,17 +1,12 @@
 import { useState, useEffect } from 'react';
 import { StudyMaterial, Flashcard, FlashcardReview, User, YouTubeVideo, Article } from '@/entities/all';
-import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import {
   BookOpen,
   FileText,
@@ -38,11 +33,7 @@ import {
   Grid3x3,
   List,
   LayoutGrid,
-  BookUser,
-  ChevronRight,
-  ChevronDown,
-  Folder,
-  Check } from
+  BookUser } from
 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -53,8 +44,6 @@ import FlashcardReviewer from '../components/flashcards/FlashcardReviewer';
 import FlashcardStats from '../components/flashcards/FlashcardStats';
 import FlashcardLibrary from '../components/flashcards/FlashcardLibrary';
 import EnhancedArticleReader from '../components/reading/EnhancedArticleReader';
-import CommunityPage from './Community';
-import ScheduleAIGenerator from '../components/studies/ScheduleAIGenerator';
 
 const cargoOptions = [
 { value: "all", label: "Todos os Cargos" },
@@ -135,28 +124,6 @@ const LAYOUT_MODES = {
 };
 
 export default function StudiesPage() {
-  // Custom Courses State
-  const [userCourses, setUserCourses] = useState([]);
-  const [userCourseItems, setUserCourseItems] = useState([]);
-  const [showCreateCourseModal, setShowCreateCourseModal] = useState(false);
-  const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [newCourseForm, setNewCourseForm] = useState({ title: '', description: '', is_public: false });
-  const [newItemForm, setNewItemForm] = useState({ title: '', description: '', type: 'video', content_url: '', file: null });
-  const [isUploading, setIsUploading] = useState(false);
-
-  // Course State
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [courseViewMode, setCourseViewMode] = useState(() => {
-    return localStorage.getItem('courseViewMode') || 'grid';
-  });
-  const [courseTab, setCourseTab] = useState('conteudo');
-  const [contentSubTab, setContentSubTab] = useState('videoaula');
-  const [contentSearch, setContentSearch] = useState('');
-  const [forumSubTab, setForumSubTab] = useState('videoaula');
-  const [forumFilter, setForumFilter] = useState('todas');
-  const [forumScope, setForumScope] = useState('todas_perguntas');
-  const [forumSearch, setForumSearch] = useState('');
-
   // State for Study Materials
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
@@ -169,7 +136,7 @@ export default function StudiesPage() {
   });
 
   // New Windows 11 Explorer-style navigation
-  const [navigationPath, setNavigationPath] = useState(['Meus Cursos']);
+  const [navigationPath, setNavigationPath] = useState(['Área de Estudos']);
   const [currentView, setCurrentView] = useState('root'); // 'root', 'subject', 'type'
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -220,10 +187,6 @@ export default function StudiesPage() {
   }, [materialViewMode]);
 
   useEffect(() => {
-    localStorage.setItem('courseViewMode', courseViewMode);
-  }, [courseViewMode]);
-
-  useEffect(() => {
     localStorage.setItem('articleViewMode', articleViewMode);
   }, [articleViewMode]);
 
@@ -238,7 +201,6 @@ export default function StudiesPage() {
   // General State
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-  const [canCreateCourse, setCanCreateCourse] = useState(false);
 
   const loadAllData = async () => {
     setIsLoading(true);
@@ -261,20 +223,6 @@ export default function StudiesPage() {
       // Process Flashcards
       setFlashcards(flashcardsData);
       setReviews(reviewsData);
-
-      // Check permissions
-      const isAdmin = user.email === 'conectadoemconcursos@gmail.com';
-      const isPremium = user.current_plan === 'avancado';
-      const creatorPerms = await base44.entities.CourseCreatorPermission.filter({ user_email: user.email });
-      setCanCreateCourse(isAdmin || isPremium || creatorPerms.length > 0);
-
-      const allCustomCourses = await base44.entities.UserCourse.list();
-      const visibleCourses = allCustomCourses.filter(c => c.user_email === user.email || c.is_public);
-      setUserCourses(visibleCourses);
-      
-      const allCustomItems = await base44.entities.UserCourseItem.list();
-      const visibleItems = allCustomItems.filter(i => visibleCourses.some(c => c.id === i.course_id));
-      setUserCourseItems(visibleItems);
 
       // Process Videos
       setVideos(videosData.sort((a, b) => (a.order || 0) - (b.order || 0)));
@@ -313,14 +261,14 @@ export default function StudiesPage() {
 
   useEffect(() => {
     loadAllData();
-
+    
     // Check URL parameters for tab
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
     if (tab === 'english') {
-
       // Tab will be handled by Tabs component defaultValue
-    }}, []);
+    }
+  }, []);
 
   useEffect(() => {
     const filterMaterials = () => {
@@ -341,7 +289,7 @@ export default function StudiesPage() {
       if (searchTerm.trim()) {
         const search = searchTerm.toLowerCase();
         filtered = filtered.filter((material) =>
-        material.title?.toLowerCase().includes(search) ||
+        material.title.toLowerCase().includes(search) ||
         material.description?.toLowerCase().includes(search) ||
         subjectNames[material.subject]?.toLowerCase().includes(search)
         );
@@ -358,21 +306,21 @@ export default function StudiesPage() {
     setSelectedSubject(subject);
     setSelectedType(null);
     setCurrentView('subject');
-    setNavigationPath(['Meus Cursos', subjectNames[subject]]);
+    setNavigationPath(['Área de Estudos', subjectNames[subject]]);
   };
 
   const handleNavigateToType = (type) => {
     setSelectedType(type);
     setSelectedSubject(null);
     setCurrentView('type');
-    setNavigationPath(['Meus Cursos', typeNames[type]]);
+    setNavigationPath(['Área de Estudos', typeNames[type]]);
   };
 
   const handleNavigateToRoot = () => {
     setSelectedSubject(null);
     setSelectedType(null);
     setCurrentView('root');
-    setNavigationPath(['Meus Cursos']);
+    setNavigationPath(['Área de Estudos']);
   };
 
   const handleBreadcrumbClick = (index) => {
@@ -382,8 +330,8 @@ export default function StudiesPage() {
   };
 
   // Get unique subjects and types from materials
-  const availableSubjects = [...new Set(materials.map((m) => m.subject))].filter(Boolean);
-  const availableTypes = [...new Set(materials.map((m) => m.type))].filter(Boolean);
+  const availableSubjects = [...new Set(materials.map(m => m.subject))].filter(Boolean);
+  const availableTypes = [...new Set(materials.map(m => m.type))].filter(Boolean);
 
   useEffect(() => {
     let filtered = [...articles];
@@ -416,7 +364,7 @@ export default function StudiesPage() {
     if (videoSearchTerm.trim()) {
       const search = videoSearchTerm.toLowerCase();
       filtered = filtered.filter((video) =>
-      video.title?.toLowerCase().includes(search) ||
+      video.title.toLowerCase().includes(search) ||
       video.description?.toLowerCase().includes(search) ||
       video.instructor?.toLowerCase().includes(search) ||
       video.topic?.toLowerCase().includes(search)
@@ -475,16 +423,9 @@ export default function StudiesPage() {
   const isAdmin = currentUser && currentUser.email === 'conectadoemconcursos@gmail.com';
 
   const extractYouTubeId = (url) => {
-    if (!url) return null;
-    if (url.length === 11 && !url.includes('youtube') && !url.includes('youtu.be')) return url;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
-  const getSafeVideoId = (video) => {
-    if (!video) return null;
-    return extractYouTubeId(video.video_id) || extractYouTubeId(video.youtube_url) || video.video_id;
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
   const handlePlayVideo = (video) => {
@@ -654,150 +595,19 @@ ${videoNotes}
   const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
   const totalArticlePages = Math.ceil(filteredArticles.length / articlesPerPage);
 
-  const getCourseProgress = (courseId) => {
-    const items = userCourseItems.filter(i => i.course_id === courseId);
-    if (items.length === 0) return 0;
-    const completed = items.filter(i => i.completed_by?.includes(currentUser?.email)).length;
-    return (completed / items.length) * 100;
-  };
-
-  const toggleItemCompletion = async (item) => {
-    const completedBy = item.completed_by || [];
-    const isCompleted = completedBy.includes(currentUser.email);
-    let newCompletedBy;
-    
-    if (isCompleted) {
-      newCompletedBy = completedBy.filter(email => email !== currentUser.email);
-    } else {
-      newCompletedBy = [...completedBy, currentUser.email];
-    }
-
-    await base44.entities.UserCourseItem.update(item.id, { completed_by: newCompletedBy });
-    
-    const newItems = userCourseItems.map(i => i.id === item.id ? { ...i, completed_by: newCompletedBy } : i);
-    setUserCourseItems(newItems);
-  };
-
-  const handleCreateCourse = async () => {
-    const myCoursesCount = userCourses.filter(c => c.user_email === currentUser?.email).length;
-    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com';
-    
-    if (!isAdminUser && myCoursesCount >= 10) {
-      alert("Você atingiu o limite de 10 pastas personalizadas.");
-      return;
-    }
-
-    try {
-      const newCourse = await base44.entities.UserCourse.create({
-        user_email: currentUser.email,
-        title: newCourseForm.title,
-        description: newCourseForm.description,
-        is_public: newCourseForm.is_public
-      });
-      setUserCourses([...userCourses, newCourse]);
-      setShowCreateCourseModal(false);
-      setNewCourseForm({ title: '', description: '', is_public: false });
-    } catch (e) { console.error(e); }
-  };
-
-  const handleCreateCourseItem = async () => {
-    const isAdminUser = currentUser?.email === 'conectadoemconcursos@gmail.com';
-    
-    // Check limits if not admin
-    if (!isAdminUser) {
-      const currentItems = userCourseItems.filter(i => i.course_id === selectedCourse.id);
-      const videosCount = currentItems.filter(i => i.type === 'video').length;
-      const pdfsCount = currentItems.filter(i => i.type === 'pdf').length;
-
-      if (newItemForm.type === 'video' && videosCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 videoaulas por curso.");
-        return;
-      }
-      if (newItemForm.type === 'pdf' && pdfsCount >= 10) {
-        alert("Limite atingido: Você só pode adicionar até 10 PDFs por curso.");
-        return;
-      }
-    }
-
-    setIsUploading(true);
-    try {
-      let finalUrl = newItemForm.content_url;
-      if (newItemForm.type === 'pdf' && newItemForm.file) {
-        const res = await base44.integrations.Core.UploadFile({ file: newItemForm.file });
-        finalUrl = res.file_url;
-      }
-      const newItem = await base44.entities.UserCourseItem.create({
-        course_id: selectedCourse.id,
-        user_email: currentUser.email,
-        title: newItemForm.title,
-        description: newItemForm.description,
-        type: newItemForm.type,
-        content_url: finalUrl,
-        completed_by: []
-      });
-      const newItems = [...userCourseItems, newItem];
-      setUserCourseItems(newItems);
-      setShowAddItemModal(false);
-      setNewItemForm({ title: '', description: '', type: 'video', content_url: '', file: null });
-    } catch (e) {
-      console.error(e);
-      alert("Erro ao adicionar material.");
-    }
-    setIsUploading(false);
-  };
-
-  const handleDeleteCourse = async (courseId) => {
-    if (!window.confirm("Tem certeza que deseja excluir este curso?")) return;
-    try {
-      await base44.entities.UserCourse.delete(courseId);
-      setUserCourses(userCourses.filter(c => c.id !== courseId));
-      setSelectedCourse(null);
-    } catch(e) { console.error(e); }
-  };
-
-  const handleDeleteCourseItem = async (itemId) => {
-    if (!window.confirm("Tem certeza que deseja excluir este material?")) return;
-    try {
-      await base44.entities.UserCourseItem.delete(itemId);
-      const newItems = userCourseItems.filter(i => i.id !== itemId);
-      setUserCourseItems(newItems);
-      updateCourseProgress(selectedCourse.id, newItems);
-    } catch(e) { console.error(e); }
-  };
-
-  const handleOpenCustomItem = (item) => {
-    if (item.type === 'video') {
-      handlePlayVideo({
-        id: item.id,
-        title: item.title,
-        video_id: item.content_url,
-        description: item.description,
-        subject: selectedCourse.title
-      });
-    } else {
-      setSelectedMaterial({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        file_url: item.content_url,
-        file_type: item.type === 'pdf' ? 'pdf' : 'text'
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <RefreshCw className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando seus cursos...</p>
+            <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Carregando área de estudos...</p>
           </div>
         </div>);
 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -806,10 +616,10 @@ ${videoNotes}
 
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-              <BookUser className="w-8 h-8" /> Meus Cursos
+              <BookUser className="w-8 h-8" /> Área de Estudos
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Seus materiais, resumos e videoaulas organizados por curso.
+              Seus materiais, resumos e flashcards, tudo em um só lugar.
             </p>
           </div>
           {isAdmin &&
@@ -823,385 +633,1007 @@ ${videoNotes}
           }
         </motion.div>
 
-        {!selectedCourse ? (
-          <div className="space-y-10">
-            <div>
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-2 gap-4">
-                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Folder className="w-5 h-5 text-blue-600" fill="currentColor" /> Pastas de Materiais de Estudo Personalizadas</h2>
-                 <div className="flex items-center gap-3">
-                   <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                     <Button
-                       variant="ghost"
-                       size="sm"
-                       onClick={() => setCourseViewMode('grid')}
-                       className={`px-2 py-1 h-auto ${courseViewMode === 'grid' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}
-                     >
-                       <LayoutGrid className="w-4 h-4" />
-                     </Button>
-                     <Button
-                       variant="ghost"
-                       size="sm"
-                       onClick={() => setCourseViewMode('list')}
-                       className={`px-2 py-1 h-auto ${courseViewMode === 'list' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}
-                     >
-                       <List className="w-4 h-4" />
-                     </Button>
-                   </div>
-                   {canCreateCourse && (
-                     <Button onClick={() => setShowCreateCourseModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                       <Plus className="w-4 h-4 mr-2" /> Criar Pasta
-                     </Button>
-                   )}
-                 </div>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-                Se você aprende melhor com um material próprio ou um professor específico em determinada disciplina, pode reunir tudo em um só lugar — simples, organizado e totalmente personalizado para o seu método de aprendizagem. (Limite de 10 pastas)
-              </p>
-              <div className={courseViewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
-                {userCourses.length === 0 ? (
-                  <div className="col-span-full py-8 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                    <Folder className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
-                    <p className="text-gray-500 font-medium">Você ainda não criou nenhuma pasta.</p>
-                    <p className="text-sm text-gray-400 mt-1">Crie uma pasta para organizar seus próprios materiais.</p>
-                  </div>
-                ) : (
-                  userCourses.map(course => (
-                    <Card key={course.id} className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30 ${courseViewMode === 'list' ? 'flex flex-row items-center p-4' : ''}`} onClick={() => setSelectedCourse({...course, isCustom: true, label: course.title})}>
-                      {courseViewMode === 'grid' ? (
-                        <CardContent className="p-6 flex flex-col items-center text-center relative w-full">
-                          <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded-full">
-                            {Math.round(getCourseProgress(course.id))}%
-                          </div>
-                          <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                            <Folder className="w-8 h-8" fill="currentColor" />
-                          </div>
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{course.title}</h3>
-                          {course.is_public && <Badge variant="secondary" className="mt-2 bg-blue-100 text-blue-700 hover:bg-blue-100">Público</Badge>}
-                          <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description || "Pasta de materiais personalizada"}</p>
-                        </CardContent>
-                      ) : (
-                        <div className="flex items-center w-full gap-4">
-                          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-400">
-                            <Folder className="w-6 h-6" fill="currentColor" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h3 className="text-base font-bold text-gray-900 dark:text-white truncate">{course.title}</h3>
-                              {course.is_public && <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100 h-5 text-[10px] px-1.5">Público</Badge>}
-                            </div>
-                            <p className="text-sm text-gray-500 truncate">{course.description || "Pasta de materiais personalizada"}</p>
-                          </div>
-                          <div className="flex-shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold px-3 py-1.5 rounded-full">
-                            {Math.round(getCourseProgress(course.id))}% concluído
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  ))
-                )}
-              </div>
-            </div>
+        <Tabs defaultValue="materials" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="materials" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Materiais
+            </TabsTrigger>
+            <TabsTrigger value="articles" className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Artigos
+            </TabsTrigger>
+            <TabsTrigger value="videos" className="flex items-center gap-2">
+              <Play className="w-4 h-4" />
+              Vídeo-Aulas
+            </TabsTrigger>
+            <TabsTrigger value="flashcards" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              Flashcards
+            </TabsTrigger>
+          </TabsList>
 
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cursos</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {cargoOptions.filter(c => c.value !== 'all' && c.value !== 'materiais_questoes').map(cargo => (
-                  <Card key={cargo.value} className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" onClick={() => {
-                      setSelectedCourse(cargo);
-                      setSelectedCargo(cargo.value);
-                  }}>
-                    <CardContent className="p-6 flex flex-col items-center text-center">
-                      <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mb-4 text-gray-600 dark:text-gray-300">
-                        <BookOpen className="w-8 h-8" />
+          <TabsContent value="materials" className="mt-6">
+            {/* Uploader - apenas para admin */}
+            {showUploader && isAdmin &&
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8">
+
+                <StudyMaterialUploader
+                onMaterialUploaded={loadAllData}
+                onCancel={() => setShowUploader(false)} />
+
+              </motion.div>
+            }
+
+            {/* Windows 11 Explorer Style */}
+            <div className="flex flex-col lg:flex-row gap-4 mb-6">
+              {/* Sidebar - Estilo Windows 11 */}
+              <Card className="lg:w-64 flex-shrink-0">
+                <CardContent className="p-4">
+                  <div className="space-y-1">
+                    <button
+                      onClick={handleNavigateToRoot}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                        currentView === 'root' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }`}>
+                      <BookOpen className="w-4 h-4" />
+                      Todos os Materiais
+                    </button>
+
+                    <div className="pt-3 pb-2 px-3">
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Disciplinas
+                      </p>
+                    </div>
+                    {availableSubjects.map((subject) => (
+                      <button
+                        key={subject}
+                        onClick={() => handleNavigateToSubject(subject)}
+                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                          selectedSubject === subject ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}>
+                        <FileText className="w-4 h-4" />
+                        {subjectNames[subject] || subject}
+                      </button>
+                    ))}
+
+                    <div className="pt-3 pb-2 px-3">
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Tipos de Material
+                      </p>
+                    </div>
+                    {availableTypes.map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => handleNavigateToType(type)}
+                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                          selectedType === type ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}>
+                        <FileText className="w-4 h-4" />
+                        {typeNames[type]}
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Main Content Area */}
+              <div className="flex-1">
+                {/* Top Bar com Breadcrumbs e Controles */}
+                <Card className="mb-4">
+                  <CardContent className="p-4">
+                    {/* Breadcrumbs */}
+                    <div className="flex items-center gap-2 text-sm mb-4">
+                      {navigationPath.map((path, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleBreadcrumbClick(index)}
+                            className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
+                              index === navigationPath.length - 1 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'
+                            }`}>
+                            {path}
+                          </button>
+                          {index < navigationPath.length - 1 && (
+                            <span className="text-gray-400">/</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      {/* Search Bar */}
+                      <div className="relative flex-1 w-full sm:w-auto">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Input
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          placeholder="Buscar em Materiais..."
+                          className="pl-10 w-full" />
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">{cargo.label}</h3>
-                      <p className="text-sm text-gray-500 mt-2">Acessar conteúdo do curso</p>
-                    </CardContent>
-                  </Card>
+
+                      {/* View Controls */}
+                      <div className="flex items-center gap-2">
+                        <Select value={selectedCargo} onValueChange={setSelectedCargo}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Filtrar por cargo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cargoOptions.map((cargo) =>
+                            <SelectItem key={cargo.value} value={cargo.value}>
+                                {cargo.label}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex items-center gap-1 border rounded-lg p-1">
+                          <Button
+                            variant={materialViewMode === 'grid' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setMaterialViewMode('grid')}
+                            className="h-8 px-2">
+                            <Grid3x3 className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant={materialViewMode === 'list' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setMaterialViewMode('list')}
+                            className="h-8 px-2">
+                            <List className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant={materialViewMode === 'compact' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setMaterialViewMode('compact')}
+                            className="h-8 px-2">
+                            <LayoutGrid className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+            {/* Root View - Folders */}
+            {currentView === 'root' && !searchTerm && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Disciplinas
+                </h3>
+                {availableSubjects.map((subject) => (
+                  <motion.div
+                    key={subject}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="cursor-pointer"
+                    onClick={() => handleNavigateToSubject(subject)}>
+                    <Card className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
+                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
+                          <FileText className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
+                          {subjectNames[subject]}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {materials.filter(m => m.subject === subject).length} materiais
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+
+                <h3 className="col-span-full text-lg font-semibold text-gray-900 dark:text-white mb-2 mt-6">
+                  Tipos de Material
+                </h3>
+                {availableTypes.map((type) => (
+                  <motion.div
+                    key={type}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="cursor-pointer"
+                    onClick={() => handleNavigateToType(type)}>
+                    <Card className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4 flex flex-col items-center text-center gap-2">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center shadow-md">
+                          <FileText className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
+                          {typeNames[type]}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {materials.filter(m => m.type === type).length} materiais
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
-            <div className="flex items-center gap-4 px-6 pt-6 pb-2">
-               <Button variant="ghost" onClick={() => {
-                   setSelectedCourse(null);
-                   setSelectedCargo('all');
-               }} className="text-gray-500 hover:text-gray-900 dark:hover:text-white -ml-4">
-                 <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
-               </Button>
-               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCourse.label}</h2>
-            </div>
-            
-            <Tabs value={courseTab} onValueChange={setCourseTab} className="w-full">
-              <TabsList className="flex border-b border-gray-200 dark:border-gray-800 bg-transparent h-auto p-0 px-6 space-x-8 rounded-none overflow-x-auto justify-start">
-                <TabsTrigger value="painel" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                  Painel
-                </TabsTrigger>
-                <TabsTrigger value="conteudo" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                  Conteúdo
-                </TabsTrigger>
-                <TabsTrigger value="cronograma" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                  Cronograma
-                </TabsTrigger>
-                <TabsTrigger value="forum" className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                  Fórum de dúvidas
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="painel" className="p-6 min-h-[400px]">
-                <div className="bg-gray-50 dark:bg-gray-800/50 p-8 rounded-xl border border-gray-200 dark:border-gray-700 text-center flex flex-col items-center justify-center h-64">
-                   <BarChart3 className="w-12 h-12 text-gray-400 mb-4" />
-                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Painel de Estatísticas</h3>
-                   <p className="text-gray-500 dark:text-gray-400 max-w-md">O progresso e as estatísticas do seu curso estarão disponíveis em breve nesta seção.</p>
-                </div>
-              </TabsContent>
+            )}
 
-              <TabsContent value="cronograma" className="p-6 min-h-[400px]">
-                <ScheduleAIGenerator course={selectedCourse} />
-              </TabsContent>
+            {/* Materials List - Shown when filtering or in subject/type view */}
+            {(currentView !== 'root' || searchTerm) && (
+              <div>
+              {filteredMaterials.length === 0 ?
+              <Card className="text-center py-12">
+                  <CardContent className="space-y-4">
+                    <BookOpen className="w-16 h-16 mx-auto text-gray-400" />
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      Nenhum material encontrado
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Tente ajustar os filtros de busca
+                    </p>
+                  </CardContent>
+                </Card> :
 
-              <TabsContent value="forum" className="mt-0 min-h-[500px]">
-                <CommunityPage embedded={true} />
-              </TabsContent>
-              
-              <TabsContent value="conteudo" className="p-6">
-                {selectedCourse.isCustom ? (
-                  <div className="space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiais do Curso</h3>
-                      {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                        <div className="flex flex-wrap gap-2">
-                          <Button variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => handleDeleteCourse(selectedCourse.id)}>
-                            <Trash2 className="w-4 h-4 mr-2" /> Excluir Curso
-                          </Button>
-                          <Button onClick={() => setShowAddItemModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                            <Plus className="w-4 h-4 mr-2" /> Adicionar Material
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+              <div className={
+              materialViewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6' :
+              materialViewMode === 'list' ? 'space-y-4' :
+              'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4'
+              }>
+                  {filteredMaterials.map((material, index) =>
+                <motion.div
+                  key={material.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="min-w-0 overflow-hidden">
 
-                    <div className="space-y-3">
-                      {userCourseItems.filter(item => item.course_id === selectedCourse.id).length === 0 ? (
-                        <div className="py-12 text-center bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                          <BookOpen className="w-12 h-12 mx-auto text-gray-400 mb-3 opacity-50" />
-                          <p className="text-gray-500 font-medium">Nenhum material adicionado a este curso ainda.</p>
-                          <Button onClick={() => setShowAddItemModal(true)} variant="link" className="text-blue-600 mt-2">Clique aqui para adicionar</Button>
-                        </div>
-                      ) : (
-                        userCourseItems.filter(item => item.course_id === selectedCourse.id).map(item => (
-                          <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm gap-4 hover:border-blue-300 transition-colors group">
-                            <div className="flex items-center gap-4 flex-1 w-full">
-                              <button onClick={() => toggleItemCompletion(item)} className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.completed_by?.includes(currentUser?.email) ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-gray-400 dark:border-gray-600'}`}>
-                                {item.completed_by?.includes(currentUser?.email) && <Check className="w-4 h-4" />}
-                              </button>
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                                {item.type === 'video' ? <Play className="w-4 h-4 ml-0.5" fill="currentColor" /> : <FileText className="w-4 h-4" />}
+                      {materialViewMode === 'list' ?
+                  <Card className="shadow hover:shadow-lg transition-all cursor-pointer overflow-hidden"
+                  onClick={() => handleMaterialClick(material)}>
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-4 overflow-hidden">
+                              <div className="flex-shrink-0">
+                                {material.file_type === 'pdf' ?
+                          <FileText className="w-12 h-12 text-red-500" /> :
+
+                          <Eye className="w-12 h-12 text-blue-500" />
+                          }
                               </div>
-                              <div className="flex-1 min-w-0" onClick={() => handleOpenCustomItem(item)}>
-                                <h4 className="font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">{item.title}</h4>
-                                {item.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{item.description}</p>}
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                                  {material.title}
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                                  {material.description}
+                                </p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  <Badge className={typeColors[material.type]} size="sm">
+                                    {typeNames[material.type]}
+                                  </Badge>
+                                  <Badge variant="outline" size="sm">
+                                    {subjectNames[material.subject]}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                {isAdmin &&
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteMaterial(e, material.id)}>
+
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                          }
+                                <Button
+                            size="sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMaterialClick(material);
+                            }}>
+
+                                  Ver
+                                </Button>
                               </div>
                             </div>
-                            {(isAdmin || selectedCourse.user_email === currentUser?.email) && (
-                              <Button variant="ghost" size="icon" onClick={() => handleDeleteCourseItem(item.id)} className="flex-shrink-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                <div className="space-y-6">
-                  {/* Pills */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button onClick={() => setContentSubTab('videoaula')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${contentSubTab === 'videoaula' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'}`}>
-                      <Play className="w-4 h-4" fill={contentSubTab === 'videoaula' ? 'currentColor' : 'none'} />
-                      Videoaula
-                    </button>
-                    <button onClick={() => setContentSubTab('pdf')} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${contentSubTab === 'pdf' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'}`}>
-                      PDF
-                    </button>
-                    <button onClick={() => setContentSubTab('outros')} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${contentSubTab === 'outros' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'}`}>
-                      Outros materiais
-                    </button>
-                    <button onClick={() => setContentSubTab('notificacoes')} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${contentSubTab === 'notificacoes' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'}`}>
-                      Notificações
-                    </button>
-                  </div>
+                          </CardContent>
+                        </Card> :
 
-                  {/* Filters */}
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                    <div className="relative flex-1 max-w-md">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      <Input 
-                        placeholder="Pesquisar" 
-                        value={contentSearch}
-                        onChange={(e) => setContentSearch(e.target.value)}
-                        className="pl-9 h-10 w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                      />
-                    </div>
+                  <Card className="shadow hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden"
+                  onClick={() => handleMaterialClick(material)}>
+                          <CardHeader className={materialViewMode === 'compact' ? 'p-2' : 'flex-grow p-4'}>
+                            <div className="flex justify-between items-start gap-1 min-w-0">
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                <CardTitle className={`text-gray-900 dark:text-white line-clamp-2 break-words ${materialViewMode === 'compact' ? 'text-xs leading-tight' : 'text-lg'}`}>
+                                  {material.title}
+                                </CardTitle>
+                                {materialViewMode === 'grid' && material.description &&
+                          <p className="text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 text-sm break-words">
+                                    {material.description}
+                                  </p>
+                          }
+                              </div>
+                              <div className="flex-shrink-0">
+                                {material.file_type === 'pdf' ?
+                          <FileText className={`text-red-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} /> :
+
+                          <Eye className={`text-blue-500 ${materialViewMode === 'compact' ? 'w-4 h-4' : 'w-8 h-8'}`} />
+                          }
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className={`flex flex-col justify-end min-w-0 ${materialViewMode === 'compact' ? 'p-2 pt-0' : 'p-4 pt-0'}`}>
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex flex-wrap gap-1 min-w-0">
+                                <Badge className={`${typeColors[material.type]} ${materialViewMode === 'compact' ? 'text-[10px] px-1 py-0' : 'text-xs'} truncate max-w-full`}>
+                                  {typeNames[material.type]}
+                                </Badge>
+                                {materialViewMode !== 'compact' &&
+                                <Badge variant="outline" className="text-xs truncate max-w-full">
+                                  {subjectNames[material.subject]}
+                                </Badge>
+                                }
+                              </div>
+                              {materialViewMode !== 'compact' &&
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                  <span className="font-medium">
+                                    {cargoOptions.find((c) => c.value === material.cargo)?.label}
+                                  </span>
+                                </div>
+                        }
+                              <div className={`flex items-center pt-1 min-w-0 ${materialViewMode === 'compact' ? 'justify-center' : 'justify-between'}`}>
+                                {materialViewMode !== 'compact' &&
+                          <span className="text-xs text-gray-400 truncate flex-1 min-w-0 mr-2">
+                                    {material.file_name}
+                                  </span>
+                          }
+                                <div className={`flex items-center gap-1 flex-shrink-0 ${materialViewMode === 'compact' ? 'w-full justify-center' : ''}`}>
+                                  {isAdmin && materialViewMode !== 'compact' &&
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => handleDeleteMaterial(e, material.id)}>
+
+                                      <Trash2 className="w-3 h-3 text-red-500" />
+                                    </Button>
+                            }
+                                  <Button
+                              size="sm"
+                              className={`bg-indigo-600 hover:bg-indigo-700 text-white ${materialViewMode === 'compact' ? 'text-[10px] h-6 px-2' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleMaterialClick(material);
+                              }}>
+
+                                    <Eye className={`${materialViewMode === 'compact' ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'}`} />
+                                    {materialViewMode !== 'compact' && 'Ver'}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                  }
+                    </motion.div>
+                )}
+                </div>
+              }
+              </div>
+            )}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="articles" className="mt-6">
+            <div className="mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Artigos de Estudo</h2>
+               <div className="flex items-center gap-1">
+                 <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 hidden sm:inline">Visualização:</span>
+                 <Button
+                    variant={articleViewMode === 'grid' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('grid')}
+                    className={`h-8 px-2 ${articleViewMode === 'grid' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
+                   <Grid3x3 className="w-3 h-3" />
+                 </Button>
+                 <Button
+                    variant={articleViewMode === 'list' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('list')}
+                    className={`h-8 px-2 ${articleViewMode === 'list' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
+                   <List className="w-3 h-3" />
+                 </Button>
+                 <Button
+                    variant={articleViewMode === 'compact' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setArticleViewMode('compact')}
+                    className={`h-8 px-2 ${articleViewMode === 'compact' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}>
+
+                   <LayoutGrid className="w-3 h-3" />
+                 </Button>
+               </div>
+              </div>
+              
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                <Select value={selectedArticleSubject} onValueChange={(value) => {
+                  setSelectedArticleSubject(value);
+                  setCurrentArticlePage(1);
+                }}>
+                  <SelectTrigger className="w-full md:w-64">
+                    <SelectValue placeholder="Filtrar por disciplina" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as Disciplinas</SelectItem>
+                    {Object.entries(subjectNames).map(([key, label]) =>
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={articleSearchTerm}
+                    onChange={(e) => {
+                      setArticleSearchTerm(e.target.value);
+                      setCurrentArticlePage(1);
+                    }}
+                    placeholder="Buscar artigos por título, assunto..."
+                    className="pl-10" />
+
+                </div>
+                
+                <Badge variant="secondary" className="text-sm">
+                  {filteredArticles.length} {filteredArticles.length === 1 ? 'artigo' : 'artigos'}
+                </Badge>
+              </div>
+            </div>
+
+            {filteredArticles.length === 0 ?
+            <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <BookOpen className="w-16 h-16 text-gray-400 mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Nenhum artigo disponível {selectedArticleSubject !== 'all' ? 'para esta disciplina' : 'no momento'}.
+                  </p>
+                </CardContent>
+              </Card> :
+
+            <>
+                <div className={
+              articleViewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' :
+              articleViewMode === 'list' ? 'space-y-4' :
+              'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3'
+              }>
+                  {currentArticles.map((article, index) =>
+                <motion.div
+                  key={article.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}>
+
+                      {articleViewMode === 'list' ?
+                  <Card
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() => handleArticleClick(article)}>
+
+                          <CardContent className="p-4">
+                            <div className="flex gap-4">
+                              {article.cover_image_url &&
+                        <div className="w-32 h-24 flex-shrink-0 rounded overflow-hidden">
+                                  <img
+                            src={article.cover_image_url}
+                            alt={article.title}
+                            className="w-full h-full object-cover" />
+
+                                </div>
+                        }
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                  <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 text-xs">
+                                    {subjectNames[article.subject] || article.subject}
+                                  </Badge>
+                                  {article.topic &&
+                            <Badge variant="outline" className="text-xs">
+                                      {article.topic}
+                                    </Badge>
+                            }
+                                  {article.is_featured &&
+                            <Badge className="bg-yellow-100 text-yellow-800 text-xs">⭐</Badge>
+                            }
+                                </div>
+                                <h3 className="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-1 line-clamp-1">
+                                  {article.title}
+                                </h3>
+                                {article.summary &&
+                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    {article.summary}
+                                  </p>
+                          }
+                                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                  {article.reading_time &&
+                            <span className="flex items-center gap-1">
+                                      <Timer className="w-3 h-3" />
+                                      {article.reading_time} min
+                                    </span>
+                            }
+                                  {article.views_count > 0 &&
+                            <span className="flex items-center gap-1">
+                                      <Eye className="w-3 h-3" />
+                                      {article.views_count}
+                                    </span>
+                            }
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card> :
+
+                  <Card
+                    className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col"
+                    onClick={() => handleArticleClick(article)}>
+
+                          {article.cover_image_url &&
+                    <div className={articleViewMode === 'compact' ? 'h-24' : 'h-32'}>
+                              <img
+                        src={article.cover_image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover" />
+
+                            </div>
+                    }
+                          <CardHeader className={`flex-grow ${articleViewMode === 'compact' ? 'p-2' : 'p-3'}`}>
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              <Badge className={`bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
+                                {subjectNames[article.subject] || article.subject}
+                              </Badge>
+                              {article.topic && articleViewMode !== 'compact' &&
+                        <Badge variant="outline" className="text-xs">
+                                  {article.topic}
+                                </Badge>
+                        }
+                              {article.is_featured &&
+                        <Badge className={`bg-yellow-100 text-yellow-800 ${articleViewMode === 'compact' ? 'text-[10px] px-1' : 'text-xs'}`}>
+                                  ⭐
+                                </Badge>
+                        }
+                            </div>
+                            <CardTitle className={`line-clamp-2 ${articleViewMode === 'compact' ? 'text-xs' : 'text-sm'}`}>
+                              {article.title}
+                            </CardTitle>
+                            {article.summary && articleViewMode !== 'compact' &&
+                      <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                                {article.summary}
+                              </p>
+                      }
+                          </CardHeader>
+                          <CardContent className={articleViewMode === 'compact' ? 'p-2 pt-0' : 'p-3 pt-0'}>
+                            <div className={`flex items-center justify-between text-gray-500 dark:text-gray-400 ${articleViewMode === 'compact' ? 'text-[10px]' : 'text-xs'}`}>
+                              {article.reading_time &&
+                        <span className="flex items-center gap-1">
+                                  <Timer className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
+                                  {article.reading_time} min
+                                </span>
+                        }
+                              {article.views_count > 0 &&
+                        <span className="flex items-center gap-1">
+                                  <Eye className={articleViewMode === 'compact' ? 'w-2 h-2' : 'w-3 h-3'} />
+                                  {article.views_count}
+                                </span>
+                        }
+                            </div>
+                          </CardContent>
+                        </Card>
+                  }
+                    </motion.div>
+                )}
+                </div>
+
+                {/* Pagination */}
+                {totalArticlePages > 1 &&
+              <div className="mt-8 flex justify-center items-center gap-2">
+                    <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentArticlePage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentArticlePage === 1}>
+
+                      Anterior
+                    </Button>
                     
-                    <div className="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors">
-                        Disciplinas <ChevronDown className="w-4 h-4" />
-                      </div>
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors">
-                        Professores <ChevronDown className="w-4 h-4" />
-                      </div>
+                    <div className="flex gap-1">
+                      {Array.from({ length: Math.min(5, totalArticlePages) }, (_, i) => {
+                    let pageNum;
+                    if (totalArticlePages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentArticlePage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentArticlePage >= totalArticlePages - 2) {
+                      pageNum = totalArticlePages - 4 + i;
+                    } else {
+                      pageNum = currentArticlePage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={i}
+                        variant={currentArticlePage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentArticlePage(pageNum)}
+                        className="w-10">
+
+                            {pageNum}
+                          </Button>);
+
+                  })}
                     </div>
+
+                    <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentArticlePage((prev) => Math.min(totalArticlePages, prev + 1))}
+                  disabled={currentArticlePage === totalArticlePages}>
+
+                      Próxima
+                    </Button>
                   </div>
+              }
 
-                  {/* Content List */}
-                  <div className="mt-6">
-                    {contentSubTab === 'videoaula' && (
-                      <Accordion type="multiple" className="w-full space-y-3">
-                        {Object.entries(
-                          filteredVideos.filter(v => !contentSearch.trim() || v.title?.toLowerCase().includes(contentSearch.toLowerCase()) || v.instructor?.toLowerCase().includes(contentSearch.toLowerCase()))
-                          .reduce((acc, v) => {
-                            const subj = subjectNames[v.subject] || v.subject || 'Outros';
-                            if (!acc[subj]) acc[subj] = [];
-                            acc[subj].push(v);
-                            return acc;
-                          }, {})
-                        ).map(([subject, subjectVideos], idx) => (
-                          <AccordionItem key={idx} value={`subject-${idx}`} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden">
-                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                              <div className="flex items-center justify-between w-full pr-4">
-                                <span className="font-semibold text-gray-900 dark:text-white text-base">{subject}</span>
-                                <span className="text-sm font-medium text-blue-600 dark:text-blue-400 border-b border-blue-600 dark:border-blue-400 pb-0.5">
-                                  {Math.floor(Math.random() * 80) + 10}% concluído
-                                </span>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="pt-0 pb-4 px-5">
-                               <div className="space-y-2 mt-2">
-                                 {subjectVideos.map(video => (
-                                    <div key={video.id} onClick={() => handlePlayVideo(video)} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 cursor-pointer transition-all group">
-                                       <div className="flex items-center gap-4">
-                                         <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors flex-shrink-0">
-                                           <Play className="w-4 h-4 ml-0.5" fill="currentColor" />
-                                         </div>
-                                         <div>
-                                           <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{video.title}</p>
-                                           <div className="flex items-center gap-3 mt-1">
-                                             {video.duration && <p className="text-xs text-gray-500 flex items-center gap-1"><Timer className="w-3 h-3" /> {video.duration}</p>}
-                                             {video.instructor && <p className="text-xs text-gray-500 flex items-center gap-1"><UserIcon className="w-3 h-3" /> Prof. {video.instructor}</p>}
-                                           </div>
-                                         </div>
-                                       </div>
-                                    </div>
-                                 ))}
-                               </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
-                    )}
-                    
-                    {contentSubTab === 'pdf' && (
-                      <Accordion type="multiple" className="w-full space-y-3">
-                        {Object.entries(
-                          filteredMaterials.filter(m => (m.file_type === 'pdf' || m.type === 'resumo') && (!contentSearch.trim() || m.title?.toLowerCase().includes(contentSearch.toLowerCase())))
-                          .reduce((acc, m) => {
-                            const subj = subjectNames[m.subject] || m.subject || 'Outros';
-                            if (!acc[subj]) acc[subj] = [];
-                            acc[subj].push(m);
-                            return acc;
-                          }, {})
-                        ).map(([subject, subjectItems], idx) => (
-                          <AccordionItem key={idx} value={`subject-${idx}`} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden">
-                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                              <div className="flex items-center justify-between w-full pr-4">
-                                <span className="font-semibold text-gray-900 dark:text-white text-base">{subject}</span>
-                                <span className="text-sm font-medium text-blue-600 dark:text-blue-400 border-b border-blue-600 dark:border-blue-400 pb-0.5">
-                                  {Math.floor(Math.random() * 80) + 10}% concluído
-                                </span>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="pt-0 pb-4 px-5">
-                               <div className="space-y-2 mt-2">
-                                 {subjectItems.map(item => (
-                                    <div key={item.id} onClick={() => handleMaterialClick(item)} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50/50 dark:hover:bg-red-900/20 cursor-pointer transition-all group">
-                                       <div className="flex items-center gap-4">
-                                         <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:bg-red-600 group-hover:text-white transition-colors flex-shrink-0">
-                                           <FileText className="w-4 h-4" />
-                                         </div>
-                                         <div>
-                                           <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{item.title}</p>
-                                           {item.description && <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{item.description}</p>}
-                                         </div>
-                                       </div>
-                                    </div>
-                                 ))}
-                               </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
-                    )}
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
+                  Página {currentArticlePage} de {totalArticlePages} • Mostrando {indexOfFirstArticle + 1}-{Math.min(indexOfLastArticle, filteredArticles.length)} de {filteredArticles.length} artigos
+                </div>
+              </>
+            }
+          </TabsContent>
 
-                    {contentSubTab === 'outros' && (
-                      <Accordion type="multiple" className="w-full space-y-3">
-                        {Object.entries(
-                          filteredMaterials.filter(m => m.file_type !== 'pdf' && m.type !== 'resumo' && (!contentSearch.trim() || m.title?.toLowerCase().includes(contentSearch.toLowerCase())))
-                          .reduce((acc, m) => {
-                            const subj = subjectNames[m.subject] || m.subject || 'Outros';
-                            if (!acc[subj]) acc[subj] = [];
-                            acc[subj].push(m);
-                            return acc;
-                          }, {})
-                        ).map(([subject, subjectItems], idx) => (
-                          <AccordionItem key={idx} value={`subject-${idx}`} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm rounded-xl overflow-hidden">
-                            <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                              <div className="flex items-center justify-between w-full pr-4">
-                                <span className="font-semibold text-gray-900 dark:text-white text-base">{subject}</span>
-                                <span className="text-sm font-medium text-blue-600 dark:text-blue-400 border-b border-blue-600 dark:border-blue-400 pb-0.5">
-                                  {Math.floor(Math.random() * 80) + 10}% concluído
-                                </span>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="pt-0 pb-4 px-5">
-                               <div className="space-y-2 mt-2">
-                                 {subjectItems.map(item => (
-                                    <div key={item.id} onClick={() => handleMaterialClick(item)} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all group">
-                                       <div className="flex items-center gap-4">
-                                         <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 group-hover:bg-gray-600 group-hover:text-white transition-colors flex-shrink-0">
-                                           <BookOpen className="w-4 h-4" />
-                                         </div>
-                                         <div>
-                                           <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">{item.title}</p>
-                                           {item.description && <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{item.description}</p>}
-                                         </div>
-                                       </div>
-                                    </div>
-                                 ))}
-                               </div>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
+          <TabsContent value="videos" className="mt-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vídeo-Aulas</h2>
+              
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                <Select value={selectedVideoSubject} onValueChange={(value) => {
+                  setSelectedVideoSubject(value);
+                  setCurrentVideoPage(1); // Reset page on filter change
+                }}>
+                  <SelectTrigger className="w-full md:w-64">
+                    <SelectValue placeholder="Filtrar por disciplina" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as Disciplinas</SelectItem>
+                    {Object.entries(subjectNames).map(([key, label]) =>
+                    <SelectItem key={key} value={key}>{label}</SelectItem>
                     )}
+                  </SelectContent>
+                </Select>
+                
+                <div className="relative flex-1 w-full">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    value={videoSearchTerm}
+                    onChange={(e) => {
+                      setVideoSearchTerm(e.target.value);
+                      setCurrentVideoPage(1);
+                    }}
+                    placeholder="Buscar vídeos por título, professor..."
+                    className="pl-10" />
 
-                    {contentSubTab === 'notificacoes' && (
-                      <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl">
-                        <div className="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4">
-                          <BookOpen className="w-8 h-8 text-gray-400" />
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-sm">
+                    {filteredVideos.length} {filteredVideos.length === 1 ? 'vídeo' : 'vídeos'}
+                  </Badge>
+                  
+                  <div className="flex items-center gap-1 border rounded-lg p-1">
+                    <Button
+                      variant={videoDisplaySize === 'small' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('small')}
+                      className="h-7 px-2"
+                      title="Miniatura pequena">
+
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-1 h-1 bg-current rounded-sm"></div>
+                          <div className="w-1 h-1 bg-current rounded-sm"></div>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400">Nenhuma notificação no momento.</p>
                       </div>
-                    )}
+                    </Button>
+                    <Button
+                      variant={videoDisplaySize === 'normal' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('normal')}
+                      className="h-7 px-2"
+                      title="Miniatura normal">
+
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+                          <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+                        </div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant={videoDisplaySize === 'large' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setVideoDisplaySize('large')}
+                      className="h-7 px-2"
+                      title="Miniatura grande">
+
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-0.5">
+                          <div className="w-2 h-2 bg-current rounded-sm"></div>
+                          <div className="w-2 h-2 bg-current rounded-sm"></div>
+                        </div>
+                      </div>
+                    </Button>
                   </div>
                 </div>
-                )}
+              </div>
+            </div>
+
+            {filteredVideos.length === 0 ?
+            <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Play className="w-16 h-16 text-gray-400 mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 text-center">
+                    Nenhuma vídeo-aula disponível {selectedVideoSubject !== 'all' ? 'para esta disciplina' : 'no momento'}.
+                  </p>
+                </CardContent>
+              </Card> :
+
+            <>
+                <div className="space-y-4">
+                  {currentVideos.map((video, index) => {
+                  const videoId = video.video_id || extractYouTubeId(video.youtube_url);
+                  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+
+                  return (
+                    <motion.div
+                      key={video.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}>
+
+                        <Card className="overflow-hidden hover:shadow-xl transition-all cursor-pointer">
+                          <div className="flex flex-col md:flex-row">
+                            <div
+                            className={`${
+                            videoDisplaySize === 'small' ? 'md:w-48 h-32' :
+                            videoDisplaySize === 'large' ? 'md:w-96 h-64' :
+                            'md:w-80 h-48'} md:h-auto bg-gray-200 flex-shrink-0 relative group`
+                            }
+                            onClick={() => handlePlayVideo(video)}>
+
+                              <img
+                              src={thumbnailUrl}
+                              alt={video.title}
+                              className="w-full h-full object-cover" />
+
+                              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="bg-white rounded-full p-4">
+                                  <Play className="w-8 h-8 text-red-600" />
+                                </div>
+                              </div>
+                              {video.duration &&
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs">
+                                  {video.duration}
+                                </div>
+                            }
+                            </div>
+
+                            <CardContent className="flex-1 p-4">
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                  {subjectNames[video.subject] || video.subject}
+                                </Badge>
+                                {video.topic &&
+                              <Badge variant="outline">
+                                    {video.topic}
+                                  </Badge>
+                              }
+                              </div>
+
+                              <h3
+                              className="text-lg font-semibold text-gray-900 dark:text-white mb-2 hover:text-gray-700 dark:hover:text-gray-200 cursor-pointer line-clamp-2"
+                              onClick={() => handlePlayVideo(video)}
+                              style={{ fontWeight: 600 }}>
+
+                                {video.title}
+                              </h3>
+
+                              {video.description &&
+                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                  {video.description}
+                                </p>
+                            }
+
+                              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                {video.instructor &&
+                              <span className="flex items-center gap-1">
+                                    <UserIcon className="w-3 h-3" />
+                                    {video.instructor}
+                                  </span>
+                              }
+                                {video.duration &&
+                              <span className="flex items-center gap-1">
+                                    <Timer className="w-3 h-3" />
+                                    {video.duration}
+                                  </span>
+                              }
+                              </div>
+
+                              <Button
+                              onClick={() => handlePlayVideo(video)}
+                              className="mt-4 bg-red-600 hover:bg-red-700 text-white"
+                              size="sm">
+
+                                <Play className="w-4 h-4 mr-2" />
+                                Assistir Agora
+                              </Button>
+                            </CardContent>
+                          </div>
+                        </Card>
+                      </motion.div>);
+
+                })}
+                </div>
+
+                {/* Paginação */}
+                {totalVideoPages > 1 &&
+              <div className="mt-8 flex justify-center items-center gap-2">
+                    <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentVideoPage === 1}>
+
+                      Anterior
+                    </Button>
+                    
+                    <div className="flex gap-1">
+                      {Array.from({ length: Math.min(5, totalVideoPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalVideoPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentVideoPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentVideoPage >= totalVideoPages - 2) {
+                      pageNum = totalVideoPages - 4 + i;
+                    } else {
+                      pageNum = currentVideoPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={i}
+                        variant={currentVideoPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentVideoPage(pageNum)}
+                        className="w-10">
+
+                            {pageNum}
+                          </Button>);
+
+                  })}
+                    </div>
+
+                    <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentVideoPage((prev) => Math.min(totalVideoPages, prev + 1))}
+                  disabled={currentVideoPage === totalVideoPages}>
+
+                      Próxima
+                    </Button>
+                  </div>
+              }
+
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
+                  Página {currentVideoPage} de {totalVideoPages} • Mostrando {indexOfFirstVideo + 1}-{Math.min(indexOfLastVideo, filteredVideos.length)} de {filteredVideos.length} vídeos
+                </div>
+              </>
+            }
+          </TabsContent>
+
+          <TabsContent value="flashcards" className="mt-6">
+              {/* Cards de estatísticas */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm opacity-90">Total de Cartões</p>
+                      <p className="text-2xl font-bold">{flashcardStats.totalCards}</p>
+                    </div>
+                    <BookOpen className="w-8 h-8 opacity-80" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm opacity-90">Para Revisar</p>
+                      <p className="text-2xl font-bold">{flashcardStats.cardsDue}</p>
+                    </div>
+                    <Timer className="w-8 h-8 opacity-80" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm opacity-90">Revisados Hoje</p>
+                      <p className="text-2xl font-bold">{flashcardStats.reviewedToday}</p>
+                    </div>
+                    <BarChart3 className="w-8 h-8 opacity-80" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm opacity-90">Facilidade Média</p>
+                      <p className="text-2xl font-bold">{flashcardStats.avgEasiness}</p>
+                    </div>
+                    <Brain className="w-8 h-8 opacity-80" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Tabs defaultValue="review" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="review" className="flex items-center gap-2">
+                  <Play className="w-4 h-4" />
+                  Revisar ({flashcardStats.cardsDue})
+                </TabsTrigger>
+                <TabsTrigger value="create" className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Criar
+                </TabsTrigger>
+                <TabsTrigger value="library" className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Biblioteca
+                </TabsTrigger>
+                <TabsTrigger value="stats" className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Estatísticas
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="review" className="mt-6">
+                <FlashcardReviewer
+                  cardsDue={cardsDueToday}
+                  onReviewComplete={loadAllData} />
+
+              </TabsContent>
+              <TabsContent value="create" className="mt-6">
+                <FlashcardCreator onFlashcardCreated={loadAllData} />
+              </TabsContent>
+              <TabsContent value="library" className="mt-6">
+                <FlashcardLibrary
+                  flashcards={flashcards}
+                  onUpdate={loadAllData} />
+
+              </TabsContent>
+              <TabsContent value="stats" className="mt-6">
+                <FlashcardStats
+                  flashcards={flashcards}
+                  reviews={reviews} />
+
               </TabsContent>
             </Tabs>
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
         
         {/* Viewer Modal */}
         {selectedMaterial &&
@@ -1226,7 +1658,7 @@ ${videoNotes}
                 <div className="flex-1 relative">
                    <iframe
                   className="w-full h-full"
-                  src={getSafeVideoId(playingVideo) ? `https://www.youtube-nocookie.com/embed/${getSafeVideoId(playingVideo)}?autoplay=1&rel=0` : ''}
+                  src={`https://www.youtube.com/embed/${playingVideo.video_id || extractYouTubeId(playingVideo.youtube_url)}?autoplay=1&rel=0`}
                   title={playingVideo.title}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -1326,7 +1758,7 @@ ${videoNotes}
                     <div className="flex-1 overflow-y-auto">
                       <div className="p-2">
                         {filteredVideos.map((video, idx) => {
-                      const videoId = getSafeVideoId(video);
+                      const videoId = video.video_id || extractYouTubeId(video.youtube_url);
                       const isActive = video.id === playingVideo.id;
                       return (
                         <button
@@ -1406,89 +1838,8 @@ ${videoNotes}
         <EnhancedArticleReader
           article={selectedArticle}
           isOpen={!!selectedArticle}
-          onClose={() => setSelectedArticle(null)} />
-
-        {/* Modals para Cursos Personalizados */}
-        <Dialog open={showCreateCourseModal} onOpenChange={setShowCreateCourseModal}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Criar Nova Pasta de Materiais</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label>Título da Pasta</Label>
-                <Input value={newCourseForm.title} onChange={e => setNewCourseForm({...newCourseForm, title: e.target.value})} placeholder="Ex: Materiais de Informática" />
-              </div>
-              <div className="space-y-2">
-                <Label>Descrição</Label>
-                <Textarea value={newCourseForm.description} onChange={e => setNewCourseForm({...newCourseForm, description: e.target.value})} placeholder="Breve descrição dos materiais..." />
-              </div>
-              {currentUser?.email === 'conectadoemconcursos@gmail.com' && (
-                <div className="flex items-center justify-between border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
-                  <div className="space-y-0.5">
-                    <Label>Pasta Pública</Label>
-                    <p className="text-xs text-gray-500">Se ativado, esta pasta aparecerá para todos os alunos.</p>
-                  </div>
-                  <Switch 
-                    checked={newCourseForm.is_public} 
-                    onCheckedChange={checked => setNewCourseForm({...newCourseForm, is_public: checked})} 
-                  />
-                </div>
-              )}
-            </div>
-            <DialogFooter className="mt-6">
-              <Button variant="outline" onClick={() => setShowCreateCourseModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateCourse} disabled={!newCourseForm.title} className="bg-blue-600 hover:bg-blue-700 text-white">Criar Pasta</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={showAddItemModal} onOpenChange={setShowAddItemModal}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Adicionar Material à Pasta</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <Label>Tipo de Material</Label>
-                <Select value={newItemForm.type} onValueChange={v => setNewItemForm({...newItemForm, type: v, content_url: '', file: null})}>
-                  <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="video">Videoaula (Link do YouTube)</SelectItem>
-                    <SelectItem value="pdf">Arquivo PDF / Arquivo Genérico</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Título</Label>
-                <Input value={newItemForm.title} onChange={e => setNewItemForm({...newItemForm, title: e.target.value})} placeholder="Ex: Aula 01 - Conceitos Básicos" />
-              </div>
-              <div className="space-y-2">
-                <Label>Descrição (Opcional)</Label>
-                <Input value={newItemForm.description} onChange={e => setNewItemForm({...newItemForm, description: e.target.value})} placeholder="Ex: Introdução ao tema..." />
-              </div>
-              
-              {newItemForm.type === 'video' ? (
-                <div className="space-y-2">
-                  <Label>Link do YouTube</Label>
-                  <Input value={newItemForm.content_url} onChange={e => setNewItemForm({...newItemForm, content_url: e.target.value})} placeholder="https://youtube.com/watch?v=..." />
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label>Arquivo</Label>
-                  <Input type="file" onChange={e => setNewItemForm({...newItemForm, file: e.target.files[0]})} />
-                </div>
-              )}
-            </div>
-            <DialogFooter className="mt-6">
-              <Button variant="outline" onClick={() => setShowAddItemModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateCourseItem} disabled={!newItemForm.title || isUploading || (newItemForm.type === 'video' && !newItemForm.content_url) || (newItemForm.type === 'pdf' && !newItemForm.file)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                {isUploading ? 'Adicionando...' : 'Adicionar'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
+          onClose={() => setSelectedArticle(null)}
+        />
       </div>
     </div>);
 

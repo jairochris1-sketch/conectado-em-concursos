@@ -7,12 +7,12 @@ import { toast } from "sonner";
 import { BookOpen, Clock, Check, X, Ban, Users, MessageSquare, UserMinus, Flag } from "lucide-react";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
 import ReportUserModal from "@/components/social/ReportUserModal";
-import { encryptEmail } from "@/components/security/emailCrypto";
 
-export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto, targetIsAdmin }) {
+export default function StudyPartnerButton({ currentUser, targetEmail, targetName, targetPhoto }) {
   const [status, setStatus] = useState("loading");
   const [partnerId, setPartnerId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
@@ -36,20 +36,13 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("not_connected");
   };
 
-  const notify = async (toEmail, title, message, type = "invite") => {
-    try {
-      await base44.functions.invoke("sendAppNotification", {
-        targetEmail: toEmail, 
-        title, 
-        message, 
-        type,
-        actionUrl: createPageUrl("UserProfile") + "?u=" + encryptEmail(currentUser.email),
-        relatedUserName: currentUser.full_name,
-        relatedUserPhoto: currentUser.profile_photo_url || ""
-      });
-    } catch (error) {
-      console.warn("Failed to send notification:", error);
-    }
+  const notify = async (toEmail, title, message) => {
+    await base44.entities.Notification.create({
+      user_email: toEmail, title, message, type: "follow",
+      action_url: createPageUrl("Community"),
+      related_user_name: currentUser.full_name,
+      related_user_photo: currentUser.profile_photo_url || ""
+    });
   };
 
   const sendInvite = async () => {
@@ -124,35 +117,20 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setLoading(false);
   };
 
-  const unblock = async () => {
-    if (!partnerId) return;
-    setLoading(true);
-    await base44.entities.StudyPartner.delete(partnerId);
-    setStatus("not_connected");
-    setPartnerId(null);
-    toast.success("Usuário desbloqueado");
-    setLoading(false);
-  };
-
   if (!currentUser || currentUser.email === targetEmail) return null;
   if (status === "loading") return null;
+  if (status === "blocked") return null;
 
   const partner = { email: targetEmail, name: targetName, photo: targetPhoto };
 
   return (
     <>
       <div className="flex gap-2 flex-wrap items-center">
-        {status === "not_connected" && !targetIsAdmin &&
+        {status === "not_connected" &&
         <Button size="sm" onClick={sendInvite} disabled={loading} className="gap-1.5 bg-green-600 hover:bg-green-700 text-white">
             <BookOpen className="w-3.5 h-3.5" /> Convidar para Estudar
           </Button>
         }
-
-        {status === "blocked" && (
-          <Button size="sm" onClick={unblock} disabled={loading} variant="outline" className="gap-1 text-gray-600 border-gray-300 text-xs">
-            <Ban className="w-3.5 h-3.5" /> Desbloquear
-          </Button>
-        )}
 
         {status === "pending_sent" &&
         <>
@@ -184,7 +162,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
             <span className="bg-blue-600 text-slate-50 px-2.5 py-1.5 text-xs font-medium rounded-md flex items-center gap-1 border border-green-300">Parceiros de Estudo
 
           </span>
-            <Button size="sm" onClick={() => window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }))} variant="outline" className="bg-blue-600 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-blue-300">
+            <Button size="sm" onClick={() => setChatOpen(true)} variant="outline" className="bg-blue-600 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-blue-300">
               <MessageSquare className="w-3.5 h-3.5" /> Chat
             </Button>
             <Button size="sm" onClick={undoPartnership} disabled={loading} variant="outline" className="bg-blue-500 text-slate-50 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 gap-1 border-red-200">
@@ -196,15 +174,24 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
           </>
         }
 
-        {/* Report button always visible (except self and admin) */}
-        {!targetIsAdmin && status !== "blocked" && (
-          <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
-            <Flag className="w-3 h-3" /> Denunciar
-          </Button>
-        )}
+        {/* Report button always visible (except self) */}
+        <Button size="sm" variant="ghost" onClick={() => setReportOpen(true)} className="gap-1 text-xs text-red-400 hover:text-red-600">
+          <Flag className="w-3 h-3" /> Denunciar
+        </Button>
       </div>
 
+      {/* Chat Dialog */}
+      {status === "accepted" &&
+      <Dialog open={chatOpen} onOpenChange={setChatOpen}>
+          <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
+            <StudyPartnerChat
+            currentUser={currentUser}
+            partner={partner}
+            onClose={() => setChatOpen(false)} />
 
+          </DialogContent>
+        </Dialog>
+      }
 
       {/* Report Modal */}
       <ReportUserModal

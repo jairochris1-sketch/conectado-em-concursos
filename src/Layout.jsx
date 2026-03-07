@@ -41,7 +41,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import BottomNavBar from "./components/navigation/BottomNavBar";
 import ProvaUploader from "./components/upload/ProvaUploader";
-import { RefreshCcw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +55,6 @@ import TrialCountdown from './components/trial/TrialCountdown';
 import LastDayModal from './components/trial/LastDayModal';
 import PlanAdvantagesBlock from './components/plans/PlanAdvantagesBlock';
 import ChatWidget from './components/chat/ChatWidget';
-import GlobalStudyPartnerChat from './components/chat/GlobalStudyPartnerChat';
 import GlobalSearch from './components/search/GlobalSearch';
 
 const navigationItems = [
@@ -64,6 +62,11 @@ const navigationItems = [
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
   icon: Home
+},
+{
+  title: "Pessoas",
+  url: createPageUrl("People"),
+  icon: Users
 },
 {
   title: "Questões",
@@ -86,7 +89,7 @@ const navigationItems = [
   icon: BookOpenIcon
 },
 {
-  title: "Meus Cursos",
+  title: "Área de Estudos",
   url: createPageUrl("Studies"),
   icon: BookOpen
 },
@@ -97,69 +100,120 @@ const navigationItems = [
 }];
 
 
-const moreMenuCategories = [
-  {
-    title: "Estudos & Planejamento",
-    items: [
-      { title: "Cadernos de Questões", url: createPageUrl("Notebooks"), icon: BookCopy },
-      { title: "Minhas Anotações", url: createPageUrl("Notes"), icon: ClipboardList },
-      { title: "Cronograma de Estudos", url: createPageUrl("Schedule"), icon: Calendar },
-      { title: "Planos de Estudo", url: createPageUrl("StudyPlans"), icon: Target },
-      { title: "Minhas Dúvidas", url: createPageUrl("MyDoubts"), icon: HelpCircle },
-      { title: "Revisões", url: createPageUrl("Reviews"), icon: RefreshCcw },
-    ]
-  },
-  {
-    title: "Desempenho & Estatísticas",
-    items: [
-      { title: "Relatórios", url: createPageUrl("PerformanceReports"), icon: BarChart3 },
-      { title: "Minhas Estatísticas", url: createPageUrl("Statistics"), icon: BarChart3 },
-      { title: "Ranking de Usuários", url: createPageUrl("Ranking"), icon: Trophy },
-    ]
-  },
-  {
-    title: "Comunidade",
-    items: [
-      { title: "Pessoas", url: createPageUrl("People"), icon: Users },
-      { title: "Fórum", url: createPageUrl("Community"), icon: MessageSquare },
-      { title: "Feed de Atividades", url: createPageUrl("ActivityFeed"), icon: BookOpen },
-    ]
-  },
-  {
-    title: "Cursos",
-    items: [
-      { title: "Curso de Inglês", url: createPageUrl("EnglishCourse"), icon: BookOpen },
-      { title: "Curso de Matemática", url: createPageUrl("MathCourse"), icon: BookOpen },
-      { title: "Raciocínio Lógico", url: createPageUrl("LogicCourse"), icon: Brain },
-    ]
-  },
-  {
-    title: "Simulados Extras",
-    items: [
-      { title: "Simulados Digital", url: createPageUrl("SimuladosDigital"), icon: ClipboardList },
-      { title: "Histórico de Simulações", url: createPageUrl("SimulationHistory"), icon: ClipboardList },
-      { title: "Revisão de Simulados", url: createPageUrl("SimulationReview"), icon: ClipboardList },
-    ]
-  },
-  {
-    title: "Conta",
-    items: [
-      { title: "Meu Perfil", url: createPageUrl("Profile"), icon: Shield },
-      { title: "Painel de Assinaturas", url: createPageUrl("SubscriptionsDashboard"), icon: CreditCard },
-    ]
-  }
-];
-
-const moreMenuItems = moreMenuCategories.flatMap(c => c.items);
+const moreMenuItems = [
+{
+  title: "Simulado por Edital",
+  url: createPageUrl("EditalSimulator"),
+  icon: Target
+},
+{
+  title: "Cadernos de Questões",
+  url: createPageUrl("Notebooks"),
+  icon: BookCopy
+},
+{
+  title: "Minhas Dúvidas",
+  url: createPageUrl("MyDoubts"),
+  icon: HelpCircle
+},
+{
+  title: "Curso de Inglês",
+  url: createPageUrl("EnglishCourse"),
+  icon: BookOpen
+},
+{
+  title: "Curso de Matemática",
+  url: createPageUrl("MathCourse"),
+  icon: BookOpen
+},
+{
+  title: "Raciocínio Lógico",
+  url: createPageUrl("LogicCourse"),
+  icon: Brain
+},
+{
+  title: "Fórum",
+  url: createPageUrl("Community"),
+  icon: MessageSquare
+},
+{
+  title: "Feed de Atividades",
+  url: createPageUrl("ActivityFeed"),
+  icon: BookOpen
+},
+{
+  title: "Favoritas",
+  url: createPageUrl("FavoriteQuestions"),
+  icon: Star
+},
+{
+  title: "Relatórios",
+  url: createPageUrl("PerformanceReports"),
+  icon: BarChart3
+},
+{
+  title: "ChatGPT",
+  url: createPageUrl("ChatGPT"),
+  icon: Bot
+},
+{
+  title: "Cronograma de Estudos",
+  url: createPageUrl("Schedule"),
+  icon: Calendar
+},
+{
+  title: "Planos de Estudo",
+  url: createPageUrl("StudyPlans"),
+  icon: Target
+},
+{
+  title: "Ranking de Usuários",
+  url: createPageUrl("Ranking"),
+  icon: Trophy
+},
+{
+  title: "Lousa Digital",
+  url: createPageUrl("DigitalWhiteboard"),
+  icon: Pencil
+},
+{
+  title: "Minhas Anotações",
+  url: createPageUrl("Notes"),
+  icon: ClipboardList
+},
+{
+  title: "Simulados Digital",
+  url: createPageUrl("SimuladosDigital"),
+  icon: ClipboardList
+},
+{
+  title: "Histórico de Simulações",
+  url: createPageUrl("SimulationHistory"),
+  icon: ClipboardList
+},
+{
+  title: "Revisão de Simulados",
+  url: createPageUrl("SimulationReview"),
+  icon: ClipboardList
+},
+{
+  title: "Meu Perfil",
+  url: createPageUrl("Profile"),
+  icon: Shield
+},
+{
+  title: "Minhas Estatísticas",
+  url: createPageUrl("Statistics"),
+  icon: BarChart3
+}];
 
 
 const pageNameTranslations = {
-  SubscriptionsDashboard: "Painel de Assinaturas",
   Dashboard: "Meu Painel",
   People: "Pessoas",
   Questions: "Questões",
   Exams: "Provas",
-  Studies: "Meus Cursos",
+  Studies: "Área de Estudos",
   Schedule: "Cronograma de Estudos",
   StudyPlans: "Planos de Estudo",
   CreateStudyPlan: "Criar Plano de Estudo",
@@ -172,12 +226,14 @@ const pageNameTranslations = {
   Welcome: "Bem-Vindo(a)!",
   ExamView: "Visualização de Prova",
   CreateSimulation: "Criar Simulado",
+  ChatGPT: "ChatGPT - IA de Estudos",
   VideoAnalysis: "Análise de Vídeos",
   SavedContests: "Concursos Abertos",
+  DigitalWhiteboard: "Lousa Digital",
   Notes: "Minhas Anotações",
   SimuladosDigital: "Simulados Digital",
   SDAdmin: "Admin Simulados Digital",
-  Reviews: "Revisões",
+  GuiaEstudos: "Resumos",
   ComoEstudarPrimeiroLugar: "Como Estudar",
   GuiaEstudos: "Guia de Estudos",
   Community: "Fórum da Comunidade",
@@ -195,13 +251,14 @@ const featureAccess = {
   'Meu Painel': ['gratuito', 'padrao', 'avancado'],
   'Pessoas': ['gratuito', 'padrao', 'avancado'],
   'Questões': ['gratuito', 'padrao', 'avancado'],
-  'Meus Cursos': ['avancado'],
+  'Área de Estudos': ['avancado'],
   'Cronograma de Estudos': ['avancado'],
-  'Revisões': ['padrao', 'avancado'],
   'Planos de Estudo': ['avancado'],
+  'ChatGPT': ['avancado'],
   'Criar Simulado': ['avancado'],
   'Concursos Abertos': ['avancado'],
   'Planos': ['gratuito', 'padrao', 'avancado'],
+  'Lousa Digital': ['avancado'],
   'Minhas Anotações': ['avancado'],
   'Simulados Digital': ['avancado'],
   'Resumos': ['avancado'],
@@ -218,8 +275,7 @@ const featureAccess = {
   'Minhas Estatísticas': ['gratuito', 'padrao', 'avancado'],
   'Meu Perfil': ['gratuito', 'padrao', 'avancado'],
   'Feed de Atividades': ['padrao', 'avancado'],
-  'Minhas Dúvidas': ['avancado'],
-  'Painel de Assinaturas': ['gratuito', 'padrao', 'avancado']
+  'Minhas Dúvidas': ['avancado']
 };
 
 const checkAccess = (featureTitle, plan, isAdmin) => {
@@ -245,7 +301,7 @@ const planStyles = {
     style: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
   },
   avancado: {
-    label: "Plano Premium",
+    label: "Plano Avançado",
     icon: Shield,
     style: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
   }
@@ -267,9 +323,6 @@ export default function Layout({ children, currentPageName }) {
   });
   const [userStats, setUserStats] = React.useState(null);
 
-  const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
-  const [iconSize, setIconSize] = useState(localStorage.getItem('iconSizeKey') || 'md');
-
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
   useEffect(() => {
@@ -277,25 +330,9 @@ export default function Layout({ children, currentPageName }) {
     const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
     const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
 
-    setPrimaryColor(savedColor);
-    setIconSize(savedIconSizeKey);
     document.documentElement.style.setProperty('--primary-color', savedColor);
     document.documentElement.style.setProperty('--icon-size', iconSizes[savedIconSizeKey]);
   }, []);
-
-  const handleColorChange = (e) => {
-    const newColor = e.target.value;
-    setPrimaryColor(newColor);
-    localStorage.setItem('primaryColor', newColor);
-    document.documentElement.style.setProperty('--primary-color', newColor);
-  };
-
-  const handleIconSizeChange = (sizeKey) => {
-    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
-    setIconSize(sizeKey);
-    localStorage.setItem('iconSizeKey', sizeKey);
-    document.documentElement.style.setProperty('--icon-size', iconSizes[sizeKey]);
-  };
 
   React.useEffect(() => {
     let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -424,7 +461,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden bg-gray-50 dark:bg-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="min-h-screen flex flex-col w-full relative overflow-x-hidden" style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#1c2c34' }}>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-blue-600 focus:text-white focus:rounded">
         Pular para conteúdo principal
       </a>
@@ -484,91 +521,54 @@ export default function Layout({ children, currentPageName }) {
                 </Button>
               </div>
 
-              <nav className="flex-1 p-3 space-y-4 overflow-y-auto overscroll-contain" aria-label="Navegação do menu">
-                <div className="space-y-1">
-                  {navigationItems.map((item) => {
-                  const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                  const isCurrentPage = location.pathname === item.url;
-                  return (
-                    <Link
-                      key={item.title}
-                      to={hasAccess ? item.url : createPageUrl("Subscription")}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
-                      isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
-                      }
-                      style={isCurrentPage ? {} : {}}
-                      onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
-                      onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
+              <nav className="flex-1 p-3 space-y-1 overflow-y-auto overscroll-contain" aria-label="Navegação do menu">
+                {[...navigationItems, ...moreMenuItems].map((item) => {
+                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                const isCurrentPage = location.pathname === item.url;
+                return (
+                  <Link
+                    key={item.title}
+                    to={hasAccess ? item.url : createPageUrl("Subscription")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
+                    isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
+                    }
+                    style={isCurrentPage ? {} : {}}
+                    onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
+                    onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
 
-                        <div className="flex items-center gap-3 min-w-0">
-                          <item.icon className="w-5 h-5 flex-shrink-0" />
-                          <span className="truncate text-sm font-medium">{item.title}</span>
-                        </div>
-                        {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
-                      </Link>);
-                  })}
-                </div>
-                
-                <div className="h-px bg-white/10 w-full my-2"></div>
-                
-                {moreMenuCategories.map((category) => (
-                  <div key={category.title} className="space-y-1">
-                    <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-3 mb-2 mt-4">
-                      {category.title}
-                    </h3>
-                    {category.items.map((item) => {
-                      const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                      const isCurrentPage = location.pathname === item.url;
-                      return (
-                        <Link
-                          key={item.title}
-                          to={hasAccess ? item.url : createPageUrl("Subscription")}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center justify-between p-3 rounded-lg transition-all duration-200 active:scale-95 ${
-                          isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200'}`
-                          }
-                          onMouseEnter={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.15)')}
-                          onMouseLeave={(e) => !isCurrentPage && (e.currentTarget.style.backgroundColor = 'transparent')}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <item.icon className="w-5 h-5 flex-shrink-0" />
+                        <span className="truncate text-sm font-medium">{item.title}</span>
+                      </div>
+                      {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
+                    </Link>);
 
-                            <div className="flex items-center gap-3 min-w-0">
-                              <item.icon className="w-5 h-5 flex-shrink-0" />
-                              <span className="truncate text-sm font-medium">{item.title}</span>
-                            </div>
-                            {!hasAccess && <Lock className="w-4 h-4 text-yellow-300 flex-shrink-0" />}
-                          </Link>
-                      );
-                    })}
-                  </div>
-                ))}
-
+              })}
                 {isAdmin &&
-                <div className="space-y-1 pt-4 border-t border-white/10 mt-4">
-                    <h3 className="text-xs font-semibold text-white/50 uppercase tracking-wider px-3 mb-2">
-                      Administração
-                    </h3>
-                    <Link
-                    to={createPageUrl("Admin")}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <>
+                  <Link
+                  to={createPageUrl("Admin")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
-                      <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                      <span>Admin Geral</span>
-                    </Link>
-                    <Link
-                    to={createPageUrl("SDAdmin")}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                    <span>Admin Geral</span>
+                  </Link>
+                  <Link
+                  to={createPageUrl("SDAdmin")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 rounded-lg text-red-400 transition-colors"
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.3)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
-                      <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
-                      <span>Admin Simulados Digital</span>
-                    </Link>
-                </div>
-                }
+                    <Shield style={{ width: 'var(--icon-size, 1.25rem)', height: 'var(--icon-size, 1.25rem)' }} />
+                    <span>Admin Simulados Digital</span>
+                  </Link>
+                  </>
+              }
               </nav>
             </motion.div>
           </>
@@ -583,11 +583,11 @@ export default function Layout({ children, currentPageName }) {
             className="w-10 h-10 object-contain shadow-lg" />
 
             <div>
-                <h2 className="text-white text-sm font-semibold text-justify normal-case leading-tight">Conectado em Concursos </h2>
-                <h2 className="font-bold text-white text-sm leading-tight"></h2>
-                
-
-
+                <h2 className="font-bold text-white text-sm leading-tight">Conectado em</h2>
+                <h2 className="font-bold text-white text-sm leading-tight">Concursos Públicos SE</h2>
+                <div className="text-xs leading-tight" style={{ color: '#FFD700' }}>
+                  ⭐⭐⭐⭐⭐
+                </div>
             </div>
         </Link>
 
@@ -629,62 +629,49 @@ export default function Layout({ children, currentPageName }) {
                         <span>Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-              className="text-white border-black border-opacity-20 w-[700px] max-h-[80vh] overflow-y-auto"
-              style={{ backgroundColor: 'var(--primary-color)' }}
-              align="center">
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-                    {moreMenuCategories.map((category) => (
-                        <div key={category.title} className="space-y-2">
-                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                            {category.title}
-                          </h3>
-                          <div className="space-y-1">
-                            {category.items.map((item) => {
-                              const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                              const isCurrentPage = location.pathname === item.url;
-                              return (
-                                <DropdownMenuItem key={item.title} asChild>
-                                  <Link
-                                    to={hasAccess ? item.url : createPageUrl("Subscription")}
-                                    className={`flex items-center justify-between w-full cursor-pointer text-sm px-3 py-2 rounded-lg transition-colors ${isCurrentPage ? 'bg-white/20 text-white' : 'text-gray-200 hover:bg-white/10'}`}>
+                <DropdownMenuContent 
+                  className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto" 
+                  style={{ backgroundColor: 'var(--primary-color)' }}
+                  align="center">
+                    <div className="grid grid-cols-2 gap-1 p-2">
+                    {moreMenuItems.map((item) => {
+                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
+                const isCurrentPage = location.pathname === item.url;
+                return (
+                  <DropdownMenuItem key={item.title} asChild>
+                                <Link
+                      to={hasAccess ? item.url : createPageUrl("Subscription")}
+                      className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
+
                                     <div className="flex items-center gap-2">
                                         <item.icon className="w-4 h-4 flex-shrink-0" />
                                         <span className="truncate">{item.title}</span>
                                     </div>
                                     {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
-                                  </Link>
-                                </DropdownMenuItem>
-                              );
-                            })}
-                          </div>
-                        </div>
-                    ))}
+                                </Link>
+                            </DropdownMenuItem>);
+
+              })}
                     {isAdmin &&
-                        <div className="space-y-2">
-                          <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider px-2 mb-2">
-                            Administração
-                          </h3>
-                          <div className="space-y-1">
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
-                                        <span>Admin Geral</span>
-                                    </div>
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                 <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                        <Shield className="w-4 h-4" />
-                                        <span>Admin Simulados Digital</span>
-                                    </div>
-                                </Link>
-                            </DropdownMenuItem>
-                          </div>
-                        </div>
-                    }
+              <>
+                        <DropdownMenuItem asChild>
+                             <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-4 h-4" />
+                                    <span>Admin Geral</span>
+                                </div>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-4 h-4" />
+                                    <span>Admin Simulados Digital</span>
+                                </div>
+                            </Link>
+                        </DropdownMenuItem>
+                        </>
+              }
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -701,17 +688,6 @@ export default function Layout({ children, currentPageName }) {
             <Upload className="w-3 h-3 mr-1" />
             <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
-          {(userPlan === 'gratuito') && (
-            <Link to={createPageUrl("Subscription")}>
-              <Button
-                size="sm"
-                className="text-xs px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold shadow-sm transition-all"
-              >
-                <Star className="w-3 h-3 mr-1 fill-current" />
-                Assinar Premium
-              </Button>
-            </Link>
-          )}
         </div>
 
         <div className="flex items-center gap-2 ml-4">
@@ -739,7 +715,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="text-white border-black border-opacity-20 w-64" style={{ backgroundColor: 'var(--primary-color)' }}>
+            <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
               {user.job_title &&
               <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
                   <BookOpen className="w-4 h-4" />
@@ -750,52 +726,7 @@ export default function Layout({ children, currentPageName }) {
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
               </DropdownMenuItem>
-              <div className="h-px bg-white/20 my-2 mx-2" />
-              <div className="px-2 py-2">
-                <p className="text-xs font-semibold text-white/70 mb-3 uppercase tracking-wider px-2">Aparência do Menu</p>
-                <div className="space-y-3 px-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-200">Cor Principal</span>
-                    <input
-                      type="color"
-                      value={primaryColor}
-                      onChange={handleColorChange}
-                      className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-200">Tamanho Ícones</span>
-                    <div className="flex gap-1 bg-black/20 p-0.5 rounded-md">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('sm'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'sm' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        P
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('md'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'md' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        M
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => { e.preventDefault(); handleIconSizeChange('lg'); }}
-                        className={`h-6 w-6 p-0 text-[10px] rounded-sm ${iconSize === 'lg' ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-gray-300'}`}
-                      >
-                        G
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="h-px bg-white/20 my-2 mx-2" />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 text-sm flex items-center gap-2">
                 <LogOut className="w-4 h-4" />
                 Sair
               </DropdownMenuItem>
@@ -826,25 +757,23 @@ export default function Layout({ children, currentPageName }) {
               </div>
               <div className="flex items-center gap-2">
                 <GlobalSearch isMobile />
-                {(userPlan === 'gratuito') && (
-                  <Link to={createPageUrl("Subscription")}>
-                    <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    style={{ backgroundColor: 'var(--primary-color)' }}>
+                <Link to={createPageUrl("Subscription")}>
+                  <Button
+                  variant="default"
+                  size="sm"
+                  className="text-white"
+                  style={{ backgroundColor: 'var(--primary-color)' }}>
 
-                      <CreditCard className="w-4 h-4 mr-1" />
-                      Assinar
-                    </Button>
-                  </Link>
-                )}
+                    <CreditCard className="w-4 h-4 mr-1" />
+                    Assinar
+                  </Button>
+                </Link>
               </div>
             </div>
           </header>
 
-        <header className="bg-white px-6 py-3 hidden md:flex dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 items-center justify-between shadow-sm print-hide">
-            <h1 className="bg-transparent text-gray-900 text-xl font-bold dark:text-white">
+        <header className="hidden md:flex bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3 items-center justify-between shadow-sm print-hide">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {pageNameTranslations[currentPageName] || currentPageName}
             </h1>
             <div className="flex items-center gap-2">
@@ -870,7 +799,7 @@ export default function Layout({ children, currentPageName }) {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="fixed bottom-24 md:bottom-6 right-6 z-40">
+          className="fixed bottom-24 md:bottom-6 right-6 z-50">
 
             <Button
             size="icon"
@@ -886,7 +815,6 @@ export default function Layout({ children, currentPageName }) {
       </AnimatePresence>
 
       <ChatWidget />
-      <GlobalStudyPartnerChat currentUser={user} />
       </div>);
 
 }

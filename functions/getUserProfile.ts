@@ -14,18 +14,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email, id } = await req.json();
+    const { email } = await req.json();
     
-    if (!email && !id) {
-      return Response.json({ error: 'Email or ID required' }, { status: 400 });
+    if (!email || !email.includes('@')) {
+      return Response.json({ error: 'Invalid email' }, { status: 400 });
     }
 
     // Use service role to bypass RLS and get the user's public profile
-    let query = {};
-    if (id) query = { id };
-    else query = { email };
-    
-    const users = await base44.asServiceRole.entities.User.filter(query);
+    const users = await base44.asServiceRole.entities.User.filter({ email });
     
     if (users.length === 0) {
       return Response.json({ error: 'User not found' }, { status: 404 });

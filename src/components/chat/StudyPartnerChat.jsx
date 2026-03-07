@@ -53,7 +53,7 @@ function PresenceDot({ presence }) {
 
 const MESSAGES_PER_PAGE = 30;
 
-export default function StudyPartnerChat({ currentUser, partner, onClose, isMinimized, onToggleMinimize }) {
+export default function StudyPartnerChat({ currentUser, partner, onClose }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -68,7 +68,6 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const [showDebug, setShowDebug] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [prefs, setPrefs] = useState(notificationService.getPreferences());
-  const containerRef = useRef(null);
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const myStatusRef = useRef("online");
@@ -80,7 +79,6 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   // Initialize notifications
   useEffect(() => {
     const initNotifications = async () => {
-      await notificationService.initSound();
       const hasPermission = await notificationService.requestNotificationPermission();
       setNotificationsEnabled(hasPermission);
       if (hasPermission) {
@@ -98,7 +96,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
 
   // Infinite scroll - load older messages with debounce
   useEffect(() => {
-    const container = containerRef.current;
+    const container = document.querySelector('[data-chat-messages]');
     if (!container) return;
 
     const handleScroll = () => {
@@ -163,49 +161,30 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
         
         console.log(`New message received: ${msg.id} from ${msg.sender_email}`);
         
+        // Add message to chat
+        setMessages((prev) => [...prev, msg]);
+        setLastMessageId(msg.id);
+
         // If I'm receiving this message, mark as read and update status
         if (msg.receiver_email === currentUser.email && !msg.is_read) {
           base44.entities.StudyPartnerMessage.update(msg.id, { is_read: true, status: 'read' }).catch((err) => {
             console.warn("Failed to mark message as read:", err);
           });
 
-          // Tocar som em todas as novas mensagens
-          if (notificationService.getPreferences().sound) {
-            notificationService.playNotificationSound();
-          }
-
-          // Verificar se é a primeira mensagem lendo o estado atual
-          setMessages((prev) => {
-            const isFirstMessage = prev.length === 0;
-
-            // Exibir notificação apenas se for a primeira mensagem da conversa
-            if (isFirstMessage && !document.hidden) {
-              // Delay the toast slightly to avoid strict mode double render issues
-              setTimeout(() => {
-                toast.info(`Nova conversa com ${msg.sender_name}`, {
-                  description: msg.content.substring(0, 50) + (msg.content.length > 50 ? '...' : '')
-                });
-              }, 100);
-            }
-
-            return [...prev, msg];
-          });
-
-          // Show push notification if app in background
+          // Show notification if app in background
           if (notificationsEnabled && document.hidden) {
-            notificationService.sendPushNotification(`Nova mensagem de ${msg.sender_name}`, { body: msg.content.substring(0, 50) });
+            notificationService.showVisualNotification(
+              msg.content.substring(0, 50),
+              msg.sender_name
+            );
           }
 
           // Show scroll-to-bottom indicator
           if (!isScrolledToBottom()) {
             setShowNewMessageIndicator(true);
-            setUnreadCount(prevCount => prevCount + 1);
+            setUnreadCount(prev => prev + 1);
           }
-        } else {
-          // It's my own message or already read
-          setMessages((prev) => [...prev, msg]);
         }
-        setLastMessageId(msg.id);
       }
     });
 
@@ -378,32 +357,9 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
 
   const isScrolledToBottom = () => {
-    if (isMinimized) return false;
     if (!messagesEnd.current) return true;
-    const container = containerRef.current;
-    if (container) {
-       return container.scrollHeight - container.scrollTop - container.clientHeight < 50;
-    }
-    return true;
+    return messagesEnd.current.scrollIntoView ? true : false;
   };
-
-  useEffect(() => {
-    // When maximizing, scroll to bottom to mark messages as read
-    if (!isMinimized && messagesEnd.current) {
-      messagesEnd.current.scrollIntoView({ behavior: "smooth" });
-      if (showNewMessageIndicator || unreadCount > 0) {
-        setShowNewMessageIndicator(false);
-        setUnreadCount(0);
-        const unreadMsgs = messages.filter(m => m.receiver_email === currentUser.email && !m.is_read);
-        if (unreadMsgs.length > 0) {
-          Promise.all(
-            unreadMsgs.map(m => base44.entities.StudyPartnerMessage.update(m.id, { is_read: true, status: 'read' }).catch(() => {}))
-          );
-          setMessages(prev => prev.map(m => unreadMsgs.find(u => u.id === m.id) ? { ...m, is_read: true, status: 'read' } : m));
-        }
-      }
-    }
-  }, [isMinimized]);
 
   return (
     <motion.div
@@ -414,14 +370,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       className="flex flex-col w-full h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden"
     >
       {/* Header */}
-      <div 
-        className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0 cursor-pointer"
-        onClick={(e) => {
-          if (onToggleMinimize && !e.target.closest('button') && !e.target.closest('[role="menuitem"]')) {
-            onToggleMinimize();
-          }
-        }}
-      >
+      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-600 to-green-700 text-white flex-shrink-0">
         <div className="relative">
           <Avatar className="w-9 h-9">
             <AvatarImage src={partner.photo} />
@@ -484,13 +433,11 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8 ml-auto" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+        <Button variant="ghost" size="icon" className="text-white hover:bg-green-600 w-8 h-8" onClick={onClose}>
           <X className="w-4 h-4" />
         </Button>
       </div>
 
-      {!isMinimized && (
-        <>
       {/* Debug Panel */}
       {showDebug && (
         <div className="p-3 bg-gray-900 border-b border-gray-700 max-h-60 overflow-y-auto">
@@ -503,7 +450,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" ref={containerRef}>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-800 relative" data-chat-messages>
         {loadingOlder && (
           <div className="text-center text-gray-400 text-xs py-2">
             <Loader2 className="w-3 h-3 animate-spin inline mr-1" /> Carregando mensagens antigas...
@@ -582,8 +529,6 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
         </Button>
       </div>
-        </>
-      )}
     </motion.div>
   );
 }

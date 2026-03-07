@@ -12,8 +12,6 @@ import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import StudyPartnerButton from "@/components/social/StudyPartnerButton";
 import StudyPartnerChat from "@/components/chat/StudyPartnerChat";
-import { StaffBadge } from "@/components/ui/staff-badge";
-import { decryptEmail } from "@/components/security/emailCrypto";
 
 const subjectLabels = {
   portugues: "Português", matematica: "Matemática",
@@ -28,12 +26,7 @@ import { useLocation } from "react-router-dom";
 export default function UserProfilePage() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
-  const targetId = urlParams.get("id");
-  let urlEmail = urlParams.get("email");
-  const encodedEmail = urlParams.get("u");
-  if (encodedEmail && !urlEmail) {
-    try { urlEmail = decryptEmail(encodedEmail); } catch(e) {}
-  }
+  const targetEmail = urlParams.get("email");
 
   const [currentUser, setCurrentUser] = useState(null);
   const [profileUser, setProfileUser] = useState(null);
@@ -43,42 +36,25 @@ export default function UserProfilePage() {
   const [followers, setFollowers] = useState([]);
   const [partnershipStatus, setPartnershipStatus] = useState(null);
   const [isPartner, setIsPartner] = useState(false);
-
+  const [chatOpen, setChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!targetId && !urlEmail) return;
+    if (!targetEmail) return;
     loadData();
-  }, [targetId, urlEmail]);
+  }, [targetEmail]);
 
   useEffect(() => {
-    if (!isLoading && isPartner && urlParams.get("openChat") === "true" && profileUser) {
-      const partner = { email: profileUser.email, name: profileUser.full_name, photo: profileUser.profile_photo_url };
-      window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
-      
-      // Clean up URL to prevent reopening on reload
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.delete('openChat');
-      window.history.replaceState({}, '', newUrl);
+    if (!isLoading && isPartner && urlParams.get("openChat") === "true") {
+      setChatOpen(true);
     }
-  }, [isLoading, isPartner, location.search, profileUser]);
+  }, [isLoading, isPartner, location.search]);
 
   const loadData = async () => {
     setIsLoading(true);
     try {
       const me = await User.me();
       setCurrentUser(me);
-
-      // Get profile user via backend function (User entity is restricted by RLS)
-      const profileUserResult = await base44.functions.invoke('getUserProfile', targetId ? { id: targetId } : { email: urlEmail });
-      let targetEmail = urlEmail;
-      if (profileUserResult.data && !profileUserResult.data.error) {
-        setProfileUser(profileUserResult.data);
-        targetEmail = profileUserResult.data.email;
-      } else {
-        setIsLoading(false);
-        return;
-      }
 
       const [stats, ranking, partnersSent, partnersReceived, followList] = await Promise.all([
         base44.entities.UserStats.filter({ user_email: targetEmail }),
@@ -88,6 +64,9 @@ export default function UserProfilePage() {
         base44.entities.UserFollow.filter({ following_email: targetEmail }),
       ]);
 
+      // Get profile user via backend function (User entity is restricted by RLS)
+      const profileUserResult = await base44.functions.invoke('getUserProfile', { email: targetEmail });
+      if (profileUserResult.data) setProfileUser(profileUserResult.data);
       if (stats.length > 0) setUserStats(stats[0]);
       if (ranking.length > 0) setUserRanking(ranking[0]);
       setPartners([...partnersSent, ...partnersReceived]);
@@ -125,10 +104,9 @@ export default function UserProfilePage() {
     );
   }
 
-  const isOwnProfile = currentUser?.email === profileUser?.email;
+  const isOwnProfile = currentUser?.email === targetEmail;
   // Only accepted partners or own profile can see full stats/details
-  const targetIsAdmin = profileUser?.role === 'admin' || ['conectadoemconcursos@gmail.com', 'jairochris1@gmail.com', 'juniorgmj2016@gmail.com'].includes(profileUser?.email);
-  const canSeeDetails = isOwnProfile || isPartner || targetIsAdmin;
+  const canSeeDetails = isOwnProfile || isPartner;
   const accuracy = userStats ? Math.round((userStats.correct_answers / Math.max(1, userStats.total_answers)) * 100) : 0;
 
   return (
@@ -149,10 +127,7 @@ export default function UserProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileUser.full_name}</h1>
-                  <StaffBadge email={profileUser.email} className="w-5 h-5" />
-                </div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{profileUser.full_name}</h1>
                 {(profileUser.city || profileUser.state) && (
                   <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
                     <MapPin className="w-3.5 h-3.5" />
@@ -187,18 +162,15 @@ export default function UserProfilePage() {
                 {!isOwnProfile && currentUser && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     <FollowButton
-                      targetEmail={profileUser.email}
-                      targetId={profileUser.id}
+                      targetEmail={targetEmail}
                       targetName={profileUser.full_name}
                       targetPhotoUrl={profileUser.profile_photo_url}
                     />
                     <StudyPartnerButton
                       currentUser={currentUser}
-                      targetEmail={profileUser.email}
-                      targetId={profileUser.id}
+                      targetEmail={targetEmail}
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
-                      targetIsAdmin={targetIsAdmin}
                     />
                   </div>
                 )}
@@ -296,38 +268,33 @@ export default function UserProfilePage() {
           </Card>
         )}
 
-        {/* Objetivos de Aprendizado - only for partners/self */}
-        {canSeeDetails && profileUser.learning_goals && (
-          <Card className="mb-5">
-            <CardContent className="p-5">
-              <h2 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Target className="w-4 h-4" /> Objetivos de Aprendizado
-              </h2>
-              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{profileUser.learning_goals}</p>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Disciplinas preferidas - only for partners/self */}
-        {canSeeDetails && (profileUser.preferred_subjects?.length > 0 || profileUser.favorite_subjects) && (
+        {canSeeDetails && profileUser.preferred_subjects?.length > 0 && (
           <Card className="mb-5">
             <CardContent className="p-5">
-              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Favoritas</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-white mb-3">📚 Disciplinas Preferidas</h2>
               <div className="flex flex-wrap gap-2">
-                {profileUser.preferred_subjects?.map(s => (
+                {profileUser.preferred_subjects.map(s => (
                   <Badge key={s} variant="outline">{subjectLabels[s] || s}</Badge>
                 ))}
-                {profileUser.favorite_subjects && (
-                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-                    {profileUser.favorite_subjects}
-                  </Badge>
-                )}
               </div>
             </CardContent>
           </Card>
         )}
       </div>
 
+      {/* Chat */}
+      {chatOpen && currentUser && (
+        <Dialog open={chatOpen} onOpenChange={setChatOpen}>
+          <DialogContent className="p-0 max-w-md h-[600px] flex flex-col overflow-hidden">
+            <StudyPartnerChat
+              currentUser={currentUser}
+              partner={{ email: targetEmail, name: profileUser.full_name, photo: profileUser.profile_photo_url }}
+              onClose={() => setChatOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

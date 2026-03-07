@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 
-export default function FollowButton({ targetEmail, targetId, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
+export default function FollowButton({ targetEmail, targetName, targetPhotoUrl, size = "sm", variant = "outline" }) {
   const [user, setUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followId, setFollowId] = useState(null);
@@ -62,14 +62,14 @@ export default function FollowButton({ targetEmail, targetId, targetName, target
         setFollowId(newFollow.id);
         toast.success(`Você agora está seguindo ${targetName}`);
 
-        await base44.functions.invoke("sendAppNotification", {
-          targetEmail: targetEmail,
+        await base44.entities.Notification.create({
+          user_email: targetEmail,
           title: "Novo seguidor",
           message: `${user.full_name} começou a seguir você`,
           type: "follow",
-          actionUrl: createPageUrl("UserProfile") + "?id=" + encodeURIComponent(user.id),
-          relatedUserName: user.full_name,
-          relatedUserPhoto: user.profile_photo_url
+          action_url: createPageUrl("UserProfile") + "?email=" + encodeURIComponent(user.email),
+          related_user_name: user.full_name,
+          related_user_photo: user.profile_photo_url
         });
       }
     } catch (error) {

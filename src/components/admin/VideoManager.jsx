@@ -85,11 +85,9 @@ export default function VideoManager() {
   };
 
   const extractYouTubeId = (url) => {
-    if (!url) return null;
-    if (url.length === 11 && !url.includes('youtube') && !url.includes('youtu.be')) return url;
-    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return match ? match[1] : null;
+    return (match && match[2].length === 11) ? match[2] : null;
   };
 
   const handleSubmit = async (e) => {

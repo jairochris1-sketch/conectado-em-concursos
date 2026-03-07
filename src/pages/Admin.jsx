@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare, Volume2, UserCheck } from 'lucide-react';
+import { Trash2, PlusCircle, Shield, AlertTriangle, Loader2, Pencil, FileText, Download, Upload, HelpCircle, CreditCard, Zap, BookOpen, Plus, Play, Newspaper, Bookmark, Users, MessageSquare, Volume2 } from 'lucide-react';
 
 import { format } from "date-fns";
 import { toast } from 'sonner';
@@ -30,7 +30,6 @@ import FeedbackManager from '../components/admin/FeedbackManager';
 import InstitutionManager from '../components/admin/InstitutionManager';
 import ChatAdmin from '../components/admin/ChatAdmin';
 import QuickResponseManager from '../components/admin/QuickResponseManager';
-import BannerManager from '../components/admin/BannerManager';
 import AutoResponseManager from '../components/admin/AutoResponseManager';
 import SpecialUserManager from '../components/admin/SpecialUserManager';
 import SubscriptionManager from '../components/admin/SubscriptionManager';
@@ -38,7 +37,6 @@ import AuditLogViewer from '../components/admin/AuditLogViewer';
 import NotificationSoundManager from '../components/admin/NotificationSoundManager';
 import AdminInternalChat from '../components/admin/AdminInternalChat';
 import ForumAdmin from '../components/admin/ForumAdmin';
-import CourseCreatorAdmin from '../components/admin/CourseCreatorAdmin';
 
 // Lazy load admin components
 const QuestionsList = lazy(() => import('@/components/admin/QuestionsList'));
@@ -444,10 +442,6 @@ export default function AdminPage() {
               <FileText className="w-4 h-4 mr-2" />
               Conteúdo
             </TabsTrigger>
-            <TabsTrigger value="banner">
-              <FileText className="w-4 h-4 mr-2" />
-              Banner
-            </TabsTrigger>
             <TabsTrigger value="videos">
               <Play className="w-4 h-4 mr-2" />
               Vídeos
@@ -495,10 +489,6 @@ export default function AdminPage() {
             <TabsTrigger value="exportar">
               <Download className="w-4 h-4 mr-2" />
               Exportar
-            </TabsTrigger>
-            <TabsTrigger value="criadores-cursos">
-              <UserCheck className="w-4 h-4 mr-2" />
-              Criadores
             </TabsTrigger>
           </TabsList>
 
@@ -557,10 +547,6 @@ export default function AdminPage() {
               content={welcomeContent}
               onSave={handleContentSave}
             />
-          </TabsContent>
-
-          <TabsContent value="banner">
-            <BannerManager />
           </TabsContent>
 
           <TabsContent value="assuntos">
@@ -627,10 +613,6 @@ export default function AdminPage() {
 
           <TabsContent value="feedbacks" className="mt-6">
             <FeedbackManager />
-          </TabsContent>
-
-          <TabsContent value="criadores-cursos" className="mt-6">
-            <CourseCreatorAdmin />
           </TabsContent>
         </Tabs>
       </div>

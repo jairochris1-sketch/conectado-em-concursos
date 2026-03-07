@@ -19,8 +19,6 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { StaffBadge } from "@/components/ui/staff-badge";
-import { encryptEmail } from "@/components/security/emailCrypto";
 
 const defaultCategories = [
 { value: "depoimentos", label: "Depoimentos de Aprovação" },
@@ -36,7 +34,7 @@ const defaultCategories = [
 { value: "outros", label: "Outros Assuntos" }];
 
 
-export default function CommunityPage({ embedded = false }) {
+export default function CommunityPage() {
   const [categories, setCategories] = useState(defaultCategories);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -140,15 +138,15 @@ export default function CommunityPage({ embedded = false }) {
     });
 
     if (!hasLiked && post.author_email !== user.email) {
-      await base44.functions.invoke("sendAppNotification", {
-        targetEmail: post.author_email,
+      await base44.entities.Notification.create({
+        user_email: post.author_email,
         title: "Alguém curtiu sua discussão",
         message: `${user.full_name} curtiu seu post: "${post.title}"`,
         type: "like",
-        actionUrl: createPageUrl("Community"),
-        relatedUserName: user.full_name,
-        relatedUserPhoto: user.profile_photo_url,
-        entityId: post.id
+        action_url: createPageUrl("Community"),
+        related_user_name: user.full_name,
+        related_user_photo: user.profile_photo_url,
+        entity_id: post.id
       });
     }
 
@@ -185,29 +183,16 @@ export default function CommunityPage({ embedded = false }) {
         replies_count: (selectedPost.replies_count || 0) + 1
       });
 
-      // If answering someone directly
-      if (replyingTo && replyingTo.email && replyingTo.email !== user.email) {
-        await base44.functions.invoke("sendAppNotification", {
-          targetEmail: replyingTo.email,
-          title: "Você foi respondido!",
-          message: `${user.full_name} respondeu ao seu comentário na discussão "${selectedPost.title}".`,
-          type: "mention",
-          actionUrl: createPageUrl("Community"),
-          relatedUserName: user.full_name,
-          relatedUserPhoto: user.profile_photo_url,
-          entityId: selectedPost.id
-        });
-      } else if (selectedPost.author_email !== user.email) {
-        // If not replying directly, notify the post author
-        await base44.functions.invoke("sendAppNotification", {
-          targetEmail: selectedPost.author_email,
+      if (selectedPost.author_email !== user.email) {
+        await base44.entities.Notification.create({
+          user_email: selectedPost.author_email,
           title: "Nova resposta na sua discussão",
           message: `${user.full_name} respondeu: "${replyContent.substring(0, 100)}${replyContent.length > 100 ? '...' : ''}"`,
           type: "reply",
-          actionUrl: createPageUrl("Community"),
-          relatedUserName: user.full_name,
-          relatedUserPhoto: user.profile_photo_url,
-          entityId: selectedPost.id
+          action_url: createPageUrl("Community"),
+          related_user_name: user.full_name,
+          related_user_photo: user.profile_photo_url,
+          entity_id: selectedPost.id
         });
       }
 
@@ -235,15 +220,15 @@ export default function CommunityPage({ embedded = false }) {
     });
 
     if (!hasLiked && reply.author_email !== user.email) {
-      await base44.functions.invoke("sendAppNotification", {
-        targetEmail: reply.author_email,
+      await base44.entities.Notification.create({
+        user_email: reply.author_email,
         title: "Alguém curtiu sua resposta",
         message: `${user.full_name} curtiu sua resposta no fórum`,
         type: "like",
-        actionUrl: createPageUrl("Community"),
-        relatedUserName: user.full_name,
-        relatedUserPhoto: user.profile_photo_url,
-        entityId: reply.id
+        action_url: createPageUrl("Community"),
+        related_user_name: user.full_name,
+        related_user_photo: user.profile_photo_url,
+        entity_id: reply.id
       });
     }
 
@@ -357,14 +342,14 @@ export default function CommunityPage({ embedded = false }) {
   };
 
   const renderReplies = (replyNodes, level = 0) => {
-    return replyNodes.map((reply) =>
-    <div key={reply.id} className={`${level > 0 ? 'ml-8 md:ml-12 mt-2 relative' : 'mt-4'}`}>
-        {level > 0 &&
-      <div className="absolute -left-6 md:-left-8 top-4 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
-      }
-        {level > 0 &&
-      <div className="absolute -left-6 md:-left-8 top-4 w-6 h-px bg-gray-200 dark:bg-gray-700" />
-      }
+    return replyNodes.map((reply) => (
+      <div key={reply.id} className={`${level > 0 ? 'ml-8 md:ml-12 mt-2 relative' : 'mt-4'}`}>
+        {level > 0 && (
+          <div className="absolute -left-6 md:-left-8 top-4 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
+        )}
+        {level > 0 && (
+          <div className="absolute -left-6 md:-left-8 top-4 w-6 h-px bg-gray-200 dark:bg-gray-700" />
+        )}
         <div className="flex items-start gap-2 relative z-10">
           <Avatar className={`w-8 h-8 ${level > 0 ? 'w-6 h-6 mt-1' : ''} shrink-0 bg-white`}>
             <AvatarImage src={reply.author_photo_url} />
@@ -374,17 +359,16 @@ export default function CommunityPage({ embedded = false }) {
             <div className="bg-gray-100 dark:bg-slate-800 rounded-2xl px-4 py-2 inline-block max-w-full">
               <div className="flex items-center gap-2 mb-0.5">
                 <Link
-                to={createPageUrl("UserProfile") + `?u=${encryptEmail(reply.author_email)}`}
-                className="font-bold text-sm hover:underline text-gray-900 dark:text-white">
-
+                  to={createPageUrl("UserProfile") + `?email=${reply.author_email}`}
+                  className="font-bold text-sm hover:underline text-gray-900 dark:text-white"
+                >
                   {reply.author_name}
                 </Link>
-                <StaffBadge email={reply.author_email} className="ml-0.5" />
                 {reply.is_best_answer &&
-              <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
-              }
+                  <Badge variant="outline" className="text-green-600 bg-green-50 scale-75 origin-left">Melhor Resposta</Badge>
+                }
                 {reply.author_email === user.email &&
-              <DropdownMenu>
+                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-5 w-5 ml-2 -mr-2 text-gray-400">
                         <MoreVertical className="w-3 h-3" />
@@ -399,48 +383,48 @@ export default function CommunityPage({ embedded = false }) {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-              }
+                }
               </div>
               {editingReply?.id === reply.id ?
-            <div className="space-y-2 mt-2 w-full min-w-[200px] md:min-w-[400px]">
+                <div className="space-y-2 mt-2 w-full min-w-[200px] md:min-w-[400px]">
                   <Textarea
-                value={editingReply.content}
-                onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
-                rows={2} />
+                    value={editingReply.content}
+                    onChange={(e) => setEditingReply({ ...editingReply, content: e.target.value })}
+                    rows={2} />
                   <div className="flex gap-2">
                     <Button size="sm" onClick={() => handleEditReply(reply)}>Salvar</Button>
                     <Button size="sm" variant="outline" onClick={() => setEditingReply(null)}>Cancelar</Button>
                   </div>
                 </div> :
-            <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{reply.content}</p>
-            }
+                <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{reply.content}</p>
+              }
             </div>
-            {(!editingReply || editingReply.id !== reply.id) &&
-          <div className="flex items-center gap-4 text-xs font-semibold text-gray-500 mt-1 ml-2">
+            {(!editingReply || editingReply.id !== reply.id) && (
+              <div className="flex items-center gap-4 text-xs font-semibold text-gray-500 mt-1 ml-2">
                 <span>{new Date(reply.created_date).toLocaleDateString()}</span>
                 <button
-              className={`hover:underline ${reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}`}
-              onClick={() => handleLikeReply(reply)}>
-
+                  className={`hover:underline ${reply.liked_by?.includes(user.email) ? "text-blue-600" : ""}`}
+                  onClick={() => handleLikeReply(reply)}
+                >
                   Curtir {reply.likes_count > 0 && `(${reply.likes_count})`}
                 </button>
                 <button
-              className="hover:underline"
-              onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name, email: reply.author_email })}>
-
+                  className="hover:underline"
+                  onClick={() => setReplyingTo({ id: reply.id, name: reply.author_name })}
+                >
                   Responder
                 </button>
               </div>
-          }
+            )}
           </div>
         </div>
-        {reply.children && reply.children.length > 0 &&
-      <div className="pl-2 relative">
+        {reply.children && reply.children.length > 0 && (
+          <div className="pl-2 relative">
             {renderReplies(reply.children, level + 1)}
           </div>
-      }
+        )}
       </div>
-    );
+    ));
   };
 
   if (isLoading) {
@@ -453,7 +437,7 @@ export default function CommunityPage({ embedded = false }) {
 
   if (selectedPost) {
     return (
-      <div className={embedded ? "w-full" : "min-h-screen bg-gray-50 dark:bg-gray-900 p-6"}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
           <Button onClick={() => setSelectedPost(null)} variant="outline" className="bg-blue-600 text-slate-50 mb-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
             ← Voltar
@@ -470,16 +454,15 @@ export default function CommunityPage({ embedded = false }) {
                   <div className="flex-1">
                           <CardTitle className="text-xl">{selectedPost.title}</CardTitle>
                           <div className="flex items-center gap-2">
-                            <p className="flex items-center text-sm text-gray-500 flex-wrap">
+                            <p className="text-sm text-gray-500">
                               Por{" "}
                               <Link
-                          to={createPageUrl("UserProfile") + `?u=${encryptEmail(selectedPost.author_email)}`}
-                          className="font-semibold hover:underline text-blue-600 ml-1">
+                          to={createPageUrl("UserProfile") + `?email=${selectedPost.author_email}`}
+                          className="font-semibold hover:underline text-blue-600">
 
                                 {selectedPost.author_name}
                               </Link>
-                              <StaffBadge email={selectedPost.author_email} className="ml-1" />
-                              <span className="ml-1">• {new Date(selectedPost.created_date).toLocaleDateString()}</span>
+                              {" "}• {new Date(selectedPost.created_date).toLocaleDateString()}
                             </p>
                       <FollowButton
                         targetEmail={selectedPost.author_email}
@@ -521,7 +504,7 @@ export default function CommunityPage({ embedded = false }) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="bg-slate-800 pt-0 p-6">
+            <CardContent>
               <p className="whitespace-pre-wrap mb-4">{selectedPost.content}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <Button
@@ -546,32 +529,26 @@ export default function CommunityPage({ embedded = false }) {
           </Card>
 
           <Card className="mb-6">
-            <CardHeader className="bg-slate-900 p-6 flex flex-col space-y-1.5">
+            <CardHeader>
               <CardTitle>Respostas ({replies.length})</CardTitle>
             </CardHeader>
-            <CardContent className="bg-slate-900 pt-0 p-6">
+            <CardContent>
               <div className="space-y-1 mb-8">
                 {renderReplies(buildReplyTree(replies))}
               </div>
 
               <div className="mt-6">
-                {replyingTo &&
-                <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
+                {replyingTo && (
+                  <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
                     <span>Respondendo a <strong>{replyingTo.name}</strong></span>
                     <button onClick={() => setReplyingTo(null)} className="hover:text-blue-900 font-bold">&times;</button>
                   </div>
-                }
+                )}
                 <div className="flex gap-2">
                   <Textarea
                     placeholder={replyingTo ? `Escreva sua resposta...` : "Escreva um comentário..."}
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleReply();
-                      }
-                    }}
                     rows={3} />
 
                   <Button onClick={handleReply} className="bg-blue-600 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 self-end">
@@ -669,20 +646,18 @@ export default function CommunityPage({ embedded = false }) {
   }
 
   return (
-    <div className={embedded ? "w-full" : "min-h-screen bg-gray-50 dark:bg-gray-900 p-6"}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
-        {!embedded && <StudyPartnerRequests currentUser={user} />}
+        <StudyPartnerRequests currentUser={user} />
 
-        <div className={`flex items-center justify-between ${embedded ? 'mb-4' : 'mb-6'}`}>
-          {!embedded && (
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
-              <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
-            </div>
-          )}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fórum da Comunidade</h1>
+            <p className="text-gray-600 dark:text-gray-400">Tire dúvidas e compartilhe conhecimento</p>
+          </div>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 text-slate-200 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9">
+              <Button>
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Discussão
               </Button>
@@ -774,28 +749,25 @@ export default function CommunityPage({ embedded = false }) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {post.is_pinned && <Pin className="w-4 h-4 text-yellow-600" />}
-                          <h3 className="text-slate-300 text-lg font-semibold">{post.title}</h3>
+                          <h3 className="font-semibold text-lg">{post.title}</h3>
                         </div>
-                        <p className="text-slate-300 mb-2 text-sm dark:text-gray-400 line-clamp-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
                           {post.content}
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Badge className="bg-blue-600 text-slate-200 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent shadow hover:bg-primary/80">{categories.find((s) => s.value === post.subject)?.label}</Badge>
+                        <Badge>{categories.find((s) => s.value === post.subject)?.label}</Badge>
                         {post.is_resolved && <CheckCircle className="w-5 h-5 text-green-600" />}
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Link
-                        to={createPageUrl("UserProfile") + `?u=${encryptEmail(post.author_email)}`}
-                        className="font-semibold hover:underline text-blue-600"
-                        onClick={(e) => e.stopPropagation()}>
+                      <Link
+                      to={createPageUrl("UserProfile") + `?email=${post.author_email}`}
+                      className="font-semibold hover:underline text-blue-600"
+                      onClick={(e) => e.stopPropagation()}>
 
-                          {post.author_name}
-                        </Link>
-                        <StaffBadge email={post.author_email} />
-                      </div>
+                        {post.author_name}
+                      </Link>
                       <span>•</span>
                       <span>{new Date(post.created_date).toLocaleDateString()}</span>
                       <span>•</span>

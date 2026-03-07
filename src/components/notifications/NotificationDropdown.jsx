@@ -10,13 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { base44 } from '@/api/base44Client';
 import { User } from '@/entities/User';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 // AnimatePresence and motion are not used in new rendering, but kept as imports if there are other usages.
 // Not used in this component, but kept as existing import.
 
 export default function NotificationDropdown() {
-  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,13 +32,6 @@ export default function NotificationDropdown() {
     const unsubscribe = base44.entities.Notification.subscribe((event) => {
       if (event.type === 'create' && event.data.user_email === user.email) {
         setNotifications(prev => [event.data, ...prev]);
-        
-        // Show a toast for new notifications if it's a chat message
-        if (event.data.type === 'chat_message') {
-          toast.info(event.data.title, {
-            description: event.data.message
-          });
-        }
       } else if (event.type === 'update') {
         setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
       } else if (event.type === 'delete') {
@@ -85,24 +75,7 @@ export default function NotificationDropdown() {
       setIsOpen(false);
       
       if (notification.action_url) {
-        if (notification.type === 'chat_message') {
-           const urlParams = new URLSearchParams(notification.action_url.split('?')[1]);
-           const partnerEmail = urlParams.get('email');
-           if (partnerEmail) {
-             const partner = {
-               email: partnerEmail,
-               name: notification.related_user_name,
-               photo: notification.related_user_photo
-             };
-             window.dispatchEvent(new CustomEvent('open-study-chat', { detail: { partner } }));
-             return; // Don't navigate
-           }
-        }
-        if (notification.action_url.startsWith('http')) {
-          window.location.href = notification.action_url;
-        } else {
-          navigate(notification.action_url);
-        }
+        window.location.href = notification.action_url;
       }
     } catch (error) {
       console.error('Erro ao marcar notificação como lida:', error);
@@ -133,7 +106,6 @@ export default function NotificationDropdown() {
 
   const getNotificationIcon = (type) => {
     switch(type) {
-      case 'chat_message': return <MessageSquare className="w-4 h-4" />;
       case 'reply': return <MessageSquare className="w-4 h-4" />;
       case 'like': return <Heart className="w-4 h-4" />;
       case 'follow': return <UserPlus className="w-4 h-4" />;
@@ -148,7 +120,6 @@ export default function NotificationDropdown() {
 
   const getIconColors = (type) => {
     switch(type) {
-      case 'chat_message': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
       case 'simulation_ready': return 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300';
       case 'simulation_incomplete': return 'bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300';
       case 'contest_deadline': return 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300';

@@ -139,25 +139,26 @@ export default function QuestionCard({
         <CardContent className="p-6 space-y-6">
           {question.associated_text && (
             <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-              <AlertDescription 
-                className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed [&_b]:!font-medium [&_strong]:!font-medium"
-                dangerouslySetInnerHTML={{ __html: question.associated_text }}
-              />
+              <AlertDescription className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+                {question.associated_text}
+              </AlertDescription>
             </Alert>
           )}
 
           {question.statement && (
-            <div 
-              className="font-medium text-gray-900 dark:text-gray-100 mb-2 whitespace-pre-wrap [&_b]:!font-medium [&_strong]:!font-medium"
-              dangerouslySetInnerHTML={{ __html: question.statement }}
-            />
+            <div>
+              <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                {question.statement}
+              </p>
+            </div>
           )}
 
           {question.command && (
-            <div 
-              className="font-medium text-indigo-700 dark:text-indigo-400 mb-4 whitespace-pre-wrap [&_b]:!font-medium [&_strong]:!font-medium"
-              dangerouslySetInnerHTML={{ __html: question.command }}
-            />
+            <div>
+              <p className="font-semibold text-indigo-700 dark:text-indigo-400 mb-4">
+                {question.command}
+              </p>
+            </div>
           )}
 
           <RadioGroup
@@ -169,9 +170,8 @@ export default function QuestionCard({
             {question.options?.map((option, index) => (
               <div
                 key={index}
-                onClick={() => !isSubmitted && handleAnswerSelect(option.letter)}
                 className={cn(
-                  "flex items-start space-x-3 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer",
+                  "flex items-start space-x-3 p-4 rounded-lg border-2 transition-all duration-200",
                   "bg-white dark:bg-gray-800",
                   userAnswer === option.letter && !isSubmitted && "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20",
                   isSubmitted && option.letter === question.correct_answer && "border-green-500 bg-green-50 dark:bg-green-900/20",
@@ -179,14 +179,14 @@ export default function QuestionCard({
                   !userAnswer && !isSubmitted && "border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                 )}
               >
-                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} onClick={(e) => e.stopPropagation()} />
-                <div className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200 flex items-start">
-                  <span className="font-medium mr-2">{option.letter})</span>
-                  <span 
-                    className="[&_b]:!font-medium [&_strong]:!font-medium"
-                    dangerouslySetInnerHTML={{ __html: option.text }}
-                  />
-                </div>
+                <RadioGroupItem value={option.letter} id={`q${question.id}-${option.letter}`} />
+                <Label
+                  htmlFor={`q${question.id}-${option.letter}`}
+                  className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200"
+                >
+                  <span className="font-semibold mr-2">{option.letter})</span>
+                  {option.text}
+                </Label>
                 {isSubmitted && option.letter === question.correct_answer && (
                   <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                 )}

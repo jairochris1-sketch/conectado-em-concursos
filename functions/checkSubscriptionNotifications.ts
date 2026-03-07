@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
             body: `
               Olá!
               
-              Seu pagamento de R$ ${subscription.price.toFixed(2)} para o Plano ${subscription.plan === 'padrao' ? 'Padrão' : 'Premium'} será processado em 3 dias (${nextPaymentDate.toLocaleDateString('pt-BR')}).
+              Seu pagamento de R$ ${subscription.price.toFixed(2)} para o Plano ${subscription.plan === 'padrao' ? 'Padrão' : 'Avançado'} será processado em 3 dias (${nextPaymentDate.toLocaleDateString('pt-BR')}).
               
               Certifique-se de que há saldo disponível no seu método de pagamento.
               

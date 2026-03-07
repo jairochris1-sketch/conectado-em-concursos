@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { Question } from "@/entities/Question";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +15,7 @@ import {
   Briefcase,
   Grid3x3,
   List,
-  LayoutGrid,
-  Star } from
+  LayoutGrid } from
 "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -65,14 +63,10 @@ export default function Exams() {
   const [filteredExams, setFilteredExams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [favorites, setFavorites] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
   const [filters, setFilters] = useState({
     institution: "all",
     year: "all",
-    subject: "all",
-    favoritesOnly: false
+    subject: "all"
   });
   const [viewMode, setViewMode] = useState(() => {
     return localStorage.getItem('examsViewMode') || 'list';
@@ -93,26 +87,23 @@ export default function Exams() {
         );
 
         const examsList = Object.values(groupedExams).map((examQuestions) => {
-          const firstQuestion = examQuestions[0];
-          const subjects = [...new Set(examQuestions.map((q) => q.subject))];
+        const firstQuestion = examQuestions[0];
+        const subjects = [...new Set(examQuestions.map((q) => q.subject))];
+        
+        // Buscar a primeira imagem disponível em todas as questões do exame
+        const coverImage = examQuestions.find(q => q.exam_cover_image)?.exam_cover_image || null;
 
-          // Buscar a primeira imagem disponível em todas as questões do exame
-          const coverImage = examQuestions.find((q) => q.exam_cover_image)?.exam_cover_image || null;
-
-          return {
-            id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
-            institution: firstQuestion.institution,
-            year: firstQuestion.year,
-            exam_name: firstQuestion.exam_name,
-            cargo: firstQuestion.cargo || 'Cargo não especificado',
-            subjects: subjects,
-            question_count: examQuestions.length,
-            cover_image: coverImage
-          };
+        return {
+          id: `${firstQuestion.institution}-${firstQuestion.year}-${firstQuestion.exam_name}-${firstQuestion.cargo || 'N/A'}`,
+          institution: firstQuestion.institution,
+          year: firstQuestion.year,
+          exam_name: firstQuestion.exam_name,
+          cargo: firstQuestion.cargo || 'Cargo não especificado',
+          subjects: subjects,
+          question_count: examQuestions.length,
+          cover_image: coverImage
+        };
         }).sort((a, b) => b.year - a.year || a.exam_name.localeCompare(b.exam_name));
-
-        const favs = await base44.entities.FavoriteExam.list();
-        setFavorites(favs.map((f) => f.exam_id));
 
         setExams(examsList);
         setFilteredExams(examsList);
@@ -148,36 +139,8 @@ export default function Exams() {
       filtered = filtered.filter((exam) => exam.subjects.includes(filters.subject));
     }
 
-    if (filters.favoritesOnly) {
-      filtered = filtered.filter((exam) => favorites.includes(exam.id));
-    }
-
     setFilteredExams(filtered);
-    setCurrentPage(1);
-  }, [exams, searchTerm, filters, favorites]);
-
-  const toggleFavorite = async (e, examId) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      if (favorites.includes(examId)) {
-        const toDelete = await base44.entities.FavoriteExam.filter({ exam_id: examId });
-        if (toDelete.length > 0) {
-          await base44.entities.FavoriteExam.delete(toDelete[0].id);
-        }
-        setFavorites((prev) => prev.filter((id) => id !== examId));
-      } else {
-        await base44.entities.FavoriteExam.create({ exam_id: examId });
-        setFavorites((prev) => [...prev, examId]);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const paginatedExams = filteredExams.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
+  }, [exams, searchTerm, filters]);
 
   const uniqueValues = useMemo(() => {
     const institutions = [...new Set(exams.map((e) => e.institution))].filter(Boolean).sort();
@@ -199,7 +162,7 @@ export default function Exams() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-4 md:p-8 text-gray-900 dark:text-gray-100">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -215,7 +178,7 @@ export default function Exams() {
 
         {/* Filtros e Busca */}
         <Card className="mb-6 shadow-sm">
-          <CardHeader className="bg-transparent p-6 flex flex-col space-y-1.5">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Filter className="w-5 h-5" />
@@ -253,7 +216,7 @@ export default function Exams() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="bg-transparent p-6">
+          <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -309,26 +272,15 @@ export default function Exams() {
             </div>
 
             <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center gap-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {filteredExams.length} {filteredExams.length === 1 ? 'prova encontrada' : 'provas encontradas'}
-                </p>
-                <Button
-                  variant={filters.favoritesOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setFilters((prev) => ({ ...prev, favoritesOnly: !prev.favoritesOnly }))}
-                  className={filters.favoritesOnly ? "bg-amber-500 hover:bg-amber-600 text-white border-none" : "text-gray-600"}>
-
-                  <Star className={`w-4 h-4 mr-2 ${filters.favoritesOnly ? 'fill-current' : ''}`} />
-                  Apenas Favoritos
-                </Button>
-              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {filteredExams.length} {filteredExams.length === 1 ? 'prova encontrada' : 'provas encontradas'}
+              </p>
               <Button
                 variant="outline"
                 onClick={() => {
                   setSearchTerm("");
-                  setFilters({ institution: "all", year: "all", subject: "all", favoritesOnly: false });
-                }} className="bg-blue-600 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
+                  setFilters({ institution: "all", year: "all", subject: "all" });
+                }}>
 
                 Limpar Filtros
               </Button>
@@ -342,7 +294,7 @@ export default function Exams() {
         viewMode === 'list' ? 'space-y-4' :
         'grid grid-cols-1 md:grid-cols-2 gap-3'
         }>
-          {paginatedExams.map((exam, index) =>
+          {filteredExams.map((exam, index) =>
           <motion.div
             key={exam.id}
             initial={{ opacity: 0, y: 20 }}
@@ -354,27 +306,21 @@ export default function Exams() {
 
                 {viewMode === 'grid' ?
               <Card className="hover:shadow-lg hover:border-blue-500 transition-all duration-200 group h-full">
-                    <CardHeader className="bg-transparent p-6 flex flex-col space-y-1.5">
+                    <CardHeader className="pb-3">
                       <div className="flex items-start gap-3">
-                        {exam.cover_image &&
-                    <img
-                      src={exam.cover_image}
-                      alt={exam.exam_name}
-                      className="w-12 h-12 object-contain flex-shrink-0 rounded" />
-
-                    }
-                        <CardTitle className="text-gray-900 text-base font-semibold tracking-tight dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1">
+                        {exam.cover_image && (
+                          <img 
+                            src={exam.cover_image} 
+                            alt={exam.exam_name}
+                            className="w-12 h-12 object-contain flex-shrink-0 rounded"
+                          />
+                        )}
+                        <CardTitle className="text-base text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </CardTitle>
-                        <button
-                      onClick={(e) => toggleFavorite(e, exam.id)}
-                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
-
-                          <Star className={`w-5 h-5 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
-                        </button>
                       </div>
                     </CardHeader>
-                    <CardContent className="bg-transparent p-6 space-y-2">
+                    <CardContent className="space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                         <Building className="w-4 h-4 flex-shrink-0" />
                         <span className="font-medium">{institutionNames[exam.institution] || exam.institution.toUpperCase()}</span>
@@ -397,14 +343,14 @@ export default function Exams() {
                   </Card> :
               viewMode === 'list' ?
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
-                    <CardContent className="bg-transparent p-4 flex items-center justify-between gap-3">
-                      {exam.cover_image &&
-                  <img
-                    src={exam.cover_image}
-                    alt={exam.exam_name}
-                    className="w-16 h-16 object-contain flex-shrink-0 rounded" />
-
-                  }
+                    <CardContent className="p-4 flex items-center justify-between gap-3">
+                      {exam.cover_image && (
+                        <img 
+                          src={exam.cover_image} 
+                          alt={exam.exam_name}
+                          className="w-16 h-16 object-contain flex-shrink-0 rounded"
+                        />
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="text-blue-900 text-lg font-semibold dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-1">
                           {exam.exam_name}
@@ -428,37 +374,23 @@ export default function Exams() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-center gap-2">
-                        <button
-                      onClick={(e) => toggleFavorite(e, exam.id)}
-                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
-
-                          <Star className={`w-5 h-5 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
-                        </button>
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
-                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
                     </CardContent>
                   </Card> :
 
               <Card className="hover:shadow-md hover:border-blue-500 transition-all duration-200 group">
                     <CardContent className="p-3">
                       <div className="flex items-start gap-2 mb-2">
-                        {exam.cover_image &&
-                    <img
-                      src={exam.cover_image}
-                      alt={exam.exam_name}
-                      className="w-10 h-10 object-contain flex-shrink-0 rounded" />
-
-                    }
+                        {exam.cover_image && (
+                          <img 
+                            src={exam.cover_image} 
+                            alt={exam.exam_name}
+                            className="w-10 h-10 object-contain flex-shrink-0 rounded"
+                          />
+                        )}
                         <p className="text-sm font-semibold text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-blue-100 transition-colors line-clamp-2 flex-1">
                           {exam.exam_name}
                         </p>
-                        <button
-                      onClick={(e) => toggleFavorite(e, exam.id)}
-                      className="text-gray-400 hover:text-amber-500 transition-colors shrink-0">
-
-                          <Star className={`w-4 h-4 ${favorites.includes(exam.id) ? 'fill-amber-500 text-amber-500' : ''}`} />
-                        </button>
                       </div>
                       <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
                         <div className="flex items-center justify-between">
@@ -487,28 +419,6 @@ export default function Exams() {
             <p className="text-gray-600 dark:text-gray-400">
               Tente ajustar os filtros para encontrar o que procura.
             </p>
-          </div>
-        }
-
-        {totalPages > 1 &&
-        <div className="flex justify-center mt-8 gap-2">
-            <Button
-            variant="outline"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}>
-
-              Anterior
-            </Button>
-            <span className="flex items-center px-4 text-sm font-medium text-gray-600 dark:text-gray-400">
-              Página {currentPage} de {totalPages}
-            </span>
-            <Button
-            variant="outline"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}>
-
-              Próxima
-            </Button>
           </div>
         }
       </div>

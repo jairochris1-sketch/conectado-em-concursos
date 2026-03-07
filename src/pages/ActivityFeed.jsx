@@ -8,7 +8,6 @@ import { MessageSquare, Trophy, BookOpen, UserPlus, Users, Link as LinkIcon } fr
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { encryptEmail } from "@/components/security/emailCrypto";
 
 export default function ActivityFeedPage() {
   const [user, setUser] = useState(null);
@@ -89,7 +88,7 @@ export default function ActivityFeedPage() {
              <Card key={activity.id}>
               <CardContent className="p-3 md:p-4">
                 <div className="flex items-start gap-2 md:gap-3">
-                  <Link to={`${createPageUrl("UserProfile")}?u=${encryptEmail(activity.user_email)}`} className="shrink-0">
+                  <Link to={`${createPageUrl("UserProfile")}?email=${encodeURIComponent(activity.user_email)}`} className="shrink-0">
                     <Avatar className="w-8 h-8 md:w-10 md:h-10 hover:opacity-80 transition-opacity">
                       <AvatarImage src={activity.user_photo} />
                       <AvatarFallback>{activity.user_name?.charAt(0)}</AvatarFallback>
@@ -97,7 +96,7 @@ export default function ActivityFeedPage() {
                   </Link>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <Link to={`${createPageUrl("UserProfile")}?u=${encryptEmail(activity.user_email)}`}>
+                      <Link to={`${createPageUrl("UserProfile")}?email=${encodeURIComponent(activity.user_email)}`}>
                         <span className="font-semibold text-sm md:text-base text-gray-900 dark:text-white truncate hover:underline">
                           {activity.user_name}
                         </span>

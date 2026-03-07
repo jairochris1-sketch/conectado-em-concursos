@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Note, User } from '@/entities/all';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -158,21 +156,14 @@ export default function NotesPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
             <StickyNote className="w-8 h-8" />
             Minhas Anotações
           </h1>
-          <div className="flex items-center gap-3 flex-wrap">
-            <Link to={createPageUrl("FavoriteQuestions")}>
-              <Button variant="outline">
-                <Star className="w-4 h-4 mr-2" />
-                Questões Favoritas
-              </Button>
-            </Link>
-            <Button
-              onClick={() => {
-                setEditingNote(null);
+          <Button
+            onClick={() => {
+              setEditingNote(null);
               setFormData({ title: '', content: '', subject: '', topic: '', color: 'yellow', tags: [] });
               setShowForm(!showForm);
             }}
@@ -180,8 +171,7 @@ export default function NotesPage() {
           >
             <Plus className="w-5 h-5 mr-2" />
             Nova Anotação
-            </Button>
-          </div>
+          </Button>
         </div>
 
         {/* Formulário */}
