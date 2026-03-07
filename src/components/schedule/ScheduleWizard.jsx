@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { base44 } from "@/api/base44Client";
 
@@ -48,6 +49,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
   });
   const [minSession, setMinSession] = useState(45); // minutes
   const [maxSession, setMaxSession] = useState(90);
+  const [topicConfig, setTopicConfig] = useState({});
   const [title, setTitle] = useState(initialSchedule?.title || "Planejamento Semanal");
   const [period, setPeriod] = useState(() => {
     const start = nextWeekStart();
@@ -140,6 +142,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       dailyHours,
       minSession,
       maxSession,
+      topicConfig,
     });
 
     const payload = {
@@ -249,6 +252,27 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                       min={1}
                       max={5}
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 mt-3">
+                  <div>
+                    <label className="text-xs font-medium text-gray-600">Assunto (opcional)</label>
+                    <Input
+                      value={topicConfig[s]?.mainTopic || ""}
+                      onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), mainTopic: e.target.value } }))}
+                      placeholder="Ex: Direitos Fundamentais"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-gray-600">Subtópicos (um por linha)</label>
+                    <Textarea
+                      rows={3}
+                      value={topicConfig[s]?.subtopicsText || ""}
+                      onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), subtopicsText: e.target.value } }))}
+                      placeholder={"Ex:\nArt. 5º - Direitos e Deveres\nLei 8.112 - Regime Jurídico\n..."}
+                    />
+                    <div className="text-[11px] text-gray-500 mt-1">Usaremos estes subtópicos para preencher o campo “tópico” das sessões.</div>
                   </div>
                 </div>
               ))}
@@ -410,10 +434,21 @@ function diffMinutes(a, b) {
   return (bh*60+bm) - (ah*60+am);
 }
 
-function generateScheduleItems({ selected, weightList, dailyHours, minSession, maxSession }) {
+function generateScheduleItems({ selected, weightList, dailyHours, minSession, maxSession, topicConfig = {} }) {
   const selectedWeights = weightList.filter(w => selected.includes(w.subject));
   const totalMinutes = Object.values(dailyHours).reduce((s, v) => s + hhmmToMinutes(v), 0);
   const sumScore = selectedWeights.reduce((s, w) => s + w.score, 0) || 1;
+
+  // Parse topics per subject
+  const topicsInfo = {};
+  const parseLines = (txt = "") => (txt.split(/\r?\n|,/).map(v => v.trim()).filter(Boolean));
+  selected.forEach(s => {
+    const cfg = topicConfig[s] || {};
+    const main = (cfg.mainTopic || "").trim();
+    const subs = parseLines(cfg.subtopicsText || "");
+    const queue = subs.length ? subs : (main ? [main] : []);
+    topicsInfo[s] = { main, subs, queue, next: 0 };
+  });
 
   // Build sessions pool per subject
   const sessions = [];
@@ -439,12 +474,31 @@ function generateScheduleItems({ selected, weightList, dailyHours, minSession, m
       const s = sessions[poolIdx];
       const use = Math.min(s.duration, rem);
       const end = addMinutesToTime(t, use);
+
+      // Choose topic label for this subject
+      let topicLabel = "";
+      const info = topicsInfo[s.subject] || {};
+      const q = info.queue || [];
+      if (q.length > 0) {
+        const idx = info.next % q.length;
+        const sub = q[idx];
+        info.next = idx + 1;
+        topicsInfo[s.subject] = info;
+        if ((info.subs && info.subs.length > 0) && info.main) {
+          topicLabel = `${info.main} — ${sub}`;
+        } else {
+          topicLabel = sub;
+        }
+      } else if (info.main) {
+        topicLabel = info.main;
+      }
+
       items.push({
         day_of_week: day,
         start_time: t,
         end_time: end,
         subject: s.subject,
-        topic: "",
+        topic: topicLabel,
         activity_type: "teoria"
       });
       t = end;
