@@ -557,16 +557,10 @@ export default function CommunityPage() {
                 {renderReplies(buildReplyTree(replies))}
               </div>
 
-              <div className="mt-6">
-                {replyingTo && (
-                  <div className="flex items-center justify-between bg-blue-50 text-blue-700 px-3 py-2 rounded-t-lg text-sm mb-1">
-                    <span>Respondendo a <strong>{replyingTo.name}</strong></span>
-                    <button onClick={() => setReplyingTo(null)} className="hover:text-blue-900 font-bold">&times;</button>
-                  </div>
-                )}
-                <div className="flex gap-2">
+              {!replyingTo && (
+                <div className="mt-6 flex gap-2">
                   <Textarea
-                    placeholder={replyingTo ? `Escreva sua resposta...` : "Escreva um comentário..."}
+                    placeholder="Escreva um comentário..."
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
                     rows={3} />
@@ -575,7 +569,7 @@ export default function CommunityPage() {
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
