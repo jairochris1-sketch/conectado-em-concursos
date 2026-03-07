@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { 
   Search, X, User as UserIcon, MessageSquare, 
-  Calendar, Filter, Loader2, ChevronRight 
+  Calendar, Filter, Loader2, ChevronRight, Users 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,17 +81,23 @@ export default function GlobalSearch({ isMobile }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {isMobile ? (
-          <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
-            <Search className="w-5 h-5" style={{ color: 'var(--nav-icon-color)' }} />
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" style={{ backgroundColor: 'var(--primary-color)' }}>
+            <span className="relative inline-flex items-center justify-center">
+              <Users className="w-4 h-4 text-white" />
+              <Search className="w-3 h-3 text-white absolute -bottom-0.5 -right-0.5 bg-white/20 rounded-full p-[1px]" />
+            </span>
           </Button>
         ) : (
           <Button 
-            variant="outline" 
-            className="hidden md:flex relative w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64 bg-white/10 border-white/20 hover:bg-white/20 hover:text-white text-white/80"
+            variant="ghost"
+            size="icon"
+            className="hidden md:inline-flex h-9 w-9 rounded-lg"
+            style={{ backgroundColor: 'var(--primary-color)' }}
           >
-            <span className="hidden lg:inline-flex">Pesquisar...</span>
-            <span className="inline-flex lg:hidden">Pesquisar...</span>
-            <Search className="absolute right-1.5 top-1.5 h-5 w-5" style={{ color: 'var(--nav-icon-color)' }} />
+            <span className="relative inline-flex items-center justify-center">
+              <Users className="w-4 h-4 text-white" />
+              <Search className="w-3 h-3 text-white absolute -bottom-0.5 -right-0.5 bg-white/20 rounded-full p-[1px]" />
+            </span>
           </Button>
         )}
       </DialogTrigger>
