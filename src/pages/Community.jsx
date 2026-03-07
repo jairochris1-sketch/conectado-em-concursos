@@ -167,10 +167,12 @@ export default function CommunityPage({ embedded = false }) {
   };
 
   const handleReply = async () => {
-    if (!replyContent.trim()) {
-      toast.error("Digite uma resposta");
+    if (!replyContent.trim() || isSubmittingReply) {
+      if (!replyContent.trim() && !isSubmittingReply) toast.error("Digite uma resposta");
       return;
     }
+
+    setIsSubmittingReply(true);
 
     try {
       await ForumReply.create({
