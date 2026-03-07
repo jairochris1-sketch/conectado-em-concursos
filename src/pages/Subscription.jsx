@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/entities/User';
 import { Subscription } from '@/entities/Subscription';
-import { createAsaasSubscription } from '@/functions/createAsaasSubscription';
-import { cancelAsaasSubscription } from '@/functions/cancelAsaasSubscription';
+
+
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -195,7 +195,7 @@ const plans = [
 }];
 
 
-const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, loadingPlan, onCancel, isCancelling, billingCycle, cancelError }) => {
+const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, loadingPlan, billingCycle }) => {
   const isCurrentPlan = currentPlan?.plan === plan.key && currentPlan?.status === 'active';
   const isUserCurrentPlan = currentUserPlan === plan.key;
   const isDisabled = plan.key === 'gratuito' || isCurrentPlan || isUserCurrentPlan || isLoading;
@@ -348,29 +348,7 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
             getButtonText()
             }
           </Button>
-          {isCurrentPlan && plan.key !== 'gratuito' && currentPlan?.billing_type === 'CREDIT_CARD' &&
-          <>
-              <Button
-              size="sm"
-              variant="destructive"
-              className="w-full bg-red-800 hover:bg-red-700"
-              onClick={onCancel}
-              disabled={isCancelling}>
-
-                {isCancelling ?
-              <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Cancelando...
-                  </> :
-
-              'Cancelar Assinatura'
-              }
-              </Button>
-              {cancelError &&
-            <p className="text-xs text-red-300 mt-2 text-center">{cancelError}</p>
-            }
-            </>
-          }
+          
         </CardFooter>
       </Card>
     </motion.div>);
@@ -511,22 +489,7 @@ export default function SubscriptionPage() {
       window.open(checkoutUrl, '_blank');
       return;
     }
-
-    const missing = checkMissingData(user);
-
-    if (Object.keys(missing).length > 0) {
-      setMissingData({
-        cpf: user?.cpf || '',
-        phone: user?.phone || ''
-      });
-      setSelectedPlan({ key: planKey, cycle });
-      setShowQuickForm(true);
-      return;
-    }
-
-    // Mostrar tela de seleção de método de pagamento
-    setSelectedPlan({ key: planKey, cycle });
-    setShowPaymentMethod(true);
+    alert('Link de checkout indisponível no momento. Entre em contato para concluir a assinatura.');
   };
 
   const processSubscription = async (planKey, cycle, paymentMethod) => {
@@ -751,8 +714,8 @@ export default function SubscriptionPage() {
 
   }
 
-  // Tela de seleção de método de pagamento
-  if (showPaymentMethod && selectedPlan && user) {
+  // (Removido fluxo de seleção de pagamento/Asaas)
+  if (false) {
     const plan = plans.find((p) => p.key === selectedPlan.key);
 
     const getCurrentPricingPayment = () => {
@@ -885,43 +848,7 @@ export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {currentSubscription?.status === 'pending' && showPendingBanner &&
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-4 bg-blue-600 border border-blue-500 rounded-lg flex items-center justify-between gap-4">
-
-            <div className="flex items-center gap-4">
-              <Clock className="w-6 h-6 text-blue-100 flex-shrink-0" />
-              <div>
-                <h3 className="font-bold text-white">Aguardando Confirmação de Pagamento</h3>
-                <p className="text-sm text-blue-100">
-                  Se você já realizou o pagamento, aguarde! Em breve será feita a confirmação e você terá acesso liberado ao plano <strong>{currentSubscription.plan}</strong> escolhido.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {currentSubscription.payment_url &&
-              <Button
-                size="sm"
-                variant="secondary"
-                className="bg-white text-blue-600 hover:bg-blue-50"
-                onClick={() => {
-                  window.open(currentSubscription.payment_url, '_blank');
-                  setShowPendingBanner(false);
-                }}>
-                Abrir Pagamento
-              </Button>
-              }
-              <button
-              onClick={() => setShowPendingBanner(false)}
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
-              aria-label="Fechar aviso">
-                  <X className="w-5 h-5 text-blue-100" />
-              </button>
-            </div>
-          </motion.div>
-        }
+        
 
         <div className="text-center mb-16">
           <motion.h1
@@ -993,17 +920,14 @@ export default function SubscriptionPage() {
           filter((plan) => !(plan.key === 'padrao' && billingCycle === 'annual')).
           map((plan) =>
           <PlanCard
-            key={plan.name}
-            plan={plan}
-            currentPlan={currentSubscription}
-            currentUserPlan={user?.current_plan}
-            onSubscribe={handleSubscribe}
-            isLoading={isSubmitting}
-            loadingPlan={loadingPlan}
-            onCancel={handleCancelSubscription}
-            isCancelling={isCancelling}
-            billingCycle={billingCycle}
-            cancelError={cancelError} />
+                       key={plan.name}
+                       plan={plan}
+                       currentPlan={currentSubscription}
+                       currentUserPlan={user?.current_plan}
+                       onSubscribe={handleSubscribe}
+                       isLoading={isSubmitting}
+                       loadingPlan={loadingPlan}
+                       billingCycle={billingCycle} />
 
           )}
         </div>
