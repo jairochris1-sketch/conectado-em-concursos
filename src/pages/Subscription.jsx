@@ -465,8 +465,8 @@ export default function SubscriptionPage() {
   const handleSubscribe = async (planKey, cycle) => {
     if (planKey === 'gratuito') return;
 
-    // Links diretos do Asaas conforme plano/ciclo
-    const directLinks = {
+    alert('Assinaturas online estão temporariamente indisponíveis. Entre em contato para aderir ao plano.');
+  }
       monthly: {
         padrao: 'https://www.asaas.com/c/l6rj0623rvgpqfw6',
         avancado: 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
@@ -492,7 +492,7 @@ export default function SubscriptionPage() {
     alert('Link de checkout indisponível no momento. Entre em contato para concluir a assinatura.');
   };
 
-  const processSubscription = async (planKey, cycle, paymentMethod) => {
+  // Fluxo Asaas removido
     setIsSubmitting(true);
     setLoadingPlan(`${planKey}-${cycle}`);
 
@@ -595,7 +595,7 @@ export default function SubscriptionPage() {
 
   }
 
-  if (showQuickForm && selectedPlan && user) {
+  if (false) {
     const plan = plans.find((p) => p.key === selectedPlan.key);
 
     const getCurrentPricingQuickForm = () => {
