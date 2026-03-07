@@ -57,7 +57,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     const isAdmin = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com' || currentUser?.email === 'juniorgmj2016@gmail.com' || currentUser?.role === 'admin';
     const isPremium = userPlan === 'padrao' || userPlan === 'avancado';
     if (!isAdmin && !isPremium) {
-      toast.error("Usuários do plano gratuito não podem enviar convites. Faça um upgrade.");
+      toast.error("Apenas usuários Premium podem enviar convites de Parceria. Faça um upgrade!");
       return;
     }
     
