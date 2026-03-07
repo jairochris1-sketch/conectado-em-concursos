@@ -223,6 +223,8 @@ export default function CommunityPage({ embedded = false }) {
       loadData();
     } catch (error) {
       toast.error("Erro ao enviar resposta");
+    } finally {
+      setIsSubmittingReply(false);
     }
   };
 
