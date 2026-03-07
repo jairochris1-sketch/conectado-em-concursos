@@ -89,7 +89,6 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
   const messagesEnd = useRef(null);
   const messagesStart = useRef(null);
   const inputRef = useRef(null);
-  const myStatusRef = useRef("online");
   const visibilityUnsubRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
   const loadingRef = useRef(false);
