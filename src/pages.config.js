@@ -73,6 +73,7 @@ import GuiaEstudos from './pages/GuiaEstudos';
 import Home from './pages/Home';
 import LogicCourse from './pages/LogicCourse';
 import MathCourse from './pages/MathCourse';
+import MeuEdital from './pages/MeuEdital';
 import MyDoubts from './pages/MyDoubts';
 import NotebookStats from './pages/NotebookStats';
 import Notebooks from './pages/Notebooks';
@@ -103,7 +104,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import MeuEdital from './pages/MeuEdital';
 import __Layout from './Layout.jsx';
 
 
@@ -134,6 +134,7 @@ export const PAGES = {
     "Home": Home,
     "LogicCourse": LogicCourse,
     "MathCourse": MathCourse,
+    "MeuEdital": MeuEdital,
     "MyDoubts": MyDoubts,
     "NotebookStats": NotebookStats,
     "Notebooks": Notebooks,
@@ -164,7 +165,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "MeuEdital": MeuEdital,
 }
 
 export const pagesConfig = {

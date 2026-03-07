@@ -300,7 +300,7 @@ export default function Questions() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Questões de Concursos Públicos
             </h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-300">
               <span>
                 {allQuestions.length} questões disponíveis
               </span>
@@ -380,7 +380,7 @@ export default function Questions() {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Nenhuma questão encontrada
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4 px-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4 px-4">
                   Tente ajustar os filtros para encontrar o que procura.
                 </p>
               </div>
