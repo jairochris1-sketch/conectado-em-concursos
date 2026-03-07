@@ -188,18 +188,20 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
   const currentPricing = getCurrentPricing();
 
   const getFeatures = () => {
-    if (plan.key === 'padrao') {
-      return currentPricing.features || plan.features;
+    if (currentPricing && currentPricing.features) {
+      return currentPricing.features;
     }
     return plan.features;
   };
 
+
   const getUnavailableFeatures = () => {
-    if (plan.key === 'padrao') {
-      return currentPricing.unavailableFeatures || plan.unavailableFeatures;
+    if (currentPricing && currentPricing.unavailableFeatures) {
+      return currentPricing.unavailableFeatures;
     }
     return plan.unavailableFeatures;
   };
+
   const getPriceDetail = () => {
     switch (billingCycle) {
       case 'semiannual':return '/ trimestre';
@@ -251,7 +253,10 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
         }
 
         <CardHeader className={`text-center p-6 ${headerColors[plan.color]}`}>
-          <CardTitle className="text-2xl font-bold uppercase tracking-wider">{plan.name}</CardTitle>
+          <CardTitle className="text-2xl font-bold uppercase tracking-wider">{currentPricing.title || plan.name}</CardTitle>
+          {currentPricing.subtitle && (
+            <div className="mt-1 text-sm opacity-90">{currentPricing.subtitle}</div>
+          )}
           {(isCurrentPlan || isUserCurrentPlan) &&
           <div className="mt-2">
               <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
@@ -275,13 +280,18 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
               <span className="text-lg opacity-70">{priceDetail}</span>
             </div>
             
-            {billingCycle === 'semiannual' && currentPricing.installments &&
-            <div className="text-center mt-2">
+            {(billingCycle === 'semiannual' || billingCycle === 'annual') && currentPricing.installments && (
+              <div className="text-center mt-2">
                 <span className="text-lg font-semibold text-yellow-300">
                   {currentPricing.installments}
                 </span>
               </div>
-            }
+            )}
+            {billingCycle === 'annual' && currentPricing.upfront && (
+              <div className="text-center mt-1">
+                <span className="text-sm opacity-80">ou {currentPricing.upfront}</span>
+              </div>
+            )}
           </div>
           <ul className="space-y-4">
             {getFeatures().map((feature, index) =>
