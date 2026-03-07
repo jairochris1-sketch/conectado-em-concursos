@@ -95,11 +95,12 @@ import StudyPlans from './pages/StudyPlans';
 import Subscription from './pages/Subscription';
 import UserProfile from './pages/UserProfile';
 import ViewStudyPlan from './pages/ViewStudyPlan';
+import WeeklyTrack from './pages/WeeklyTrack';
 import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import WeeklyTrack from './pages/WeeklyTrack';
+import Cycle from './pages/Cycle';
 import __Layout from './Layout.jsx';
 
 
@@ -152,11 +153,12 @@ export const PAGES = {
     "Subscription": Subscription,
     "UserProfile": UserProfile,
     "ViewStudyPlan": ViewStudyPlan,
+    "WeeklyTrack": WeeklyTrack,
     "Welcome": Welcome,
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "WeeklyTrack": WeeklyTrack,
+    "Cycle": Cycle,
 }
 
 export const pagesConfig = {
