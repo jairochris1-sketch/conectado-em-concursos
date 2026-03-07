@@ -328,17 +328,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     }
   };
 
-  const changeMyStatus = async (newStatus) => {
-    setMyStatus(newStatus);
-    myStatusRef.current = newStatus;
-    if (myPresenceId) {
-      await base44.entities.UserPresence.update(myPresenceId, {
-        status: newStatus, last_seen: new Date().toISOString()
-      });
-    }
-    const label = STATUS_OPTIONS.find(s => s.value === newStatus)?.label;
-    toast.success(`Status: ${label}`);
-  };
+
 
   const sendMessage = async () => {
     if (!text.trim() || sending) return;
