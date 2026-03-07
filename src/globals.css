@@ -265,6 +265,13 @@ body {
   }
 }
 
+/* Melhorias de contraste no modo escuro */
+.dark .text-gray-400 { color: #d1d5db !important; }
+.dark .text-gray-500 { color: #e5e7eb !important; }
+.dark .text-gray-600 { color: #e5e7eb !important; }
+.dark .text-gray-700 { color: #f3f4f6 !important; }
+.dark .text-muted-foreground { color: hsl(var(--muted-foreground)) !important; }
+
 /* Otimizações para mobile */
 @media (max-width: 768px) {
   * {
