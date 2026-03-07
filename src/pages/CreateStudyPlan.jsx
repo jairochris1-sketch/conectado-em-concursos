@@ -43,8 +43,7 @@ export default function CreateStudyPlan() {
     } else if (mode === "schedule") {
       navigate(createPageUrl("Schedule"));
     } else if (mode === "cycle") {
-      // Ciclo de Estudos ainda não implementado
-      navigate(createPageUrl("StudyPlans"));
+      navigate(createPageUrl("StudyCycle"));
     }
   };
 
