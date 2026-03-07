@@ -803,7 +803,7 @@ ${videoNotes}
                 </Card>
 
             {/* Root View - Pastas e Áreas de Estudo */}
-            {currentView === 'root' && !searchTerm && (
+            {currentView === 'root' && !searchTerm && selectedCargo === 'all' && (
               <div className="space-y-6">
                 {/* Pastas de Materiais de Estudo Personalizadas */}
                 <div>
