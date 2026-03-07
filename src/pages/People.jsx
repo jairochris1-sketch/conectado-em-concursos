@@ -10,6 +10,7 @@ import { createPageUrl } from "@/utils";
 import FollowButton from "@/components/social/FollowButton";
 import ConnectButton from "@/components/social/ConnectButton";
 import UserLink from "@/components/social/UserLink";
+import StudyPartnerButton from "@/components/social/StudyPartnerButton";
 import { base44 } from "@/api/base44Client";
 import { getPeople } from "@/functions/getPeople";
 
