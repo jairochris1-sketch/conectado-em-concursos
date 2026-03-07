@@ -69,6 +69,7 @@ import SolveNotebook from './pages/SolveNotebook';
 import SolveSimulation from './pages/SolveSimulation';
 import SimuladosDigital from './pages/SimuladosDigital';
 import Notebooks from './pages/Notebooks';
+import Flashcards from './pages/Flashcards';
 import ViewStudyPlan from './pages/ViewStudyPlan';
 import Welcome from './pages/Welcome';
 import studies from './pages/studies';
@@ -99,7 +100,7 @@ import SavedContests from './pages/SavedContests';
 import ActivityFeed from './pages/ActivityFeed';
 import SimulationHistory from './pages/SimulationHistory';
 import ExamView from './pages/ExamView';
-import Flashcards from './pages/Flashcards';
+import StudyCycle from './pages/StudyCycle';
 import __Layout from './Layout.jsx';
 
 
@@ -126,6 +127,7 @@ export const PAGES = {
     "SolveSimulation": SolveSimulation,
     "SimuladosDigital": SimuladosDigital,
     "Notebooks": Notebooks,
+    "Flashcards": Flashcards,
     "ViewStudyPlan": ViewStudyPlan,
     "Welcome": Welcome,
     "studies": studies,
@@ -156,7 +158,7 @@ export const PAGES = {
     "ActivityFeed": ActivityFeed,
     "SimulationHistory": SimulationHistory,
     "ExamView": ExamView,
-    "Flashcards": Flashcards,
+    "StudyCycle": StudyCycle,
 }
 
 export const pagesConfig = {
