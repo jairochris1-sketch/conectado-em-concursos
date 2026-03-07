@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { ChevronDown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const defaultSubjects = [
@@ -48,6 +52,8 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
   });
   const [minSession, setMinSession] = useState(45); // minutes
   const [maxSession, setMaxSession] = useState(90);
+  const [topics, setTopics] = useState([]);
+  const [subjectTopics, setSubjectTopics] = useState({});
   const [title, setTitle] = useState(initialSchedule?.title || "Planejamento Semanal");
   const [period, setPeriod] = useState(() => {
     const start = nextWeekStart();
@@ -84,6 +90,18 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       }
     };
     loadSubjects();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const list = await base44.entities.Topic?.list?.();
+        setTopics(Array.isArray(list) ? list : []);
+      } catch {
+        setTopics([]);
+      }
+    };
+    load();
   }, []);
 
   useEffect(() => {
@@ -125,9 +143,29 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
     return withScore.map(r => ({ ...r, pct: Math.round((r.score / total) * 100) }));
   }, [selected, weights]);
 
+  const normalize = (s) => (typeof s === 'string' ? s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase() : '');
+  const topicsForLabel = (label) => {
+    const n = normalize(label);
+    const filtered = topics.filter(t => {
+      const subj = normalize(t.subject || '');
+      const lab = normalize(t.label || '');
+      return (subj && n.includes(subj)) || lab.includes(n);
+    });
+    return filtered.length ? filtered : topics;
+  };
+
   const handleToggleSubject = (s) => {
-    setSelected(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-    setWeights(prev => prev[s] ? prev : { ...prev, [s]: { importance: 3, knowledge: 3 } });
+    setSelected(prev => {
+      const next = prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s];
+      setWeights(w => (w[s] ? w : { ...w, [s]: { importance: 3, knowledge: 3 } }));
+      setSubjectTopics(st => {
+        const copy = { ...st };
+        if (next.includes(s) && !copy[s]) copy[s] = [];
+        if (!next.includes(s)) delete copy[s];
+        return copy;
+      });
+      return next;
+    });
   };
 
   const next = () => setStep(prev => Math.min(4, prev + 1));
@@ -140,6 +178,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       dailyHours,
       minSession,
       maxSession,
+      subjectTopics,
     });
 
     const payload = {
@@ -249,6 +288,52 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                       min={1}
                       max={5}
                     />
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="text-xs text-gray-500 mb-1">Assuntos</div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" size="sm" className="justify-between w-full sm:w-auto">
+                          {subjectTopics[s]?.length ? `${subjectTopics[s].length} selecionado(s)` : "Selecionar assuntos"}
+                          <ChevronDown className="w-4 h-4 ml-2" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 p-2">
+                        <div className="max-h-60 overflow-auto space-y-2">
+                          {topicsForLabel(s).map((t) => {
+                            const val = t.label || t.value;
+                            const checked = (subjectTopics[s] || []).includes(val);
+                            return (
+                              <label key={val} className="flex items-center gap-2 text-sm text-gray-700">
+                                <Checkbox
+                                  checked={checked}
+                                  onCheckedChange={(v) => {
+                                    setSubjectTopics(prev => {
+                                      const arr = prev[s] ? [...prev[s]] : [];
+                                      const isChecked = !!v;
+                                      const i = arr.indexOf(val);
+                                      if (isChecked && i === -1) arr.push(val);
+                                      if (!isChecked && i > -1) arr.splice(i, 1);
+                                      return { ...prev, [s]: arr };
+                                    });
+                                  }}
+                                />
+                                <span>{t.label || t.value}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+
+                    {subjectTopics[s]?.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {subjectTopics[s].map((v) => (
+                          <Badge key={v} variant="secondary">{v}</Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -410,7 +495,7 @@ function diffMinutes(a, b) {
   return (bh*60+bm) - (ah*60+am);
 }
 
-function generateScheduleItems({ selected, weightList, dailyHours, minSession, maxSession }) {
+function generateScheduleItems({ selected, weightList, dailyHours, minSession, maxSession, subjectTopics }) {
   const selectedWeights = weightList.filter(w => selected.includes(w.subject));
   const totalMinutes = Object.values(dailyHours).reduce((s, v) => s + hhmmToMinutes(v), 0);
   const sumScore = selectedWeights.reduce((s, w) => s + w.score, 0) || 1;
@@ -431,6 +516,7 @@ function generateScheduleItems({ selected, weightList, dailyHours, minSession, m
   const dayKeys = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
   const items = [];
   let poolIdx = 0;
+  const topicIndex = {};
   dayKeys.forEach(day => {
     let rem = hhmmToMinutes(dailyHours[day]);
     if (rem <= 0) return;
@@ -439,12 +525,16 @@ function generateScheduleItems({ selected, weightList, dailyHours, minSession, m
       const s = sessions[poolIdx];
       const use = Math.min(s.duration, rem);
       const end = addMinutesToTime(t, use);
+      const list = (subjectTopics && subjectTopics[s.subject]) || [];
+      const idx = topicIndex[s.subject] || 0;
+      const chosenTopic = list.length ? list[idx % list.length] : "";
+      topicIndex[s.subject] = idx + 1;
       items.push({
         day_of_week: day,
         start_time: t,
         end_time: end,
         subject: s.subject,
-        topic: "",
+        topic: chosenTopic,
         activity_type: "teoria"
       });
       t = end;
