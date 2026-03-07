@@ -122,6 +122,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setPartnerId(record.id);
     await notify(targetEmail, "📚 Convite de Parceria de Estudos", `${currentUser.full_name} te convidou para ser parceiro(a) de estudos!`);
     toast.success("Convite enviado!");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -131,6 +132,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Convite cancelado");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -141,6 +143,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("accepted");
     await notify(targetEmail, "✅ Parceria aceita!", `${currentUser.full_name} aceitou seu convite de Parceria de Estudos!`);
     toast.success("Parceria aceita!");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -150,6 +153,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Convite recusado");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -169,6 +173,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     }
     setStatus("blocked");
     toast.success("Usuário bloqueado");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -179,6 +184,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     await base44.entities.StudyPartner.delete(partnerId);
     setStatus("not_connected");setPartnerId(null);
     toast.success("Parceria desfeita");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
@@ -189,6 +195,7 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
     setStatus("not_connected");
     setPartnerId(null);
     toast.success("Usuário desbloqueado");
+    await queryClient.invalidateQueries({ queryKey: ['studyPartners', currentUser.email] });
     setLoading(false);
   };
 
