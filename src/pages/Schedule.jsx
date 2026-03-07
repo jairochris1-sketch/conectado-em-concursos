@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
@@ -7,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
-import ScheduleForm from "../components/schedule/ScheduleForm";
-import ScheduleView from "../components/schedule/ScheduleView";
+import ScheduleWizard from "../components/schedule/ScheduleWizard";
+import WeeklyBoard from "../components/schedule/WeeklyBoard";
 
 const getDayName = (day) => {
   const days = {
@@ -35,8 +34,9 @@ const getActivityName = (activity) => {
 
 export default function SchedulePage() {
   const [schedules, setSchedules] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [wizardInitial, setWizardInitial] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
@@ -60,24 +60,12 @@ export default function SchedulePage() {
     setIsLoading(false);
   };
 
-  const handleSubmit = async (scheduleData) => {
-    try {
-      if (editingSchedule) {
-        await StudySchedule.update(editingSchedule.id, scheduleData);
-      } else {
-        await StudySchedule.create(scheduleData);
-      }
-      setShowForm(false);
-      setEditingSchedule(null);
-      loadData();
-    } catch (error) {
-      console.error("Erro ao salvar cronograma:", error);
-    }
-  };
+  // Gerado pelo Wizard; mantemos apenas o carregamento após concluir no componente filho.
 
   const handleEdit = (schedule) => {
     setEditingSchedule(schedule);
-    setShowForm(true);
+    setWizardInitial(schedule);
+    setShowWizard(true);
   };
 
   const handleDelete = async (id) => {
@@ -89,6 +77,11 @@ export default function SchedulePage() {
         console.error("Erro ao excluir cronograma:", error);
       }
     }
+  };
+
+  const handleItemsChange = async (scheduleId, newItems) => {
+    await StudySchedule.update(scheduleId, { schedule_items: newItems });
+    loadData();
   };
 
   const handlePrint = (schedule) => {
@@ -167,11 +160,11 @@ export default function SchedulePage() {
             </p>
           </div>
           <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-indigo-600 hover:bg-indigo-700"
+            onClick={() => { setWizardInitial(null); setShowWizard(true); }}
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
             <Plus className="w-5 h-5 mr-2" />
-            Novo Cronograma
+            Novo Planejamento
           </Button>
         </motion.div>
 
@@ -186,19 +179,16 @@ export default function SchedulePage() {
           />
         </div>
 
-        {showForm && (
+        {showWizard && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <ScheduleForm
-              schedule={editingSchedule}
-              onSubmit={handleSubmit}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingSchedule(null);
-              }}
+            <ScheduleWizard
+              initialSchedule={wizardInitial}
+              onClose={() => { setShowWizard(false); setWizardInitial(null); }}
+              onComplete={() => { setShowWizard(false); setWizardInitial(null); loadData(); }}
             />
           </motion.div>
         )}
@@ -268,7 +258,7 @@ export default function SchedulePage() {
                           size="sm"
                           onClick={() => handleEdit(schedule)}
                         >
-                          Editar
+                          Replanejar
                         </Button>
                         <Button
                           variant="destructive"
@@ -281,7 +271,7 @@ export default function SchedulePage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <ScheduleView schedule={schedule} />
+                    <WeeklyBoard schedule={schedule} onChange={(items) => handleItemsChange(schedule.id, items)} />
                   </CardContent>
                 </Card>
               </motion.div>

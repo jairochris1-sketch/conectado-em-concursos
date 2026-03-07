@@ -57,6 +57,7 @@ import ComoEstudarPrimeiroLugar from './pages/ComoEstudarPrimeiroLugar';
 import CreateNotebook from './pages/CreateNotebook';
 import CreateSimulation from './pages/CreateSimulation';
 import CreateStudyPlan from './pages/CreateStudyPlan';
+import Cycle from './pages/Cycle';
 import Dashboard from './pages/Dashboard';
 import DigitalWhiteboard from './pages/DigitalWhiteboard';
 import EditalSimulator from './pages/EditalSimulator';
@@ -83,7 +84,6 @@ import Ranking from './pages/Ranking';
 import ResetPassword from './pages/ResetPassword';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
-import Schedule from './pages/Schedule';
 import SimuladosDigital from './pages/SimuladosDigital';
 import SimulationHistory from './pages/SimulationHistory';
 import SimulationReview from './pages/SimulationReview';
@@ -100,7 +100,7 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Cycle from './pages/Cycle';
+import Schedule from './pages/Schedule';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +115,7 @@ export const PAGES = {
     "CreateNotebook": CreateNotebook,
     "CreateSimulation": CreateSimulation,
     "CreateStudyPlan": CreateStudyPlan,
+    "Cycle": Cycle,
     "Dashboard": Dashboard,
     "DigitalWhiteboard": DigitalWhiteboard,
     "EditalSimulator": EditalSimulator,
@@ -141,7 +142,6 @@ export const PAGES = {
     "ResetPassword": ResetPassword,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
-    "Schedule": Schedule,
     "SimuladosDigital": SimuladosDigital,
     "SimulationHistory": SimulationHistory,
     "SimulationReview": SimulationReview,
@@ -158,7 +158,7 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Cycle": Cycle,
+    "Schedule": Schedule,
 }
 
 export const pagesConfig = {
