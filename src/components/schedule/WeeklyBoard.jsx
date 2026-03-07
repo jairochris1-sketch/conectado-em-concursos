@@ -155,6 +155,7 @@ export default function WeeklyBoard({ schedule, onChange }) {
     }
 
     setLocalItems(items);
+    await base44.entities.StudySchedule.update(schedule.id, { schedule_items: items });
     onChange?.(items);
   };
 
@@ -198,7 +199,7 @@ export default function WeeklyBoard({ schedule, onChange }) {
                               tabIndex={0}
                               role="button"
                               aria-label={`Mover ${it.subject} com setas`}
-                              onKeyDown={(e) => onItemKeyDown(e, day, index)}
+                              onKeyDownCapture={(e) => onItemKeyDown(e, day, index)}
                               className={`p-2 border-l-4 focus:outline-none focus:ring-2 focus:ring-blue-500 ${pal.bg} ${pal.border}`}
                             >
                               <div className="flex items-center justify-between">
