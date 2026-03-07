@@ -454,6 +454,31 @@ export default function SubscriptionPage() {
   const handleSubscribe = async (planKey, cycle) => {
     if (planKey === 'gratuito') return;
 
+    // Links diretos do Asaas conforme plano/ciclo
+    const directLinks = {
+      monthly: {
+        padrao: 'https://www.asaas.com/c/l6rj0623rvgpqfw6',
+        avancado: 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
+      },
+      semiannual: 'https://www.asaas.com/c/cn1abdnvyqy6pz6u', // Trimestral (ciclo "semiannual" no código)
+      annual: 'https://www.asaas.com/c/45fatb35qaui9vd9',
+    };
+
+    let checkoutUrl = null;
+    if (cycle === 'monthly') {
+      if (planKey === 'padrao') checkoutUrl = directLinks.monthly.padrao;
+      if (planKey === 'avancado') checkoutUrl = directLinks.monthly.avancado;
+    } else if (cycle === 'semiannual') {
+      checkoutUrl = directLinks.semiannual;
+    } else if (cycle === 'annual') {
+      checkoutUrl = directLinks.annual;
+    }
+
+    if (checkoutUrl) {
+      window.open(checkoutUrl, '_blank');
+      return;
+    }
+
     const missing = checkMissingData(user);
 
     if (Object.keys(missing).length > 0) {
