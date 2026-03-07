@@ -52,6 +52,7 @@ export default function CommunityPage({ embedded = false }) {
   const [deletePostId, setDeletePostId] = useState(null);
   const [deleteReplyId, setDeleteReplyId] = useState(null);
   const [replyingTo, setReplyingTo] = useState(null);
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   const [newPost, setNewPost] = useState({
     title: "",
