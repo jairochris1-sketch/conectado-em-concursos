@@ -210,7 +210,6 @@ export default function UserProfilePage() {
                     <StudyPartnerButton
                       currentUser={currentUser}
                       targetEmail={profileUser.email}
-                      targetId={profileUser.id}
                       targetName={profileUser.full_name}
                       targetPhoto={profileUser.profile_photo_url}
                       targetIsAdmin={targetIsAdmin}
