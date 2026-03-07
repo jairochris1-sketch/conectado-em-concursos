@@ -235,44 +235,46 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
             <div className="md:col-span-2 space-y-4">
               {selected.map((s) => (
-                <div key={s} className="rounded-lg border p-4">
-                  <div className="font-semibold mb-3">{s}</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <SliderField
-                      label="Importância"
-                      value={[weights[s]?.importance ?? 3]}
-                      onChange={([v]) => setWeights(w => ({ ...w, [s]: { ...(w[s] || {}), importance: v } }))}
-                      min={1}
-                      max={5}
-                    />
-                    <SliderField
-                      label="Conhecimento"
-                      value={[weights[s]?.knowledge ?? 3]}
-                      onChange={([v]) => setWeights(w => ({ ...w, [s]: { ...(w[s] || {}), knowledge: v } }))}
-                      min={1}
-                      max={5}
-                    />
+                <div key={s} className="space-y-3">
+                  <div className="rounded-lg border p-4">
+                    <div className="font-semibold mb-3">{s}</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <SliderField
+                        label="Importância"
+                        value={[weights[s]?.importance ?? 3]}
+                        onChange={([v]) => setWeights(w => ({ ...w, [s]: { ...(w[s] || {}), importance: v } }))}
+                        min={1}
+                        max={5}
+                      />
+                      <SliderField
+                        label="Conhecimento"
+                        value={[weights[s]?.knowledge ?? 3]}
+                        onChange={([v]) => setWeights(w => ({ ...w, [s]: { ...(w[s] || {}), knowledge: v } }))}
+                        min={1}
+                        max={5}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 gap-3 mt-3">
-                  <div>
-                    <label className="text-xs font-medium text-gray-600">Assunto (opcional)</label>
-                    <Input
-                      value={topicConfig[s]?.mainTopic || ""}
-                      onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), mainTopic: e.target.value } }))}
-                      placeholder="Ex: Direitos Fundamentais"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-600">Subtópicos (um por linha)</label>
-                    <Textarea
-                      rows={3}
-                      value={topicConfig[s]?.subtopicsText || ""}
-                      onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), subtopicsText: e.target.value } }))}
-                      placeholder={"Ex:\nArt. 5º - Direitos e Deveres\nLei 8.112 - Regime Jurídico\n..."}
-                    />
-                    <div className="text-[11px] text-gray-500 mt-1">Usaremos estes subtópicos para preencher o campo “tópico” das sessões.</div>
+                  <div className="grid grid-cols-1 gap-3 mt-3">
+                    <div>
+                      <label className="text-xs font-medium text-gray-600">Assunto (opcional)</label>
+                      <Input
+                        value={topicConfig[s]?.mainTopic || ""}
+                        onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), mainTopic: e.target.value } }))}
+                        placeholder="Ex: Direitos Fundamentais"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-600">Subtópicos (um por linha)</label>
+                      <Textarea
+                        rows={3}
+                        value={topicConfig[s]?.subtopicsText || ""}
+                        onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), subtopicsText: e.target.value } }))}
+                        placeholder={"Ex:\nArt. 5º - Direitos e Deveres\nLei 8.112 - Regime Jurídico\n..."}
+                      />
+                      <div className="text-[11px] text-gray-500 mt-1">Usaremos estes subtópicos para preencher o campo “tópico” das sessões.</div>
+                    </div>
                   </div>
                 </div>
               ))}
