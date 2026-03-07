@@ -467,85 +467,9 @@ export default function SubscriptionPage() {
 
     alert('Assinaturas online estão temporariamente indisponíveis. Entre em contato para aderir ao plano.');
   }
-      monthly: {
-        padrao: 'https://www.asaas.com/c/l6rj0623rvgpqfw6',
-        avancado: 'https://www.asaas.com/c/lxdzzqgy1ojtfgky',
-      },
-      semiannual: 'https://www.asaas.com/c/cn1abdnvyqy6pz6u', // Trimestral (ciclo "semiannual" no código)
-      annual: 'https://www.asaas.com/c/45fatb35qaui9vd9',
-    };
-
-    let checkoutUrl = null;
-    if (cycle === 'monthly') {
-      if (planKey === 'padrao') checkoutUrl = directLinks.monthly.padrao;
-      if (planKey === 'avancado') checkoutUrl = directLinks.monthly.avancado;
-    } else if (cycle === 'semiannual') {
-      checkoutUrl = directLinks.semiannual;
-    } else if (cycle === 'annual') {
-      checkoutUrl = directLinks.annual;
-    }
-
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
-      return;
-    }
-    alert('Link de checkout indisponível no momento. Entre em contato para concluir a assinatura.');
   };
 
   // Fluxo Asaas removido
-    setIsSubmitting(true);
-    setLoadingPlan(`${planKey}-${cycle}`);
-
-    try {
-      const billingTypeMap = {
-        'PIX': 'PIX',
-        'BOLETO': 'BOLETO',
-        'CREDIT_CARD': 'CREDIT_CARD'
-      };
-
-      const response = await createAsaasSubscription({
-        plan: planKey,
-        cycle: cycle,
-        billingType: billingTypeMap[paymentMethod] || 'UNDEFINED',
-        customerData: {
-          name: user?.full_name || '',
-          email: user?.email || '',
-          cpf: user?.cpf || missingData.cpf,
-          phone: user?.phone || missingData.phone
-        }
-      });
-
-      if (response.data.success) {
-        // Verificar se tem URL de pagamento
-        const paymentUrl = response.data.payment_url ||
-        response.data.boleto_url || (
-        response.data.pix_code ? response.data.payment_url : null);
-
-        if (paymentUrl) {
-          // Redirecionar para a página de pagamento do Asaas em nova aba
-          window.open(paymentUrl, '_blank');
-          alert('Uma nova aba foi aberta com os detalhes do pagamento. Se não abriu, verifique se o bloqueador de pop-ups está ativo.');
-        } else {
-          alert('Assinatura criada! Aguarde a confirmação do pagamento.');
-        }
-
-        // Recarregar a página após alguns segundos
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-      } else {
-        throw new Error(response.data.error || 'Erro ao processar assinatura');
-      }
-    } catch (error) {
-      console.error('Erro ao criar assinatura:', error);
-      alert(`Erro ao processar assinatura: ${error.message || 'Tente novamente.'}`);
-    }
-
-    setIsSubmitting(false);
-    setLoadingPlan(null);
-    setShowQuickForm(false);
-    setShowPaymentMethod(false);
-  };
 
   const handleQuickFormSubmit = async (e) => {
     e.preventDefault();
@@ -569,22 +493,8 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleCancelSubscription = async () => {
-    if (!currentSubscription) return;
-
-    if (confirm('Tem certeza que deseja cancelar sua assinatura? Você perderá o acesso aos recursos premium no final do ciclo de faturamento.')) {
-      setIsCancelling(true);
-      setCancelError('');
-      try {
-        await cancelAsaasSubscription({ subscriptionId: currentSubscription.id });
-        loadUserData();
-      } catch (error) {
-        console.error('Erro ao cancelar assinatura:', error);
-        setCancelError('Ocorreu um erro ao cancelar. Tente novamente.');
-      }
-      setIsCancelling(false);
-    }
-  };
+  /* handleCancelSubscription removido */
+  
 
   if (loading) {
     return (
