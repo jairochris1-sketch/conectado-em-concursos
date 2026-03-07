@@ -367,7 +367,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     }
   };
 
-  const currentStatusOption = STATUS_OPTIONS.find(s => s.value === myStatus) || STATUS_OPTIONS[0];
+
 
   const isScrolledToBottom = () => {
     if (isMinimized) return false;
