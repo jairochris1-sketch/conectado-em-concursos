@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { base44 } from "@/api/base44Client";
 
 const defaultSubjects = [
@@ -50,6 +51,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
   const [minSession, setMinSession] = useState(45); // minutes
   const [maxSession, setMaxSession] = useState(90);
   const [topicConfig, setTopicConfig] = useState({});
+  const [topicsBySubject, setTopicsBySubject] = useState({});
   const [title, setTitle] = useState(initialSchedule?.title || "Planejamento Semanal");
   const [period, setPeriod] = useState(() => {
     const start = nextWeekStart();
@@ -113,6 +115,24 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialSchedule]);
+
+  useEffect(() => {
+    if (step !== 3 || selected.length === 0) return;
+    const load = async () => {
+      const next = {};
+      await Promise.all(selected.map(async (s) => {
+        try {
+          const list = await base44.entities.Question.filter({ subject: s }, undefined, 500);
+          const topics = Array.from(new Set((list || []).map(q => (q.topic || "").trim()).filter(Boolean)));
+          next[s] = { topics };
+        } catch {
+          next[s] = { topics: [] };
+        }
+      }));
+      setTopicsBySubject(next);
+    };
+    load();
+  }, [step, selected]);
 
   const totalWeekMinutes = useMemo(() => Object.values(dailyHours).reduce((sum, hhmm) => sum + hhmmToMinutes(hhmm), 0), [dailyHours]);
 
@@ -258,22 +278,74 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
 
                   <div className="grid grid-cols-1 gap-3 mt-3">
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Assunto (opcional)</label>
-                      <Input
-                        value={topicConfig[s]?.mainTopic || ""}
-                        onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), mainTopic: e.target.value } }))}
-                        placeholder="Ex: Direitos Fundamentais"
-                      />
+                      <label className="text-xs font-medium text-gray-600">Assuntos (múltiplos)</label>
+                      {(() => {
+                        const allTopics = topicsBySubject[s]?.topics || [];
+                        const assuntoOptions = Array.from(new Set(allTopics.map(extractAssuntoFromTopic).filter(Boolean)))
+                          .map(v => ({ label: v, value: v }));
+                        const selectedAssuntos = topicConfig[s]?.mainTopics || [];
+                        return (
+                          <>
+                            <MultiSelect
+                              options={assuntoOptions}
+                              selected={selectedAssuntos}
+                              onChange={(vals) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), mainTopics: vals } }))}
+                              placeholder="Selecione assuntos"
+                            />
+                            <Input
+                              className="mt-2"
+                              placeholder="Adicionar assunto e pressionar Enter"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const v = e.currentTarget.value.trim();
+                                  if (v) {
+                                    setTopicConfig(cfg => {
+                                      const cur = cfg[s]?.mainTopics || [];
+                                      return { ...cfg, [s]: { ...(cfg[s] || {}), mainTopics: Array.from(new Set([...cur, v])) } };
+                                    });
+                                    e.currentTarget.value = '';
+                                  }
+                                }
+                              }}
+                            />
+                          </>
+                        );
+                      })()}
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Subtópicos (um por linha)</label>
-                      <Textarea
-                        rows={3}
-                        value={topicConfig[s]?.subtopicsText || ""}
-                        onChange={(e) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), subtopicsText: e.target.value } }))}
-                        placeholder={"Ex:\nArt. 5º - Direitos e Deveres\nLei 8.112 - Regime Jurídico\n..."}
-                      />
-                      <div className="text-[11px] text-gray-500 mt-1">Usaremos estes subtópicos para preencher o campo “tópico” das sessões.</div>
+                      <label className="text-xs font-medium text-gray-600">Subtópicos (múltiplos)</label>
+                      {(() => {
+                        const allTopics = topicsBySubject[s]?.topics || [];
+                        const subOptions = Array.from(new Set(allTopics)).map(v => ({ label: v, value: v }));
+                        const selectedSubs = topicConfig[s]?.subtopics || [];
+                        return (
+                          <>
+                            <MultiSelect
+                              options={subOptions}
+                              selected={selectedSubs}
+                              onChange={(vals) => setTopicConfig(cfg => ({ ...cfg, [s]: { ...(cfg[s] || {}), subtopics: vals } }))}
+                              placeholder="Selecione subtópicos"
+                            />
+                            <Input
+                              className="mt-2"
+                              placeholder="Adicionar subtópico e pressionar Enter"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const v = e.currentTarget.value.trim();
+                                  if (v) {
+                                    setTopicConfig(cfg => {
+                                      const cur = cfg[s]?.subtopics || [];
+                                      return { ...cfg, [s]: { ...(cfg[s] || {}), subtopics: Array.from(new Set([...cur, v])) } };
+                                    });
+                                    e.currentTarget.value = '';
+                                  }
+                                }
+                              }}
+                            />
+                            <div className="text-[11px] text-gray-500 mt-1">Usaremos estes subtópicos para preencher o campo “tópico” das sessões.</div>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -436,6 +508,12 @@ function diffMinutes(a, b) {
   return (bh*60+bm) - (ah*60+am);
 }
 
+function extractAssuntoFromTopic(t) {
+  if (!t) return "";
+  const part = String(t).split(/—|\-|:|\//)[0].trim();
+  return part;
+}
+
 function generateScheduleItems({ selected, weightList, dailyHours, minSession, maxSession, topicConfig = {} }) {
   const selectedWeights = weightList.filter(w => selected.includes(w.subject));
   const totalMinutes = Object.values(dailyHours).reduce((s, v) => s + hhmmToMinutes(v), 0);
@@ -448,8 +526,10 @@ function generateScheduleItems({ selected, weightList, dailyHours, minSession, m
     const cfg = topicConfig[s] || {};
     const main = (cfg.mainTopic || "").trim();
     const subs = parseLines(cfg.subtopicsText || "");
-    const queue = subs.length ? subs : (main ? [main] : []);
-    topicsInfo[s] = { main, subs, queue, next: 0 };
+    const mains = Array.isArray(cfg.mainTopics) ? cfg.mainTopics.filter(Boolean) : [];
+    const subsSel = Array.isArray(cfg.subtopics) ? cfg.subtopics.filter(Boolean) : [];
+    const queue = subsSel.length ? subsSel : (mains.length ? mains : (subs.length ? subs : (main ? [main] : [])));
+    topicsInfo[s] = { main, subs, mains, subsSel, queue, next: 0 };
   });
 
   // Build sessions pool per subject
@@ -486,11 +566,14 @@ function generateScheduleItems({ selected, weightList, dailyHours, minSession, m
         const sub = q[idx];
         info.next = idx + 1;
         topicsInfo[s.subject] = info;
-        if ((info.subs && info.subs.length > 0) && info.main) {
-          topicLabel = `${info.main} — ${sub}`;
+        // If selecting explicit subtopics and there is a single main selected, prefix it
+        if ((info.subsSel && info.subsSel.length > 0) && (info.mains && info.mains.length === 1)) {
+          topicLabel = `${info.mains[0]} — ${sub}`;
         } else {
           topicLabel = sub;
         }
+      } else if (info.mains && info.mains.length > 0) {
+        topicLabel = info.mains[0];
       } else if (info.main) {
         topicLabel = info.main;
       }
