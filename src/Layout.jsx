@@ -705,7 +705,7 @@ export default function Layout({ children, currentPageName }) {
             className="text-xs px-3 py-2 text-white hover:text-white"
             style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
 
-            <Upload className="w-3 h-3 mr-1" />
+            <Upload className="w-3 h-3 mr-1" style={{ color: 'var(--nav-icon-color)' }} />
             <span className="hidden 2xl:inline">Enviar Prova</span>
           </Button>
         </div>
