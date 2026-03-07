@@ -650,49 +650,213 @@ export default function Layout({ children, currentPageName }) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="text-white border-black border-opacity-20 w-[600px] max-h-[500px] overflow-y-auto" 
+                  className="text-white border-black border-opacity-20 w-[720px] max-h-[560px] overflow-y-auto" 
                   style={{ backgroundColor: 'var(--primary-color)' }}
                   align="center">
-                    <div className="grid grid-cols-2 gap-1 p-2">
-                    {moreMenuItems.map((item) => {
-                const hasAccess = checkAccess(item.title, userPlan, isAdmin);
-                const isCurrentPage = location.pathname === item.url;
-                return (
-                  <DropdownMenuItem key={item.title} asChild>
-                                <Link
-                      to={hasAccess ? item.url : createPageUrl("Subscription")}
-                      className={`flex items-center justify-between w-full cursor-pointer text-sm p-3 rounded-lg hover:bg-black/20 transition-colors ${isCurrentPage ? 'bg-black/20' : ''}`}>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+                      {/* Estudos & Planejamento */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Estudos & Planejamento</p>
+                        <div className="space-y-1">
+                          {(() => { const title='Cadernos de Questões'; const url=createPageUrl('Notebooks'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Minhas Anotações'; const url=createPageUrl('Notes'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Criar Planejamento de Estudos'; const url=createPageUrl('CreateStudyPlan'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><Calendar className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Minhas Dúvidas'; const url=createPageUrl('MyDoubts'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><HelpCircle className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
 
-                                    <div className="flex items-center gap-2">
-                                        <item.icon className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--nav-icon-color)' }} />
-                                        <span className="truncate">{item.title}</span>
-                                    </div>
-                                    {!hasAccess && <Lock className="w-3 h-3 text-yellow-400 flex-shrink-0" />}
-                                </Link>
-                            </DropdownMenuItem>);
+                      {/* Desempenho & Estatísticas */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Desempenho & Estatísticas</p>
+                        <div className="space-y-1">
+                          {(() => { const title='Relatórios'; const url=createPageUrl('PerformanceReports'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Minhas Estatísticas'; const url=createPageUrl('Statistics'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BarChart3 className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Ranking de Usuários'; const url=createPageUrl('Ranking'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><Trophy className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
 
-              })}
-                    {isAdmin &&
-              <>
-                        <DropdownMenuItem asChild>
-                             <Link to={createPageUrl("Admin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-4 h-4" />
-                                    <span>Admin Geral</span>
-                                </div>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                             <Link to={createPageUrl("SDAdmin")} className="flex items-center justify-between w-full cursor-pointer text-red-400 hover:text-red-300 text-sm p-3 rounded-lg hover:bg-black/20 transition-colors">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-4 h-4" />
-                                    <span>Admin Simulados Digital</span>
-                                </div>
-                            </Link>
-                        </DropdownMenuItem>
-                        </>
-              }
+                      {/* Comunidade */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Comunidade</p>
+                        <div className="space-y-1">
+                          {(() => { const title='Pessoas'; const url=createPageUrl('People'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><Users className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Fórum'; const url=createPageUrl('Community'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><MessageSquare className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Feed de Atividades'; const url=createPageUrl('ActivityFeed'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
+
+                      {/* Quizzes */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Quizzes</p>
+                        <div className="space-y-1">
+                          {(() => { const display='Quiz de Inglês'; const title='Curso de Inglês'; const url=createPageUrl('EnglishCourse'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={display}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {display}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const display='Quiz de Matemática'; const title='Curso de Matemática'; const url=createPageUrl('MathCourse'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={display}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {display}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const display='Quiz de Raciocínio Lógico'; const title='Raciocínio Lógico'; const url=createPageUrl('LogicCourse'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={display}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {display}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
+
+                      {/* Simulados Extras */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Simulados Extras</p>
+                        <div className="space-y-1">
+                          {(() => { const title='Simulados Digital'; const url=createPageUrl('SimuladosDigital'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const display='Histórico de Simulações'; const title='Simulados Digital'; const url=createPageUrl('SimulationHistory'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={display}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {display}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const title='Revisão de Simulados'; const url=createPageUrl('SimulationReview'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><ClipboardList className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
+
+                      {/* Conta */}
+                      <div>
+                        <p className="text-xs tracking-wider font-semibold text-white/80 uppercase mb-2">Conta</p>
+                        <div className="space-y-1">
+                          {(() => { const title='Meu Perfil'; const url=createPageUrl('Profile'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={title}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><UserIcon className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {title}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                          {(() => { const display='Painel de Assinaturas'; const title='Planos'; const url=createPageUrl('Subscription'); const hasAccess=checkAccess(title, userPlan, isAdmin); const isCurrent=location.pathname===url; return (
+                            <DropdownMenuItem asChild key={display}>
+                              <Link to={hasAccess ? url : createPageUrl('Subscription')} className={`flex items-center justify-between w-full cursor-pointer text-sm p-2.5 rounded-md hover:bg-black/20 ${isCurrent ? 'bg-black/20' : ''}`}>
+                                <span className="flex items-center gap-2"><CreditCard className="w-4 h-4" style={{ color: 'var(--nav-icon-color)' }} /> {display}</span>
+                                {!hasAccess && <Lock className="w-3 h-3 text-yellow-400" />}
+                              </Link>
+                            </DropdownMenuItem>
+                          ); })()}
+                        </div>
+                      </div>
                     </div>
+
+                    {isAdmin && (
+                      <div className="border-t border-white/20 mt-2 pt-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
+                          <DropdownMenuItem asChild>
+                            <Link to={createPageUrl('Admin')} className="flex items-center justify-between w-full cursor-pointer text-red-300 hover:text-red-200 text-sm p-2.5 rounded-md hover:bg-black/20 transition-colors">
+                              <span className="flex items-center gap-2"><Shield className="w-4 h-4" /> Admin Geral</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link to={createPageUrl('SDAdmin')} className="flex items-center justify-between w-full cursor-pointer text-red-300 hover:text-red-200 text-sm p-2.5 rounded-md hover:bg-black/20 transition-colors">
+                              <span className="flex items-center gap-2"><Shield className="w-4 h-4" /> Admin Simulados Digital</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        </div>
+                      </div>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>
