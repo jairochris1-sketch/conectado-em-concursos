@@ -30,7 +30,8 @@ import {
   Brain,
   Target,
   HelpCircle,
-  Users } from
+  Users,
+  LayoutGrid } from
 "lucide-react";
 import { User } from "@/entities/User";
 import { UserAnswer } from "@/entities/UserAnswer";
@@ -61,12 +62,7 @@ const navigationItems = [
 {
   title: "Meu Painel",
   url: createPageUrl("Dashboard"),
-  icon: Home
-},
-{
-  title: "Pessoas",
-  url: createPageUrl("People"),
-  icon: Users
+  icon: LayoutGrid
 },
 {
   title: "Questões",
@@ -76,17 +72,17 @@ const navigationItems = [
 {
   title: "Provas",
   url: createPageUrl("Exams"),
-  icon: BookCopy
+  icon: ClipboardList
 },
 {
-  title: "Simulado por Edital",
+  title: "Meu Edital",
   url: createPageUrl("EditalSimulator"),
-  icon: Target
+  icon: FileText
 },
 {
   title: "Resumos",
   url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
-  icon: BookOpenIcon
+  icon: BookCopy
 },
 {
   title: "Área de Estudos",
@@ -101,6 +97,11 @@ const navigationItems = [
 
 
 const moreMenuItems = [
+{
+  title: "Pessoas",
+  url: createPageUrl("People"),
+  icon: Users
+},
 {
   title: "Simulado por Edital",
   url: createPageUrl("EditalSimulator"),
@@ -269,6 +270,7 @@ const featureAccess = {
   'Raciocínio Lógico': ['avancado'],
   'Cadernos de Questões': ['avancado'],
   'Simulado por Edital': ['avancado'],
+  'Meu Edital': ['avancado'],
   'Fórum': ['avancado'],
   'Favoritas': ['gratuito', 'padrao', 'avancado'],
   'Relatórios': ['padrao', 'avancado'],
@@ -315,6 +317,9 @@ export default function Layout({ children, currentPageName }) {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const [primaryColor, setPrimaryColor] = useState(localStorage.getItem('primaryColor') || '#0464fc');
+  const [iconSizeKey, setIconSizeKey] = useState(localStorage.getItem('iconSizeKey') || 'md');
+  const [iconColorType, setIconColorType] = useState(localStorage.getItem('iconColorType') || 'branco');
 
   const [sidebarStats, setSidebarStats] = React.useState({
     streak: 0,
@@ -326,13 +331,19 @@ export default function Layout({ children, currentPageName }) {
   const isAdmin = user && (user.email === 'conectadoemconcursos@gmail.com' || user.email === 'jairochris1@gmail.com' || user.email === 'juniorgmj2016@gmail.com');
 
   useEffect(() => {
-    const savedColor = localStorage.getItem('primaryColor') || '#0464fc';
-    const savedIconSizeKey = localStorage.getItem('iconSizeKey') || 'md';
-    const iconSizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
+    document.documentElement.style.setProperty('--primary-color', primaryColor);
+    localStorage.setItem('primaryColor', primaryColor);
+  }, [primaryColor]);
 
-    document.documentElement.style.setProperty('--primary-color', savedColor);
-    document.documentElement.style.setProperty('--icon-size', iconSizes[savedIconSizeKey]);
-  }, []);
+  useEffect(() => {
+    const sizes = { sm: '0.875rem', md: '1rem', lg: '1.25rem' };
+    document.documentElement.style.setProperty('--icon-size', sizes[iconSizeKey]);
+    localStorage.setItem('iconSizeKey', iconSizeKey);
+  }, [iconSizeKey]);
+
+  useEffect(() => {
+    localStorage.setItem('iconColorType', iconColorType);
+  }, [iconColorType]);
 
   React.useEffect(() => {
     let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -598,10 +609,8 @@ export default function Layout({ children, currentPageName }) {
             return (
               <Link
                 key={item.title}
-                to={hasAccess ? item.url : createPageUrl("Subscription")} className="bg-transparent text-amber-100 px-2 py-2 text-base font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white"
-
-
-
+                to={hasAccess ? item.url : createPageUrl("Subscription")} 
+                className={`bg-transparent px-2 py-2 text-sm font-bold rounded-lg relative flex flex-col items-center gap-1 transition-colors min-w-0 hover:text-white ${isCurrentPage ? 'text-white' : 'text-white/80'}`}
                 style={isCurrentPage ? { backgroundColor: 'rgba(0,0,0,0.2)' } : {}}
                 onMouseEnter={(e) => {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)';
@@ -610,8 +619,12 @@ export default function Layout({ children, currentPageName }) {
                   if (!isCurrentPage) e.currentTarget.style.backgroundColor = 'transparent';
                 }}>
 
-                        <item.icon className="flex-shrink-0" style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span className="text-base font-semibold text-center leading-tight truncate">{item.title}</span>
+                        <item.icon className="flex-shrink-0" style={{ 
+                          width: 'var(--icon-size, 1.25rem)', 
+                          height: 'var(--icon-size, 1.25rem)',
+                          color: iconColorType === 'cor' ? '#fde047' : 'currentColor'
+                        }} />
+                        <span className="text-[13px] font-semibold text-center leading-tight truncate mt-1">{item.title}</span>
                         {!hasAccess && <Lock className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />}
                     </Link>);
 
@@ -621,12 +634,16 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger asChild>
                     <Button
                 variant="ghost"
-                className="flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white"
+                className="flex flex-col items-center gap-1 px-2 py-2 h-auto rounded-lg text-[13px] font-semibold text-white/80 hover:text-white"
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.1)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 
-                        <ChevronDown style={{ width: 'var(--icon-size, 1rem)', height: 'var(--icon-size, 1rem)' }} />
-                        <span>Mais</span>
+                        <ChevronDown style={{ 
+                          width: 'var(--icon-size, 1.25rem)', 
+                          height: 'var(--icon-size, 1.25rem)',
+                          color: iconColorType === 'cor' ? '#fde047' : 'currentColor'
+                        }} />
+                        <span className="mt-1">Mais</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
@@ -715,18 +732,82 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="text-white border-black border-opacity-20" style={{ backgroundColor: 'var(--primary-color)' }}>
-              {user.job_title &&
-              <DropdownMenuItem className="cursor-default text-sm text-gray-200 flex items-center gap-2 opacity-80" disabled>
-                  <BookOpen className="w-4 h-4" />
-                  {user.job_title}
-                </DropdownMenuItem>
-              }
-              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-2">
+            <DropdownMenuContent className="text-white border-black border-opacity-20 w-64 shadow-2xl" style={{ backgroundColor: 'var(--primary-color)' }} align="end">
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("Profile"))} className="cursor-pointer text-sm flex items-center gap-3 p-3">
                 <UserIcon className="w-4 h-4" />
                 Meu Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 text-sm flex items-center gap-2">
+              <DropdownMenuItem onClick={() => navigate(createPageUrl("Subscription"))} className="cursor-pointer text-sm flex items-center gap-3 p-3">
+                <CreditCard className="w-4 h-4" />
+                Painel de Assinaturas
+              </DropdownMenuItem>
+              
+              <div className="h-px bg-white/20 my-2 mx-2" />
+              
+              <div className="p-3">
+                <p className="text-[11px] tracking-wider font-semibold text-white/70 mb-3 uppercase">Aparência do Menu</p>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm">Cor Principal</span>
+                  <div className="relative w-6 h-6 rounded border border-white/40 cursor-pointer overflow-hidden shadow-sm" style={{ backgroundColor: primaryColor }}>
+                    <input 
+                      type="color" 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                      value={primaryColor}
+                      onChange={(e) => setPrimaryColor(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm">Tamanho Ícones</span>
+                  <div className="flex gap-1 bg-black/20 p-1 rounded-md">
+                    {['sm', 'md', 'lg'].map(size => {
+                       const labels = { sm: 'P', md: 'M', lg: 'G' };
+                       const isActive = iconSizeKey === size;
+                       return (
+                         <button
+                           key={size}
+                           onClick={(e) => {
+                             e.preventDefault();
+                             e.stopPropagation();
+                             setIconSizeKey(size);
+                           }}
+                           className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold transition-colors ${isActive ? 'bg-white text-blue-600' : 'text-white hover:bg-white/10'}`}
+                         >
+                           {labels[size]}
+                         </button>
+                       )
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Cor dos Ícones</span>
+                  <div className="flex gap-1 bg-black/20 p-1 rounded-md">
+                    {['branco', 'cor'].map(colorType => {
+                       const isActive = iconColorType === colorType;
+                       return (
+                         <button
+                           key={colorType}
+                           onClick={(e) => {
+                             e.preventDefault();
+                             e.stopPropagation();
+                             setIconColorType(colorType);
+                           }}
+                           className={`px-2 py-1 flex items-center justify-center rounded text-xs font-bold transition-colors ${isActive ? 'bg-white text-blue-600' : 'text-white hover:bg-white/10'}`}
+                         >
+                           {colorType === 'branco' ? 'Branco' : 'Cor'}
+                         </button>
+                       )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-white/20 my-2 mx-2" />
+
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 focus:bg-red-400/10 focus:text-red-300 text-sm flex items-center gap-3 p-3">
                 <LogOut className="w-4 h-4" />
                 Sair
               </DropdownMenuItem>
