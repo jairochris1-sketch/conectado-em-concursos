@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
@@ -9,6 +8,7 @@ import { motion } from "framer-motion";
 
 import ScheduleForm from "../components/schedule/ScheduleForm";
 import ScheduleView from "../components/schedule/ScheduleView";
+import ScheduleWizard from "../components/schedule/ScheduleWizard";
 
 const getDayName = (day) => {
   const days = {
@@ -192,14 +192,21 @@ export default function SchedulePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <ScheduleForm
-              schedule={editingSchedule}
-              onSubmit={handleSubmit}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingSchedule(null);
-              }}
-            />
+            {editingSchedule ? (
+              <ScheduleForm
+                schedule={editingSchedule}
+                onSubmit={handleSubmit}
+                onCancel={() => {
+                  setShowForm(false);
+                  setEditingSchedule(null);
+                }}
+              />
+            ) : (
+              <ScheduleWizard
+                onComplete={() => { setShowForm(false); setEditingSchedule(null); loadData(); }}
+                onCancel={() => { setShowForm(false); setEditingSchedule(null); }}
+              />
+            )}
           </motion.div>
         )}
 
