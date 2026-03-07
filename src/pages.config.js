@@ -84,6 +84,7 @@ import Ranking from './pages/Ranking';
 import ResetPassword from './pages/ResetPassword';
 import SDAdmin from './pages/SDAdmin';
 import SavedContests from './pages/SavedContests';
+import Schedule from './pages/Schedule';
 import SimuladosDigital from './pages/SimuladosDigital';
 import SimulationHistory from './pages/SimulationHistory';
 import SimulationReview from './pages/SimulationReview';
@@ -100,7 +101,6 @@ import Welcome from './pages/Welcome';
 import chatgpt from './pages/chatgpt';
 import studies from './pages/studies';
 import subscription from './pages/subscription';
-import Schedule from './pages/Schedule';
 import __Layout from './Layout.jsx';
 
 
@@ -142,6 +142,7 @@ export const PAGES = {
     "ResetPassword": ResetPassword,
     "SDAdmin": SDAdmin,
     "SavedContests": SavedContests,
+    "Schedule": Schedule,
     "SimuladosDigital": SimuladosDigital,
     "SimulationHistory": SimulationHistory,
     "SimulationReview": SimulationReview,
@@ -158,7 +159,6 @@ export const PAGES = {
     "chatgpt": chatgpt,
     "studies": studies,
     "subscription": subscription,
-    "Schedule": Schedule,
 }
 
 export const pagesConfig = {

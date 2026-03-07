@@ -54,6 +54,13 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
     const end = new Date(start); end.setDate(end.getDate() + 6);
     return { start: toDateInput(start), end: toDateInput(end) };
   });
+  const [examDate, setExamDate] = useState(initialSchedule?.exam_date || "");
+  const daysLeft = useMemo(() => {
+    if (!examDate) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const d = new Date(examDate); if (isNaN(d)) return null; d.setHours(0,0,0,0);
+    return Math.floor((d - today) / (1000*60*60*24));
+  }, [examDate]);
 
   useEffect(() => {
     const loadSubjects = async () => {
@@ -100,6 +107,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       setDailyHours(byDay);
       setPeriod({ start: initialSchedule.start_date, end: initialSchedule.end_date });
       setTitle(initialSchedule.title || title);
+      setExamDate(initialSchedule.exam_date || "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialSchedule]);
@@ -139,6 +147,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       description: "Gerado automaticamente pelo assistente",
       start_date: period.start,
       end_date: period.end,
+      exam_date: examDate || undefined,
       schedule_items: items,
     };
 
@@ -146,6 +155,13 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
       await base44.entities.StudySchedule.update(initialSchedule.id, payload);
     } else {
       await base44.entities.StudySchedule.create(payload);
+    }
+
+    if (examDate) {
+      const plans = await base44.entities.StudyCyclePlan.filter({ is_active: true });
+      if (Array.isArray(plans) && plans.length > 0) {
+        await base44.entities.StudyCyclePlan.update(plans[0].id, { exam_date: examDate });
+      }
     }
 
     onComplete?.();
@@ -166,7 +182,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                 <label className="text-sm font-medium text-gray-700">Título</label>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Semana 1" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="text-sm font-medium text-gray-700">Início</label>
                   <Input type="date" value={period.start} onChange={(e) => setPeriod(p => ({ ...p, start: e.target.value }))} />
@@ -174,6 +190,15 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                 <div>
                   <label className="text-sm font-medium text-gray-700">Fim</label>
                   <Input type="date" value={period.end} onChange={(e) => setPeriod(p => ({ ...p, end: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Data da prova</label>
+                  <Input type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
+                  {daysLeft !== null && (
+                    <div className="text-xs text-gray-600 mt-1">
+                      {daysLeft > 0 ? `Faltam ${daysLeft} dias` : daysLeft === 0 ? 'Prova hoje' : `Prova ocorreu há ${Math.abs(daysLeft)} dias`}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { StudySchedule } from "@/entities/StudySchedule";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Calendar, Printer, BookOpen } from "lucide-react";
+import { Plus, Calendar, Printer, BookOpen, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ScheduleWizard from "../components/schedule/ScheduleWizard";
@@ -30,6 +30,13 @@ const getActivityName = (activity) => {
     'simulado': 'Simulado'
   };
   return activities[activity] || activity;
+};
+
+const daysUntil = (dateStr) => {
+  if (!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr); if (isNaN(d)) return null; d.setHours(0,0,0,0);
+  return Math.floor((d - today) / (1000*60*60*24));
 };
 
 export default function SchedulePage() {
@@ -238,6 +245,16 @@ export default function SchedulePage() {
                             <Calendar className="w-4 h-4" />
                             {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
                           </span>
+                          {schedule.exam_date && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {(() => {
+                                const d = daysUntil(schedule.exam_date);
+                                if (d === null) return null;
+                                return d > 0 ? `Prova em ${d} dias` : d === 0 ? 'Prova hoje' : `Prova há ${Math.abs(d)} dias`;
+                              })()}
+                            </span>
+                          )}
                           <span className="flex items-center gap-1">
                             <BookOpen className="w-4 h-4" />
                             {schedule.schedule_items.length} atividades
