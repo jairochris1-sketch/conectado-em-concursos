@@ -54,15 +54,12 @@ const plans = [
   name: 'Padrão',
   key: 'padrao',
   monthly: {
-    price: '39,90',
+    price: '59,90',
     cycle: 'MONTHLY',
     features: [
     'Questões ilimitadas',
-    'Estatísticas detalhadas',
-    'Criação de Flashcards ilimitados',
-    'Comentários da comunidade',
-    'Ranking de Usuários',
-    'Feed de Atividades'],
+    'Provas anteriores',
+    'Comentários da comunidade'],
 
     unavailableFeatures: [
     'Resumos de disciplinas',
@@ -153,34 +150,21 @@ const plans = [
 {
   name: 'Avançado',
   key: 'avancado',
-  monthly: { price: '79,80', cycle: 'MONTHLY' },
-  semiannual: { price: '399,00', cycle: 'SEMIANNUALLY', originalPrice: '478,80', savings: '79,80', installments: '6x R$ 66,50' },
+  monthly: { price: '119,90', cycle: 'MONTHLY' },
+  semiannual: { price: '329,90', cycle: 'SEMIANNUALLY' },
   annual: { price: '798,00', cycle: 'YEARLY', originalPrice: '957,60', savings: '159,60' },
   buttonText: 'Assinar',
   features: [
-  'Questões ilimitadas',
-  'Resumos de disciplinas',
-  'Área de Estudos (PDFs e Materiais)',
-  'Provas completas',
-  'Estatísticas avançadas',
-  'Criação de Flashcards ilimitados',
-  'Questões inéditas',
+  'Tudo do Padrão',
+  'Estatísticas detalhadas',
+  'Questões em PDF',
   'Simulados personalizados',
-  'Cadernos de Questões',
-  'Cronograma de Estudos',
-  'Planos de Estudo',
-  'ChatGPT (IA de Estudos)',
-  'Ranking de Usuários',
-  'Curso de Inglês',
-  'Curso de Matemática',
-  'Raciocínio Lógico',
-  'Simulado por Edital',
-  'Fórum da Comunidade',
-  'Lousa Digital',
-  'Minhas Dúvidas',
-  'Feed de Atividades',
-  'Comentários da comunidade',
-  'Acesso a todas as funcionalidades'],
+  'Flashcards ilimitados',
+  'Revisões espaçadas',
+  'Resumos e PDFs',
+  'Área de estudos personalizada',
+  'IA avançada',
+  'Edital verticalizado com IA'],
 
   unavailableFeatures: [],
   color: 'blue',
@@ -218,7 +202,7 @@ const PlanCard = ({ plan, currentPlan, currentUserPlan, onSubscribe, isLoading, 
   };
   const getPriceDetail = () => {
     switch (billingCycle) {
-      case 'semiannual':return '/ semestre';
+      case 'semiannual':return '/ trimestre';
       case 'annual':return '/ ano';
       default:return '/ mês';
     }
@@ -669,7 +653,7 @@ export default function SubscriptionPage() {
                 <div className="pt-4 border-t border-gray-600 mt-6">
                   <div className="text-center mb-4">
                     <div className="text-lg font-bold">
-                      R$ {pricing.price} {selectedPlan.cycle === 'annual' ? '/ ano' : selectedPlan.cycle === 'semiannual' ? '/ semestre' : '/ mês'}
+                      R$ {pricing.price} {selectedPlan.cycle === 'annual' ? '/ ano' : selectedPlan.cycle === 'semiannual' ? '/ trimestre' : '/ mês'}
                     </div>
                     {pricing.savings &&
                     <div className="text-sm text-green-400">
@@ -769,7 +753,7 @@ export default function SubscriptionPage() {
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
               Assinatura do Plano <strong>{plan.name}</strong> - R$ {pricing.price} 
-              {selectedPlan.cycle === 'annual' ? '/ano' : selectedPlan.cycle === 'semiannual' ? '/semestre' : '/mês'}
+              {selectedPlan.cycle === 'annual' ? '/ano' : selectedPlan.cycle === 'semiannual' ? '/trimestre' : '/mês'}
             </p>
             {pricing.savings &&
             <p className="text-green-600 dark:text-green-400 font-semibold mt-1">
@@ -914,16 +898,16 @@ export default function SubscriptionPage() {
                 Mensal
               </button>
               <button
-                onClick={() => setBillingCycle('semiannual')}
+                onClick={() => setBillingCycle('semiannual')
                 className={`px-4 py-2 rounded-md transition-all text-sm relative ${
                 billingCycle === 'semiannual' ?
                 'bg-white text-gray-800 shadow-sm' :
                 'text-gray-600 hover:text-gray-900'}`
                 }>
 
-                Semestral
+                Trimestral
                 <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
-                  Popular
+                 Popular
                 </span>
               </button>
               <button
@@ -970,10 +954,10 @@ export default function SubscriptionPage() {
           className="mt-16 text-center max-w-3xl mx-auto">
 
           <div className="bg-gray-100 p-6 rounded-2xl border border-gray-200 text-gray-800">
-            <p className="text-lg">
-              Escolha entre <strong>cobrança mensal</strong>, <strong>semestral com desconto</strong> ou <strong>anual com desconto maior</strong>.
-              Você pode cancelar sua assinatura a qualquer momento e continuar usando até o final do período já pago.
-            </p>
+           <p className="text-lg">
+             Escolha entre <strong>cobrança mensal</strong>, <strong>trimestral com desconto</strong> ou <strong>anual com desconto maior</strong>.
+             Você pode cancelar sua assinatura a qualquer momento e continuar usando até o final do período já pago.
+           </p>
           </div>
         </motion.div>
 
