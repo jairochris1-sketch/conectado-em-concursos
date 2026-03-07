@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Plus, Link as LinkIcon, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import RegisterStudyDialog from "../components/studies/RegisterStudyDialog";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import WeeklyCreateDialog from "../components/weekly/WeeklyCreateDialog";
 import TaskFormDialog from "../components/weekly/TaskFormDialog";
@@ -44,6 +45,7 @@ export default function WeeklyTrackPage() {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [defaultDay, setDefaultDay] = useState("monday");
   const [editingTask, setEditingTask] = useState(null);
+  const [registerOpen, setRegisterOpen] = useState(false);
 
   const currentTrack = tracks[currentIndex] || null;
 
@@ -220,9 +222,7 @@ export default function WeeklyTrackPage() {
             <LinkIcon className="w-5 h-5 text-blue-600" />
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Trilha semanal</h1>
           </div>
-          <Link to={createPageUrl('Studies')}>
-            <Button className="gap-2"><Plus className="w-4 h-4" /> Registrar estudo</Button>
-          </Link>
+          <Button className="gap-2" onClick={() => setRegisterOpen(true)}><Plus className="w-4 h-4" /> Registrar estudo</Button>
         </div>
 
         {tracks.length === 0 ? (
