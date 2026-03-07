@@ -273,10 +273,10 @@ export default function Flashcards() {
                     </Button>
                     {showBack && (
                       <div className="flex flex-wrap gap-2">
-                        <Button variant="destructive" onClick={() => handleGrade(0)}>Again</Button>
-                        <Button variant="outline" onClick={() => handleGrade(1)}>Hard</Button>
-                        <Button onClick={() => handleGrade(2)}>Good</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleGrade(3)}>Easy</Button>
+                        <Button variant="destructive" onClick={() => handleGrade(0)}>De novo</Button>
+                        <Button variant="outline" onClick={() => handleGrade(1)}>Difícil</Button>
+                        <Button onClick={() => handleGrade(2)}>Bom</Button>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleGrade(3)}>Fácil</Button>
                       </div>
                     )}
                   </div>
