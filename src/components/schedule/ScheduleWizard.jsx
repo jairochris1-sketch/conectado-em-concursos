@@ -298,7 +298,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                       </PopoverTrigger>
                       <PopoverContent className="w-64 p-2">
                         <div className="max-h-60 overflow-auto space-y-2">
-                          {topicsForLabel(s).map((t) => {
+                          {(topicsForLabel(s) || []).map((t) => {
                             const val = t.label || t.value;
                             const checked = (subjectTopics[s] || []).includes(val);
                             return (
