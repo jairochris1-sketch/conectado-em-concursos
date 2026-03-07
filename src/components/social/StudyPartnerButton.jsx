@@ -75,36 +75,9 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   const sendInvite = async () => {
     setLoading(true);
     
-    // Se o usuário não é admin e está no plano gratuito, bloqueia o convite
     const isAdmin = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com' || currentUser?.email === 'juniorgmj2016@gmail.com' || currentUser?.role === 'admin';
+    const currentPlan = userPlan || currentUser?.current_plan;
     
-    let currentPlan = userPlan || currentUser?.current_plan;
-    
-    if (!isAdmin && (!currentPlan || currentPlan === 'gratuito')) {
-      try {
-        const [activeSubs, specialUsers] = await Promise.all([
-          base44.entities.Subscription.filter({ user_email: currentUser.email, status: 'active' }),
-          base44.entities.SpecialUser.filter({ email: currentUser.email, is_active: true })
-        ]);
-        
-        let fetchedPlan = 'gratuito';
-        if (activeSubs.length > 0) {
-          const hasPremium = activeSubs.some(sub => sub.plan === 'avancado');
-          const hasStandard = activeSubs.some(sub => sub.plan === 'padrao');
-          fetchedPlan = hasPremium ? 'avancado' : (hasStandard ? 'padrao' : activeSubs[0].plan);
-        }
-        if (specialUsers.length > 0) {
-          const specialUser = specialUsers[0];
-          if (!specialUser.valid_until || new Date(specialUser.valid_until) >= new Date()) {
-            fetchedPlan = specialUser.plan;
-          }
-        }
-        currentPlan = fetchedPlan;
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
     const isPremium = currentPlan === 'padrao' || currentPlan === 'avancado';
     
     if (!isAdmin && !isPremium) {
