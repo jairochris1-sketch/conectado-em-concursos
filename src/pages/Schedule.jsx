@@ -151,7 +151,7 @@ export default function SchedulePage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -164,7 +164,7 @@ export default function SchedulePage() {
               <span className="sr-only">Voltar</span>
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-foreground mb-2">
                 Cronograma de Estudos
               </h1>
               <p className="text-gray-600">
@@ -186,7 +186,7 @@ export default function SchedulePage() {
           <input
             type="text"
             placeholder="Pesquisar cronogramas por título ou descrição..."
-            className="w-full p-3 border border-gray-200 rounded-md focus:ring-0 focus:border-gray-400 bg-white"
+            className="w-full p-3 border rounded-md bg-background text-foreground border-border placeholder:text-muted-foreground focus:border-ring focus:ring-0"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -208,27 +208,27 @@ export default function SchedulePage() {
 
         <div className="grid gap-6">
           {filteredSchedules.length === 0 ? (
-            <Card className="text-center py-12">
-              <CardContent className="space-y-4">
-                <Calendar className="w-16 h-16 mx-auto text-gray-400" />
-                <h3 className="text-xl font-semibold text-gray-900">
+            <div className="text-center py-12 rounded-xl border border-dashed bg-card/50">
+              <div className="space-y-4">
+                <Calendar className="w-16 h-16 mx-auto text-muted-foreground" />
+                <h3 className="text-xl font-semibold text-foreground">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Nenhum cronograma criado"
                     : "Nenhum cronograma encontrado"}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   {schedules.length === 0 && searchTerm === ""
                     ? "Crie seu primeiro cronograma personalizado de estudos"
                     : "Ajuste os termos de busca para encontrar cronogramas."}
                 </p>
-                {schedules.length === 0 && searchTerm === "" && ( // Only show "Criar Cronograma" button if truly no schedules and no search term
-                  <Button onClick={() => setShowForm(true)}>
+                {schedules.length === 0 && searchTerm === "" && (
+                  <Button onClick={() => { setWizardInitial(null); setShowWizard(true); }}>
                     <Plus className="w-4 h-4 mr-2" />
                     Criar Cronograma
                   </Button>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
             filteredSchedules.map((schedule) => (
               <motion.div
@@ -236,17 +236,17 @@ export default function SchedulePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <Card className="shadow-sm border border-gray-200 bg-white">
+                <Card className="shadow-sm border bg-card">
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           {schedule.title}
                         </CardTitle>
                         {schedule.description && (
-                          <p className="text-gray-600 mt-2">{schedule.description}</p>
+                          <p className="text-muted-foreground mt-2">{schedule.description}</p>
                         )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             {new Date(schedule.start_date).toLocaleDateString('pt-BR')} - {new Date(schedule.end_date).toLocaleDateString('pt-BR')}
