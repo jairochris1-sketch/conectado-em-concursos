@@ -18,6 +18,10 @@ const defaultSubjects = [
   "Estatística"
 ];
 
+// Helpers para extrair nomes legíveis de matérias
+const isIdLike = (v) => typeof v === 'string' && /^[a-f0-9-]{16,36}$/i.test(v.trim());
+const cleanLabel = (v) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim() : '');
+
 const dayOptions = [
   { key: "sunday", label: "DOM" },
   { key: "monday", label: "SEG" },
