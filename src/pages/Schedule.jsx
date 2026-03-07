@@ -152,7 +152,7 @@ export default function SchedulePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto space-y-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -186,7 +186,7 @@ export default function SchedulePage() {
           <input
             type="text"
             placeholder="Pesquisar cronogramas por título ou descrição..."
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full p-3 border border-gray-200 rounded-md focus:ring-0 focus:border-gray-400 bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
