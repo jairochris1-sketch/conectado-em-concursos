@@ -249,7 +249,7 @@ export default function ScheduleWizard({ initialSchedule, onClose, onComplete })
                   <label className="text-sm font-medium text-foreground">Data da prova</label>
                   <Input type="date" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
                   {daysLeft !== null && (
-                    <div className="text-xs text-gray-600 mt-1">
+                    <div className="text-xs text-muted-foreground mt-1">
                       {daysLeft > 0 ? `Faltam ${daysLeft} dias` : daysLeft === 0 ? 'Prova hoje' : `Prova ocorreu há ${Math.abs(daysLeft)} dias`}
                     </div>
                   )}
