@@ -3,6 +3,40 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
 
+// Paleta de cores (estática) para mapear matérias de forma determinística
+const PALETTE = [
+  { bg: 'bg-rose-50', border: 'border-rose-500', dot: 'bg-rose-500' },
+  { bg: 'bg-orange-50', border: 'border-orange-500', dot: 'bg-orange-500' },
+  { bg: 'bg-amber-50', border: 'border-amber-500', dot: 'bg-amber-500' },
+  { bg: 'bg-yellow-50', border: 'border-yellow-500', dot: 'bg-yellow-500' },
+  { bg: 'bg-lime-50', border: 'border-lime-600', dot: 'bg-lime-600' },
+  { bg: 'bg-green-50', border: 'border-green-600', dot: 'bg-green-600' },
+  { bg: 'bg-emerald-50', border: 'border-emerald-600', dot: 'bg-emerald-600' },
+  { bg: 'bg-teal-50', border: 'border-teal-600', dot: 'bg-teal-600' },
+  { bg: 'bg-cyan-50', border: 'border-cyan-600', dot: 'bg-cyan-600' },
+  { bg: 'bg-sky-50', border: 'border-sky-600', dot: 'bg-sky-600' },
+  { bg: 'bg-blue-50', border: 'border-blue-600', dot: 'bg-blue-600' },
+  { bg: 'bg-indigo-50', border: 'border-indigo-600', dot: 'bg-indigo-600' },
+  { bg: 'bg-violet-50', border: 'border-violet-600', dot: 'bg-violet-600' },
+  { bg: 'bg-purple-50', border: 'border-purple-600', dot: 'bg-purple-600' },
+  { bg: 'bg-fuchsia-50', border: 'border-fuchsia-600', dot: 'bg-fuchsia-600' },
+  { bg: 'bg-pink-50', border: 'border-pink-600', dot: 'bg-pink-600' },
+];
+
+function hashString(str = '') {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getPaletteForSubject(subject = '') {
+  const idx = hashString(subject) % PALETTE.length;
+  return PALETTE[idx];
+}
+
 const dayLabels = {
   sunday: "Dom",
   monday: "Seg",
