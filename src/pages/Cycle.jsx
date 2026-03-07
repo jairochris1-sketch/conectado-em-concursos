@@ -6,11 +6,14 @@ import { PlusCircle } from "lucide-react";
 import CycleWizard from "../components/cycle/CycleWizard";
 import CycleSequenceList from "../components/cycle/CycleSequenceList";
 import CycleDonutChart from "../components/cycle/CycleDonutChart";
+import UntilExamCard from "../components/cycle/UntilExamCard";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function CyclePage() {
   const [plan, setPlan] = useState(null);
   const [openWizard, setOpenWizard] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
   const loadPlan = async () => {
     setLoading(true);
@@ -39,7 +42,7 @@ export default function CyclePage() {
           <div className="flex gap-2">
             {plan && (
               <>
-                <Button variant="outline" onClick={handleRestart}>Recomeçar Ciclo</Button>
+                <Button variant="outline" onClick={() => setShowRestartConfirm(true)}>Recomeçar Ciclo</Button>
                 <Button onClick={() => setOpenWizard(true)}>Editar Planejamento</Button>
               </>
             )}
@@ -48,6 +51,20 @@ export default function CyclePage() {
             )}
           </div>
         </div>
+
+        {showRestartConfirm && (
+          <Alert className="bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-700 dark:text-amber-200">
+            <AlertDescription className="flex items-center justify-between gap-3 flex-wrap">
+              <span>
+                Recomeçar Ciclo vai zerar seu progresso atual para começar novamente. Seus registros anteriores não serão apagados.
+              </span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => setShowRestartConfirm(false)}>Voltar</Button>
+                <Button size="sm" onClick={async () => { await handleRestart(); setShowRestartConfirm(false); }}>Confirmar</Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -74,6 +91,9 @@ export default function CyclePage() {
                   <CycleDonutChart plan={plan} />
                 </CardContent>
               </Card>
+
+              <UntilExamCard plan={plan} onEditClick={() => setOpenWizard(true)} />
+
               <Card className="dark:bg-slate-800">
                 <CardHeader>
                   <CardTitle>Progresso</CardTitle>
