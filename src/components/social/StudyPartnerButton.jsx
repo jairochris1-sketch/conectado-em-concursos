@@ -53,7 +53,9 @@ export default function StudyPartnerButton({ currentUser, targetEmail, targetNam
   };
 
   const sendInvite = async () => {
-    if (userPlan === 'gratuito' && !targetIsAdmin) {
+    // If the user isn't an admin and is on the free plan, block invite
+    const isAdmin = currentUser?.email === 'conectadoemconcursos@gmail.com' || currentUser?.email === 'jairochris1@gmail.com' || currentUser?.email === 'juniorgmj2016@gmail.com' || currentUser?.role === 'admin';
+    if (!isAdmin && userPlan === 'gratuito') {
       toast.error("Usuários do plano gratuito não podem enviar convites. Faça um upgrade.");
       return;
     }
