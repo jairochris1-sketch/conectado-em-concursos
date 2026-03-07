@@ -167,9 +167,9 @@ export default function SchedulePage() {
               <h1 className="text-3xl font-bold text-foreground mb-2">
                 Cronograma de Estudos
               </h1>
-              <p className="text-gray-600">
-                Organize seus estudos com horários personalizados
-              </p>
+              <p className="text-muted-foreground">
+                 Organize seus estudos com horários personalizados
+               </p>
             </div>
           </div>
           <Button

@@ -182,8 +182,8 @@ export default function WeeklyBoard({ schedule, onChange }) {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-7 gap-3 min-w-[900px]">
           {Object.keys(groups).map((day) => (
-            <div key={day} className="bg-gray-50 rounded-lg p-2">
-              <div className="text-sm font-semibold mb-2 text-gray-700">{dayLabels[day]}</div>
+            <div key={day} className="bg-muted rounded-lg p-2">
+              <div className="text-sm font-semibold mb-2 text-foreground">{dayLabels[day]}</div>
               <Droppable droppableId={day}>
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-2 min-h-[60px]">
@@ -205,11 +205,11 @@ export default function WeeklyBoard({ schedule, onChange }) {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <span className={`inline-block w-2 h-2 rounded-full ${pal.dot}`} />
-                                  <div className="text-xs text-gray-600">{it.start_time} - {it.end_time}</div>
+                                  <div className="text-xs text-muted-foreground">{it.start_time} - {it.end_time}</div>
                                 </div>
                               </div>
-                              <div className="text-sm font-semibold mt-1 text-gray-900">{it.subject}</div>
-                              {it.topic && <div className="text-xs text-gray-700">{it.topic}</div>}
+                              <div className="text-sm font-semibold mt-1 text-foreground">{it.subject}</div>
+                              {it.topic && <div className="text-xs text-muted-foreground">{it.topic}</div>}
                             </Card>
                           )}
                         </Draggable>

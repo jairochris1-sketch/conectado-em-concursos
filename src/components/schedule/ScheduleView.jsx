@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Clock, BookOpen } from "lucide-react";
 
@@ -36,26 +35,26 @@ export default function ScheduleView({ schedule }) {
           return dayOrder.indexOf(a) - dayOrder.indexOf(b);
         })
         .map(([day, items]) => (
-          <div key={day} className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">
+          <div key={day} className="bg-muted rounded-lg p-4">
+            <h3 className="font-semibold text-foreground mb-3">
               {dayNames[day]}
             </h3>
             <div className="space-y-3">
               {items.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-card rounded-lg border">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Clock className="w-4 h-4" />
                       {item.start_time} - {item.end_time}
                     </div>
                     <div className="flex items-center gap-1">
                       <BookOpen className="w-4 h-4 text-indigo-600" />
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-foreground">
                         {item.subject}
                       </span>
                     </div>
                     {item.topic && (
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         - {item.topic}
                       </span>
                     )}
