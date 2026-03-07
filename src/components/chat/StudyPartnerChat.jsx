@@ -260,41 +260,7 @@ export default function StudyPartnerChat({ currentUser, partner, onClose, isMini
     };
   }, [convKey, partner.email, notificationsEnabled]);
 
-  // Heartbeat
-  useEffect(() => {
-    initMyPresence();
-    const interval = setInterval(() => {
-      if (myPresenceId) {
-        base44.entities.UserPresence.update(myPresenceId, {
-          last_seen: new Date().toISOString(),
-          status: myStatusRef.current
-        }).catch(() => {});
-      }
-    }, HEARTBEAT_INTERVAL);
-    return () => {
-      clearInterval(interval);
-      if (myPresenceId) {
-        base44.entities.UserPresence.update(myPresenceId, { status: "offline" }).catch(() => {});
-      }
-    };
-  }, [myPresenceId]);
-
-  const initMyPresence = async () => {
-    const existing = await base44.entities.UserPresence.filter({ user_email: currentUser.email });
-    if (existing.length > 0) {
-      const rec = existing[0];
-      setMyPresenceId(rec.id);
-      const savedStatus = rec.status === "invisible" ? "invisible" : "online";
-      setMyStatus(savedStatus);
-      myStatusRef.current = savedStatus;
-      await base44.entities.UserPresence.update(rec.id, { last_seen: new Date().toISOString(), status: savedStatus });
-    } else {
-      const record = await base44.entities.UserPresence.create({
-        user_email: currentUser.email, last_seen: new Date().toISOString(), status: "online"
-      });
-      setMyPresenceId(record.id);
-    }
-  };
+  // A presença já é atualizada globalmente pelo UserPresenceUpdater no Layout.
 
   const loadMessages = async (skipCount = 0) => {
     try {
