@@ -828,7 +828,8 @@ export default function SubscriptionPage() {
           {plans.
                      filter((plan) => {
                        if (billingCycle === 'semiannual') return plan.key === 'avancado';
-                       return !(plan.key === 'padrao' && billingCycle === 'annual');
+                       if (billingCycle === 'annual') return plan.key === 'avancado';
+                       return true;
                      }).
                      map((plan) =>
           <PlanCard
