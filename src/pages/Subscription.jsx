@@ -826,8 +826,11 @@ export default function SubscriptionPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-center justify-center">
           {plans.
-          filter((plan) => !(plan.key === 'padrao' && billingCycle === 'annual')).
-          map((plan) =>
+                     filter((plan) => {
+                       if (billingCycle === 'semiannual') return plan.key === 'avancado';
+                       return !(plan.key === 'padrao' && billingCycle === 'annual');
+                     }).
+                     map((plan) =>
           <PlanCard
                        key={plan.name}
                        plan={plan}
