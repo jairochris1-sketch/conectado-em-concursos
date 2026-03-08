@@ -464,10 +464,9 @@ export default function SubscriptionPage() {
 
   const handleSubscribe = async (planKey, cycle) => {
     if (planKey === 'gratuito') return;
-
     alert('Assinaturas online estão temporariamente indisponíveis. Entre em contato para aderir ao plano.');
-  }
   };
+
 
   // Fluxo Asaas removido
 
