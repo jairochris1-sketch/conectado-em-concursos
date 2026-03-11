@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Question, UserAnswer, User, ResponseHistory } from "@/entities/all";
+import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import {
   RefreshCw,
@@ -60,7 +60,7 @@ export default function Questions() {
         return;
     }
     try {
-      const questionsData = await Question.list("-created_date", 100000);
+      const questionsData = await base44.entities.Question.list("-created_date", 100000);
       const shuffledQuestions = shuffleArray([...questionsData]);
       setAllQuestions(shuffledQuestions);
       
@@ -78,7 +78,7 @@ export default function Questions() {
       
       setCurrentPage(1);
 
-      const historyData = await ResponseHistory.filter({ created_by: currentUser.email }, "-created_date", 200);
+      const historyData = await base44.entities.ResponseHistory.filter({ created_by: currentUser.email }, "-created_date", 200);
       const historyByQuestion = {};
       
       historyData.forEach(response => {
@@ -99,7 +99,7 @@ export default function Questions() {
     if (!currentUser) return { submitted: 0, correct: 0, accuracy: 0 };
 
     try {
-      const userAnswersData = await UserAnswer.filter({ created_by: currentUser.email }, "-created_date", 500);
+      const userAnswersData = await base44.entities.UserAnswer.filter({ created_by: currentUser.email }, "-created_date", 500);
       const submitted = userAnswersData.length;
       const correct = userAnswersData.filter(a => a.is_correct).length;
       const accuracy = submitted > 0 ? Math.round((correct / submitted) * 100) : 0;
@@ -114,7 +114,7 @@ export default function Questions() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const user = await User.me();
+        const user = await base44.auth.me();
         setCurrentUser(user);
       } catch (error) {
         console.error("Erro ao carregar usuário:", error);
@@ -228,7 +228,7 @@ export default function Questions() {
 
     const isCorrect = userAnswer === question.correct_answer;
     
-    const previousAttempts = await ResponseHistory.filter({ 
+    const previousAttempts = await base44.entities.ResponseHistory.filter({ 
       question_id: question.id, 
       created_by: currentUser.email 
     });
@@ -245,7 +245,7 @@ export default function Questions() {
     };
 
     try {
-      const savedHistory = await ResponseHistory.create(historyData);
+      const savedHistory = await base44.entities.ResponseHistory.create(historyData);
       
       setResponseHistory(prev => ({
         ...prev,
@@ -260,7 +260,7 @@ export default function Questions() {
         institution: question.institution
       };
 
-      await UserAnswer.create(answerData);
+      await base44.entities.UserAnswer.create(answerData);
       setSubmittedAnswers(prev => ({
         ...prev,
         [question.id]: {

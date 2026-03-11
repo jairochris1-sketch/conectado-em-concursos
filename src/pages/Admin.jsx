@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { User } from '@/entities/User';
-import { Question } from '@/entities/Question';
 import { Topic } from '@/entities/Topic';
 import { SiteContent } from '@/entities/SiteContent';
 import { FAQ } from '@/entities/FAQ';
@@ -232,7 +231,7 @@ export default function AdminPage() {
   const loadQuestions = async () => {
     setIsDataLoading(true);
     try {
-      const questionsData = await Question.list('-created_date');
+      const questionsData = await base44.entities.Question.list('-created_date');
       setQuestions(questionsData);
     } catch (error) {
       console.error('Erro ao carregar questões:', error);
@@ -301,7 +300,7 @@ export default function AdminPage() {
         const user = await User.me();
         const question = questions.find(q => q.id === id);
         
-        await Question.delete(id);
+        await base44.entities.Question.delete(id);
 
         // Log de auditoria
         await base44.asServiceRole.entities.AuditLog.create({

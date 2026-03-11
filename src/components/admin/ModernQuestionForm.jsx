@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Question } from '@/entities/Question';
-import { Topic } from '@/entities/Topic';
-import { Subject } from '@/entities/Subject';
-import { Cargo } from '@/entities/Cargo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -78,8 +74,8 @@ export default function ModernQuestionForm({
     const fetchData = async () => {
       try {
         const [subjectsData, cargosData] = await Promise.all([
-          Subject.list('order'),
-          Cargo.list('order')
+          base44.entities.Subject.list('order'),
+          base44.entities.Cargo.list('order')
         ]);
         setSubjects(subjectsData || []);
         setCargos(cargosData || []);
@@ -159,7 +155,7 @@ export default function ModernQuestionForm({
     const fetchTopics = async () => {
       if (watchSubject) {
         try {
-          const fetchedTopics = await Topic.filter({ subject: watchSubject });
+          const fetchedTopics = await base44.entities.Topic.filter({ subject: watchSubject });
 
           const uniqueTopicsMap = new Map();
           fetchedTopics.forEach(topic => {
@@ -191,7 +187,7 @@ export default function ModernQuestionForm({
   useEffect(() => {
     const fetchExamNames = async () => {
       try {
-        const allQuestions = await Question.list();
+        const allQuestions = await base44.entities.Question.list();
         if (allQuestions) {
           const uniqueNames = [...new Set(allQuestions.map(q => q.exam_name).filter(Boolean))];
           setExamNames(uniqueNames);
@@ -245,10 +241,10 @@ export default function ModernQuestionForm({
       }
 
       if (questionToEdit) {
-        await Question.update(questionToEdit.id, finalData);
+        await base44.entities.Question.update(questionToEdit.id, finalData);
         onQuestionSaved("Questão atualizada com sucesso!");
       } else {
-        await Question.create(finalData);
+        await base44.entities.Question.create(finalData);
         onQuestionSaved("Questão criada com sucesso!");
       }
     } catch (error) {

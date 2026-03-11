@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Upload, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { UploadFile, InvokeLLM } from '@/integrations/Core';
-import { Question } from '@/entities/Question';
+import { base44 } from '@/api/base44Client';
 
 const institutionOptions = ["fcc", "cespe", "vunesp", "fgv", "cesgranrio", "esaf", "idecan", "planejar", "ibptec", "outras"];
 
@@ -148,7 +148,7 @@ ASSUNTOS VÁLIDOS: interpretacao_texto, aritmetica, principios_constitucionais, 
       
       for (let i = 0; i < questionsToInsert.length; i += batchSize) {
         const batch = questionsToInsert.slice(i, i + batchSize);
-        await Question.bulkCreate(batch);
+        await base44.entities.Question.bulkCreate(batch);
         insertedCount += batch.length;
         
         const progressPercent = 75 + ((insertedCount / questionsToInsert.length) * 25);
