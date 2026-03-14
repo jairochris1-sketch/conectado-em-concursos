@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Check, Loader2, ArrowLeft, X, Shield, Clock, CreditCard, QrCode, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
-import FAQSection from '../components/faq/FAQSection';
 import SocialLinks from "../components/social/SocialLinks";
 
 const plans = [
@@ -859,48 +858,9 @@ export default function SubscriptionPage() {
           </div>
         </motion.div>
 
-        <FAQSection />
-
         <SocialLinks />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.5 }}
-          className="mt-16 max-w-4xl mx-auto">
 
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className="bg-blue-600 text-slate-300 p-8 text-center from-indigo-600 via-purple-600 to-pink-600">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c0cbbbdc46b91cef9a4fd7/63462b910_logopng.png"
-                alt="Conectado em Concursos"
-                className="w-20 h-20 mx-auto mb-6 object-contain"
-              />
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-                Quem Somos
-              </h2>
-            </div>
-            <div className="p-8 md:p-12 text-gray-800">
-              <div className="space-y-6 text-lg leading-relaxed max-w-3xl mx-auto">
-                <p>
-                  O Conectado em Concursos nasceu da experiência real de um concurseiro que, assim como você, enfrenta diariamente os desafios da preparação para provas e seleções. Afinal, ninguém entende melhor essa jornada do que quem vive na pele a rotina de estudos e a busca pela aprovação.
-                </p>
-                <p>
-                  Nosso site foi desenvolvido para ser <strong className="font-semibold text-indigo-600">moderno, objetivo e prático</strong>, reunindo em um só lugar as funções mais importantes e necessárias para quem estuda para concursos. Uma plataforma otimizada, pensada para facilitar o seu caminho e tornar sua preparação mais eficiente.
-                </p>
-                <p>
-                  Aqui, você encontra proximidade e conexão com pessoas que compartilham do mesmo sonho, trocando experiências, estratégias e motivação.
-                </p>
-                <p>
-                  Acreditamos que a melhor estratégia para conquistar sua vaga está aqui. O Conectado em Concursos é a plataforma mais atual e inovadora do mercado.
-                </p>
-                <p className="font-semibold text-xl md:text-2xl mt-8 text-center text-indigo-600">
-                  🚀 Venha com a gente rumo à aprovação!
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>);
 
