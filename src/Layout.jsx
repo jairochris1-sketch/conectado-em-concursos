@@ -80,6 +80,11 @@ const navigationItems = [
   icon: FileText
 },
 {
+  title: "Edital com IA",
+  url: createPageUrl("EditalIA"),
+  icon: Target
+},
+{
   title: "Resumos",
   url: createPageUrl("GuiaEstudos") + "?slug=guia_aprovacao",
   icon: BookCopy
@@ -277,6 +282,7 @@ const featureAccess = {
   'Cadernos de Questões': ['avancado'],
   'Simulado por Edital': ['avancado'],
   'Meu Edital': ['avancado'],
+  'Edital com IA': ['avancado'],
   'Fórum': ['avancado'],
   'Favoritas': ['gratuito', 'padrao', 'avancado'],
   'Relatórios': ['padrao', 'avancado'],
