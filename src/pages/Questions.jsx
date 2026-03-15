@@ -21,6 +21,7 @@ import { useQuestionLimit } from "@/components/hooks/useQuestionLimit";
 import DailyLimitBanner from "@/components/limits/DailyLimitBanner";
 import StudyTimer from "../components/questions/StudyTimer";
 import ExamCalendar from "../components/questions/ExamCalendar";
+import VoiceSimulationPanel from "../components/questions/VoiceSimulationPanel";
 
 const shuffleArray = (array) => {
   let currentIndex = array.length,  randomIndex;
@@ -218,8 +219,8 @@ export default function Questions() {
     }));
   };
 
-  const handleSubmitAnswer = async (question) => {
-    const userAnswer = userAnswers[question.id];
+  const handleSubmitAnswer = async (question, overrideAnswer = null) => {
+    const userAnswer = overrideAnswer ?? userAnswers[question.id];
     if (!userAnswer) return;
 
     if (isBlocked) {
@@ -274,6 +275,14 @@ export default function Questions() {
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
     }
+  };
+
+  const handleVoiceSubmit = async (question, answer) => {
+    setUserAnswers(prev => ({
+      ...prev,
+      [question.id]: answer
+    }));
+    await handleSubmitAnswer(question, answer);
   };
 
   if (isLoading && (allQuestions.length === 0 || currentUser === null)) {
@@ -351,6 +360,15 @@ export default function Questions() {
                </div>
             ) : currentQuestions.length > 0 ? (
               <>
+                <VoiceSimulationPanel
+                  questions={currentQuestions}
+                  startNumber={startIndex + 1}
+                  userAnswers={userAnswers}
+                  submittedAnswers={submittedAnswers}
+                  onAnswerChange={handleAnswerChange}
+                  onVoiceSubmit={handleVoiceSubmit}
+                  isBlocked={isBlocked}
+                />
                 <QuestionList
                   questions={currentQuestions}
                   userAnswers={userAnswers}
