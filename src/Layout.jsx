@@ -256,7 +256,8 @@ const pageNameTranslations = {
   CreateNotebook: "Criar Caderno",
   SolveNotebook: "Resolver Caderno",
   NotebookStats: "Estatísticas do Caderno",
-  Flashcards: "Meus Flashcards"
+  Flashcards: "Meus Flashcards",
+  EditalIA: "Edital com IA"
 };
 
 const featureAccess = {
